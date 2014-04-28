@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- smart sport pedometer -->
+    <string name="app_name">SPedometer</string>
+
+    <!-- splash screen -->
+    <string name="title_activity_splash_screen">SplashScreenActivity</string>
+    <string name="appLaunch_imageView_contentDescription">this is smart sport pedometer application launch imageView</string>
+
+    <!-- others -->
+    <string name="title_activity_demo">DemoActivity</string>
+
+    <string-array name="apiDemo">
+        <item>获取用户信息</item>
+        <item>更新用户信息</item>
+        <item>获取用户好友列表</item>
+        <item>获取周围的人</item>
+    </string-array>
+
+</resources>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- server root url -->
+    <string name="server_rootUrl" translatable="false">http://192.168.0.137:8080/pedometer</string>
+
+    <!-- user -->
+    <string name="getUserInfo_url" translatable="false">/user/getUserInfo</string>
+    <string name="updateUserInfo_url" translatable="false">/user/updateUserInfo</string>
+    <string name="getUserFiends_url" translatable="false">/user/getFieldList</string>
+
+    <!-- group -->
+    <string name="getScheduleGroups_url" translatable="false">/group/getGroupList</string>
+    <string name="getScheduleGroupInfo_url" translatable="false">/group/getGroupInfo</string>
+    <string name="getHistoryGroups_url" translatable="false">/group/getHistoryGroupList</string>
+    <string name="getHistoryGroupInfo_url" translatable="false">/group/getHistoryGroupInfo</string>
+
+    <!-- walk -->
+    <string name="walkInvite_url" translatable="false">/walk/invite</string>
+    <string name="respondWalkInvite_url" translatable="false">/walk/respondInvite</string>
+    <string name="walkStart_url" translatable="false">/walk/startMove</string>
+    <string name="walkStop_url" translatable="false">/walk/stopMove</string>
+    <string name="publishWalkInfo_url" translatable="false">/walk/updateLocation</string>
+    <string name="getPartnerWalkInfo_url" translatable="false">/walk/getLocation</string>
+
+    <!-- compete -->
+    <!-- within group compete -->
+    <string name="withinGroupCompeteInvite_url" translatable="false">/compete/groupInvite</string>
+    <string name="respondWithinGroupCompeteInvite_url" translatable="false">/compete/respondGroupInvite</string>
+    <string name="publishWithinGroupCompeteWalkInfo_url" translatable="false">/compete/updateDistance</string>
+    <string name="getWithinGroupCompeteWalkInfo_url" translatable="false">/compete/getDistance</string>
+
+    <!-- stranger social -->
+    <string name="getNearbyStranger_url" translatable="false">/user/getNearUser</string>
+
+    <!-- pat -->
+    <string name="patStranger_url" translatable="false">/pat/patStranger</string>
+    <string name="getPattedStrangers_url" translatable="false">/pat/getPatList</string>
+
+</resources>
