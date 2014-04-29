@@ -71,9 +71,8 @@ public class GroupInfoNetworkAdapter implements INetworkAdapter {
 				.genUserComReqParam(userId, token);
 
 		// set user schedule group id to param
-		_getUserScheduleGroupInfoReqParam.put(
-				NETWORK_ENGINE.getContext().getString(
-						R.string.getScheduleGroupDetailInfoReqParam_groupId),
+		_getUserScheduleGroupInfoReqParam.put(NETWORK_ENGINE.getContext()
+				.getString(R.string.getScheduleGroupInfoReqParam_groupId),
 				String.valueOf(groupId));
 
 		// send get user schedule group info asynchronous post http request
@@ -125,7 +124,7 @@ public class GroupInfoNetworkAdapter implements INetworkAdapter {
 
 		// set user history group id to param
 		_getUserHistoryGroupInfoReqParam.put(NETWORK_ENGINE.getContext()
-				.getString(R.string.getHistoryGroupDetailInfoReqParam_groupId),
+				.getString(R.string.getHistoryGroupInfoReqParam_groupId),
 				String.valueOf(groupId));
 
 		// send get user history group info asynchronous post http request

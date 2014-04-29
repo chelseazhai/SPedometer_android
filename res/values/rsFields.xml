@@ -34,22 +34,27 @@
     <string name="updateUserInfoReqResp_updateFailed" translatable="false">1</string>
 
     <!-- group -->
+    <!-- list -->
+    <string name="getGroupsReqResp_groupId" translatable="false">groupId</string>
+    <string name="getGroupsReqResp_groupInviteInfo" translatable="false">info</string>
+    <string name="getGroupsReqResp_groupMemNum" translatable="false">memNum</string>
+
+    <!-- type -->
     <string name="groupType_walk" translatable="false">0</string>
     <string name="groupType_compete" translatable="false">1</string>
-    <string name="groupInfo_beginTime" translatable="false">beginTime</string>
-    <string name="groupInfo_duration" translatable="false">duration</string>
-    <string name="groupInfo_endTime" translatable="false">endTime</string>
-    <string name="groupInfo_topic" translatable="false">content</string>
+
+    <!-- invite info -->
+    <string name="groupInviteInfo_beginTime" translatable="false">beginTime</string>
+    <string name="groupInviteInfo_duration" translatable="false">duration</string>
+    <string name="groupInviteInfo_endTime" translatable="false">endTime</string>
+    <string name="groupInviteInfo_topic" translatable="false">content</string>
 
     <!-- schedule group -->
     <!-- group list -->
     <string name="getScheduleGroupsReqParam_groupType" translatable="false">groupType</string>
-    <string name="getScheduleGroupsReqResp_groupId" translatable="false">groupType</string>
-    <string name="getScheduleGroupsReqParam_groupInfo" translatable="false">info</string>
-    <string name="getScheduleGroupsReqParam_groupMemNum" translatable="false">memNum</string>
 
-    <!-- group detail info -->
-    <string name="getScheduleGroupDetailInfoReqParam_groupId" translatable="false">groupId</string>
+    <!-- group info -->
+    <string name="getScheduleGroupInfoReqParam_groupId" translatable="false">groupId</string>
 
     <!-- history group -->
     <!-- group walk result info -->
@@ -57,18 +62,15 @@
     <string name="groupWalkResultInfo_totalDistance" translatable="false">totalDistance</string>
 
     <!-- group list -->
-    <string name="getHistoryGroupsReqResp_groupId" translatable="false">groupId</string>
     <string name="getHistoryGroupsReqResp_groupType" translatable="false">groupType</string>
-    <string name="getHistoryGroupsReqResp_groupInfo" translatable="false">info</string>
-    <string name="getHistoryGroupsReqResp_groupMemNum" translatable="false">memNum</string>
 
-    <!-- group detail info -->
-    <string name="getHistoryGroupDetailInfoReqParam_groupId" translatable="false">groupId</string>
-    <string name="getHistoryGroupDetailInfoResp_walkStartTime" translatable="false">startTime</string>
-    <string name="getHistoryGroupDetailInfoResp_walkDuration" translatable="false">duration</string>
-    <string name="getHistoryGroupDetailInfoResp_walkStopTime" translatable="false">stopTime</string>
-    <string name="getHistoryGroupDetailInfoResp_walkResult" translatable="false">result</string>
-    <string name="getHistoryGroupDetailInfoResp_walkResultInfo" translatable="false">info</string>
+    <!-- group info -->
+    <string name="getHistoryGroupInfoReqParam_groupId" translatable="false">groupId</string>
+    <string name="getHistoryGroupInfoResp_walkStartTime" translatable="false">startTime</string>
+    <string name="getHistoryGroupInfoResp_walkDuration" translatable="false">duration</string>
+    <string name="getHistoryGroupInfoResp_walkStopTime" translatable="false">stopTime</string>
+    <string name="getHistoryGroupInfoResp_walkResult" translatable="false">result</string>
+    <string name="getHistoryGroupInfoResp_walkResultInfo" translatable="false">info</string>
 
     <!-- invite respond decision -->
     <string name="inviteRespondDecision_agree" translatable="false">0</string>

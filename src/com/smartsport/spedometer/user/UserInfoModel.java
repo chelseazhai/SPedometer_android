@@ -234,6 +234,9 @@ public class UserInfoModel {
 											_friendInfo));
 								}
 							}
+
+							// get user all friends successful
+							//
 						} else {
 							LOGGER.error("Get user friends info response json array is null");
 						}
@@ -251,7 +254,7 @@ public class UserInfoModel {
 								+ statusCode + " and error message = "
 								+ errorMsg);
 
-						// get user friends failed
+						// get user all friends failed
 						//
 					}
 

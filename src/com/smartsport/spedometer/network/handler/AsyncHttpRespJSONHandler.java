@@ -29,34 +29,47 @@ public abstract class AsyncHttpRespJSONHandler extends
 
 	@Override
 	public void onSuccess(int statusCode, String respString) {
-		// parse and check response body
+		// parse response body
 		Object _responseBodyObject = parseResponseBody(respString);
-		if (_responseBodyObject instanceof JSONObject) {
-			// get context
-			Context _context = SSApplication.getContext();
 
-			// get response body json object
-			JSONObject _respBodyJSONObject = (JSONObject) _responseBodyObject;
+		// check response body
+		if (null != _responseBodyObject) {
+			if (_responseBodyObject instanceof JSONObject) {
+				// get context
+				Context _context = SSApplication.getContext();
 
-			// response body contains user define error
-			if (JSONUtils.jsonObjectKeys(_respBodyJSONObject).contains(
-					_context.getString(R.string.comReqResp_errorCode))) {
-				// asynchronous http response json handle failed
-				onFailure(
-						JSONUtils.getIntFromJSONObject(
-								_respBodyJSONObject,
-								_context.getString(R.string.comReqResp_errorCode)),
-						JSONUtils
-								.getStringFromJSONObject(
-										_respBodyJSONObject,
-										_context.getString(R.string.comReqResp_errorMsg)));
-			} else {
+				// get response body json object
+				JSONObject _respBodyJSONObject = (JSONObject) _responseBodyObject;
+
+				// response body contains user define error
+				if (JSONUtils.jsonObjectKeys(_respBodyJSONObject).contains(
+						_context.getString(R.string.comReqResp_errorCode))) {
+					// asynchronous http response json handle failed
+					onFailure(
+							JSONUtils.getIntFromJSONObject(
+									_respBodyJSONObject,
+									_context.getString(R.string.comReqResp_errorCode)),
+							JSONUtils.getStringFromJSONObject(
+									_respBodyJSONObject,
+									_context.getString(R.string.comReqResp_errorMsg)));
+				} else {
+					// asynchronous http response json handle successful
+					onSuccess(statusCode, (JSONObject) _responseBodyObject);
+				}
+			} else if (_responseBodyObject instanceof JSONArray) {
 				// asynchronous http response json handle successful
 				onSuccess(statusCode, (JSONObject) _responseBodyObject);
+			} else {
+				// response body unrecognized(not json object or json array)
+				// asynchronous http response json handle failed
+				// test by ares
+				onFailure(0, "unrecognized response body");
 			}
-		} else if (_responseBodyObject instanceof JSONArray) {
-			// asynchronous http response json handle successful
-			onSuccess(statusCode, (JSONObject) _responseBodyObject);
+		} else {
+			// response body is null
+			// asynchronous http response json handle failed
+			// test by ares
+			onFailure(0, "null response body");
 		}
 	}
 

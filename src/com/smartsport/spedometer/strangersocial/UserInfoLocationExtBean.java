@@ -28,6 +28,27 @@ public class UserInfoLocationExtBean extends UserInfoBean {
 	private static final SSLogger LOGGER = new SSLogger(
 			UserInfoLocationExtBean.class);
 
+	/**
+	 * @title UserInfoLocationExtBean
+	 * @descriptor user info location extension bean constructor
+	 * @author Ares
+	 */
+	public UserInfoLocationExtBean() {
+		super();
+	}
+
+	/**
+	 * @title UserInfoLocationExtBean
+	 * @descriptor user info location extension bean constructor with json
+	 *             object
+	 * @param info
+	 *            : user info with location extension json object
+	 * @author Ares
+	 */
+	public UserInfoLocationExtBean(JSONObject info) {
+		super(info);
+	}
+
 	// user location longitude and latitude
 	private LatLonPoint location;
 
