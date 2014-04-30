@@ -3,11 +3,10 @@
  */
 package com.smartsport.spedometer.group;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import android.util.SparseArray;
 
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.network.NetworkAdapter;
@@ -27,12 +26,9 @@ public class GroupInfoModel {
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(StrangerPatModel.class);
 
-	// user schedule walk and compete group list
-	private List<GroupBean> scheduleWalkGroups;
-	private List<GroupBean> scheduleCompeteGroups;
-
-	// user history walk or compete group list
-	private List<GroupBean> historyWalkOrCompeteGroups;
+	// user schedule, history walk and compete group map(key: group id and
+	// value: group object)
+	private SparseArray<GroupBean> walkOrCompeteGroupMap;
 
 	/**
 	 * @title getUserScheduleGroups
@@ -69,20 +65,9 @@ public class GroupInfoModel {
 								// check get user schedule groups response json
 								// array
 								if (null != respJSONArray) {
-									// check user schedule group type and list
-									switch (groupType) {
-									case WALK_GROUP:
-										if (null == scheduleWalkGroups) {
-											scheduleWalkGroups = new ArrayList<GroupBean>();
-										}
-										break;
-
-									case COMPETE_GROUP:
-									default:
-										if (null == scheduleCompeteGroups) {
-											scheduleCompeteGroups = new ArrayList<GroupBean>();
-										}
-										break;
+									// check user walk or compete group map
+									if (null == walkOrCompeteGroupMap) {
+										walkOrCompeteGroupMap = new SparseArray<GroupBean>();
 									}
 
 									for (int i = 0; i < respJSONArray.length(); i++) {
@@ -92,26 +77,21 @@ public class GroupInfoModel {
 												.getJSONObjectFromJSONArray(
 														respJSONArray, i);
 										if (null != _scheduleGroup) {
-											// add user schedule group object to
-											// list
-											switch (groupType) {
-											case WALK_GROUP:
-												scheduleWalkGroups
-														.add(new GroupBean(
-																_scheduleGroup));
-												break;
+											// get user schedule group object
+											GroupBean _scheduleGroupBean = new GroupBean(
+													_scheduleGroup);
 
-											case COMPETE_GROUP:
-											default:
-												scheduleCompeteGroups
-														.add(new GroupBean(
-																_scheduleGroup));
-												break;
-											}
+											// put user schedule group object to
+											// map
+											walkOrCompeteGroupMap.put(
+													_scheduleGroupBean
+															.getGroupId(),
+													_scheduleGroupBean);
 										}
 									}
 
 									// get user all schedule groups successful
+									// check user schedule group type
 									switch (groupType) {
 									case WALK_GROUP:
 										//
@@ -232,9 +212,9 @@ public class GroupInfoModel {
 								// check get user history groups response json
 								// array
 								if (null != respJSONArray) {
-									// check user history group list
-									if (null == historyWalkOrCompeteGroups) {
-										historyWalkOrCompeteGroups = new ArrayList<GroupBean>();
+									// check user walk or compete group map
+									if (null == walkOrCompeteGroupMap) {
+										walkOrCompeteGroupMap = new SparseArray<GroupBean>();
 									}
 
 									for (int i = 0; i < respJSONArray.length(); i++) {
@@ -244,11 +224,16 @@ public class GroupInfoModel {
 												.getJSONObjectFromJSONArray(
 														respJSONArray, i);
 										if (null != _historyGroup) {
-											// add user history group object to
-											// list
-											historyWalkOrCompeteGroups
-													.add(new GroupBean(
-															_historyGroup));
+											// get user history group object
+											GroupBean _historyGroupBean = new GroupBean(
+													_historyGroup);
+
+											// put user history group object to
+											// map
+											walkOrCompeteGroupMap.put(
+													_historyGroupBean
+															.getGroupId(),
+													_historyGroupBean);
 										}
 									}
 

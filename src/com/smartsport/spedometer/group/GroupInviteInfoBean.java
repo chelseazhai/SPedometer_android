@@ -51,9 +51,9 @@ public class GroupInviteInfoBean implements Serializable {
 		// get context
 		Context _context = SSApplication.getContext();
 
-		// check parsed walk or compete group info json object
+		// check parsed walk or compete group invite info json object
 		if (null != info) {
-			// set walk or compete group info attributes
+			// set walk or compete group invite info attributes
 			try {
 				// group invite begin time
 				beginTime = Long
@@ -111,7 +111,7 @@ public class GroupInviteInfoBean implements Serializable {
 			topic = JSONUtils.getStringFromJSONObject(info,
 					_context.getString(R.string.groupInviteInfo_topic));
 		} else {
-			LOGGER.error("Parse walk or compete group invite info json object error, the info is null");
+			LOGGER.error("Constructor walk or compete group invite info with json object error, the info is null");
 		}
 	}
 

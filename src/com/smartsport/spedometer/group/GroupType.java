@@ -3,6 +3,8 @@
  */
 package com.smartsport.spedometer.group;
 
+import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -14,7 +16,10 @@ import com.smartsport.spedometer.utils.SSLogger;
 public enum GroupType {
 
 	// walk and compete
-	WALK_GROUP(0), COMPETE_GROUP(1);
+	WALK_GROUP(Integer.parseInt(SSApplication.getContext().getString(
+			R.string.groupType_walk))), COMPETE_GROUP(Integer
+			.parseInt(SSApplication.getContext().getString(
+					R.string.groupType_compete)));
 
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(GroupType.class);

@@ -1,5 +1,9 @@
 package com.smartsport.spedometer.demo;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.group.GroupBean;
+import com.smartsport.spedometer.group.info.ScheduleGroupInfoBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.user.UserInfoModel;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -72,6 +78,29 @@ public class DemoActivity extends Activity {
 							});
 
 					//
+					break;
+
+				case 2:
+					try {
+						//
+						GroupBean _group = new GroupBean(
+								new JSONObject(
+										"{\"groupId\":\"1233123\",\"info\":{\"beginTime\":\"1397813119\",\"endTime\":\"1397813229\",\"content\":\"让我们一起走吧！\"},\"memberNumber\":\"2\"}"));
+
+						LOGGER.info("@@, _group = " + _group);
+
+						//
+						ScheduleGroupInfoBean _scheduleGroupInfo = new ScheduleGroupInfoBean(
+								_group,
+								new JSONArray(
+										"[{\"nickname\":\"小慧\",\"age\":\"18\",\"gender\":\"m\",\"height\":\"180\",\"weight\":\"65\",\"avatarUrl\":\"http://www.sina.com.cn\",\"status\":\"0\"}]"));
+
+						LOGGER.info("@@, _scheduleGroupInfo = "
+								+ _scheduleGroupInfo);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					break;
 
 				default:

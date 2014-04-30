@@ -30,9 +30,6 @@ public class GroupBean implements Serializable {
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(GroupBean.class);
 
-	// context
-	protected transient Context context;
-
 	// group id, type, invite info and member number
 	private int groupId;
 	private GroupType type;
@@ -46,9 +43,6 @@ public class GroupBean implements Serializable {
 	 */
 	public GroupBean() {
 		super();
-
-		// initialize context
-		context = SSApplication.getContext();
 	}
 
 	/**
@@ -115,12 +109,15 @@ public class GroupBean implements Serializable {
 	public GroupBean parseGroup(JSONObject info) {
 		// check parsed walk or compete group json object
 		if (null != info) {
+			// get context
+			Context _context = SSApplication.getContext();
+
 			// set walk or compete group attributes
 			try {
 				// group id
 				groupId = Integer.parseInt(JSONUtils.getStringFromJSONObject(
 						info,
-						context.getString(R.string.getGroupsReqResp_groupId)));
+						_context.getString(R.string.getGroupsReqResp_groupId)));
 			} catch (NumberFormatException e) {
 				LOGGER.error("Get walk or compete group id from json info object = "
 						+ info
@@ -135,25 +132,25 @@ public class GroupBean implements Serializable {
 			if (JSONUtils
 					.jsonObjectKeys(info)
 					.contains(
-							context.getString(R.string.getHistoryGroupsReqResp_groupType))) {
+							_context.getString(R.string.getHistoryGroupsReqResp_groupType))) {
 				type = GroupType
 						.getGroupType(JSONUtils.getStringFromJSONObject(
 								info,
-								context.getString(R.string.getHistoryGroupsReqResp_groupType)));
+								_context.getString(R.string.getHistoryGroupsReqResp_groupType)));
 			}
 
 			// invite info
 			inviteInfo = new GroupInviteInfoBean(
 					JSONUtils.getJSONObjectFromJSONObject(
 							info,
-							context.getString(R.string.getGroupsReqResp_groupInviteInfo)));
+							_context.getString(R.string.getGroupsReqResp_groupInviteInfo)));
 
 			try {
 				// member number
 				memberNumber = Integer
 						.parseInt(JSONUtils.getStringFromJSONObject(
 								info,
-								context.getString(R.string.getGroupsReqResp_groupMemNum)));
+								_context.getString(R.string.getGroupsReqResp_groupMemNum)));
 			} catch (NumberFormatException e) {
 				LOGGER.error("Get walk or compete group member number from json info object = "
 						+ info

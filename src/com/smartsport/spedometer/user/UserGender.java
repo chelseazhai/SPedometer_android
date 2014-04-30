@@ -3,6 +3,8 @@
  */
 package com.smartsport.spedometer.user;
 
+import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -14,7 +16,11 @@ import com.smartsport.spedometer.utils.SSLogger;
 public enum UserGender {
 
 	// male, female and unknown
-	MALE('m'), FEMALE('f'), GENDER_UNKNOWN('n');
+	MALE(SSApplication.getContext().getString(R.string.userGender_male)
+			.charAt(0)), FEMALE(SSApplication.getContext()
+			.getString(R.string.userGender_female).charAt(0)), GENDER_UNKNOWN(
+			SSApplication.getContext().getString(R.string.userGender_unknown)
+					.charAt(0));
 
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(UserGender.class);

@@ -37,7 +37,7 @@
     <!-- list -->
     <string name="getGroupsReqResp_groupId" translatable="false">groupId</string>
     <string name="getGroupsReqResp_groupInviteInfo" translatable="false">info</string>
-    <string name="getGroupsReqResp_groupMemNum" translatable="false">memNum</string>
+    <string name="getGroupsReqResp_groupMemNum" translatable="false">memberNumber</string>
 
     <!-- type -->
     <string name="groupType_walk" translatable="false">0</string>
@@ -55,6 +55,9 @@
 
     <!-- group info -->
     <string name="getScheduleGroupInfoReqParam_groupId" translatable="false">groupId</string>
+    <string name="getScheduleGroupInfoReqResp_memStatus" translatable="false">status</string>
+    <string name="memberStatus_inScheduleGroup_online" translatable="false">0</string>
+    <string name="memberStatus_inScheduleGroup_offline" translatable="false">1</string>
 
     <!-- history group -->
     <!-- group walk result info -->
