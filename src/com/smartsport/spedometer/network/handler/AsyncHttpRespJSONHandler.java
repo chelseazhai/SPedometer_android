@@ -124,7 +124,7 @@ public abstract class AsyncHttpRespJSONHandler extends
 				}
 			}
 		} else {
-			LOGGER.error("Http response body is null");
+			LOGGER.warning("Http response body is null");
 		}
 
 		return _responseBodyObject;

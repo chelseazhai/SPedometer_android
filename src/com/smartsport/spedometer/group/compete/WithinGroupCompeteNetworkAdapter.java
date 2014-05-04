@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.group.GroupInviteInfoBean;
 import com.smartsport.spedometer.network.INetworkAdapter;
 import com.smartsport.spedometer.network.NetworkUtils;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespJSONHandler;
@@ -32,32 +33,18 @@ public class WithinGroupCompeteNetworkAdapter implements INetworkAdapter {
 	 *            : user token
 	 * @param inviteesId
 	 *            : the friends id who been invite for walking compete
-	 * @param durationTime
-	 *            : walk compete duration time
-	 * @param topic
-	 *            : walk compete invite topic
+	 * @param inviteInfo
+	 *            : walk compete invite info
 	 * @param asyncHttpRespJSONHandler
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
 	public void inviteWithinGroupCompete(int userId, String token,
-			List<Integer> inviteesId, long durationTime, String topic,
+			List<Integer> inviteesId, GroupInviteInfoBean inviteInfo,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _inviteWithinGroupCompeteReqParam = NetworkUtils
 				.genUserComReqParam(userId, token);
-
-		// set user within group compete invite duration time and topic to param
-		_inviteWithinGroupCompeteReqParam
-				.put(NETWORK_ENGINE
-						.getContext()
-						.getString(
-								R.string.withinGroupCompeteInviteReqParam_competeDuration),
-						String.valueOf(durationTime));
-		_inviteWithinGroupCompeteReqParam.put(
-				NETWORK_ENGINE.getContext().getString(
-						R.string.withinGroupCompeteInviteReqParam_inviteTopic),
-				topic);
 
 		// check user within group compete invite invitees id and set it to
 		// param
@@ -89,6 +76,23 @@ public class WithinGroupCompeteNetworkAdapter implements INetworkAdapter {
 							.getString(
 									R.string.withinGroupCompeteInviteReqParam_inviteesInfo),
 							_withinGroupCompeteInviteesIdJSONArray.toString());
+		}
+
+		// check and set user within group compete invite duration time and
+		// topic to param
+		if (null != inviteInfo) {
+			_inviteWithinGroupCompeteReqParam
+					.put(NETWORK_ENGINE
+							.getContext()
+							.getString(
+									R.string.withinGroupCompeteInviteReqParam_competeDuration),
+							String.valueOf(inviteInfo.getDuration()));
+			_inviteWithinGroupCompeteReqParam
+					.put(NETWORK_ENGINE
+							.getContext()
+							.getString(
+									R.string.withinGroupCompeteInviteReqParam_inviteTopic),
+							inviteInfo.getTopic());
 		}
 
 		// send invite more than one of user friends walk compete asynchronous

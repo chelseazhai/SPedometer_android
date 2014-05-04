@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import android.util.SparseArray;
 
 import com.smartsport.spedometer.group.GroupBean;
+import com.smartsport.spedometer.group.GroupType;
 import com.smartsport.spedometer.group.info.member.MemberStatus;
 import com.smartsport.spedometer.group.info.member.UserInfoMemberStatusBean;
 import com.smartsport.spedometer.user.UserInfoBean;
@@ -77,6 +78,7 @@ public class ScheduleGroupInfoBean extends GroupInfoBean {
 	 * @descriptor get schedule walk or compete group member status
 	 * @param memberInfo
 	 *            : member info in the schedule walk or compete group
+	 * @return member status of the schedule walk or compete group
 	 * @author Ares
 	 */
 	public MemberStatus getMemberStatus(UserInfoBean memberInfo) {
@@ -86,7 +88,8 @@ public class ScheduleGroupInfoBean extends GroupInfoBean {
 		if (null != memberStatusMap && null != memberInfo) {
 			_memberStatus = memberStatusMap.get(memberInfo.hashCode());
 		} else {
-			LOGGER.error("");
+			LOGGER.error("Get schedule walk or compete group member status error, member status map = "
+					+ memberStatusMap + " and member info = " + memberInfo);
 		}
 
 		return _memberStatus;
@@ -118,6 +121,13 @@ public class ScheduleGroupInfoBean extends GroupInfoBean {
 				// group
 				UserInfoMemberStatusBean _memberInfoWithStatus = new UserInfoMemberStatusBean(
 						JSONUtils.getJSONObjectFromJSONArray(info, i));
+
+				// check the schedule walk or compete group type and set
+				// schedule compete group member status online
+				if (GroupType.COMPETE_GROUP == getType()) {
+					_memberInfoWithStatus
+							.setMemberSratus(MemberStatus.MEM_ONLINE);
+				}
 
 				// set schedule walk or compete group info attributes
 				// members info

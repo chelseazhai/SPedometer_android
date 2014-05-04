@@ -5,14 +5,12 @@ package com.smartsport.spedometer.group.walk;
 
 import java.util.Map;
 
-import org.json.JSONObject;
-
 import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.group.GroupInviteInfoBean;
 import com.smartsport.spedometer.network.INetworkAdapter;
 import com.smartsport.spedometer.network.NetworkUtils;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespJSONHandler;
-import com.smartsport.spedometer.utils.JSONUtils;
 
 /**
  * @name WalkInviteNetworkAdapter
@@ -31,18 +29,14 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 	 *            : user token
 	 * @param inviteeId
 	 *            : the friend id who been invite for walking together
-	 * @param scheduleBeginTime
-	 *            : walk invite schedule begin time
-	 * @param scheduleEndTime
-	 *            : walk invite schedule end time
-	 * @param topic
-	 *            : walk invite topic
+	 * @param inviteInfo
+	 *            : walk invite info
 	 * @param asyncHttpRespJSONHandler
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
 	public void inviteWalk(int userId, String token, int inviteeId,
-			long scheduleBeginTime, long scheduleEndTime, String topic,
+			GroupInviteInfoBean inviteInfo,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _inviteWalkReqParam = NetworkUtils
@@ -54,36 +48,13 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 						R.string.walkInviteReqParam_inviteeId),
 				String.valueOf(inviteeId));
 
-		// generate walk invite info
-		JSONObject _walkInviteInfo = new JSONObject();
-
-		// set schedule begin, end time and topic to walk invite info
-		JSONUtils
-				.putObject2JSONObject(
-						_walkInviteInfo,
-						NETWORK_ENGINE
-								.getContext()
-								.getString(
-										R.string.walkInviteReqParam_inviteInfo_scheduleBeginTime),
-						String.valueOf(scheduleBeginTime));
-		JSONUtils
-				.putObject2JSONObject(
-						_walkInviteInfo,
-						NETWORK_ENGINE
-								.getContext()
-								.getString(
-										R.string.walkInviteReqParam_inviteInfo_scheduleEndTime),
-						String.valueOf(scheduleEndTime));
-		JSONUtils.putObject2JSONObject(
-				_walkInviteInfo,
-				NETWORK_ENGINE.getContext().getString(
-						R.string.walkInviteReqParam_inviteInfo_topic), topic);
-
-		// set user walk invite info to param
-		_inviteWalkReqParam.put(
-				NETWORK_ENGINE.getContext().getString(
-						R.string.walkInviteReqParam_inviteInfo),
-				_walkInviteInfo.toString());
+		// check and set user walk invite info to param
+		if (null != inviteInfo) {
+			_inviteWalkReqParam.put(
+					NETWORK_ENGINE.getContext().getString(
+							R.string.walkInviteReqParam_inviteInfo), inviteInfo
+							.getWalkInviteInfo().toString());
+		}
 
 		// send invite one of user friends walk together asynchronous post http
 		// request

@@ -5,7 +5,9 @@ package com.smartsport.spedometer.group.info.result;
 
 import org.json.JSONObject;
 
+import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.user.UserInfoBean;
+import com.smartsport.spedometer.utils.JSONUtils;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -72,7 +74,10 @@ public class UserInfoGroupResultBean extends UserInfoBean {
 		// parse user group status of walk or compete group info
 		// check parsed user info group status extension json object
 		if (null != info) {
-			result = new GroupResultInfoBean(info);
+			result = new GroupResultInfoBean(
+					JSONUtils.getJSONObjectFromJSONObject(
+							info,
+							context.getString(R.string.getHistoryGroupInfoResp_walkResultInfo)));
 		} else {
 			LOGGER.error("Parse user info group status extension json object error, the info with group status is null");
 		}

@@ -212,7 +212,7 @@ public class UserInfoModel {
 							JSONArray respJSONArray) {
 						LOGGER.info("Get user friends successful, status code = "
 								+ statusCode
-								+ " and response json Array = "
+								+ " and response json array = "
 								+ respJSONArray);
 
 						// check get user friends info response json array

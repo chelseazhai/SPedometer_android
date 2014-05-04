@@ -8,6 +8,8 @@ import org.json.JSONObject;
 
 import android.util.SparseArray;
 
+import com.smartsport.spedometer.group.info.HistoryGroupInfoBean;
+import com.smartsport.spedometer.group.info.ScheduleGroupInfoBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.network.NetworkAdapter;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespJSONHandler;
@@ -16,7 +18,7 @@ import com.smartsport.spedometer.utils.JSONUtils;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
- * @name StrangerPatModel
+ * @name GroupInfoModel
  * @descriptor user walk or compete group info model
  * @author Ares
  * @version 1.0
@@ -59,7 +61,7 @@ public class GroupInfoModel {
 										+ groupType
 										+ " successful, status code = "
 										+ statusCode
-										+ " and response json Array = "
+										+ " and response json array = "
 										+ respJSONArray);
 
 								// check get user schedule groups response json
@@ -145,8 +147,8 @@ public class GroupInfoModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void getUserScheduleGroupInfo(int userId, String token, int groupId,
-			ICMConnector executant) {
+	public void getUserScheduleGroupInfo(int userId, String token,
+			final int groupId, ICMConnector executant) {
 		// get user schedule group info with user id, token and schedule group
 		// id
 		((GroupInfoNetworkAdapter) NetworkAdapter.getInstance()
@@ -157,8 +159,33 @@ public class GroupInfoModel {
 							@Override
 							public void onSuccess(int statusCode,
 									JSONArray respJSONArray) {
-								// TODO Auto-generated method stub
+								LOGGER.info("Get user schedule group info successful, group id = "
+										+ groupId
+										+ ", status code = "
+										+ statusCode
+										+ " and response json array = "
+										+ respJSONArray);
 
+								// check get user schedule group info response
+								// json array
+								if (null != respJSONArray) {
+									// generate schedule walk or compete group
+									// info
+									ScheduleGroupInfoBean _scheduleGroupInfo = new ScheduleGroupInfoBean(
+											walkOrCompeteGroupMap.get(groupId),
+											respJSONArray);
+
+									LOGGER.debug("Get user schedule group info successful, group id = "
+											+ groupId
+											+ " and group info = "
+											+ _scheduleGroupInfo);
+
+									// get user schedule group info successful
+									//
+								} else {
+									LOGGER.error("Get user schedule group info response json array is null, group id = "
+											+ groupId);
+								}
 							}
 
 							@Override
@@ -206,7 +233,7 @@ public class GroupInfoModel {
 									JSONArray respJSONArray) {
 								LOGGER.info("Get user history groups successful, status code = "
 										+ statusCode
-										+ " and response json Array = "
+										+ " and response json array = "
 										+ respJSONArray);
 
 								// check get user history groups response json
@@ -278,8 +305,8 @@ public class GroupInfoModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void getUserHistoryGroupInfo(int userId, String token, int groupId,
-			ICMConnector executant) {
+	public void getUserHistoryGroupInfo(int userId, String token,
+			final int groupId, ICMConnector executant) {
 		// get user history group info with user id, token and history group id
 		((GroupInfoNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(GroupInfoNetworkAdapter.class))
@@ -289,20 +316,47 @@ public class GroupInfoModel {
 							@Override
 							public void onSuccess(int statusCode,
 									JSONArray respJSONArray) {
-								// TODO Auto-generated method stub
-
+								// nothing to do
 							}
 
 							@Override
 							public void onSuccess(int statusCode,
 									JSONObject respJSONObject) {
-								// nothing to do
+								LOGGER.info("Get user history group info successful, group id = "
+										+ groupId
+										+ ", status code = "
+										+ statusCode
+										+ " and response json object = "
+										+ respJSONObject);
+
+								// check get user history group info response
+								// json object
+								if (null != respJSONObject) {
+									// generate history walk or compete group
+									// info
+									HistoryGroupInfoBean _historyGroupInfo = new HistoryGroupInfoBean(
+											walkOrCompeteGroupMap.get(groupId),
+											respJSONObject);
+
+									LOGGER.debug("Get user history group info successful, group id = "
+											+ groupId
+											+ " and group info = "
+											+ _historyGroupInfo);
+
+									// get user history group info successful
+									//
+								} else {
+									LOGGER.error("Get user history group info response json object is null, group id = "
+											+ groupId);
+								}
 							}
 
 							@Override
 							public void onFailure(int statusCode,
 									String errorMsg) {
-								LOGGER.info("Get user history group info failed, status code = "
+								LOGGER.info("Get user history group info failed, group id = "
+										+ groupId
+										+ ", status code = "
 										+ statusCode
 										+ " and error message = "
 										+ errorMsg);

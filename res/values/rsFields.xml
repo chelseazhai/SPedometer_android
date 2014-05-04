@@ -171,7 +171,7 @@
     <!-- within group invite respond -->
     <string name="respondWithinGroupCompeteInviteReqParam_groupId" translatable="false">groupId</string>
     <string name="respondWithinGroupCompeteInviteReqParam_decision" translatable="false">agreeCode</string>
-    <string name="respondWithinGroupCompeteInviteReqResp_groupMemNum" translatable="false">memNum</string>
+    <string name="respondWithinGroupCompeteInviteReqResp_groupInfo" translatable="false">info</string>
 
     <!-- within group invite responded notify -->
 

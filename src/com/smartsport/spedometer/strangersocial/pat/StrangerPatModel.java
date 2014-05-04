@@ -68,7 +68,7 @@ public class StrangerPatModel {
 									JSONArray respJSONArray) {
 								LOGGER.info("Get user nearby strangers successful, status code = "
 										+ statusCode
-										+ " and response json Array = "
+										+ " and response json array = "
 										+ respJSONArray);
 
 								// check get user nearby strangers info response
@@ -244,7 +244,7 @@ public class StrangerPatModel {
 									JSONArray respJSONArray) {
 								LOGGER.info("Get patted user strangers successful, status code = "
 										+ statusCode
-										+ " and response json Array = "
+										+ " and response json arrayf = "
 										+ respJSONArray);
 
 								// check patted user strangers info response

@@ -31,6 +31,9 @@ public class GroupInviteInfoBean implements Serializable {
 	private static final SSLogger LOGGER = new SSLogger(
 			GroupInviteInfoBean.class);
 
+	// context
+	private Context context;
+
 	// group invite begin time, duration, end time and topic
 	private long beginTime;
 	private long duration;
@@ -49,17 +52,16 @@ public class GroupInviteInfoBean implements Serializable {
 		super();
 
 		// get context
-		Context _context = SSApplication.getContext();
+		context = SSApplication.getContext();
 
 		// check parsed walk or compete group invite info json object
 		if (null != info) {
 			// set walk or compete group invite info attributes
 			try {
 				// group invite begin time
-				beginTime = Long
-						.parseLong(JSONUtils.getStringFromJSONObject(
-								info,
-								_context.getString(R.string.groupInviteInfo_beginTime)));
+				beginTime = Long.parseLong(JSONUtils.getStringFromJSONObject(
+						info,
+						context.getString(R.string.groupInviteInfo_beginTime)));
 			} catch (NumberFormatException e) {
 				LOGGER.error("Get group invite begin time from json info object = "
 						+ info
@@ -72,12 +74,12 @@ public class GroupInviteInfoBean implements Serializable {
 			// group invite duration
 			// check is or not has invite duration
 			if (JSONUtils.jsonObjectKeys(info).contains(
-					_context.getString(R.string.groupInviteInfo_duration))) {
+					context.getString(R.string.groupInviteInfo_duration))) {
 				try {
 					duration = Long
 							.parseLong(JSONUtils.getStringFromJSONObject(
 									info,
-									_context.getString(R.string.groupInviteInfo_duration)));
+									context.getString(R.string.groupInviteInfo_duration)));
 				} catch (NumberFormatException e) {
 					LOGGER.error("Get group invite duration from json info object = "
 							+ info
@@ -91,12 +93,12 @@ public class GroupInviteInfoBean implements Serializable {
 			// group invite end time
 			// check is or not has invite end time
 			if (JSONUtils.jsonObjectKeys(info).contains(
-					_context.getString(R.string.groupInviteInfo_endTime))) {
+					context.getString(R.string.groupInviteInfo_endTime))) {
 				try {
 					endTime = Long
 							.parseLong(JSONUtils.getStringFromJSONObject(
 									info,
-									_context.getString(R.string.groupInviteInfo_endTime)));
+									context.getString(R.string.groupInviteInfo_endTime)));
 				} catch (NumberFormatException e) {
 					LOGGER.error("Get group invite end time from json info object = "
 							+ info
@@ -109,7 +111,7 @@ public class GroupInviteInfoBean implements Serializable {
 
 			// topic
 			topic = JSONUtils.getStringFromJSONObject(info,
-					_context.getString(R.string.groupInviteInfo_topic));
+					context.getString(R.string.groupInviteInfo_topic));
 		} else {
 			LOGGER.error("Constructor walk or compete group invite info with json object error, the info is null");
 		}
@@ -152,6 +154,36 @@ public class GroupInviteInfoBean implements Serializable {
 		return "GroupInviteInfoBean [beginTime=" + beginTime + ", duration="
 				+ duration + ", endTime=" + endTime + " and topic=" + topic
 				+ "]";
+	}
+
+	/**
+	 * @title getWalkInviteInfo
+	 * @descriptor get walk invite info json object
+	 * @return walk invite info json object
+	 * @author Ares
+	 */
+	public JSONObject getWalkInviteInfo() {
+		// define walk invite info
+		JSONObject _walkInviteInfo = new JSONObject();
+
+		// set schedule begin, end time and topic to walk invite info
+		JSONUtils
+				.putObject2JSONObject(
+						_walkInviteInfo,
+						context.getString(R.string.walkInviteReqParam_inviteInfo_scheduleBeginTime),
+						String.valueOf(beginTime));
+		JSONUtils
+				.putObject2JSONObject(
+						_walkInviteInfo,
+						context.getString(R.string.walkInviteReqParam_inviteInfo_scheduleEndTime),
+						String.valueOf(endTime));
+		JSONUtils
+				.putObject2JSONObject(
+						_walkInviteInfo,
+						context.getString(R.string.walkInviteReqParam_inviteInfo_topic),
+						topic);
+
+		return _walkInviteInfo;
 	}
 
 }
