@@ -88,6 +88,8 @@ public class WithinGroupCompeteModel {
 												.getStringFromJSONObject(
 														respJSONObject,
 														_context.getString(R.string.withinGroupCompeteInviteReqResp_groupId)));
+
+										// within group compete start time
 										long _withinGroupCompeteStartTime = Long.parseLong(JSONUtils
 												.getStringFromJSONObject(
 														respJSONObject,
@@ -95,7 +97,7 @@ public class WithinGroupCompeteModel {
 
 										LOGGER.debug("Invite more than one of user friends, their user id = "
 												+ inviteesId
-												+ " to walk compete successful, the schedule within group compete group id = "
+												+ " to walk compete, the schedule within group compete group id = "
 												+ _withinGroupCompeteGroupId
 												+ " and start time = "
 												+ _withinGroupCompeteStartTime);
@@ -174,8 +176,46 @@ public class WithinGroupCompeteModel {
 							@Override
 							public void onSuccess(int statusCode,
 									JSONObject respJSONObject) {
-								// TODO Auto-generated method stub
+								LOGGER.info("Respond the within group walk compete invite successful, group id = "
+										+ groupId
+										+ ", my decision agreed = "
+										+ isAgreed
+										+ ", status code = "
+										+ statusCode
+										+ " and response json object = "
+										+ respJSONObject);
 
+								// check respond the within group walk compete
+								// invite response json object
+								if (null != respJSONObject) {
+									// get within group walk compete group
+									// invite info
+									GroupInviteInfoBean _withinGroupWalkCompeteInviteInfo = new GroupInviteInfoBean(
+											JSONUtils
+													.getJSONObjectFromJSONObject(
+															respJSONObject,
+															SSApplication
+																	.getContext()
+																	.getString(
+																			R.string.respondWithinGroupCompeteInviteReqResp_groupInfo)));
+
+									LOGGER.debug("Respond the within group walk compete invite, its group id = "
+											+ groupId
+											+ ", my decision agreed = "
+											+ isAgreed
+											+ " and group invite info = "
+											+ _withinGroupWalkCompeteInviteInfo);
+
+									// respond the within group walk compete
+									// invite successful
+									//
+								} else {
+									LOGGER.error("Respond the within group walk compete invite, its group id = "
+											+ groupId
+											+ " and my decision agreed = "
+											+ isAgreed
+											+ " response json object is null");
+								}
 							}
 
 							@Override
@@ -219,7 +259,7 @@ public class WithinGroupCompeteModel {
 	public void publishWithinGroupCompeteWalkingInfo(int userId, String token,
 			final int groupId, final float walkingVelocity,
 			final int totalDistance, ICMConnector executant) {
-		// publish within group compete user walking info including walking
+		// publish within group compete user walking info with group id, walking
 		// velocity and total distance
 		((WithinGroupCompeteNetworkAdapter) NetworkAdapter
 				.getInstance()
@@ -278,7 +318,7 @@ public class WithinGroupCompeteModel {
 	public void getWithinGroupCompeteWalkingInfo(int userId, String token,
 			final int groupId, ICMConnector executant) {
 		// get within group compete each member walking info including walking
-		// velocity and total distance
+		// velocity and total distance with group id
 		((WithinGroupCompeteNetworkAdapter) NetworkAdapter
 				.getInstance()
 				.getWorkerNetworkAdapter(WithinGroupCompeteNetworkAdapter.class))
@@ -288,14 +328,14 @@ public class WithinGroupCompeteModel {
 							@Override
 							public void onSuccess(int statusCode,
 									JSONArray respJSONArray) {
-								// TODO Auto-generated method stub
-
+								// nothing to do
 							}
 
 							@Override
 							public void onSuccess(int statusCode,
 									JSONObject respJSONObject) {
-								// nothing to do
+								// TODO Auto-generated method stub
+
 							}
 
 							@Override

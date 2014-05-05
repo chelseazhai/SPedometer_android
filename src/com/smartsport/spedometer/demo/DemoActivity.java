@@ -12,10 +12,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.group.GroupBean;
 import com.smartsport.spedometer.group.info.ScheduleGroupInfoBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
+import com.smartsport.spedometer.strangersocial.pat.StrangerPatModel;
 import com.smartsport.spedometer.user.UserInfoModel;
 import com.smartsport.spedometer.utils.SSLogger;
 
@@ -69,9 +71,17 @@ public class DemoActivity extends Activity {
 					break;
 
 				case 1:
-					// update user info
-					_userInfoModel.updateUserInfo(1234, "AJH12AHG33", 0, null,
-							0.0f, 0.0f, new ICMConnector() {
+					// // update user info
+					// _userInfoModel.updateUserInfo(1234, "AJH12AHG33", 0,
+					// null,
+					// 0.0f, 0.0f, new ICMConnector() {
+					//
+					// //
+					//
+					// });
+
+					new StrangerPatModel().patStranger(111, "2234", 222,
+							new LatLonPoint(0.0, 0.0), new ICMConnector() {
 
 								//
 

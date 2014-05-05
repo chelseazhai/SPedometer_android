@@ -2,7 +2,7 @@
 <resources>
 
     <!-- server root url -->
-    <string name="server_rootUrl" translatable="false">http://192.168.0.137:8080/pedometer</string>
+    <string name="server_rootUrl" translatable="false">http://192.168.0.64:8080/pedometer</string>
 
     <!-- user -->
     <string name="getUserInfo_url" translatable="false">/user/getUserInfo</string>
