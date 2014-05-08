@@ -18,7 +18,7 @@ public class SSLogger {
 
 	/**
 	 * @title SSLog
-	 * @descriptor constructor SSLog object with parameter
+	 * @descriptor constructor SSLog object with parameter log tag object class
 	 * @param logTagCls
 	 *            : log tag object class
 	 * @return SSLog object
@@ -31,12 +31,6 @@ public class SSLogger {
 		clsLogTag = logTagCls;
 	}
 
-	/**
-	 * @title getLogTag
-	 * @descriptor get log tag
-	 * @return log tag string
-	 * @author Ares
-	 */
 	private String getLogTag() {
 		// check log tag
 		if (null == logTag) {
@@ -65,45 +59,45 @@ public class SSLogger {
 	/**
 	 * @title debug
 	 * @descriptor log debug message
-	 * @param debugLog
-	 *            : debug log
+	 * @param debugMsg
+	 *            : debug log message
 	 * @author Ares
 	 */
-	public void debug(String debugLog) {
-		Log.d(getLogTag(), debugLog);
+	public void debug(String debugMsg) {
+		Log.d(getLogTag(), debugMsg);
 	}
 
 	/**
 	 * @title info
 	 * @descriptor log info message
-	 * @param infoLog
-	 *            : info log
+	 * @param infoMsg
+	 *            : info log message
 	 * @author Ares
 	 */
-	public void info(String infoLog) {
-		Log.i(getLogTag(), infoLog);
+	public void info(String infoMsg) {
+		Log.i(getLogTag(), infoMsg);
 	}
 
 	/**
 	 * @title warning
 	 * @descriptor log warning message
-	 * @param warningLog
-	 *            : warning log
+	 * @param warningMsg
+	 *            : warning log message
 	 * @author Ares
 	 */
-	public void warning(String warningLog) {
-		Log.w(getLogTag(), warningLog);
+	public void warning(String warningMsg) {
+		Log.w(getLogTag(), warningMsg);
 	}
 
 	/**
 	 * @title error
 	 * @descriptor log error message
-	 * @param errorLog
-	 *            : error log
+	 * @param errorMsg
+	 *            : error log message
 	 * @author Ares
 	 */
-	public void error(String errorLog) {
-		Log.e(getLogTag(), errorLog);
+	public void error(String errorMsg) {
+		Log.e(getLogTag(), errorMsg);
 	}
 
 }

@@ -56,7 +56,7 @@ public class UserInfoBean implements Serializable {
 
 	/**
 	 * @title UserInfoBean
-	 * @descriptor user info bean constructor with json object
+	 * @descriptor user info bean constructor with user info json object
 	 * @param info
 	 *            : user info json object
 	 * @author Ares
@@ -133,28 +133,31 @@ public class UserInfoBean implements Serializable {
 
 	/**
 	 * @title parseUserInfo
-	 * @descriptor parse user info json object to user info object
+	 * @descriptor parse user info json object to user info bean
 	 * @param info
 	 *            : user info json object
-	 * @return user info object
+	 * @return user info bean
 	 * @author Ares
 	 */
 	public UserInfoBean parseUserInfo(JSONObject info) {
-		// check parsed user info json object
+		// check be parsed user info json object
 		if (null != info) {
 			// set user info attributes
 			// user id
-			// check is or not has user id
-			if (JSONUtils.jsonObjectKeys(info).contains(
-					context.getString(R.string.userInfoReqResp_userId))) {
+			// get user id key string
+			String _userIdKeystring = context
+					.getString(R.string.userInfoReqResp_userId);
+
+			// check if there is or not user id
+			if (JSONUtils.jsonObjectKeys(info).contains(_userIdKeystring)) {
 				try {
-					userId = Integer
-							.parseInt(JSONUtils.getStringFromJSONObject(
-									info,
-									context.getString(R.string.userInfoReqResp_userId)));
+					userId = Integer.parseInt(JSONUtils
+							.getStringFromJSONObject(info, _userIdKeystring));
 				} catch (NumberFormatException e) {
-					LOGGER.error("Get user id from json info object = " + info
-							+ " error, exception message = " + e.getMessage());
+					LOGGER.error("Get user id integer from user info json object = "
+							+ info
+							+ " error, exception message = "
+							+ e.getMessage());
 
 					e.printStackTrace();
 				}
@@ -173,8 +176,10 @@ public class UserInfoBean implements Serializable {
 				age = Integer.parseInt(JSONUtils.getStringFromJSONObject(info,
 						context.getString(R.string.userInfoReqResp_userAge)));
 			} catch (NumberFormatException e) {
-				LOGGER.error("Get user age from json info object = " + info
-						+ " error, exception message = " + e.getMessage());
+				LOGGER.error("Get user age integer from user json info object = "
+						+ info
+						+ " error, exception message = "
+						+ e.getMessage());
 
 				e.printStackTrace();
 			}
@@ -191,8 +196,10 @@ public class UserInfoBean implements Serializable {
 								info,
 								context.getString(R.string.userInfoReqResp_userHeight)));
 			} catch (NumberFormatException e) {
-				LOGGER.error("Get user height from json info object = " + info
-						+ " error, exception message = " + e.getMessage());
+				LOGGER.error("Get user height float from user json info object = "
+						+ info
+						+ " error, exception message = "
+						+ e.getMessage());
 
 				e.printStackTrace();
 			}
@@ -204,13 +211,15 @@ public class UserInfoBean implements Serializable {
 								info,
 								context.getString(R.string.userInfoReqResp_userWeight)));
 			} catch (NumberFormatException e) {
-				LOGGER.error("Get user weight from json info object = " + info
-						+ " error, exception message = " + e.getMessage());
+				LOGGER.error("Get user weight float from user json info object = "
+						+ info
+						+ " error, exception message = "
+						+ e.getMessage());
 
 				e.printStackTrace();
 			}
 		} else {
-			LOGGER.error("Parse user info json object error, the info is null");
+			LOGGER.error("Parse user info json object to user info bean error, the be parsed user info json object is null");
 		}
 
 		return this;

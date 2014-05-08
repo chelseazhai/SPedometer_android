@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- smartsport base activity navigation bar bar button item -->
+    <declare-styleable name="ssb_navBar_barButtonItem">
+        <attr name="text" format="string" />
+        <attr name="textColor" format="color|reference" />
+        <attr name="src" format="color|reference" />
+        <attr name="background" format="color|reference" />
+    </declare-styleable>
+
+</resources>

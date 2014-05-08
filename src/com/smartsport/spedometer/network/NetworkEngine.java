@@ -4,10 +4,13 @@
 package com.smartsport.spedometer.network;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.http.Header;
+import org.apache.http.entity.StringEntity;
+import org.json.JSONObject;
 
 import android.content.Context;
 
@@ -125,10 +128,26 @@ public class NetworkEngine {
 				+ " and response string handler = "
 				+ asyncHttpRespStringHandler);
 
+		// generate json string parameter(charset:utf-8)
+		StringEntity _jsonStringEntity = null;
+		try {
+			_jsonStringEntity = new StringEntity(
+					new JSONObject(parameter).toString(), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			LOGGER.error("Generate asynchronous post http request json string param error, exception message = "
+					+ e.getMessage());
+
+			e.printStackTrace();
+		}
+
 		// post asynchronous http request
-		asyncHttpClient.post(genHttpRequestUrl(api), new RequestParams(
-				parameter), new TextAsyncHttpRespStringHandler(
-				asyncHttpRespStringHandler));
+		asyncHttpClient.post(context, genHttpRequestUrl(api),
+				_jsonStringEntity, "application/json charset=\"utf-8\"",
+				new TextAsyncHttpRespStringHandler(asyncHttpRespStringHandler));
+
+		// asyncHttpClient.post(genHttpRequestUrl(api), new RequestParams(
+		// parameter), new TextAsyncHttpRespStringHandler(
+		// asyncHttpRespStringHandler));
 	}
 
 	/**

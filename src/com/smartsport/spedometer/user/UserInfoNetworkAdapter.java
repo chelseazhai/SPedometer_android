@@ -115,7 +115,7 @@ public class UserInfoNetworkAdapter implements INetworkAdapter {
 		// send get user friend list asynchronous post http request
 		NETWORK_ENGINE.postWithAPI(
 				NETWORK_ENGINE.getContext().getString(
-						R.string.getUserFiends_url),
+						R.string.getUserFriends_url),
 				NetworkUtils.genUserComReqParam(userId, token),
 				asyncHttpRespJSONHandler);
 	}

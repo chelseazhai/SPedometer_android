@@ -58,7 +58,7 @@ public abstract class AsyncHttpRespJSONHandler extends
 				}
 			} else if (_responseBodyObject instanceof JSONArray) {
 				// asynchronous http response json handle successful
-				onSuccess(statusCode, (JSONObject) _responseBodyObject);
+				onSuccess(statusCode, (JSONArray) _responseBodyObject);
 			} else {
 				// response body unrecognized(not json object or json array)
 				// asynchronous http response json handle failed

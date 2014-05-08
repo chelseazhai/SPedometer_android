@@ -1,0 +1,76 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".mvc.PedometerActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <LinearLayout
+        android:id="@+id/p_functionController"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:paddingBottom="18dp"
+        android:paddingTop="18dp" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/pfc_walkInvite_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:minWidth="100dp"
+                android:text="@string/walkInvite_button_text" />
+
+            <Button
+                android:id="@+id/pfc_withinGroupCompete_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:minWidth="100dp"
+                android:text="@string/withinGroupCompete_button_text" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp" >
+
+            <Button
+                android:id="@+id/pfc_nearbyStrangers_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:minWidth="100dp"
+                android:text="@string/nearbyStrangers_button_text" />
+
+            <Button
+                android:id="@+id/pfc_historyRecord_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:minWidth="100dp"
+                android:text="@string/historyRecord_button_text" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/p_functionController" >
+
+        <Button
+            android:id="@+id/p_stepCounter_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:minHeight="140dp"
+            android:minWidth="140dp"
+            android:text="@string/stepCounter_button_text" />
+    </FrameLayout>
+
+</RelativeLayout>

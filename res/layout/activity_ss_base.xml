@@ -1,0 +1,74 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:spedometer="http://schemas.android.com/apk/res/com.smartsport.spedometer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".mvc.SSBaseActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <RelativeLayout
+        android:id="@+id/ssb_navigationBar"
+        android:layout_width="fill_parent"
+        android:layout_height="48dp"
+        android:background="@android:color/darker_gray"
+        android:paddingBottom="6dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="6dp" >
+
+        <com.smartsport.spedometer.customwidget.SSBNavBarButtonItem
+            android:id="@+id/ssb_navBar_leftBarBtnItem"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:minWidth="36dp"
+            android:visibility="invisible"
+            spedometer:src="@drawable/img_navbar_backbarbtnitem" />
+
+        <com.smartsport.spedometer.customwidget.SSBNavBarButtonItem
+            android:id="@+id/ssb_navBar_rightBarBtnItem"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:minWidth="36dp"
+            android:visibility="invisible" />
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_toLeftOf="@id/ssb_navBar_rightBarBtnItem"
+            android:layout_toRightOf="@id/ssb_navBar_leftBarBtnItem"
+            android:minWidth="220dp" >
+
+            <TextView
+                android:id="@+id/ssb_navBar_titleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ellipsize="middle"
+                android:gravity="center"
+                android:singleLine="true" />
+
+            <RelativeLayout
+                android:id="@+id/ssb_navBar_titleCustomView_relativeLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:visibility="gone" >
+            </RelativeLayout>
+        </FrameLayout>
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/ssb_contentFrameLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/ssb_navigationBar" >
+    </FrameLayout>
+
+</RelativeLayout>

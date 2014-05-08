@@ -47,7 +47,8 @@ public class UserInfoModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void getUserInfo(int userId, String token, ICMConnector executant) {
+	public void getUserInfo(final int userId, String token,
+			ICMConnector executant) {
 		// get user info with user id and token
 		((UserInfoNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(UserInfoNetworkAdapter.class))
@@ -74,6 +75,9 @@ public class UserInfoModel {
 							// parse user info json object
 							userInfo = userInfo.parseUserInfo(respJSONObject);
 						}
+
+						// set user info user id
+						userInfo.setUserId(userId);
 
 						// get user info successful
 						//
@@ -114,7 +118,8 @@ public class UserInfoModel {
 	public void updateUserInfo(int userId, String token, Integer age,
 			UserGender gender, Float height, Float weight,
 			ICMConnector executant) {
-		// update user info with user id, token and need to update user info
+		// update user info with user id, token and need to update user
+		// info(perhaps including user age, gender, height and weight)
 		((UserInfoNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(UserInfoNetworkAdapter.class))
 				.updateUserInfo(userId, token, age, gender, height, weight,
@@ -156,7 +161,8 @@ public class UserInfoModel {
 											//
 										} else {
 											LOGGER.error("Update user info failed, response result code = "
-													+ _respResultCode);
+													+ _respResultCode
+													+ " unrecognized");
 
 											// update user info failed
 											//
@@ -220,8 +226,11 @@ public class UserInfoModel {
 							// check user friend info list
 							if (null == friendsInfo) {
 								friendsInfo = new ArrayList<UserInfoBean>();
+							} else {
+								friendsInfo.clear();
 							}
 
+							// traversal response json array
 							for (int i = 0; i < respJSONArray.length(); i++) {
 								// get and check user friend info json object
 								// from response json array

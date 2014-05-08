@@ -11,11 +11,12 @@
     <string name="comReqResp_errorMsg" translatable="false">errorMsg</string>
 
     <!-- user -->
+    <!-- gender -->
     <string name="userGender_male" translatable="false">m</string>
     <string name="userGender_female" translatable="false">f</string>
     <string name="userGender_unknown" translatable="false">n</string>
 
-    <!-- user info -->
+    <!-- info -->
     <string name="userInfoReqResp_userId" translatable="false">userId</string>
     <string name="userInfoReqResp_userNickname" translatable="false">nickname</string>
     <string name="userInfoReqResp_userAvatarUrl" translatable="false">avatarUrl</string>
@@ -75,6 +76,7 @@
     <string name="getHistoryGroupInfoResp_walkResult" translatable="false">result</string>
     <string name="getHistoryGroupInfoResp_walkResultInfo" translatable="false">info</string>
 
+    <!-- walk invite and within group compete -->
     <!-- invite respond decision -->
     <string name="inviteRespondDecision_agree" translatable="false">0</string>
     <string name="inviteRespondDecision_disagree" translatable="false">1</string>
@@ -83,9 +85,6 @@
     <!-- invite -->
     <string name="walkInviteReqParam_inviteeId" translatable="false">friendId</string>
     <string name="walkInviteReqParam_inviteInfo" translatable="false">info</string>
-    <string name="walkInviteReqParam_inviteInfo_scheduleBeginTime" translatable="false">beginTime</string>
-    <string name="walkInviteReqParam_inviteInfo_scheduleEndTime" translatable="false">endTime</string>
-    <string name="walkInviteReqParam_inviteInfo_topic" translatable="false">content</string>
     <string name="walkInviteReqResp_serverAcceptResultCode" translatable="false">resultCode</string>
     <string name="walkInviteReqResp_serverAccepted" translatable="false">0</string>
     <string name="walkInviteReqResp_serverRefused" translatable="false">1</string>
@@ -95,9 +94,6 @@
     <string name="walkInviteAcceptedNotify_inviterNickname" translatable="false">friendNickname</string>
     <string name="walkInviteAcceptedNotify_tmpGroupId" translatable="false">tmpGroupId</string>
     <string name="walkInviteAcceptedNotify_inviteInfo" translatable="false">info</string>
-    <string name="walkInviteAcceptedNotify_inviteInfo_scheduleBeginTime" translatable="false">beginTime</string>
-    <string name="walkInviteAcceptedNotify_inviteInfo_scheduleEndTime" translatable="false">endTime</string>
-    <string name="walkInviteAcceptedNotify_inviteInfo_topic" translatable="false">content</string>
 
     <!-- invite respond -->
     <string name="respondWalkInviteReqParam_tmpGroupId" translatable="false">tmpGroupId</string>
@@ -113,15 +109,14 @@
 
     <!-- walk group schedule time is up notify -->
     <string name="walkGroupScheduleTimeUpNotify_groupId" translatable="false">groupId</string>
-    <string name="walkGroupScheduleTimeUpNotify_groupTopic" translatable="false">content</string>
+    <string name="walkGroupScheduleTimeUpNotify_groupInfo" translatable="false">info</string>
 
     <!-- walk control -->
     <string name="walkStartOrStopReqParam_groupId" translatable="false">groupId</string>
     <string name="walkStopReqResp_walkStartTime" translatable="false">startTime</string>
     <string name="walkStopReqResp_walkStopTime" translatable="false">stopTime</string>
     <string name="walkStopReqResp_walkResult" translatable="false">result</string>
-    <string name="walkStopReqResp_walkerWalkTotalStep" translatable="false">totalStep</string>
-    <string name="walkStopReqResp_walkerWalkTotalDistance" translatable="false">totalDistance</string>
+    <string name="walkStopReqResp_walkResultInfo" translatable="false">info</string>
 
     <!-- walk location -->
     <string name="walkLocationInfo_longitude" translatable="false">longitude</string>
@@ -145,10 +140,10 @@
     <string name="walkStartedNotify_walkStartTime" translatable="false">startTime</string>
     <string name="walkStoppedNotify_groupId" translatable="false">groupId</string>
     <string name="walkStoppedNotify_groupTopic" translatable="false">content</string>
+    <string name="walkStoppedNotify_walkerNickname" translatable="false">friendNickname</string>
     <string name="walkStoppedNotify_walkStartTime" translatable="false">startTime</string>
     <string name="walkStoppedNotify_walkStopTime" translatable="false">stopTime</string>
     <string name="walkStoppedNotify_walkResult" translatable="false">result</string>
-    <string name="walkStoppedNotify_walkerId" translatable="false">userId</string>
     <string name="walkStoppedNotify_walkResultInfo" translatable="false">info</string>
 
     <!-- compete -->
@@ -164,9 +159,7 @@
     <string name="withinGroupCompeteInviteNotify_inviterId" translatable="false">friendId</string>
     <string name="withinGroupCompeteInviteNotify_inviterNickname" translatable="false">friendNickname</string>
     <string name="withinGroupCompeteInviteNotify_groupId" translatable="false">groupId</string>
-    <string name="withinGroupCompeteInviteNotify_competeStartTime" translatable="false">startTime</string>
-    <string name="withinGroupCompeteInviteNotify_competeDuration" translatable="false">duration</string>
-    <string name="withinGroupCompeteInviteNotify_groupTopic" translatable="false">content</string>
+    <string name="withinGroupCompeteInviteNotify_groupInfo" translatable="false">info</string>
 
     <!-- within group invite respond -->
     <string name="respondWithinGroupCompeteInviteReqParam_groupId" translatable="false">groupId</string>
@@ -183,10 +176,15 @@
 
     <!-- get within group compete walk distance and velocity -->
     <string name="getWithinGroupCompeteWalkInfoReqParam_groupId" translatable="false">groupId</string>
+    <string name="getWithinGroupCompeteWalkInfoReqParam_lastFetchTimestamp" translatable="false">latestTimestamp</string>
+    <string name="getWithinGroupCompeteWalkInfoReqResp_latestTimestamp" translatable="false">currentTimestamp</string>
+    <string name="getWithinGroupCompeteWalkInfoReqResp_walkersWalkInfo" translatable="false">result</string>
     <string name="getWithinGroupCompeteWalkInfoReqResp_walkerId" translatable="false">userId</string>
+    <string name="getWithinGroupCompeteWalkInfoReqResp_walkerNickname" translatable="false">nickname</string>
     <string name="getWithinGroupCompeteWalkInfoReqResp_walkerWalkInfo" translatable="false">info</string>
     <string name="getWithinGroupCompeteWalkInfoReqResp_walkTotalDistance" translatable="false">totalDistance</string>
-    <string name="getWithinGroupCompeteWalkInfoReqResp_walkVelocity" translatable="false">velocity</string>
+    <string name="getWithinGroupCompeteWalkInfoReqResp_walkVelocity" translatable="false">velocityList</string>
+    <string name="getWithinGroupCompeteWalkInfoReqResp_velocity" translatable="false">velocity</string>
     <string name="getWithinGroupCompeteWalkInfoReqResp_velocityTimestamp" translatable="false">timestamp</string>
 
     <!-- within group compete finished notify -->
@@ -207,7 +205,7 @@
     <string name="patStrangerReqParam_pattedStrangerId" translatable="false">strangerId</string>
     <string name="patStrangerReqParam_patLocationLongitude" translatable="false">longitude</string>
     <string name="patStrangerReqParam_patLocationLatitude" translatable="false">latitude</string>
-    <string name="patStrangerReqResp_patedCount" translatable="false">patCount</string>
+    <string name="patStrangerReqResp_patCount" translatable="false">patCount</string>
     <string name="patStrangerReqResp_requirePatCount" translatable="false">totalCount</string>
 
     <!-- patted notify -->

@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 
 import com.smartsport.spedometer.R;
-import com.smartsport.spedometer.demo.DemoActivity;
+import com.smartsport.spedometer.mvc.PedometerActivity;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -60,11 +60,11 @@ public class SplashScreenActivity extends Activity implements IAppLaunch {
 
 	@Override
 	public boolean didFinishLaunching() {
-		LOGGER.debug("Fake sleep 3 seconds");
+		LOGGER.debug("Fake sleep 2 seconds");
 
-		// sleep 3 seconds
+		// sleep 2 seconds
 		try {
-			Thread.sleep(3 * 1000L);
+			Thread.sleep(2 * 1000L);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -76,7 +76,8 @@ public class SplashScreenActivity extends Activity implements IAppLaunch {
 	@Override
 	public Intent targetIntent() {
 		// test by ares
-		return new Intent(SplashScreenActivity.this, DemoActivity.class);
+		return new Intent(SplashScreenActivity.this, /* DemoActivity */
+		PedometerActivity.class);
 	}
 
 	// inner class

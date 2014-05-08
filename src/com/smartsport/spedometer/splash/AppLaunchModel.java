@@ -46,33 +46,33 @@ public class AppLaunchModel {
 	/**
 	 * @title isTargetIntentNull
 	 * @descriptor check target intent is null or not
-	 * @param pActivityContext
-	 *            : operator activity
-	 * @param pTargetIntent
+	 * @param activityContext
+	 *            : operator activity context
+	 * @param targetIntent
 	 *            : target intent
 	 * @return target intent null checked result
 	 * @author Ares
 	 */
-	public boolean isTargetIntentNull(Activity pActivityContext,
-			Intent pTargetIntent) {
+	public boolean isTargetIntentNull(Activity activityContext,
+			Intent targetIntent) {
 		// define target intent null checked result
 		boolean _targetIntentNullCheckedResult = true;
 
 		// check target intent
-		if (null == pTargetIntent) {
+		if (null == targetIntent) {
 			// update target intent null checked result
 			_targetIntentNullCheckedResult = false;
 
 			LOGGER.error("Check target intent is null or not, target intent is null, please set a target intent for going first!");
 
 			// check operator activity
-			if (null == pActivityContext
-					|| (null != pActivityContext && !(pActivityContext instanceof Activity))) {
+			if (null == activityContext
+					|| (null != activityContext && !(activityContext instanceof Activity))) {
 				LOGGER.error("Check target intent is null or not, operator activity error, operator activity = "
-						+ pActivityContext);
+						+ activityContext);
 			} else {
 				// save operator activity
-				operatorActivity = pActivityContext;
+				operatorActivity = activityContext;
 
 				// send target intent null error message
 				appLaunchHandler
@@ -86,24 +86,24 @@ public class AppLaunchModel {
 	/**
 	 * @title go2TargetIntent
 	 * @descriptor go to target intent
-	 * @param pActivityContext
-	 *            : operator activity
-	 * @param pTargetIntent
+	 * @param activityContext
+	 *            : operator activity context
+	 * @param targetIntent
 	 *            : target intent
 	 * @author Ares
 	 */
-	public void go2TargetIntent(Activity pActivityContext, Intent pTargetIntent) {
+	public void go2TargetIntent(Activity activityContext, Intent targetIntent) {
 		// check operator activity and target intent
-		if (null == pActivityContext
-				|| (null != pActivityContext && !(pActivityContext instanceof Activity))) {
+		if (null == activityContext
+				|| (null != activityContext && !(activityContext instanceof Activity))) {
 			LOGGER.error("Go to target intent, operator activity error, operator activity = "
-					+ pActivityContext);
-		} else if (null == pTargetIntent) {
+					+ activityContext);
+		} else if (null == targetIntent) {
 			LOGGER.error("Go to target intent, target intent is null, can't go anywhere!");
 		} else {
 			// save operator activity and target intent
-			operatorActivity = pActivityContext;
-			targetIntent = pTargetIntent;
+			operatorActivity = activityContext;
+			AppLaunchModel.targetIntent = targetIntent;
 
 			// send go to target intent message
 			appLaunchHandler

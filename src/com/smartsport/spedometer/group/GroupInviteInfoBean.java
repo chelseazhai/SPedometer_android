@@ -167,21 +167,14 @@ public class GroupInviteInfoBean implements Serializable {
 		JSONObject _walkInviteInfo = new JSONObject();
 
 		// set schedule begin, end time and topic to walk invite info
-		JSONUtils
-				.putObject2JSONObject(
-						_walkInviteInfo,
-						context.getString(R.string.walkInviteReqParam_inviteInfo_scheduleBeginTime),
-						String.valueOf(beginTime));
-		JSONUtils
-				.putObject2JSONObject(
-						_walkInviteInfo,
-						context.getString(R.string.walkInviteReqParam_inviteInfo_scheduleEndTime),
-						String.valueOf(endTime));
-		JSONUtils
-				.putObject2JSONObject(
-						_walkInviteInfo,
-						context.getString(R.string.walkInviteReqParam_inviteInfo_topic),
-						topic);
+		JSONUtils.putObject2JSONObject(_walkInviteInfo,
+				context.getString(R.string.groupInviteInfo_beginTime),
+				String.valueOf(beginTime));
+		JSONUtils.putObject2JSONObject(_walkInviteInfo,
+				context.getString(R.string.groupInviteInfo_endTime),
+				String.valueOf(endTime));
+		JSONUtils.putObject2JSONObject(_walkInviteInfo,
+				context.getString(R.string.groupInviteInfo_topic), topic);
 
 		return _walkInviteInfo;
 	}

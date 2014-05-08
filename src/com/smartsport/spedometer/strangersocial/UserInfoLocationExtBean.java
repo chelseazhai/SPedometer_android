@@ -5,7 +5,6 @@ package com.smartsport.spedometer.strangersocial;
 
 import org.json.JSONObject;
 
-import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.user.UserInfoBean;
 import com.smartsport.spedometer.utils.JSONUtils;
@@ -39,8 +38,8 @@ public class UserInfoLocationExtBean extends UserInfoBean {
 
 	/**
 	 * @title UserInfoLocationExtBean
-	 * @descriptor user info location extension bean constructor with json
-	 *             object
+	 * @descriptor user info location extension bean constructor with user info
+	 *             and location info json object
 	 * @param info
 	 *            : user info with location extension json object
 	 * @author Ares
@@ -49,14 +48,14 @@ public class UserInfoLocationExtBean extends UserInfoBean {
 		super(info);
 	}
 
-	// user location longitude and latitude
-	private LatLonPoint location;
+	// user location info, including longitude and latitude
+	private LocationBean location;
 
-	public LatLonPoint getLocation() {
+	public LocationBean getLocation() {
 		return location;
 	}
 
-	public void setLocation(LatLonPoint location) {
+	public void setLocation(LocationBean location) {
 		this.location = location;
 	}
 
@@ -68,7 +67,7 @@ public class UserInfoLocationExtBean extends UserInfoBean {
 
 	@Override
 	public UserInfoLocationExtBean parseUserInfo(JSONObject info) {
-		// parse user info
+		// parse user info with user location info
 		UserInfoLocationExtBean _userInfo = (UserInfoLocationExtBean) super
 				.parseUserInfo(info);
 
@@ -76,7 +75,7 @@ public class UserInfoLocationExtBean extends UserInfoBean {
 		// check parsed user info location extension json object
 		if (null != info) {
 			// initialize user location
-			location = new LatLonPoint(0.0, 0.0);
+			location = new LocationBean();
 
 			try {
 				// longitude
@@ -106,7 +105,7 @@ public class UserInfoLocationExtBean extends UserInfoBean {
 				e.printStackTrace();
 			}
 		} else {
-			LOGGER.error("Parse user info location extension json object error, the info with lolation is null");
+			LOGGER.error("Parse user info location extension json object error, the info with user location info is null");
 		}
 
 		return _userInfo;

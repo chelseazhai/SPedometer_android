@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageButton
+        android:id="@+id/ssb_navBar_barBtnItem"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:background="@null"
+        android:contentDescription="@string/ssb_navBar_barBtnItem_imageBtn_contentDescription"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/ssb_navBar_barBtnItem_titleTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:ellipsize="middle"
+        android:gravity="center"
+        android:singleLine="true"
+        android:textSize="16sp" />
+
+</FrameLayout>

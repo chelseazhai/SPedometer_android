@@ -7,7 +7,7 @@
     <!-- user -->
     <string name="getUserInfo_url" translatable="false">/user/getUserInfo</string>
     <string name="updateUserInfo_url" translatable="false">/user/updateUserInfo</string>
-    <string name="getUserFiends_url" translatable="false">/user/getFieldList</string>
+    <string name="getUserFriends_url" translatable="false">/user/getFriendList</string>
 
     <!-- group -->
     <string name="getScheduleGroups_url" translatable="false">/group/getGroupList</string>

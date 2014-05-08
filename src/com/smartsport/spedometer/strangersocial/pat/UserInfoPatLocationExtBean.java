@@ -38,8 +38,8 @@ public class UserInfoPatLocationExtBean extends UserInfoLocationExtBean {
 
 	/**
 	 * @title UserInfoPatLocationExtBean
-	 * @descriptor user info pat location extension bean constructor with json
-	 *             object
+	 * @descriptor user info pat location extension bean constructor with pat
+	 *             info json object
 	 * @param info
 	 *            : user info with pat location extension json object
 	 * @author Ares
@@ -88,7 +88,7 @@ public class UserInfoPatLocationExtBean extends UserInfoLocationExtBean {
 				e.printStackTrace();
 			}
 		} else {
-			LOGGER.error("Parse user info pat location extension json object error, the info with pat lolation is null");
+			LOGGER.error("Parse user info pat location extension json object error, the info with pat location and count is null");
 		}
 
 		return _userInfoWithLocation;

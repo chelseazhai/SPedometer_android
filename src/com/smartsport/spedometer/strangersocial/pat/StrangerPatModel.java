@@ -17,6 +17,7 @@ import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.network.NetworkAdapter;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespJSONHandler;
+import com.smartsport.spedometer.strangersocial.LocationBean;
 import com.smartsport.spedometer.user.UserGender;
 import com.smartsport.spedometer.utils.JSONUtils;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -35,9 +36,6 @@ public class StrangerPatModel {
 	// user nearby stranger list
 	private List<UserInfoPatLocationExtBean> nearbyStrangersInfo;
 
-	// patted user stranger list
-	private List<UserInfoPatLocationExtBean> pattedStrangersInfo;
-
 	/**
 	 * @title getNearbyStrangers
 	 * @descriptor get user nearby all strangers with location info
@@ -54,7 +52,7 @@ public class StrangerPatModel {
 	 * @author Ares
 	 */
 	public void getNearbyStrangers(int userId, String token,
-			UserGender strangerGender, LatLonPoint location,
+			UserGender strangerGender, LocationBean location,
 			ICMConnector executant) {
 		// get user nearby strangers info with user id, token, location info and
 		// need to get stranger gender
@@ -77,8 +75,11 @@ public class StrangerPatModel {
 									// check user nearby stranger info list
 									if (null == nearbyStrangersInfo) {
 										nearbyStrangersInfo = new ArrayList<UserInfoPatLocationExtBean>();
+									} else {
+										nearbyStrangersInfo.clear();
 									}
 
+									// traversal response json array
 									for (int i = 0; i < respJSONArray.length(); i++) {
 										// get and check user nearby stranger
 										// info json object from response json
@@ -125,7 +126,7 @@ public class StrangerPatModel {
 
 	/**
 	 * @title patStranger
-	 * @descriptor pat nearby stranger with location info
+	 * @descriptor pat nearby stranger with pat location info
 	 * @param userId
 	 *            : user id
 	 * @param token
@@ -140,7 +141,7 @@ public class StrangerPatModel {
 	 */
 	public void patStranger(int userId, String token, final int strangerId,
 			LatLonPoint patLocation, ICMConnector executant) {
-		// pat nearby stranger with user id, token, patted stranger id and pat
+		// pat nearby stranger with user id, token, pat stranger id and pat
 		// location info
 		((StrangerPatNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(StrangerPatNetworkAdapter.class))
@@ -169,30 +170,32 @@ public class StrangerPatModel {
 											.getContext();
 
 									try {
-										// get the count of user patted the
+										// get the count of user pat the
 										// stranger and require pat count
-										int _respPattedCount = Integer.parseInt(JSONUtils
+										int _respPatCount = Integer.parseInt(JSONUtils
 												.getStringFromJSONObject(
 														respJSONObject,
-														_context.getString(R.string.patStrangerReqResp_patedCount)));
+														_context.getString(R.string.patStrangerReqResp_patCount)));
 										int _respRequirePatCount = Integer.parseInt(JSONUtils
 												.getStringFromJSONObject(
 														respJSONObject,
 														_context.getString(R.string.patStrangerReqResp_requirePatCount)));
 
-										LOGGER.debug("You have patted the stranger = "
+										LOGGER.debug("You have pat the stranger, whose user id = "
 												+ strangerId
-												+ _respPattedCount
+												+ " "
+												+ _respPatCount
 												+ " times"
-												+ ((_respPattedCount < _respRequirePatCount) ? " and you need to pat him/her "
-														+ (_respRequirePatCount - _respPattedCount)
-														+ " times again, then he/she can see your personal information"
-														: ""));
+												+ ((_respPatCount < _respRequirePatCount) ? " and you need to pat him/her "
+														+ (_respRequirePatCount - _respPatCount)
+														+ " times again, then"
+														: ", now")
+												+ "  he/she can see your personal information");
 
 										// pat nearby stranger successful
 										//
 									} catch (NumberFormatException e) {
-										LOGGER.error("Get pat nearby stranger response patted count or require pat count failed, exception message = "
+										LOGGER.error("Get pat nearby stranger response pat count or require pat count failed, exception message = "
 												+ e.getMessage());
 
 										// pat nearby stranger failed
@@ -244,34 +247,39 @@ public class StrangerPatModel {
 									JSONArray respJSONArray) {
 								LOGGER.info("Get patted user strangers successful, status code = "
 										+ statusCode
-										+ " and response json arrayf = "
+										+ " and response json array = "
 										+ respJSONArray);
 
-								// check patted user strangers info response
-								// json array
+								// check the strangers who pat the user info
+								// response json array
 								if (null != respJSONArray) {
-									// check patted user stranger info list
-									if (null == pattedStrangersInfo) {
-										pattedStrangersInfo = new ArrayList<UserInfoPatLocationExtBean>();
-									}
+									// define the stranger who pat the user info
+									// list
+									List<UserInfoPatLocationExtBean> _strangersPatUserInfo = new ArrayList<UserInfoPatLocationExtBean>();
 
+									// traversal the json array
 									for (int i = 0; i < respJSONArray.length(); i++) {
-										// get and check patted user stranger
-										// info json object from response json
-										// array
-										JSONObject _pattedStrangerInfo = JSONUtils
+										// get and check the stranger who pat
+										// the user info json object from
+										// response json array
+										JSONObject _strangerPatUserInfo = JSONUtils
 												.getJSONObjectFromJSONArray(
 														respJSONArray, i);
-										if (null != _pattedStrangerInfo) {
-											// add patted user stranger info
-											// object to list
-											pattedStrangersInfo
+										if (null != _strangerPatUserInfo) {
+											// add the stranger who pat the user
+											// info object to list
+											_strangersPatUserInfo
 													.add(new UserInfoPatLocationExtBean(
-															_pattedStrangerInfo));
+															_strangerPatUserInfo));
 										}
 									}
 
-									// get patted user all strangers successful
+									LOGGER.debug("The strangers info list = "
+											+ _strangersPatUserInfo
+											+ " who pat the user");
+
+									// get all strangers who pat the user
+									// successful
 									//
 								} else {
 									LOGGER.error("Get patted user strangers info response json array is null");
@@ -292,7 +300,7 @@ public class StrangerPatModel {
 										+ " and error message = "
 										+ errorMsg);
 
-								// get patted user all strangers failed
+								// get all strangers who pat the user failed
 								//
 							}
 

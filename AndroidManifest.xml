@@ -28,8 +28,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SSBaseActivity"
-            android:screenOrientation="portrait" >
+            android:name=".mvc.PedometerActivity"
+            android:label="@string/title_activity_pedometer"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseActivityTheme" >
+        </activity>
+        <activity
+            android:name=".user.UserInfoSettingActivity"
+            android:label="@string/title_activity_userinfo_setting"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseActivityTheme" >
         </activity>
         <activity
             android:name=".demo.DemoActivity"

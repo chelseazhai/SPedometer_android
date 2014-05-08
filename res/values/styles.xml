@@ -17,9 +17,23 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <!-- Application base activity theme. -->
+    <style name="AppBaseActivityTheme" parent="AppBaseTheme">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <!-- Application splash screen theme. -->
     <style name="AppSplashScreenTheme" parent="AppBaseTheme">
         <item name="android:background">@android:color/background_dark</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!-- Application widget theme. -->
+    <style name="AppWidgetTheme" parent="AppBaseTheme">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
