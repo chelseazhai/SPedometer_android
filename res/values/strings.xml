@@ -9,7 +9,12 @@
     <string name="appLaunch_imageView_contentDescription" translatable="false">this is smart sport pedometer application launch imageView</string>
 
     <!-- smartsport base activity navigation bar bar button item -->
-    <string name="ssb_navBar_barBtnItem_imageBtn_contentDescription" translatable="false">this is smart sport base activity navigation bar bar button item imageView</string>
+    <string name="ssb_navBar_barBtnItem_imageBtn_contentDescription" translatable="false">this is smart sport base activity navigation bar bar button item imageButton</string>
+
+    <!-- user gender -->
+    <string name="userGender_male_label">帅哥</string>
+    <string name="userGender_female_label">美女</string>
+    <string name="userGender_unknown_label">保密</string>
 
     <!-- smartsport base activity -->
 
@@ -25,7 +30,29 @@
 
     <!-- user info setting activity -->
     <string name="title_activity_userinfo_setting" translatable="false">UserInfoSettingActivity</string>
-    <string name="userinfo_setting_activity_title">个人信息设置</string>
+    <string name="userinfo_setting_activity_title">个人信息</string>
+    <string name="userStepLength_label_textView_text">步长：</string>
+    <string name="userStepLength_unit">厘米</string>
+    <string name="userStepLength_notSet">未设置</string>
+    <string name="userStepLength_indicator_imageView_contentDescription" translatable="false">this is user step length calculate item imageView</string>
+    <string name="userStepLength_autoCalculate_text">自动</string>
+    <string name="userStepLength_manualCalculate_text">手动</string>
+
+    <!-- user info setting item -->
+    <string name="userInfoItem_indicator_imageView_contentDescription" translatable="false">this is user info item setting imageView</string>
+    <string name="userInfoItem_notSet">未设置</string>
+    <string name="userInfo_gender_label">性别：</string>
+    <string name="userInfo_age_label">年龄：</string>
+    <string name="userAge_unit">岁</string>
+    <string name="userInfo_height_label">身高：</string>
+    <string name="userHeight_unit">厘米</string>
+    <string name="userInfo_weight_label">体重：</string>
+    <string name="userWeight_unit">公斤</string>
+
+    <!-- user info item editor activity -->
+    <string name="title_activity_userinfo_item_editor" translatable="false">UserInfoItemEditorActivity</string>
+    <string name="save_editorUserInfo_barbtnitem_title">保存</string>
+    <string name="userAge_editor_displayTextView_text_format">您的年龄为 %d 岁</string>
 
     <!-- others -->
     <string name="title_activity_demo" translatable="false">DemoActivity</string>

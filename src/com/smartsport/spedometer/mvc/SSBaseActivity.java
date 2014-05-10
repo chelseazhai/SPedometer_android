@@ -7,7 +7,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.SparseArray;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,7 +26,7 @@ import com.smartsport.spedometer.utils.SSLogger;
  * @author Ares
  * @version 1.0
  */
-public class SSBaseActivity extends Activity {
+public abstract class SSBaseActivity extends Activity {
 
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(SSBaseActivity.class);
@@ -33,8 +35,16 @@ public class SSBaseActivity extends Activity {
 	private static final String NAV_ACTIVITY_PARAM_BACKBARBTNITEM_KEY = "nav_back_btn_default_title";
 	private static final String NAV_ACTIVITY_PARAM_START4RESULT_KEY = "nav_activity_start4result";
 
+	// smartsport base activity push navigation activity with request code, on
+	// activity result map(key: request code and value: on activity result
+	// interface)
+	private SparseArray<ISSBaseActivityResult> NAV_PUSHWITHREQCODE_ONACTIVITYRS_MAP = new SparseArray<ISSBaseActivityResult>();
+
 	// navigation bar
 	private RelativeLayout navBar;
+
+	// navigation bar back bar button item
+	private SSBNavBarButtonItem backBarBtnItem;
 
 	// navigation bar left and right bar button item
 	private SSBNavBarButtonItem leftBarBtnItem;
@@ -48,7 +58,36 @@ public class SSBaseActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		//
+		// get the intent extra data
+		final Bundle _data = getIntent().getExtras();
+
+		// check the data bundle
+		if (null != _data) {
+			// get and check the pushed activity back bar button item key from
+			// intent extra data
+			String _backBarBtnItemKey = _data
+					.getString(NAV_ACTIVITY_PARAM_BACKBARBTNITEM_KEY);
+
+			if (null != _backBarBtnItemKey) {
+				// initialize the navigation bar back bar button item
+				backBarBtnItem = new SSBNavImageBarButtonItem(this,
+						R.drawable.img_navbar_backbarbtnitem,
+						new OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								// set activity start with request code as back
+								// bar button item tag
+								backBarBtnItem.setTag(_data
+										.getBoolean(NAV_ACTIVITY_PARAM_START4RESULT_KEY));
+
+								// perform back bar button item on click
+								onBackBarButtonItemClick(backBarBtnItem);
+							}
+
+						});
+			}
+		}
 	}
 
 	@Override
@@ -70,6 +109,34 @@ public class SSBaseActivity extends Activity {
 		// set parameter layout to navigation content frameLayout
 		getLayoutInflater().inflate(layoutResID,
 				(ViewGroup) findViewById(R.id.ssb_contentFrameLayout));
+
+		// set navigation bar back button item, if needed(it is not null)
+		if (null != backBarBtnItem) {
+			setLeftBarButtonItem(backBarBtnItem);
+		}
+
+		// initialize activity content view UI
+		initContentViewUI();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// get and check on activity result method with request code from the
+		// navigation activity push with request code, on activity result map
+		ISSBaseActivityResult _onActivityResult = NAV_PUSHWITHREQCODE_ONACTIVITYRS_MAP
+				.get(requestCode);
+		if (null != _onActivityResult) {
+			// perform on activity result method
+			_onActivityResult.onActivityResult(resultCode, data);
+		} else {
+			LOGGER.warning("Get on activity result interface with request code = "
+					+ requestCode
+					+ " from the navigation activity push with request code, on activity result map = "
+					+ NAV_PUSHWITHREQCODE_ONACTIVITYRS_MAP
+					+ " error, please use method onActivityResult(\"int, int, intent\") to catch the event when you want");
+
+			super.onActivityResult(requestCode, resultCode, data);
+		}
 	}
 
 	/**
@@ -263,10 +330,13 @@ public class SSBaseActivity extends Activity {
 	 *            : start activity extra data
 	 * @param requestCode
 	 *            : start activity request code
+	 * @param onActivityResult
+	 *            : on activity result interface
 	 * @author Ares
 	 */
 	private void pushActivity(Class<? extends Activity> activityCls,
-			Map<String, ?> extraData, Integer requestCode) {
+			Map<String, ?> extraData, Integer requestCode,
+			ISSBaseActivityResult onActivityResult) {
 		// define the target activity intent
 		Intent _targetIntent = new Intent(this, activityCls);
 
@@ -342,6 +412,14 @@ public class SSBaseActivity extends Activity {
 			// set start for result key as target intent extra parameter data
 			_targetIntent.putExtra(NAV_ACTIVITY_PARAM_START4RESULT_KEY, true);
 
+			// check on activity result
+			if (null != onActivityResult) {
+				// add on activity result method to the navigation activity push
+				// with request code, on activity result map
+				NAV_PUSHWITHREQCODE_ONACTIVITYRS_MAP.put(requestCode,
+						onActivityResult);
+			}
+
 			// start activity for result with request code
 			startActivityForResult(_targetIntent, requestCode);
 		}
@@ -358,7 +436,7 @@ public class SSBaseActivity extends Activity {
 	 */
 	public void pushActivity(Class<? extends Activity> activityCls,
 			Map<String, ?> extraData) {
-		pushActivity(activityCls, extraData, null);
+		pushActivity(activityCls, extraData, null, null);
 	}
 
 	/**
@@ -382,11 +460,31 @@ public class SSBaseActivity extends Activity {
 	 *            : start activity for result extra data
 	 * @param requestCode
 	 *            : start activity for result request code
+	 * @param onActivityResult
+	 *            : on activity result interface
+	 * @author Ares
+	 */
+	public void pushActivityForResult(Class<? extends Activity> activityCls,
+			Map<String, ?> extraData, int requestCode,
+			ISSBaseActivityResult onActivityResult) {
+		pushActivity(activityCls, extraData, requestCode, onActivityResult);
+	}
+
+	/**
+	 * @title pushActivityForResult
+	 * @descriptor start activity for result with extra data and request code to
+	 *             navigation activity stack
+	 * @param activityCls
+	 *            : target activity class
+	 * @param extraData
+	 *            : start activity for result extra data
+	 * @param requestCode
+	 *            : start activity for result request code
 	 * @author Ares
 	 */
 	public void pushActivityForResult(Class<? extends Activity> activityCls,
 			Map<String, ?> extraData, int requestCode) {
-		pushActivity(activityCls, extraData, requestCode);
+		pushActivityForResult(activityCls, extraData, requestCode, null);
 	}
 
 	/**
@@ -517,5 +615,32 @@ public class SSBaseActivity extends Activity {
 	public void popActivityWithResult() {
 		popActivityWithResult(null);
 	}
+
+	/**
+	 * @title onBackBarButtonItemClick
+	 * @descriptor navigation bar back bar button item on click
+	 * @param backBarBtnItem
+	 *            : back bar button item
+	 * @author Ares
+	 */
+	protected void onBackBarButtonItemClick(SSBNavBarButtonItem backBarBtnItem) {
+		// get and check back bar button item tag as activity start with request
+		// code
+		Boolean _isPushedActivityStartWithReqCode = (Boolean) backBarBtnItem
+				.getTag();
+		if (null != _isPushedActivityStartWithReqCode
+				&& true == _isPushedActivityStartWithReqCode) {
+			popActivityWithResult();
+		} else {
+			popActivity();
+		}
+	}
+
+	/**
+	 * @title initContentViewUI
+	 * @descriptor initialize activity content view UI
+	 * @author Ares
+	 */
+	protected abstract void initContentViewUI();
 
 }

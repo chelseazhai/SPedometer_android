@@ -42,6 +42,11 @@ public class PedometerActivity extends SSBaseActivity {
 		setTitle(R.string.pedometer_activity_title);
 		setTitleColor(Color.WHITE);
 		setTitleSize(26.0f);
+	}
+
+	@Override
+	protected void initContentViewUI() {
+		LOGGER.debug("Initialize pedometer activity content view UI");
 
 		//
 	}

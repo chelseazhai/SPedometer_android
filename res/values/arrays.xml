@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- user info for setting item label array -->
+    <string-array name="userInfo4Setting_labels" translatable="false">
+        <item>@string/userInfo_gender_label</item>
+        <item>@string/userInfo_age_label</item>
+        <item>@string/userInfo_height_label</item>
+        <item>@string/userInfo_weight_label</item>
+    </string-array>
+
+</resources>

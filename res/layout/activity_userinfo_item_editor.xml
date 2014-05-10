@@ -1,0 +1,77 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".user.UserInfoItemEditorActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <EditText
+        android:id="@+id/uiie_editor_editText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/common_edittext_bg"
+        android:ellipsize="middle"
+        android:inputType="numberDecimal"
+        android:maxLength="10"
+        android:singleLine="true"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/uiie_agePicker_relativeLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone" >
+
+        <FrameLayout
+            android:id="@+id/uiie_age_numberPicker_containerFrameLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@color/light_gray" >
+
+            <NumberPicker
+                android:id="@+id/uiie_age_numberPicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/uiie_age_display_textView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@id/uiie_age_numberPicker_containerFrameLayout"
+            android:ellipsize="marquee"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/dark_gray"
+            android:textSize="24sp" />
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/uiid_genderSpinner_listView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/common_form_bg"
+        android:cacheColorHint="@android:color/transparent"
+        android:fadingEdge="none"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false"
+        android:listSelector="@android:color/transparent"
+        android:padding="1dp"
+        android:scrollbars="none"
+        android:visibility="gone" >
+    </ListView>
+
+</FrameLayout>

@@ -36,6 +36,14 @@ public class UserInfoModel {
 	// user friend list
 	private List<UserInfoBean> friendsInfo;
 
+	public UserInfoBean getUserInfo() {
+		return null == userInfo ? userInfo = new UserInfoBean() : userInfo;
+	}
+
+	public List<UserInfoBean> getFriendsInfo() {
+		return friendsInfo;
+	}
+
 	/**
 	 * @title getUserInfo
 	 * @descriptor get user info
