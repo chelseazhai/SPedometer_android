@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- the duration (in milliseconds) of a activity animation -->
+    <integer name="config_activityAnimTime">300</integer>
+
+    <!-- the limit count of stranger pat -->
+    <integer name="config_limitCount_strangerPat">5</integer>
+
+</resources>

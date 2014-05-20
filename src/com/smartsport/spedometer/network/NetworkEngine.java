@@ -142,7 +142,7 @@ public class NetworkEngine {
 
 		// post asynchronous http request
 		asyncHttpClient.post(context, genHttpRequestUrl(api),
-				_jsonStringEntity, "application/json charset=\"utf-8\"",
+				_jsonStringEntity, "text/json charset=\"utf-8\"",
 				new TextAsyncHttpRespStringHandler(asyncHttpRespStringHandler));
 
 		// asyncHttpClient.post(genHttpRequestUrl(api), new RequestParams(
@@ -223,7 +223,7 @@ public class NetworkEngine {
 		 */
 		private TextAsyncHttpRespStringHandler(
 				AsyncHttpRespStringHandler asyncHttpRespStringHandler) {
-			super();
+			super("UTF-8");
 
 			// save asynchronous http response string handler
 			this.asyncHttpRespStringHandler = asyncHttpRespStringHandler;

@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.SparseArray;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -31,10 +30,10 @@ import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
-import com.smartsport.spedometer.user.UserInfoItemEditorActivity.UserInfoEditorType;
 import com.smartsport.spedometer.user.UserInfoItemEditorActivity.UserInfoItemEditorExtraData;
 import com.smartsport.spedometer.user.UserInfoSettingActivity.UserInfo4SettingListViewAdapter.UserInfo4SettingListViewAdapterKey;
 import com.smartsport.spedometer.utils.SSLogger;
+import com.smartsport.spedometer.utils.StringUtils;
 
 /**
  * @name UserInfoSettingActivity
@@ -50,10 +49,6 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 
 	// user info model
 	private UserInfoModel userInfoModel;
-
-	// user info item editor widget id, widget info textView map(key: editor
-	// widget id and value: widget info textView)
-	private final SparseArray<TextView> UI_EDITORWIDGETIDINFOTEXTVIEW_MAP = new SparseArray<TextView>();
 
 	// user info for setting listView adapter
 	private UserInfo4SettingListViewAdapter userInfo4SettingListViewAdapter;
@@ -90,7 +85,7 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 		// set content view
 		setContentView(R.layout.activity_userinfo_setting);
 
-		// get user info
+		// get user info from remote server
 		userInfoModel.getUserInfo(123123, "token", new ICMConnector() {
 
 			//
@@ -106,9 +101,10 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 				android.R.color.holo_green_light));
 
 		// set title attributes
-		setTitle(R.string.userinfo_setting_activity_title);
+		setTitle(R.string.userInfo_setting_activity_title);
 		setTitleColor(Color.WHITE);
-		setTitleSize(26.0f);
+		setTitleSize(22.0f);
+		setShadow(1.0f, 0.6f, 0.8f, Color.GRAY);
 
 		// get user info for setting listView
 		ListView _userInfo4SettingListView = (ListView) findViewById(R.id.uis_userInfo_listView);
@@ -184,6 +180,20 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 	}
 
 	/**
+	 * @name UserInfoSettingExtraData
+	 * @descriptor user info setting extra data constant
+	 * @author Ares
+	 * @version 1.0
+	 */
+	public static final class UserInfoSettingExtraData {
+
+		// user info setting, editor user info attribute and editor info value
+		public static final String UIS_EI_ATTRIBUTE = "userInfoSetting_userInfo_attribute";
+		public static final String UIS_EI_VALUE = "userInfoSetting_userInfo_editorInfo_value";
+
+	}
+
+	/**
 	 * @name UISUserInfoEditorOnActivityResult
 	 * @descriptor user info setting user info editor on activity result
 	 * @author Ares
@@ -193,10 +203,70 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 
 		@Override
 		public void onActivityResult(int resultCode, Intent data) {
-			LOGGER.info("UISUserInfoEditorOnActivityResult - resultCode = "
-					+ resultCode + " and data = " + data);
+			// check the result code
+			if (RESULT_OK == resultCode) {
+				// get and check the extra data
+				Bundle _extraData = data.getExtras();
+				if (null != _extraData) {
+					// get and check editor user info attribute and value
+					UserInfoAttr4Setting _editorAttr = (UserInfoAttr4Setting) _extraData
+							.getSerializable(UserInfoSettingExtraData.UIS_EI_ATTRIBUTE);
+					String _editorValue = _extraData
+							.getString(UserInfoSettingExtraData.UIS_EI_VALUE);
+					switch (_editorAttr) {
+					case USER_GENDER:
+					case USER_AGE:
+					case USER_HEIGHT:
+					case USER_WEIGHT:
+						// update editor user info value
+						userInfo4SettingListViewAdapter.setData(_editorAttr,
+								_editorValue);
 
-			//
+						// update user info to remote server
+						userInfoModel
+								.updateUserInfo(
+										123123,
+										"token",
+										UserInfoAttr4Setting.USER_AGE == _editorAttr ? Integer
+												.parseInt(_editorValue) : null,
+										UserInfoAttr4Setting.USER_GENDER == _editorAttr ? UserGender
+												.getGender(_editorValue) : null,
+										UserInfoAttr4Setting.USER_HEIGHT == _editorAttr ? Float
+												.parseFloat(_editorValue)
+												: null,
+										UserInfoAttr4Setting.USER_WEIGHT == _editorAttr ? Float
+												.parseFloat(_editorValue)
+												: null, new ICMConnector() {
+
+											//
+
+										});
+						break;
+
+					case USER_STEPLENGTH:
+						// save editor user step length
+						userStepLength = Float.parseFloat(_editorValue);
+
+						// update user step length
+						userStepLengthTextView
+								.setText(null != userStepLength ? userStepLength
+										+ getString(R.string.userStepLength_unit)
+										: getString(R.string.userStepLength_notSet));
+
+						// save user step length to local storage
+						//
+						break;
+
+					default:
+						// nothing to do
+						LOGGER.warning("User info attribute = " + _editorAttr
+								+ " for editor not implementation now");
+						break;
+					}
+				} else {
+					LOGGER.error("Update editor user info error, the return extra data is null");
+				}
+			}
 		}
 
 	}
@@ -209,11 +279,15 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 	 */
 	static class UserInfo4SettingListViewAdapter extends SimpleAdapter {
 
-		// user info for setting value selector content data key
+		// user info for setting attribute and value selector content data key
+		private static final String USERINFO4SETTING_ATTRIBUTE_KEY = "userInfo_attribute_key";
 		private static final String USERINFO4SETTING_VALUE_SELECTORCONTENT_KEY = "userInfo_value_selectorContent_key";
 
+		// context
+		private Context context;
+
 		// user info for setting listView adapter data list
-		private static List<Map<String, ?>> _sDataList;
+		private static List<Map<String, Object>> _sDataList;
 
 		/**
 		 * @title UserInfo4SettingListViewAdapter
@@ -235,12 +309,16 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 		public UserInfo4SettingListViewAdapter(Context context,
 				UserInfoBean userInfo, int resource, String[] dataKeys,
 				int[] ids) {
-			super(context, _sDataList = new ArrayList<Map<String, ?>>(),
+			super(context, _sDataList = new ArrayList<Map<String, Object>>(),
 					resource, dataKeys, ids);
+
+			// save context
+			this.context = context;
 
 			// check for setting user info bean
 			if (null != userInfo) {
-				// define user info for setting value
+				// define user info for setting attribute and value
+				UserInfoAttr4Setting _attribute = null;
 				String _value = null;
 
 				// get user info for setting label array
@@ -251,28 +329,33 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 					// define user info for setting listView adapter data
 					Map<String, Object> _data = new HashMap<String, Object>();
 
-					// get user info for setting label and value
+					// get user info for setting attribute, label and value
 					String _label = _labels[i];
 					if (context.getString(R.string.userInfo_gender_label)
 							.equalsIgnoreCase(_label)) {
+						_attribute = UserInfoAttr4Setting.USER_GENDER;
 						_value = userInfo.getGender().getLabel();
 					} else if (context.getString(R.string.userInfo_age_label)
 							.equalsIgnoreCase(_label)) {
+						_attribute = UserInfoAttr4Setting.USER_AGE;
 						_value = userInfo.getAge()
 								+ context.getString(R.string.userAge_unit);
 					} else if (context
 							.getString(R.string.userInfo_height_label)
 							.equalsIgnoreCase(_label)) {
+						_attribute = UserInfoAttr4Setting.USER_HEIGHT;
 						_value = userInfo.getHeight()
 								+ context.getString(R.string.userHeight_unit);
 					} else if (context
 							.getString(R.string.userInfo_weight_label)
 							.equalsIgnoreCase(_label)) {
+						_attribute = UserInfoAttr4Setting.USER_WEIGHT;
 						_value = userInfo.getWeight()
 								+ context.getString(R.string.userWeight_unit);
 					}
 
 					// set data attributes
+					_data.put(USERINFO4SETTING_ATTRIBUTE_KEY, _attribute);
 					_data.put(
 							UserInfo4SettingListViewAdapterKey.USERINFO_LABEL_KEY
 									.name(), _label);
@@ -300,6 +383,14 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 			return (Map<String, ?>) super.getItem(position);
 		}
 
+		/**
+		 * @title getItemLabel
+		 * @descriptor get editor user info item label textView text
+		 * @param position
+		 *            : editor user info listView position
+		 * @return editor user info item label
+		 * @author Ares
+		 */
 		public String getItemLabel(int position) {
 			// get label with position
 			String _label = (String) getItem(position).get(
@@ -307,9 +398,32 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 							.name());
 
 			// return the label
-			return _label;
+			return StringUtils.sTrim(_label,
+					context.getString(R.string.userInfo_label_suffix));
 		}
 
+		/**
+		 * @title getItemAttribute
+		 * @descriptor get editor user info attribute
+		 * @param position
+		 *            : editor user info listView position
+		 * @return editor user info attribute
+		 * @author Ares
+		 */
+		public UserInfoAttr4Setting getItemAttribute(int position) {
+			// return the attribute
+			return (UserInfoAttr4Setting) getItem(position).get(
+					USERINFO4SETTING_ATTRIBUTE_KEY);
+		}
+
+		/**
+		 * @title getItemValue
+		 * @descriptor get editor user info item info textView text
+		 * @param position
+		 *            : editor user info listView position
+		 * @return editor user info item value
+		 * @author Ares
+		 */
 		public String getItemValue(int position) {
 			// get value with position
 			String _value = (String) getItem(position).get(
@@ -317,7 +431,34 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 							.name());
 
 			// return the value
-			return _value;
+			return StringUtils
+					.cStrip(_value,
+							new StringBuilder()
+									.append(context
+											.getString(R.string.userStepLength_unit))
+									.append(context
+											.getString(R.string.userAge_unit))
+									.append(context
+											.getString(R.string.userHeight_unit))
+									.append(context
+											.getString(R.string.userWeight_unit))
+									.toString());
+		}
+
+		/**
+		 * @title getItemValueSelectorContent
+		 * @descriptor get editor user info item value selector content save on
+		 *             data list
+		 * @param position
+		 *            : editor user info listView position
+		 * @return editor user info item value selector content
+		 * @author Ares
+		 */
+		@SuppressWarnings("unchecked")
+		public List<String> getItemValueSelectorContent(int position) {
+			// return the value selector content
+			return (List<String>) getItem(position).get(
+					USERINFO4SETTING_VALUE_SELECTORCONTENT_KEY);
 		}
 
 		@Override
@@ -348,6 +489,53 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 			return _contentView;
 		}
 
+		/**
+		 * @title setData
+		 * @descriptor set editor user info data
+		 * @param attr
+		 *            : editor user info attribute
+		 * @param value
+		 *            : editor user info value
+		 * @author Ares
+		 */
+		public void setData(UserInfoAttr4Setting attr, String value) {
+			// traversal editor user info data list
+			for (Map<String, Object> _editorUserInfoData : _sDataList) {
+				// get and check editor user info attribute
+				if (null != attr
+						&& (UserInfoAttr4Setting) _editorUserInfoData
+								.get(USERINFO4SETTING_ATTRIBUTE_KEY) == attr) {
+					// update editor user info value with attribute
+					switch (attr) {
+					case USER_AGE:
+						value += context.getString(R.string.userAge_unit);
+						break;
+
+					case USER_HEIGHT:
+						value += context.getString(R.string.userHeight_unit);
+						break;
+
+					case USER_WEIGHT:
+						value += context.getString(R.string.userWeight_unit);
+						break;
+
+					default:
+						// nothing to do
+						break;
+					}
+					_editorUserInfoData
+							.put(UserInfo4SettingListViewAdapterKey.USERINFO_VALUE_KEY
+									.name(), value);
+
+					// break immediately
+					break;
+				}
+			}
+
+			// notify data set changed
+			notifyDataSetChanged();
+		}
+
 		// inner class
 		/**
 		 * @name UserInfo4SettingListViewAdapterKey
@@ -375,31 +563,24 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			// get user info value textView
-			TextView _userInfoValueTextView = (TextView) view
-					.findViewById(R.id.uisi_info_textView);
-
-			// add user info value textView to user info editor widget id, info
-			// textView map
-			UI_EDITORWIDGETIDINFOTEXTVIEW_MAP.put(
-					_userInfoValueTextView.hashCode(), _userInfoValueTextView);
-
 			// define user info item editor extra data map
 			Map<String, Object> _extraMap = new HashMap<String, Object>();
 
-			// put user info item editor widget id, name, type, info and its
-			// selector content to extra data map as param
-			_extraMap.put(UserInfoItemEditorExtraData.UI_EI_WIDGETID,
-					_userInfoValueTextView.hashCode());
+			// put editor user info attribute, name, info and its selector
+			// content to extra data map as param
+			_extraMap.put(UserInfoItemEditorExtraData.UI_EI_ATTRIBUTE,
+					userInfo4SettingListViewAdapter.getItemAttribute(position));
 			_extraMap.put(UserInfoItemEditorExtraData.UI_EI_NAME,
 					userInfo4SettingListViewAdapter.getItemLabel(position));
-			_extraMap.put(UserInfoItemEditorExtraData.UI_EI_TYPE,
-					UserInfoEditorType.AGE_PICKER);
 			_extraMap.put(UserInfoItemEditorExtraData.UI_EI_VALUE,
 					userInfo4SettingListViewAdapter.getItemValue(position));
-			_extraMap.put(
-					UserInfoItemEditorExtraData.UI_EI_VALUESELECTORCONTENT,
-					UserGender.getGenders());
+			List<String> _valueSelectorContent = userInfo4SettingListViewAdapter
+					.getItemValueSelectorContent(position);
+			if (null != _valueSelectorContent) {
+				_extraMap.put(
+						UserInfoItemEditorExtraData.UI_EI_VALUESELECTORCONTENT,
+						_valueSelectorContent);
+			}
 
 			// go to user info item editor activity with extra data map
 			pushActivityForResult(UserInfoItemEditorActivity.class, _extraMap,
@@ -419,26 +600,18 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 
 		@Override
 		public void onClick(View v) {
-			// get step length info textView
-			TextView _stepLengthInfoTextView = (TextView) v
-					.findViewById(R.id.uis_userStepLength_textView);
-
-			// add step length info textView to user info editor widget id, info
-			// textView map
-			UI_EDITORWIDGETIDINFOTEXTVIEW_MAP
-					.put(_stepLengthInfoTextView.hashCode(),
-							_stepLengthInfoTextView);
-
 			// define user info item editor extra data map
 			Map<String, Object> _extraMap = new HashMap<String, Object>();
 
-			// put user step length editor widget id, name, type and info to
-			// extra data map as param
-			_extraMap.put(UserInfoItemEditorExtraData.UI_EI_WIDGETID,
-					_stepLengthInfoTextView.hashCode());
-			_extraMap.put(UserInfoItemEditorExtraData.UI_EI_NAME, "步长");
-			_extraMap.put(UserInfoItemEditorExtraData.UI_EI_TYPE,
-					UserInfoEditorType.HWSL_EDITTEXT);
+			// put editor user step length attribute, name and info to extra
+			// data map as param
+			_extraMap.put(UserInfoItemEditorExtraData.UI_EI_ATTRIBUTE,
+					UserInfoAttr4Setting.USER_STEPLENGTH);
+			_extraMap
+					.put(UserInfoItemEditorExtraData.UI_EI_NAME,
+							StringUtils
+									.sTrim(getString(R.string.userStepLength_label_textView_text),
+											getString(R.string.userInfo_label_suffix)));
 			_extraMap.put(UserInfoItemEditorExtraData.UI_EI_VALUE,
 					String.valueOf(userStepLength));
 
@@ -474,6 +647,16 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 						.getVisibility()) {
 					userStepLengthIndicatorImgView.setVisibility(View.GONE);
 				}
+
+				// save editor user step length
+				// test by ares
+				userStepLength = Float.parseFloat("13.0");
+
+				// update user step length
+				userStepLengthTextView
+						.setText(null != userStepLength ? userStepLength
+								+ getString(R.string.userStepLength_unit)
+								: getString(R.string.userStepLength_notSet));
 			} else {
 				// set user step length relativeLayout clickable
 				userStepLengthRelativeLayout.setClickable(true);

@@ -36,6 +36,11 @@ public class StrangerPatModel {
 	// user nearby stranger list
 	private List<UserInfoPatLocationExtBean> nearbyStrangersInfo;
 
+	public List<UserInfoPatLocationExtBean> getNearbyStrangersInfo() {
+		return null == nearbyStrangersInfo ? nearbyStrangersInfo = new ArrayList<UserInfoPatLocationExtBean>()
+				: nearbyStrangersInfo;
+	}
+
 	/**
 	 * @title getNearbyStrangers
 	 * @descriptor get user nearby all strangers with location info

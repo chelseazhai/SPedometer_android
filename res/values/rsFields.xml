@@ -3,8 +3,18 @@
 
     <!-- common -->
     <!-- user http request -->
+    <!-- header -->
+    <string name="userComReqParam_header" translatable="false">header</string>
     <string name="userComReqParam_userId" translatable="false">userId</string>
-    <string name="userComReqParam_userToken" translatable="false">token</string>
+    <string name="userComReqParam_userAccessToken" translatable="false">accessToken</string>
+    <string name="userComReqParam_userType" translatable="false">userType</string>
+    <string name="userComReqParam_deviceId" translatable="false">devId</string>
+    <string name="userComReqParam_deviceType" translatable="false">devType</string>
+    <string name="userComReqParam_osVersion" translatable="false">osVersion</string>
+    <string name="userComReqParam_appId" translatable="false">appId</string>
+    <string name="userComReqParam_appVersion" translatable="false">appVersion</string>
+    <string name="userComReqParam_funcId" translatable="false">funcId</string>
+    <string name="userComReqParam_body" translatable="false">body</string>
 
     <!-- http response error -->
     <string name="comReqResp_errorCode" translatable="false">errorCode</string>

@@ -37,10 +37,11 @@ public class NetworkUtils {
 		// get context
 		Context _context = SSApplication.getContext();
 
-		// put user id and token in
+		// put user id and access token in
 		_reqParam.put(_context.getString(R.string.userComReqParam_userId),
 				String.valueOf(userId));
-		_reqParam.put(_context.getString(R.string.userComReqParam_userToken),
+		_reqParam.put(
+				_context.getString(R.string.userComReqParam_userAccessToken),
 				token);
 
 		return _reqParam;

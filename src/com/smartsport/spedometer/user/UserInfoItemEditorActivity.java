@@ -3,7 +3,9 @@
  */
 package com.smartsport.spedometer.user;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -17,6 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.NumberPicker;
@@ -26,6 +29,7 @@ import android.widget.TextView;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
+import com.smartsport.spedometer.user.UserInfoSettingActivity.UserInfoSettingExtraData;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -47,11 +51,9 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 	private Timer SHOW_SOFTINPUT_TIMER = new Timer();
 	private TimerTask showSoftInputTimerTask;
 
-	// user info editor item widget id, editor info name, type, value and its
-	// selector content
-	private int editorItemWidgetId;
+	// user info attribute, editor info name, value and its selector content
+	private UserInfoAttr4Setting editorAttr;
 	private String editorInfoName;
-	private UserInfoEditorType editorType;
 	private String editorInfoValue;
 	private List<String> editorInfoValueSelectorContent;
 
@@ -68,14 +70,12 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 		// get and check the extra data
 		Bundle _extraData = getIntent().getExtras();
 		if (null != _extraData) {
-			// get the editor user info item widget id, editor name, type, value
-			// and its selector content
-			editorItemWidgetId = _extraData
-					.getInt(UserInfoItemEditorExtraData.UI_EI_WIDGETID);
+			// get the editor user info attribute, editor name, value and its
+			// selector content
+			editorAttr = (UserInfoAttr4Setting) _extraData
+					.getSerializable(UserInfoItemEditorExtraData.UI_EI_ATTRIBUTE);
 			editorInfoName = _extraData
 					.getString(UserInfoItemEditorExtraData.UI_EI_NAME);
-			editorType = (UserInfoEditorType) _extraData
-					.getSerializable(UserInfoItemEditorExtraData.UI_EI_TYPE);
 			editorInfoValue = _extraData
 					.getString(UserInfoItemEditorExtraData.UI_EI_VALUE);
 			editorInfoValueSelectorContent = _extraData
@@ -96,8 +96,9 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 		setNavbarBackgroundColor(getResources().getColor(
 				android.R.color.holo_green_light));
 
-		// check editor user info type and set right bar button item if needed
-		if (UserInfoEditorType.GENDER_SPINNER != editorType) {
+		// check editor user info attribute and set right bar button item if
+		// needed
+		if (UserInfoAttr4Setting.USER_GENDER != editorAttr) {
 			setRightBarButtonItem(new SSBNavTitleBarButtonItem(this,
 					R.string.save_editorUserInfo_barbtnitem_title,
 					new EditorUserInfoSaveBarBtnItemOnClickListener()));
@@ -106,12 +107,14 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 		// set title attributes
 		setTitle(editorInfoName);
 		setTitleColor(Color.WHITE);
-		setTitleSize(26.0f);
+		setTitleSize(22.0f);
+		setShadow(1.0f, 0.6f, 0.8f, Color.GRAY);
 
-		// check editor user info type again and get the editor operator widget
-		if (null != editorType) {
-			switch (editorType) {
-			case GENDER_SPINNER:
+		// check editor user info attribute again and get the editor operator
+		// widget
+		if (null != editorAttr) {
+			switch (editorAttr) {
+			case USER_GENDER:
 				// get user gender spinner listView
 				genderSpinnerListView = (ListView) findViewById(R.id.uiid_genderSpinner_listView);
 
@@ -124,10 +127,6 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 									R.layout.usergender_spinner_listview_item_layout,
 									R.id.userGender_spinnerItem_label_textView,
 									editorInfoValueSelectorContent));
-
-					// set its choice mode
-					genderSpinnerListView
-							.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
 					// check editor gender value and set the user selected item
 					// if needed
@@ -151,7 +150,7 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 				}
 				break;
 
-			case AGE_PICKER:
+			case USER_AGE:
 				// get user age numberPicker
 				ageNumberPicker = (NumberPicker) findViewById(R.id.uiie_age_numberPicker);
 
@@ -189,8 +188,9 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 						View.VISIBLE);
 				break;
 
-			case HWSL_EDITTEXT:
-			default:
+			case USER_HEIGHT:
+			case USER_WEIGHT:
+			case USER_STEPLENGTH:
 				// get user info editor edittext
 				editorEditText = (EditText) findViewById(R.id.uiie_editor_editText);
 
@@ -202,6 +202,12 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 				// set its visible
 				editorEditText.setVisibility(View.VISIBLE);
 				break;
+
+			default:
+				// nothing to do
+				LOGGER.warning("User info attribute = " + editorAttr
+						+ " for editor not implementation now");
+				break;
 			}
 		} else {
 			LOGGER.error("Edit user info error, the editor user info type is null");
@@ -212,8 +218,10 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 	protected void onResume() {
 		super.onResume();
 
-		// check editor user info type
-		if (UserInfoEditorType.HWSL_EDITTEXT == editorType) {
+		// check editor user info attribute
+		if (UserInfoAttr4Setting.USER_HEIGHT == editorAttr
+				|| UserInfoAttr4Setting.USER_WEIGHT == editorAttr
+				|| UserInfoAttr4Setting.USER_STEPLENGTH == editorAttr) {
 			// set editor editText focusable
 			editorEditText.setFocusable(true);
 			editorEditText.setFocusableInTouchMode(true);
@@ -246,19 +254,6 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 
 	// inner class
 	/**
-	 * @name UserInfoEditorType
-	 * @descriptor user info editor type
-	 * @author Ares
-	 * @version 1.0
-	 */
-	public enum UserInfoEditorType {
-
-		// gender spinner, age picker, height, weight and step length edittext
-		GENDER_SPINNER, AGE_PICKER, HWSL_EDITTEXT;
-
-	}
-
-	/**
 	 * @name UserInfoItemEditorExtraData
 	 * @descriptor user info item editor extra data constant
 	 * @author Ares
@@ -266,11 +261,10 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 	 */
 	public static final class UserInfoItemEditorExtraData {
 
-		// user info item widget id, editor info name, type, info value and its
-		// selector content
-		public static final String UI_EI_WIDGETID = "userInfo_editorItem_widgetId";
+		// user info attribute, editor info name, info value and its selector
+		// content
+		public static final String UI_EI_ATTRIBUTE = "userInfo_attribute";
 		public static final String UI_EI_NAME = "userInfo_editorInfo_name";
-		public static final String UI_EI_TYPE = "userInfo_editorInfo_type";
 		public static final String UI_EI_VALUE = "userInfo_editorInfo_value";
 		public static final String UI_EI_VALUESELECTORCONTENT = "userInfo_editorInfo_value_selectorContent";
 
@@ -287,14 +281,27 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 
 		@Override
 		public void onClick(View v) {
-			// check editor user info type
-			if (UserInfoEditorType.HWSL_EDITTEXT == editorType) {
-				//
-			} else if (UserInfoEditorType.AGE_PICKER == editorType) {
-				//
+			// define user gender editor extra data map
+			Map<String, Object> _extraMap = new HashMap<String, Object>();
+
+			// put editor user info attribute to extra data map as param
+			_extraMap
+					.put(UserInfoSettingExtraData.UIS_EI_ATTRIBUTE, editorAttr);
+
+			// check editor user info attribute and put user info editor info to
+			// extra data map as param
+			if (UserInfoAttr4Setting.USER_HEIGHT == editorAttr
+					|| UserInfoAttr4Setting.USER_WEIGHT == editorAttr
+					|| UserInfoAttr4Setting.USER_STEPLENGTH == editorAttr) {
+				_extraMap.put(UserInfoSettingExtraData.UIS_EI_VALUE,
+						editorEditText.getText().toString());
+			} else if (UserInfoAttr4Setting.USER_AGE == editorAttr) {
+				_extraMap.put(UserInfoSettingExtraData.UIS_EI_VALUE,
+						String.valueOf(ageNumberPicker.getValue()));
 			}
 
-			//
+			// pop the activity with result code and extra map
+			popActivityWithResult(RESULT_OK, _extraMap);
 		}
 
 	}
@@ -385,7 +392,21 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			//
+			// define user gender editor extra data map
+			Map<String, Object> _extraMap = new HashMap<String, Object>();
+
+			// put editor user gender attribute and info to extra data map as
+			// param
+			_extraMap
+					.put(UserInfoSettingExtraData.UIS_EI_ATTRIBUTE, editorAttr);
+			_extraMap
+					.put(UserInfoSettingExtraData.UIS_EI_VALUE,
+							((CheckedTextView) view
+									.findViewById(R.id.userGender_spinnerItem_label_textView))
+									.getText());
+
+			// pop the activity with result code and extra map
+			popActivityWithResult(RESULT_OK, _extraMap);
 		}
 
 	}

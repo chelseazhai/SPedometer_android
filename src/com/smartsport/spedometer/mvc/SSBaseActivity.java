@@ -292,6 +292,24 @@ public abstract class SSBaseActivity extends Activity {
 	}
 
 	/**
+	 * @title setShadow
+	 * @descriptor set title textView text shadow
+	 * @param radius
+	 *            : title textView text shadow radius
+	 * @param dx
+	 *            : title textView text shadow dx
+	 * @param dy
+	 *            : title textView text shadow dy
+	 * @param color
+	 *            : title textView text shadow color
+	 * @author Ares
+	 */
+	public void setShadow(float radius, float dx, float dy, int color) {
+		// set title textView shadow layer
+		titleTextView.setShadowLayer(radius, dx, dy, color);
+	}
+
+	/**
 	 * @title setTitleView
 	 * @descriptor set custom title view with fake title
 	 * @param titleView
@@ -423,6 +441,9 @@ public abstract class SSBaseActivity extends Activity {
 			// start activity for result with request code
 			startActivityForResult(_targetIntent, requestCode);
 		}
+
+		// set push activity animation
+		overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 	}
 
 	/**
@@ -510,6 +531,9 @@ public abstract class SSBaseActivity extends Activity {
 	public void popActivity() {
 		// finish the activity
 		finish();
+
+		// set pop activity animation
+		overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 	}
 
 	/**
@@ -590,6 +614,9 @@ public abstract class SSBaseActivity extends Activity {
 
 		// finish the activity
 		finish();
+
+		// set pop activity animation
+		overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 	}
 
 	/**

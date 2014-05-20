@@ -30,7 +30,8 @@
 
     <!-- user info setting activity -->
     <string name="title_activity_userinfo_setting" translatable="false">UserInfoSettingActivity</string>
-    <string name="userinfo_setting_activity_title">个人信息</string>
+    <string name="userInfo_setting_activity_title">个人信息</string>
+    <string name="userInfo_label_suffix">：</string>
     <string name="userStepLength_label_textView_text">步长：</string>
     <string name="userStepLength_unit">厘米</string>
     <string name="userStepLength_notSet">未设置</string>
@@ -53,6 +54,27 @@
     <string name="title_activity_userinfo_item_editor" translatable="false">UserInfoItemEditorActivity</string>
     <string name="save_editorUserInfo_barbtnitem_title">保存</string>
     <string name="userAge_editor_displayTextView_text_format">您的年龄为 %d 岁</string>
+
+    <!-- nearby strangers activity -->
+    <string name="title_activity_nearby_strangers" translatable="false">NearbyStrangersActivity</string>
+    <string name="nearbyStrangers_activity_title">附近的人</string>
+
+    <!-- nearby stranger item -->
+    <string name="nearbyStrangerItem_indicator_imageView_contentDescription" translatable="false">this is nearby stranger item pat imageView</string>
+    <string name="nearbyStrangerItem_strangerAvatar_imageView_contentDescription" translatable="false">this is nearby stranger item stranger avatar imageView</string>
+    <string name="nearbyStrangerItem_strangerGender_imageView_contentDescription" translatable="false">this is nearby stranger item stranger gender imageView</string>
+    <string name="nearbyStrangerItem_strangerDistance_step">100</string>
+    <string name="nearbyStrangerItem_strangerDistance_format">%d米以内</string>
+
+    <!-- stranger pat activity -->
+    <string name="title_activity_stranger_pat" translatable="false">StrangerPatActivity</string>
+    <string name="strangerPat_activity_title">详细资料</string>
+    <string name="strangerAvatar_imageView_contentDescription" translatable="false">this is nearby stranger avatar imageView</string>
+    <string name="strangerGender_imageView_contentDescription" translatable="false">this is nearby stranger gender imageView</string>
+    <string name="patStranger_count_format">您已拍过他/她 %d 次了</string>
+    <string name="addStrangerAsFriend_limitPatCount_format">您还需拍他/她 %d 次可查看其个人信息</string>
+    <string name="patStranger_button_text">拍肩</string>
+    <string name="addAsFriend_button_text">加为好友</string>
 
     <!-- others -->
     <string name="title_activity_demo" translatable="false">DemoActivity</string>
