@@ -2,126 +2,115 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/user_item_bg"
+    android:background="@drawable/listview_item_bg"
     android:padding="8dp" >
 
     <ImageView
-        android:id="@+id/nsi_item_strangerAvatar_imageView"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/user_avatar_imageview_bg"
-        android:contentDescription="@string/nearbyStrangerItem_strangerAvatar_imageView_contentDescription"
-        android:scaleType="centerInside"
-        android:src="@drawable/img_default_avatar" />
-
-    <ImageView
-        android:id="@+id/nsi_item_indicator_imageView"
+        android:id="@+id/swigi_item_indicator_imageView"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:contentDescription="@string/nearbyStrangerItem_indicator_imageView_contentDescription"
+        android:contentDescription="@string/scheduleWalkInviteGroupItem_indicator_imageView_contentDescription"
         android:src="@drawable/img_item_indicator" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_toLeftOf="@id/nsi_item_indicator_imageView"
-        android:layout_toRightOf="@id/nsi_item_strangerAvatar_imageView" >
+        android:layout_toLeftOf="@id/swigi_item_indicator_imageView"
+        android:orientation="vertical" >
 
-        <FrameLayout
-            android:id="@+id/nsi_item_strangerMood_frameLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
-            android:minWidth="80dp" >
-
-            <TextView
-                android:id="@+id/nsi_item_strangerMood_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|right"
-                android:background="@drawable/user_mood_textview_bg"
-                android:padding="4dp"
-                android:textColor="@color/gray"
-                android:textSize="14sp"
-                android:visibility="gone" />
-        </FrameLayout>
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_toLeftOf="@id/nsi_item_strangerMood_frameLayout"
-            android:orientation="vertical" >
+            android:layout_weight="1" >
 
-            <RelativeLayout
+            <TextView
+                android:id="@+id/swigi_walkInviteGroup_topic_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:ellipsize="end"
+                android:minWidth="220dp"
+                android:singleLine="true"
+                android:textColor="@color/dark_gray"
+                android:textSize="15sp" />
+
+            <TextView
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="3" >
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="4dp"
+                android:layout_toLeftOf="@id/swigi_walkInviteGroup_topic_textView"
+                android:ellipsize="middle"
+                android:gravity="center_vertical|right"
+                android:singleLine="true"
+                android:text="@string/scheduleWalkInviteGroup_topic_label"
+                android:textSize="17sp" />
+        </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/nsi_item_strangerNickname_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:textSize="18sp" />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
 
-                <ImageView
-                    android:id="@+id/nsi_item_strangerGender_imageView"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="4dp"
-                    android:layout_toRightOf="@id/nsi_item_strangerNickname_textView"
-                    android:contentDescription="@string/nearbyStrangerItem_strangerGender_imageView_contentDescription"
-                    android:scaleType="centerCrop" />
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/swigi_walkInviteGroup_scheduleTime_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:ellipsize="end"
+                android:minWidth="220dp"
+                android:singleLine="true"
+                android:textColor="@color/dark_gray"
+                android:textSize="15sp" />
 
-            <RelativeLayout
+            <TextView
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="5" >
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="4dp"
+                android:layout_toLeftOf="@id/swigi_walkInviteGroup_scheduleTime_textView"
+                android:ellipsize="middle"
+                android:gravity="center_vertical|right"
+                android:singleLine="true"
+                android:text="@string/scheduleWalkInviteGroup_scheduleTime_label"
+                android:textSize="17sp" />
+        </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/nsi_item_strangerDistance_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:shadowColor="@android:color/white"
-                    android:shadowDy="1"
-                    android:shadowRadius="1"
-                    android:singleLine="true"
-                    android:textColor="@color/gray"
-                    android:textSize="14sp" />
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
 
-                <TextView
-                    android:id="@+id/nsi_item_strangerPatCount_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="4dp"
-                    android:layout_toRightOf="@id/nsi_item_strangerDistance_textView"
-                    android:drawableStart="@drawable/img_stranger_pat"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:shadowColor="@android:color/white"
-                    android:shadowDy="1"
-                    android:shadowRadius="1"
-                    android:singleLine="true"
-                    android:textColor="@color/gray"
-                    android:textSize="14sp" />
-            </RelativeLayout>
-        </LinearLayout>
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/swigi_walkInviteGroup_status_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:ellipsize="end"
+                android:minWidth="220dp"
+                android:singleLine="true"
+                android:textColor="@color/dark_gray"
+                android:textSize="15sp" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="4dp"
+                android:layout_toLeftOf="@id/swigi_walkInviteGroup_status_textView"
+                android:ellipsize="middle"
+                android:gravity="center_vertical|right"
+                android:singleLine="true"
+                android:text="@string/scheduleWalkInviteGroup_status_label"
+                android:textSize="17sp" />
+        </RelativeLayout>
+    </LinearLayout>
 
 </RelativeLayout>

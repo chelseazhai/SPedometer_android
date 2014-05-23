@@ -52,8 +52,20 @@
             android:theme="@style/AppBaseActivityTheme" >
         </activity>
         <activity
+            android:name=".group.GroupInviteInfoEditorActivity"
+            android:label="@string/title_activity_groupInviteInfo_editor"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseActivityTheme" >
+        </activity>
+        <activity
             android:name=".group.walk.WalkInviteInviteeSelectActivity"
             android:label="@string/title_activity_walkInvite_invitee_select"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseActivityTheme" >
+        </activity>
+        <activity
+            android:name=".group.walk.WalkInviteInfoSettingActivity"
+            android:label="@string/title_activity_walkInviteInfo_setting"
             android:screenOrientation="portrait"
             android:theme="@style/AppBaseActivityTheme" >
         </activity>

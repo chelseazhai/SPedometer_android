@@ -59,10 +59,27 @@
     <string name="title_activity_schedule_walkInvite_groups" translatable="false">ScheduleWalkInviteGroupsActivity</string>
     <string name="scheduleWalkInviteGroups_activity_title">约走组</string>
 
+    <!-- group invite info editor activity -->
+    <string name="title_activity_groupInviteInfo_editor" translatable="false">GroupInviteInfoEditorActivity</string>
+
+    <!-- schedule walk invite group item -->
+    <string name="scheduleWalkInviteGroupItem_indicator_imageView_contentDescription" translatable="false">this is schedule walk invite group item setting imageView</string>
+    <string name="scheduleWalkInviteGroup_topic_label">主题：</string>
+    <string name="scheduleWalkInviteGroup_scheduleTime_label">约走时间：</string>
+    <string name="scheduleWalkInviteGroup_scheduleTime_format" formatted="false">%s ~ %s</string>
+    <string name="scheduleWalkInviteGroup_status_label">状态：</string>
+
     <!-- walk invite invitee select activity -->
     <string name="title_activity_walkInvite_invitee_select" translatable="false">WalkInviteInviteeSelectActivity</string>
     <string name="cancel_selectWalkInviteInvitee_barbtnitem_title">取消</string>
     <string name="walkInviteInviteeSelect_activity_title">选择约走对象</string>
+
+    <!-- walk invite info setting activity -->
+    <string name="title_activity_walkInviteInfo_setting" translatable="false">WalkInviteInfoSettingActivity</string>
+    <string name="walkInviteInfoSetting_activity_title">安排约走</string>
+
+    <!-- walk invite invitee select item -->
+    <string name="walkInviteInviteeSelectItem_friendAvatar_imageView_contentDescription" translatable="false">this is walk invite invitee select item user friend avatar imageView</string>
 
     <!-- nearby strangers activity -->
     <string name="title_activity_nearby_strangers" translatable="false">NearbyStrangersActivity</string>

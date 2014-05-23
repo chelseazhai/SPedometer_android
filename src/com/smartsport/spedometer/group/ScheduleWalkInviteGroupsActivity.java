@@ -3,7 +3,10 @@
  */
 package com.smartsport.spedometer.group;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +14,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -46,6 +52,9 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 	// schedule walk invite group list
 	private List<GroupBean> scheduleWalkInviteGroupList;
 
+	// schedule walk invite group listView adapter
+	private ScheduleWalkInviteGroupListViewAdapter scheduleWalkInviteGroupListViewAdapter;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,7 +65,23 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 
 		// test by ares
 		for (int i = 0; i < 10; i++) {
-			//
+			GroupBean _group = new GroupBean();
+
+			GroupInviteInfoBean _inviteInfo = new GroupInviteInfoBean(null);
+			_inviteInfo.setBeginTime(System.currentTimeMillis() / 1000L + 100
+					* (i + 1));
+			_inviteInfo
+					.setDuration(0 == i ? 3000 : 0 == i % 2 ? 150000 : 50000);
+			_inviteInfo.setEndTime(_inviteInfo.getBeginTime()
+					+ _inviteInfo.getDuration());
+			_inviteInfo.setTopic("欢迎加入我们的约走组" + i);
+
+			_group.setGroupId(10000 + i);
+			_group.setInviteInfo(_inviteInfo);
+			_group.setType(GroupType.WALK_GROUP);
+			_group.setMemberNumber(2);
+
+			scheduleWalkInviteGroupList.add(_group);
 		}
 
 		// set content view
@@ -94,17 +119,21 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 
 		// set its adapter
 		_scheduleWalkInviteGroupListView
-				.setAdapter(new ScheduleWalkInviteGroupListViewAdapter(
+				.setAdapter(scheduleWalkInviteGroupListViewAdapter = new ScheduleWalkInviteGroupListViewAdapter(
 						this,
 						scheduleWalkInviteGroupList,
-						0,
+						R.layout.schedulewalkinvitegroup_listview_item_layout,
 						new String[] {
-								ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_TITLE_KEY
+								ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_TOPIC_KEY
 										.name(),
-								ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_SCHEDULEBEGINENDTIME_KEY
+								ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_SCHEDULETIME_KEY
 										.name(),
 								ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_STATUS_KEY
-										.name() }, new int[] {}));
+										.name() },
+						new int[] {
+								R.id.swigi_walkInviteGroup_topic_textView,
+								R.id.swigi_walkInviteGroup_scheduleTime_textView,
+								R.id.swigi_walkInviteGroup_status_textView }));
 
 		// set its on item click listener
 		_scheduleWalkInviteGroupListView
@@ -162,7 +191,7 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 
 						//
 					} else {
-						LOGGER.error("");
+						LOGGER.error("Select walk invite invitee error, the selected walk invite invitee is null");
 					}
 				} else {
 					LOGGER.error("Select walk invite invitee error, the return extra data is null");
@@ -206,9 +235,14 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 		private static final SSLogger LOGGER = new SSLogger(
 				ScheduleWalkInviteGroupListViewAdapter.class);
 
-		// schedule walk invite group begin and end time keys
-		private static final String WALKINVITEGROUP_SCHEDULEBEGINTIME_KEY = "";
-		private static final String WALKINVITEGROUP_SCHEDULEENDTIME_KEY = "";
+		// milliseconds per second
+		private static final int MILLISECONDS_PER_SECOND = 1000;
+
+		// timestamp long and short date format
+		private static final SimpleDateFormat TIMESTAMP_LONG_DATEFORMAT = new SimpleDateFormat(
+				"yy-MM-dd HH:mm");
+		private static final SimpleDateFormat TIMESTAMP_SHORT_DATEFORMAT = new SimpleDateFormat(
+				"HH:mm");
 
 		// context
 		private Context context;
@@ -242,7 +276,111 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 			// save context
 			this.context = context;
 
-			//
+			// set schedule walk invite group list
+			setScheduleWalkInviteGroups(scheduleWalkInviteGroups);
+		}
+
+		/**
+		 * @title setScheduleWalkInviteGroups
+		 * @descriptor set new schedule walk invite group list
+		 * @param scheduleWalkInviteGroups
+		 *            : new schedule walk invite group list
+		 */
+		public void setScheduleWalkInviteGroups(
+				List<GroupBean> scheduleWalkInviteGroups) {
+			// check new schedule walk invite group list
+			if (null != scheduleWalkInviteGroups) {
+				// clear schedule walk invite group listView adapter data list
+				// and add new data
+				_sDataList.clear();
+
+				// traversal new schedule walk invite group list
+				for (GroupBean scheduleWalkInviteGroup : scheduleWalkInviteGroups) {
+					// define schedule walk invite group listView adapter data
+					Map<String, Object> _data = new HashMap<String, Object>();
+
+					// get schedule walk invite group invite info
+					GroupInviteInfoBean _scheduleWalkInviteInviteInfo = scheduleWalkInviteGroup
+							.getInviteInfo();
+
+					// generate holo green dark foreground color span
+					ForegroundColorSpan _holoGreenDarkForegroundColorSpan = new ForegroundColorSpan(
+							context.getResources().getColor(
+									android.R.color.holo_green_dark));
+
+					// check schedule walk invite group status
+					SpannableString _status = new SpannableString("即将开始");
+					_status.setSpan(_holoGreenDarkForegroundColorSpan, 0,
+							_status.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+					// set data attributes
+					_data.put(
+							ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_TOPIC_KEY
+									.name(), _scheduleWalkInviteInviteInfo
+									.getTopic());
+					_data.put(
+							ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_SCHEDULETIME_KEY
+									.name(),
+							getScheduleTime(
+									_scheduleWalkInviteInviteInfo
+											.getBeginTime()
+											* MILLISECONDS_PER_SECOND,
+									_scheduleWalkInviteInviteInfo.getEndTime()
+											* MILLISECONDS_PER_SECOND));
+					_data.put(
+							ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_STATUS_KEY
+									.name(), _status);
+
+					// add data to list
+					_sDataList.add(_data);
+				}
+
+				// notify data set changed
+				notifyDataSetChanged();
+			} else {
+				LOGGER.error("Set new schedule walk invite group list error, the new set data list is null");
+			}
+		}
+
+		/**
+		 * @title getScheduleTime
+		 * @descriptor get schedule walk invite group schedule time
+		 * @param scheduleWalkInviteGroups
+		 *            : new schedule walk invite group list
+		 */
+		private String getScheduleTime(long scheduleBeginTime,
+				long scheduleEndTime) {
+			String _scheduleTime = "";
+
+			// check schedule begin and end time
+			if (scheduleEndTime >= scheduleBeginTime) {
+				// get default locale and default timeZone calendar
+				Calendar _defaultCalendar = Calendar.getInstance();
+
+				// define and get begin, end time calendar day
+				_defaultCalendar.setTimeInMillis(scheduleBeginTime);
+				int _beginTimeDay = _defaultCalendar.get(Calendar.DAY_OF_MONTH);
+				_defaultCalendar.setTimeInMillis(scheduleEndTime);
+				int _endTimeDay = _defaultCalendar.get(Calendar.DAY_OF_MONTH);
+
+				// compare the schedule begin, end time calendar day and then
+				// generate schedule time
+				_scheduleTime = String
+						.format(context
+								.getString(R.string.scheduleWalkInviteGroup_scheduleTime_format),
+								TIMESTAMP_LONG_DATEFORMAT
+										.format(scheduleBeginTime),
+								(_beginTimeDay == _endTimeDay ? TIMESTAMP_SHORT_DATEFORMAT
+										: TIMESTAMP_LONG_DATEFORMAT)
+										.format(scheduleEndTime));
+			} else {
+				LOGGER.error("Schedule walk invite group schedule time error, end time = "
+						+ scheduleEndTime
+						+ " is less than begin time = "
+						+ scheduleBeginTime);
+			}
+
+			return _scheduleTime;
 		}
 
 		// inner class
@@ -255,9 +393,9 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 		 */
 		public enum ScheduleWalkInviteGroupListViewAdapterKey {
 
-			// schedule walk invite group title, schedule begin, end time and
-			// status key
-			WALKINVITEGROUP_TITLE_KEY, WALKINVITEGROUP_SCHEDULEBEGINENDTIME_KEY, WALKINVITEGROUP_STATUS_KEY;
+			// schedule walk invite group topic, schedule time(begin and end
+			// time) and status key
+			WALKINVITEGROUP_TOPIC_KEY, WALKINVITEGROUP_SCHEDULETIME_KEY, WALKINVITEGROUP_STATUS_KEY;
 
 		}
 

@@ -41,7 +41,8 @@ public class UserInfoModel {
 	}
 
 	public List<UserInfoBean> getFriendsInfo() {
-		return friendsInfo;
+		return null == friendsInfo ? friendsInfo = new ArrayList<UserInfoBean>()
+				: friendsInfo;
 	}
 
 	/**

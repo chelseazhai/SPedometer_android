@@ -59,7 +59,7 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 	// user location info
 	private static LocationBean sUserLocation;
 
-	// nearby stranger listView adapter and its data list
+	// nearby stranger listView adapter
 	private NearbyStrangerListViewAdapter nearbyStrangerListViewAdapter;
 
 	@Override
