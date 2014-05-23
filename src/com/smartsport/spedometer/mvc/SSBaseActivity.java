@@ -35,10 +35,10 @@ public abstract class SSBaseActivity extends Activity {
 	private static final String NAV_ACTIVITY_PARAM_BACKBARBTNITEM_KEY = "nav_back_btn_default_title";
 	private static final String NAV_ACTIVITY_PARAM_START4RESULT_KEY = "nav_activity_start4result";
 
-	// smartsport base activity push navigation activity with request code, on
-	// activity result map(key: request code and value: on activity result
-	// interface)
-	private SparseArray<ISSBaseActivityResult> NAV_PUSHWITHREQCODE_ONACTIVITYRS_MAP = new SparseArray<ISSBaseActivityResult>();
+	// smartsport base activity push navigation activity or present activity
+	// with request code, on activity result map(key: request code and value: on
+	// activity result interface)
+	private SparseArray<ISSBaseActivityResult> NAVPUSH_PRESENT_WITHREQCODE_ONACTIVITYRS_MAP = new SparseArray<ISSBaseActivityResult>();
 
 	// navigation bar
 	private RelativeLayout navBar;
@@ -113,6 +113,8 @@ public abstract class SSBaseActivity extends Activity {
 		// set navigation bar back button item, if needed(it is not null)
 		if (null != backBarBtnItem) {
 			setLeftBarButtonItem(backBarBtnItem);
+		} else {
+			leftBarBtnItem.setImage(null);
 		}
 
 		// initialize activity content view UI
@@ -122,8 +124,9 @@ public abstract class SSBaseActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// get and check on activity result method with request code from the
-		// navigation activity push with request code, on activity result map
-		ISSBaseActivityResult _onActivityResult = NAV_PUSHWITHREQCODE_ONACTIVITYRS_MAP
+		// navigation activity push or the activity present with request code,
+		// on activity result map
+		ISSBaseActivityResult _onActivityResult = NAVPUSH_PRESENT_WITHREQCODE_ONACTIVITYRS_MAP
 				.get(requestCode);
 		if (null != _onActivityResult) {
 			// perform on activity result method
@@ -131,8 +134,8 @@ public abstract class SSBaseActivity extends Activity {
 		} else {
 			LOGGER.warning("Get on activity result interface with request code = "
 					+ requestCode
-					+ " from the navigation activity push with request code, on activity result map = "
-					+ NAV_PUSHWITHREQCODE_ONACTIVITYRS_MAP
+					+ " from the navigation activity push or the activity present with request code, on activity result map = "
+					+ NAVPUSH_PRESENT_WITHREQCODE_ONACTIVITYRS_MAP
 					+ " error, please use method onActivityResult(\"int, int, intent\") to catch the event when you want");
 
 			super.onActivityResult(requestCode, resultCode, data);
@@ -434,7 +437,7 @@ public abstract class SSBaseActivity extends Activity {
 			if (null != onActivityResult) {
 				// add on activity result method to the navigation activity push
 				// with request code, on activity result map
-				NAV_PUSHWITHREQCODE_ONACTIVITYRS_MAP.put(requestCode,
+				NAVPUSH_PRESENT_WITHREQCODE_ONACTIVITYRS_MAP.put(requestCode,
 						onActivityResult);
 			}
 
@@ -641,6 +644,286 @@ public abstract class SSBaseActivity extends Activity {
 	 */
 	public void popActivityWithResult() {
 		popActivityWithResult(null);
+	}
+
+	/**
+	 * @title presentActivity
+	 * @descriptor start activity with extra data and request code
+	 * @param activityCls
+	 *            : target activity class
+	 * @param extraData
+	 *            : start activity extra data
+	 * @param requestCode
+	 *            : start activity request code
+	 * @param onActivityResult
+	 *            : on activity result interface
+	 * @author Ares
+	 */
+	private void presentActivity(Class<? extends Activity> activityCls,
+			Map<String, ?> extraData, Integer requestCode,
+			ISSBaseActivityResult onActivityResult) {
+		// define the target activity intent
+		Intent _targetIntent = new Intent(this, activityCls);
+
+		// process extra data
+		if (null != extraData) {
+			for (String extraDataKey : extraData.keySet()) {
+				// get extra data value
+				Object _extraDataKeyValue = extraData.get(extraDataKey);
+
+				// check extra data value type
+				if (_extraDataKeyValue instanceof Short) {
+					_targetIntent.putExtra(extraDataKey,
+							(Short) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Integer) {
+					_targetIntent.putExtra(extraDataKey,
+							(Integer) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Long) {
+					_targetIntent.putExtra(extraDataKey,
+							(Long) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Float) {
+					_targetIntent.putExtra(extraDataKey,
+							(Float) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Double) {
+					_targetIntent.putExtra(extraDataKey,
+							(Double) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Character) {
+					_targetIntent.putExtra(extraDataKey,
+							(Character) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Byte) {
+					_targetIntent.putExtra(extraDataKey,
+							(Byte) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Boolean) {
+					_targetIntent.putExtra(extraDataKey,
+							(Boolean) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof String) {
+					_targetIntent.putExtra(extraDataKey,
+							(String) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof CharSequence) {
+					_targetIntent.putExtra(extraDataKey,
+							(CharSequence) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Serializable) {
+					_targetIntent.putExtra(extraDataKey,
+							(Serializable) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Parcelable) {
+					_targetIntent.putExtra(extraDataKey,
+							(Parcelable) _extraDataKeyValue);
+				} else {
+					// others, not implementation now
+					LOGGER.warning("Present activity, its class = "
+							+ activityCls
+							+ " with extra data value incompleted, extra data value type = "
+							+ extraData.get(extraDataKey).getClass().getName()
+							+ " not implementation now");
+				}
+			}
+		}
+
+		// check start activity request code and then go to the target activity
+		if (null == requestCode) {
+			startActivity(_targetIntent);
+		} else {
+			// check on activity result
+			if (null != onActivityResult) {
+				// add on activity result method to the activity present with
+				// request code, on activity result map
+				NAVPUSH_PRESENT_WITHREQCODE_ONACTIVITYRS_MAP.put(requestCode,
+						onActivityResult);
+			}
+
+			// start activity for result with request code
+			startActivityForResult(_targetIntent, requestCode);
+		}
+
+		// set present activity animation
+		overridePendingTransition(R.anim.slide_in_bottom, R.anim.fade_out);
+	}
+
+	/**
+	 * @title presentActivity
+	 * @descriptor start activity with extra data
+	 * @param activityCls
+	 *            : target activity class
+	 * @param extraData
+	 *            : start activity extra data
+	 * @author Ares
+	 */
+	public void presentActivity(Class<? extends Activity> activityCls,
+			Map<String, ?> extraData) {
+		presentActivity(activityCls, extraData, null, null);
+	}
+
+	/**
+	 * @title presentActivity
+	 * @descriptor start activity
+	 * @param activityCls
+	 *            : target activity class
+	 * @author Ares
+	 */
+	public void presentActivity(Class<? extends Activity> activityCls) {
+		presentActivity(activityCls, null);
+	}
+
+	/**
+	 * @title presentActivityForResult
+	 * @descriptor start activity for result with extra data and request code
+	 * @param activityCls
+	 *            : target activity class
+	 * @param extraData
+	 *            : start activity for result extra data
+	 * @param requestCode
+	 *            : start activity for result request code
+	 * @param onActivityResult
+	 *            : on activity result interface
+	 * @author Ares
+	 */
+	public void presentActivityForResult(Class<? extends Activity> activityCls,
+			Map<String, ?> extraData, int requestCode,
+			ISSBaseActivityResult onActivityResult) {
+		presentActivity(activityCls, extraData, requestCode, onActivityResult);
+	}
+
+	/**
+	 * @title presentActivityForResult
+	 * @descriptor start activity for result with extra data and request code
+	 * @param activityCls
+	 *            : target activity class
+	 * @param extraData
+	 *            : start activity for result extra data
+	 * @param requestCode
+	 *            : start activity for result request code
+	 * @author Ares
+	 */
+	public void presentActivityForResult(Class<? extends Activity> activityCls,
+			Map<String, ?> extraData, int requestCode) {
+		presentActivityForResult(activityCls, extraData, requestCode, null);
+	}
+
+	/**
+	 * @title presentActivityForResult
+	 * @descriptor start activity for result with request code
+	 * @param activityCls
+	 *            : target activity class
+	 * @param requestCode
+	 *            : start activity for result request code
+	 * @author Ares
+	 */
+	public void presentActivityForResult(Class<? extends Activity> activityCls,
+			int requestCode) {
+		presentActivityForResult(activityCls, null, requestCode);
+	}
+
+	/**
+	 * @title dismissActivity
+	 * @descriptor dismiss the activity
+	 * @author Ares
+	 */
+	public void dismissActivity() {
+		// finish the activity
+		finish();
+
+		// set dismiss activity animation
+		overridePendingTransition(R.anim.fade_in, R.anim.slide_out_bottom);
+	}
+
+	/**
+	 * @title dismissActivityWithResult
+	 * @descriptor dismiss the activity with result code and extra data then
+	 *             previous activity using onActivityResult method to process
+	 *             them
+	 * @param resultCode
+	 *            : dismiss activity with result code
+	 * @param extraData
+	 *            : dismiss activity with result extra data
+	 * @author Ares
+	 */
+	public void dismissActivityWithResult(Integer resultCode,
+			Map<String, ?> extraData) {
+		// check and process extra data
+		if (null != extraData) {
+			for (String extraDataKey : extraData.keySet()) {
+				// get extra data value
+				Object _extraDataKeyValue = extraData.get(extraDataKey);
+
+				// check extra data value type
+				if (_extraDataKeyValue instanceof Short) {
+					getIntent().putExtra(extraDataKey,
+							(Short) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Integer) {
+					getIntent().putExtra(extraDataKey,
+							(Integer) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Long) {
+					getIntent().putExtra(extraDataKey,
+							(Long) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Float) {
+					getIntent().putExtra(extraDataKey,
+							(Float) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Double) {
+					getIntent().putExtra(extraDataKey,
+							(Double) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Character) {
+					getIntent().putExtra(extraDataKey,
+							(Character) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Byte) {
+					getIntent().putExtra(extraDataKey,
+							(Byte) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Boolean) {
+					getIntent().putExtra(extraDataKey,
+							(Boolean) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof String) {
+					getIntent().putExtra(extraDataKey,
+							(String) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof CharSequence) {
+					getIntent().putExtra(extraDataKey,
+							(CharSequence) _extraDataKeyValue);
+				} else if (_extraDataKeyValue instanceof Serializable) {
+					getIntent().putExtra(extraDataKey,
+							(Serializable) _extraDataKeyValue);
+				} else {
+					// others, not implementation now
+					LOGGER.warning("Dismiss activity with result with extra data value incompleted, extra data value type = "
+							+ extraData.get(extraDataKey).getClass().getName()
+							+ " not implementation now");
+				}
+			}
+		}
+
+		// check the result code and set result
+		if (null == resultCode) {
+			setResult(RESULT_CANCELED, getIntent());
+		} else {
+			setResult(resultCode, getIntent());
+		}
+
+		// finish the activity
+		finish();
+
+		// set dismiss activity animation
+		overridePendingTransition(R.anim.fade_in, R.anim.slide_out_bottom);
+	}
+
+	/**
+	 * @title dismissActivityWithResult
+	 * @descriptor dismiss the activity with extra data and result code:
+	 *             RESULT_CANCELED then previous activity using onActivityResult
+	 *             method to process them
+	 * @param extraData
+	 *            : dismiss activity with result extra data
+	 * @author Ares
+	 */
+	public void dismissActivityWithResult(Map<String, ?> extraData) {
+		dismissActivityWithResult(null, extraData);
+	}
+
+	/**
+	 * @title dismissActivityWithResult
+	 * @descriptor dismiss the activity with result code: RESULT_CANCELED then
+	 *             previous activity using onActivityResult method to process
+	 *             them
+	 * @author Ares
+	 */
+	public void dismissActivityWithResult() {
+		dismissActivityWithResult(null);
 	}
 
 	/**

@@ -1,5 +1,6 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Theme -->
     <!--
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -12,18 +13,18 @@
         -->
     </style>
 
-    <!-- Application theme. -->
+    <!-- Application theme -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
-    <!-- Application base activity theme. -->
+    <!-- Application base activity theme -->
     <style name="AppBaseActivityTheme" parent="AppBaseTheme">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <!-- Application splash screen theme. -->
+    <!-- Application splash screen theme -->
     <style name="AppSplashScreenTheme" parent="AppBaseTheme">
         <item name="android:background">@android:color/background_dark</item>
         <item name="android:windowActionBar">false</item>
@@ -32,12 +33,18 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
-    <!-- Application widget theme. -->
+    <!-- Application widget theme -->
     <style name="AppWidgetTheme" parent="AppBaseTheme">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!-- Style -->
+    <style name="ActionSheetAnimationPopupStyle">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>
 
 </resources>

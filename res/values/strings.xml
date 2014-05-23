@@ -55,9 +55,27 @@
     <string name="save_editorUserInfo_barbtnitem_title">保存</string>
     <string name="userAge_editor_displayTextView_text_format">您的年龄为 %d 岁</string>
 
+    <!-- schedule walk invite groups activity -->
+    <string name="title_activity_schedule_walkInvite_groups" translatable="false">ScheduleWalkInviteGroupsActivity</string>
+    <string name="scheduleWalkInviteGroups_activity_title">约走组</string>
+
+    <!-- walk invite invitee select activity -->
+    <string name="title_activity_walkInvite_invitee_select" translatable="false">WalkInviteInviteeSelectActivity</string>
+    <string name="cancel_selectWalkInviteInvitee_barbtnitem_title">取消</string>
+    <string name="walkInviteInviteeSelect_activity_title">选择约走对象</string>
+
     <!-- nearby strangers activity -->
     <string name="title_activity_nearby_strangers" translatable="false">NearbyStrangersActivity</string>
     <string name="nearbyStrangers_activity_title">附近的人</string>
+
+    <!-- nearby strangers more operation action sheet -->
+    <string name="nearbyStrangers_moreOperationActionSheet_operateGridViewItem_icon_contentDescription" translatable="false">this is nearby stranger more operation action sheet operate gridView item icon imageView</string>
+    <string name="nearbyStrangers_moreOperationActionSheet_showMaleStrangers_operate_tip">只看帅哥</string>
+    <string name="nearbyStrangers_moreOperationActionSheet_showFemaleStrangers_operate_tip">只看美女</string>
+    <string name="nearbyStrangers_moreOperationActionSheet_showAllStrangers_operate_tip">查看全部</string>
+    <string name="nearbyStrangers_moreOperationActionSheet_showPatYouStrangers_operate_tip">附近拍你肩的人</string>
+    <string name="nearbyStrangers_moreOperationActionSheet_clearLocationInfo_operate_tip">清除位置信息并退出</string>
+    <string name="nearbyStrangers_moreOperationActionSheet_cancelBtn_text">取消</string>
 
     <!-- nearby stranger item -->
     <string name="nearbyStrangerItem_indicator_imageView_contentDescription" translatable="false">this is nearby stranger item pat imageView</string>

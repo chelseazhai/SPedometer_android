@@ -9,4 +9,13 @@
         <item>@string/userInfo_weight_label</item>
     </string-array>
 
+    <!-- nearby strangers more operation action sheet operate tips array -->
+    <string-array name="nearbyStrangerMoreOperation_operate_tips" translatable="false">
+        <item>@string/nearbyStrangers_moreOperationActionSheet_showMaleStrangers_operate_tip</item>
+        <item>@string/nearbyStrangers_moreOperationActionSheet_showFemaleStrangers_operate_tip</item>
+        <item>@string/nearbyStrangers_moreOperationActionSheet_showAllStrangers_operate_tip</item>
+        <item>@string/nearbyStrangers_moreOperationActionSheet_showPatYouStrangers_operate_tip</item>
+        <item>@string/nearbyStrangers_moreOperationActionSheet_clearLocationInfo_operate_tip</item>
+    </string-array>
+
 </resources>

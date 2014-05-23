@@ -5,6 +5,7 @@ package com.smartsport.spedometer.strangersocial;
 
 import java.io.Serializable;
 
+import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -76,6 +77,16 @@ public class LocationBean implements Serializable {
 	public String toString() {
 		return "LocationBean [longitude=" + longitude + " and latitude="
 				+ latitude + "]";
+	}
+
+	/**
+	 * @title toLatLonPoint
+	 * @descriptor convert the location bean to latLonPoint
+	 * @return the location latLonPoint
+	 * @author Ares
+	 */
+	public LatLonPoint toLatLonPoint() {
+		return new LatLonPoint(latitude, longitude);
 	}
 
 	/**

@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
+import com.smartsport.spedometer.group.ScheduleWalkInviteGroupsActivity;
 import com.smartsport.spedometer.strangersocial.NearbyStrangersActivity;
 import com.smartsport.spedometer.user.UserInfoSettingActivity;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -54,12 +55,18 @@ public class PedometerActivity extends SSBaseActivity {
 		setTitleSize(26.0f);
 		setShadow(1.0f, 0.6f, 0.8f, Color.GRAY);
 
+		// get walk invite button
+		walkInviteBtn = (Button) findViewById(R.id.pfc_walkInvite_button);
+
+		// set its on click listener
+		walkInviteBtn.setOnClickListener(new WalkInviteBtnOnClickListener());
+
 		// get nearby stranger button
 		nearbyStrangersBtn = (Button) findViewById(R.id.pfc_nearbyStrangers_button);
 
 		// set its on click listener
 		nearbyStrangersBtn
-				.setOnClickListener(new GetNearbyStrangersOnClickListener());
+				.setOnClickListener(new GetNearbyStrangersBtnOnClickListener());
 	}
 
 	// inner class
@@ -80,12 +87,28 @@ public class PedometerActivity extends SSBaseActivity {
 	}
 
 	/**
-	 * @name GetNearbyStrangersOnClickListener
+	 * @name WalkInviteBtnOnClickListener
+	 * @descriptor walk invite button on click listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class WalkInviteBtnOnClickListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			// go to schedule walk invite groups activity
+			pushActivity(ScheduleWalkInviteGroupsActivity.class);
+		}
+
+	}
+
+	/**
+	 * @name GetNearbyStrangersBtnOnClickListener
 	 * @descriptor get nearby strangers button on click listener
 	 * @author Ares
 	 * @version 1.0
 	 */
-	class GetNearbyStrangersOnClickListener implements OnClickListener {
+	class GetNearbyStrangersBtnOnClickListener implements OnClickListener {
 
 		@Override
 		public void onClick(View v) {

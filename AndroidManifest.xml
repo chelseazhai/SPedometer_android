@@ -46,6 +46,18 @@
             android:theme="@style/AppBaseActivityTheme" >
         </activity>
         <activity
+            android:name=".group.ScheduleWalkInviteGroupsActivity"
+            android:label="@string/title_activity_schedule_walkInvite_groups"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseActivityTheme" >
+        </activity>
+        <activity
+            android:name=".group.walk.WalkInviteInviteeSelectActivity"
+            android:label="@string/title_activity_walkInvite_invitee_select"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseActivityTheme" >
+        </activity>
+        <activity
             android:name=".strangersocial.NearbyStrangersActivity"
             android:label="@string/title_activity_nearby_strangers"
             android:screenOrientation="portrait"

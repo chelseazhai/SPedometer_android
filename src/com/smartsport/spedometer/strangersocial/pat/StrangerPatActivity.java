@@ -20,6 +20,7 @@ import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavBarButtonItem;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
+import com.smartsport.spedometer.strangersocial.LocationBean;
 import com.smartsport.spedometer.strangersocial.NearbyStrangersActivity.NearbyStrangersExtraData;
 import com.smartsport.spedometer.user.UserGender;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -39,10 +40,12 @@ public class StrangerPatActivity extends SSBaseActivity {
 	// stranger pat model
 	private StrangerPatModel strangerPatModel;
 
-	// the nearby stranger info bean, distance and be pat count
+	// the nearby stranger info bean, distance, be pat count and user pat
+	// location
 	private UserInfoPatLocationExtBean strangerInfo;
 	private String strangerDistance;
 	private int strangerBePatCount;
+	private LocationBean userPatLocation;
 
 	// the nearby stranger be pat flag
 	private boolean hadBeenPatStranger;
@@ -54,11 +57,14 @@ public class StrangerPatActivity extends SSBaseActivity {
 		// get and check the extra data
 		Bundle _extraData = getIntent().getExtras();
 		if (null != _extraData) {
-			// get the selected nearby stranger info bean and distance
+			// get the selected nearby stranger info bean, distance and user pat
+			// location
 			strangerInfo = (UserInfoPatLocationExtBean) _extraData
 					.getSerializable(StrangerPatExtraData.SP_SI_BEAN);
 			strangerDistance = _extraData
 					.getString(StrangerPatExtraData.SP_STRANGER_DISTANCE);
+			userPatLocation = (LocationBean) _extraData
+					.getSerializable(StrangerPatExtraData.SP_USER_PATLOCATION);
 		}
 
 		// initialize stranger pat model
@@ -179,9 +185,10 @@ public class StrangerPatActivity extends SSBaseActivity {
 	 */
 	public static final class StrangerPatExtraData {
 
-		// stranger info bean and distance
+		// stranger info bean, distance and user pat location
 		public static final String SP_SI_BEAN = "strangerPat_strangerInfo_bean";
 		public static final String SP_STRANGER_DISTANCE = "strangerPat_stranger_distance";
+		public static final String SP_USER_PATLOCATION = "strangerPat_user_patLocation";
 
 	}
 
@@ -195,11 +202,12 @@ public class StrangerPatActivity extends SSBaseActivity {
 
 		@Override
 		public void onClick(View v) {
-			// check the pat stranger info
-			if (null != strangerInfo) {
+			// check the pat stranger info and user pat location
+			if (null != strangerInfo && null != userPatLocation) {
 				// pat the nearby stranger
 				strangerPatModel.patStranger(123123, "token",
-						strangerInfo.getUserId(), null, new ICMConnector() {
+						strangerInfo.getUserId(),
+						userPatLocation.toLatLonPoint(), new ICMConnector() {
 
 							//
 
@@ -211,7 +219,10 @@ public class StrangerPatActivity extends SSBaseActivity {
 				Toast.makeText(StrangerPatActivity.this, "成功拍肩一次(测试@Ares)",
 						Toast.LENGTH_LONG).show();
 			} else {
-				LOGGER.error("Pat stranger error, the nearby stranger info bean is null");
+				LOGGER.error("Pat stranger error, the nearby stranger info bean = "
+						+ strangerInfo
+						+ " and user pat location = "
+						+ userPatLocation);
 			}
 		}
 

@@ -45,7 +45,8 @@ public class StrangerPatNetworkAdapter implements INetworkAdapter {
 				.genUserComReqParam(userId, token);
 
 		// check user need to get stranger gender and set it to param
-		if (null != strangerGender) {
+		if (null != strangerGender
+				&& UserGender.GENDER_UNKNOWN != strangerGender) {
 			_getNearbyStrangersReqParam.put(NETWORK_ENGINE.getContext()
 					.getString(R.string.getNearbyUserReqParam_gender), String
 					.valueOf(strangerGender.getValue()));

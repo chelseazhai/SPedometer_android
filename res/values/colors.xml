@@ -9,4 +9,8 @@
     <color name="silver">#EEEEEE</color>
     <color name="light_light_gray">#F4F4F4</color>
 
+    <!-- transparent color -->
+    <color name="quarter_black_transparent">#40000000</color>
+    <color name="little_white_transparent">#F0FFFFFF</color>
+
 </resources>
