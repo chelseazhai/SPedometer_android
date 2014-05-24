@@ -74,11 +74,8 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 		// load user info with step length and its calculate type from local
 		// storage
 		// test by ares
-		userInfoModel.getUserInfo().setGender(UserGender.GENDER_UNKNOWN);
 		userInfoModel.getUserInfo().setAge(20);
 		userInfoModel.getUserInfo().setHeight(173.0f);
-		userInfoModel.getUserInfo().setWeight(72.0f);
-		userStepLength = 22.0f;
 		userStepLenCalcType = UserStepLenCalcType.MANUAL_CALC_SETPLEN;
 		//
 
@@ -140,10 +137,11 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 		// get user step length
 		userStepLengthTextView = (TextView) findViewById(R.id.uis_userStepLength_textView);
 
-		// set user step length
-		userStepLengthTextView.setText(null != userStepLength ? userStepLength
-				+ getString(R.string.userStepLength_unit)
-				: getString(R.string.userStepLength_notSet));
+		// check user step length and set user step length
+		if (null != userStepLength) {
+			userStepLengthTextView.setText(userStepLength
+					+ getString(R.string.userStepLength_unit));
+		}
 
 		// get user step length calculate switch
 		Switch _userStepLenCalcSwitch = (Switch) findViewById(R.id.uis_userStepLength_calculate_switch);
@@ -175,7 +173,7 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 	class UserInfoSettingRequestCode {
 
 		// user info item editor request code
-		private static final int UII_EDITOR_REQCODE = 1000;
+		private static final int UIS_USERINFOITEM_EDITOR_REQCODE = 1000;
 
 	}
 
@@ -222,36 +220,47 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 						userInfo4SettingListViewAdapter.setData(_editorAttr,
 								_editorValue);
 
-						// update user info to remote server
-						userInfoModel
-								.updateUserInfo(
-										123123,
-										"token",
-										UserInfoAttr4Setting.USER_AGE == _editorAttr ? Integer
-												.parseInt(_editorValue) : null,
-										UserInfoAttr4Setting.USER_GENDER == _editorAttr ? UserGender
-												.getGender(_editorValue) : null,
-										UserInfoAttr4Setting.USER_HEIGHT == _editorAttr ? Float
-												.parseFloat(_editorValue)
-												: null,
-										UserInfoAttr4Setting.USER_WEIGHT == _editorAttr ? Float
-												.parseFloat(_editorValue)
-												: null, new ICMConnector() {
+						// check editor user info value and update user info to
+						// remote server
+						if (!"".equalsIgnoreCase(_editorValue)) {
+							userInfoModel
+									.updateUserInfo(
+											123123,
+											"token",
+											UserInfoAttr4Setting.USER_AGE == _editorAttr
+													&& null != _editorValue ? Integer
+													.parseInt(_editorValue)
+													: null,
+											UserInfoAttr4Setting.USER_GENDER == _editorAttr
+													&& null != _editorValue ? UserGender
+													.getGender(_editorValue)
+													: null,
+											UserInfoAttr4Setting.USER_HEIGHT == _editorAttr
+													&& null != _editorValue ? Float
+													.parseFloat(_editorValue)
+													: null,
+											UserInfoAttr4Setting.USER_WEIGHT == _editorAttr
+													&& null != _editorValue ? Float
+													.parseFloat(_editorValue)
+													: null, new ICMConnector() {
 
-											//
+												//
 
-										});
+											});
+						}
 						break;
 
 					case USER_STEPLENGTH:
-						// save editor user step length
-						userStepLength = Float.parseFloat(_editorValue);
+						// check editor user step length and save
+						userStepLength = null == _editorValue
+								|| "".equalsIgnoreCase(_editorValue) ? null
+								: Float.parseFloat(_editorValue);
 
-						// update user step length
+						// check user step length and update its textView text
 						userStepLengthTextView
 								.setText(null != userStepLength ? userStepLength
 										+ getString(R.string.userStepLength_unit)
-										: getString(R.string.userStepLength_notSet));
+										: "");
 
 						// save user step length to local storage
 						//
@@ -334,24 +343,35 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 					if (context.getString(R.string.userInfo_gender_label)
 							.equalsIgnoreCase(_label)) {
 						_attribute = UserInfoAttr4Setting.USER_GENDER;
-						_value = userInfo.getGender().getLabel();
+						// get and check user gender
+						UserGender _gender = userInfo.getGender();
+						_value = null != _gender ? _gender.getLabel() : null;
 					} else if (context.getString(R.string.userInfo_age_label)
 							.equalsIgnoreCase(_label)) {
 						_attribute = UserInfoAttr4Setting.USER_AGE;
-						_value = userInfo.getAge()
-								+ context.getString(R.string.userAge_unit);
+						// get and check user age
+						int _age = userInfo.getAge();
+						_value = 0 <= _age ? _age
+								+ context.getString(R.string.userAge_unit)
+								: null;
 					} else if (context
 							.getString(R.string.userInfo_height_label)
 							.equalsIgnoreCase(_label)) {
 						_attribute = UserInfoAttr4Setting.USER_HEIGHT;
-						_value = userInfo.getHeight()
-								+ context.getString(R.string.userHeight_unit);
+						// get and check user height
+						float _height = userInfo.getHeight();
+						_value = 0 <= _height ? _height
+								+ context.getString(R.string.userHeight_unit)
+								: null;
 					} else if (context
 							.getString(R.string.userInfo_weight_label)
 							.equalsIgnoreCase(_label)) {
 						_attribute = UserInfoAttr4Setting.USER_WEIGHT;
-						_value = userInfo.getWeight()
-								+ context.getString(R.string.userWeight_unit);
+						// get and check user weight
+						float _weight = userInfo.getWeight();
+						_value = 0 <= _weight ? _weight
+								+ context.getString(R.string.userWeight_unit)
+								: null;
 					}
 
 					// set data attributes
@@ -431,18 +451,19 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 							.name());
 
 			// return the value
-			return StringUtils
-					.cStrip(_value,
-							new StringBuilder()
-									.append(context
-											.getString(R.string.userStepLength_unit))
-									.append(context
-											.getString(R.string.userAge_unit))
-									.append(context
-											.getString(R.string.userHeight_unit))
-									.append(context
-											.getString(R.string.userWeight_unit))
-									.toString());
+			return null == _value ? ""
+					: StringUtils
+							.cStrip(_value,
+									new StringBuilder()
+											.append(context
+													.getString(R.string.userStepLength_unit))
+											.append(context
+													.getString(R.string.userAge_unit))
+											.append(context
+													.getString(R.string.userHeight_unit))
+											.append(context
+													.getString(R.string.userWeight_unit))
+											.toString());
 		}
 
 		/**
@@ -505,23 +526,28 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 				if (null != attr
 						&& (UserInfoAttr4Setting) _editorUserInfoData
 								.get(USERINFO4SETTING_ATTRIBUTE_KEY) == attr) {
-					// update editor user info value with attribute
-					switch (attr) {
-					case USER_AGE:
-						value += context.getString(R.string.userAge_unit);
-						break;
+					// check the value
+					if (null != value && !"".equalsIgnoreCase(value)) {
+						// update editor user info value with attribute
+						switch (attr) {
+						case USER_AGE:
+							value += context.getString(R.string.userAge_unit);
+							break;
 
-					case USER_HEIGHT:
-						value += context.getString(R.string.userHeight_unit);
-						break;
+						case USER_HEIGHT:
+							value += context
+									.getString(R.string.userHeight_unit);
+							break;
 
-					case USER_WEIGHT:
-						value += context.getString(R.string.userWeight_unit);
-						break;
+						case USER_WEIGHT:
+							value += context
+									.getString(R.string.userWeight_unit);
+							break;
 
-					default:
-						// nothing to do
-						break;
+						default:
+							// nothing to do
+							break;
+						}
 					}
 					_editorUserInfoData
 							.put(UserInfo4SettingListViewAdapterKey.USERINFO_VALUE_KEY
@@ -584,7 +610,7 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 
 			// go to user info item editor activity with extra data map
 			pushActivityForResult(UserInfoItemEditorActivity.class, _extraMap,
-					UserInfoSettingRequestCode.UII_EDITOR_REQCODE,
+					UserInfoSettingRequestCode.UIS_USERINFOITEM_EDITOR_REQCODE,
 					new UISUserInfoEditorOnActivityResult());
 		}
 
@@ -612,12 +638,14 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 							StringUtils
 									.sTrim(getString(R.string.userStepLength_label_textView_text),
 											getString(R.string.userInfo_label_suffix)));
-			_extraMap.put(UserInfoItemEditorExtraData.UI_EI_VALUE,
-					String.valueOf(userStepLength));
+			_extraMap.put(
+					UserInfoItemEditorExtraData.UI_EI_VALUE,
+					null == userStepLength ? "" : String
+							.valueOf(userStepLength));
 
 			// go to user info item editor activity with extra data map
 			pushActivityForResult(UserInfoItemEditorActivity.class, _extraMap,
-					UserInfoSettingRequestCode.UII_EDITOR_REQCODE,
+					UserInfoSettingRequestCode.UIS_USERINFOITEM_EDITOR_REQCODE,
 					new UISUserInfoEditorOnActivityResult());
 		}
 

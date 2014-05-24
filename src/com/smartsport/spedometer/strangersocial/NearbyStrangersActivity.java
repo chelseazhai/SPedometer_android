@@ -146,11 +146,11 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 										.name(),
 								NearbyStrangerListViewAdapterKey.NEARBYSTRANGER_PATCOUNT_KEY
 										.name() }, new int[] {
-								R.id.nsi_item_strangerAvatar_imageView,
-								R.id.nsi_item_strangerNickname_textView,
-								R.id.nsi_item_strangerGender_imageView,
-								R.id.nsi_item_strangerDistance_textView,
-								R.id.nsi_item_strangerPatCount_textView }));
+								R.id.nsi_strangerAvatar_imageView,
+								R.id.nsi_strangerNickname_textView,
+								R.id.nsi_strangerGender_imageView,
+								R.id.nsi_strangerDistance_textView,
+								R.id.nsi_strangerPatCount_textView }));
 
 		// set its on item click listener
 		_nearbyStrangerListView

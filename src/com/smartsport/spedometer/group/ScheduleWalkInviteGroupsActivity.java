@@ -10,10 +10,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -27,6 +29,8 @@ import android.widget.SimpleAdapter;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
 import com.smartsport.spedometer.group.ScheduleWalkInviteGroupsActivity.ScheduleWalkInviteGroupListViewAdapter.ScheduleWalkInviteGroupListViewAdapterKey;
+import com.smartsport.spedometer.group.walk.WalkInviteInfoSettingActivity;
+import com.smartsport.spedometer.group.walk.WalkInviteInfoSettingActivity.WalkInviteInfoSettingExtraData;
 import com.smartsport.spedometer.group.walk.WalkInviteInviteeSelectActivity;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
@@ -131,9 +135,9 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 								ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_STATUS_KEY
 										.name() },
 						new int[] {
-								R.id.swigi_walkInviteGroup_topic_textView,
-								R.id.swigi_walkInviteGroup_scheduleTime_textView,
-								R.id.swigi_walkInviteGroup_status_textView }));
+								R.id.swigi_walkInviteGroupTopic_textView,
+								R.id.swigi_walkInviteGroupScheduleTime_textView,
+								R.id.swigi_walkInviteGroupStatus_textView }));
 
 		// set its on item click listener
 		_scheduleWalkInviteGroupListView
@@ -186,10 +190,34 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 					UserInfoBean _selectedInviteeBean = (UserInfoBean) _extraData
 							.getSerializable(WalkInviteInviteeSelectExtraData.WIIS_SELECTED_INVITEE_BEAN);
 					if (null != _selectedInviteeBean) {
-						LOGGER.info("@@@, _selectedInviteeBean = "
-								+ _selectedInviteeBean);
+						// define walk invite info setting extra data map
+						final Map<String, Object> _extraMap = new HashMap<String, Object>();
 
-						//
+						// put selected walk invite invitee bean to extra data
+						// map as param
+						_extraMap
+								.put(WalkInviteInfoSettingExtraData.WIIS_SELECTED_INVITEE_BEAN,
+										_selectedInviteeBean);
+
+						// go to walk invite info setting activity with extra
+						// data map delayed
+						new Handler().postDelayed(
+								new Runnable() {
+
+									@Override
+									public void run() {
+										pushActivity(
+												WalkInviteInfoSettingActivity.class,
+												_extraMap);
+									}
+
+								},
+								getResources().getInteger(
+										R.integer.config_activityAnimTime) + 30/*
+																				 * eye
+																				 * residual
+																				 * time
+																				 */);
 					} else {
 						LOGGER.error("Select walk invite invitee error, the selected walk invite invitee is null");
 					}
@@ -239,8 +267,10 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 		private static final int MILLISECONDS_PER_SECOND = 1000;
 
 		// timestamp long and short date format
+		@SuppressLint("SimpleDateFormat")
 		private static final SimpleDateFormat TIMESTAMP_LONG_DATEFORMAT = new SimpleDateFormat(
 				"yy-MM-dd HH:mm");
+		@SuppressLint("SimpleDateFormat")
 		private static final SimpleDateFormat TIMESTAMP_SHORT_DATEFORMAT = new SimpleDateFormat(
 				"HH:mm");
 

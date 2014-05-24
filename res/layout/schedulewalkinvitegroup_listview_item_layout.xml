@@ -28,7 +28,7 @@
             android:layout_weight="1" >
 
             <TextView
-                android:id="@+id/swigi_walkInviteGroup_topic_textView"
+                android:id="@+id/swigi_walkInviteGroupTopic_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -36,7 +36,7 @@
                 android:ellipsize="end"
                 android:minWidth="220dp"
                 android:singleLine="true"
-                android:textColor="@color/dark_gray"
+                android:textColor="@color/gray"
                 android:textSize="15sp" />
 
             <TextView
@@ -44,11 +44,12 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="4dp"
-                android:layout_toLeftOf="@id/swigi_walkInviteGroup_topic_textView"
+                android:layout_toLeftOf="@id/swigi_walkInviteGroupTopic_textView"
                 android:ellipsize="middle"
                 android:gravity="center_vertical|right"
                 android:singleLine="true"
                 android:text="@string/scheduleWalkInviteGroup_topic_label"
+                android:textColor="@color/dark_gray"
                 android:textSize="17sp" />
         </RelativeLayout>
 
@@ -58,7 +59,7 @@
             android:layout_weight="1" >
 
             <TextView
-                android:id="@+id/swigi_walkInviteGroup_scheduleTime_textView"
+                android:id="@+id/swigi_walkInviteGroupScheduleTime_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -66,7 +67,7 @@
                 android:ellipsize="end"
                 android:minWidth="220dp"
                 android:singleLine="true"
-                android:textColor="@color/dark_gray"
+                android:textColor="@color/gray"
                 android:textSize="15sp" />
 
             <TextView
@@ -74,11 +75,12 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="4dp"
-                android:layout_toLeftOf="@id/swigi_walkInviteGroup_scheduleTime_textView"
+                android:layout_toLeftOf="@id/swigi_walkInviteGroupScheduleTime_textView"
                 android:ellipsize="middle"
                 android:gravity="center_vertical|right"
                 android:singleLine="true"
                 android:text="@string/scheduleWalkInviteGroup_scheduleTime_label"
+                android:textColor="@color/dark_gray"
                 android:textSize="17sp" />
         </RelativeLayout>
 
@@ -88,7 +90,7 @@
             android:layout_weight="1" >
 
             <TextView
-                android:id="@+id/swigi_walkInviteGroup_status_textView"
+                android:id="@+id/swigi_walkInviteGroupStatus_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -96,7 +98,7 @@
                 android:ellipsize="end"
                 android:minWidth="220dp"
                 android:singleLine="true"
-                android:textColor="@color/dark_gray"
+                android:textColor="@color/gray"
                 android:textSize="15sp" />
 
             <TextView
@@ -104,11 +106,12 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="4dp"
-                android:layout_toLeftOf="@id/swigi_walkInviteGroup_status_textView"
+                android:layout_toLeftOf="@id/swigi_walkInviteGroupStatus_textView"
                 android:ellipsize="middle"
                 android:gravity="center_vertical|right"
                 android:singleLine="true"
                 android:text="@string/scheduleWalkInviteGroup_status_label"
+                android:textColor="@color/dark_gray"
                 android:textSize="17sp" />
         </RelativeLayout>
     </LinearLayout>

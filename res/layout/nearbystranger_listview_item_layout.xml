@@ -6,7 +6,7 @@
     android:padding="8dp" >
 
     <ImageView
-        android:id="@+id/nsi_item_strangerAvatar_imageView"
+        android:id="@+id/nsi_strangerAvatar_imageView"
         android:layout_width="44dp"
         android:layout_height="44dp"
         android:layout_alignParentLeft="true"
@@ -32,10 +32,10 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_toLeftOf="@id/nsi_item_indicator_imageView"
-        android:layout_toRightOf="@id/nsi_item_strangerAvatar_imageView" >
+        android:layout_toRightOf="@id/nsi_strangerAvatar_imageView" >
 
         <FrameLayout
-            android:id="@+id/nsi_item_strangerMood_frameLayout"
+            android:id="@+id/nsi_strangerMood_frameLayout"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
@@ -44,7 +44,7 @@
             android:minWidth="80dp" >
 
             <TextView
-                android:id="@+id/nsi_item_strangerMood_textView"
+                android:id="@+id/nsi_strangerMood_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|right"
@@ -58,7 +58,7 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_toLeftOf="@id/nsi_item_strangerMood_frameLayout"
+            android:layout_toLeftOf="@id/nsi_strangerMood_frameLayout"
             android:orientation="vertical" >
 
             <RelativeLayout
@@ -67,7 +67,7 @@
                 android:layout_weight="3" >
 
                 <TextView
-                    android:id="@+id/nsi_item_strangerNickname_textView"
+                    android:id="@+id/nsi_strangerNickname_textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -76,12 +76,12 @@
                     android:textSize="18sp" />
 
                 <ImageView
-                    android:id="@+id/nsi_item_strangerGender_imageView"
+                    android:id="@+id/nsi_strangerGender_imageView"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="4dp"
-                    android:layout_toRightOf="@id/nsi_item_strangerNickname_textView"
+                    android:layout_toRightOf="@id/nsi_strangerNickname_textView"
                     android:contentDescription="@string/nearbyStrangerItem_strangerGender_imageView_contentDescription"
                     android:scaleType="centerCrop" />
             </RelativeLayout>
@@ -92,7 +92,7 @@
                 android:layout_weight="5" >
 
                 <TextView
-                    android:id="@+id/nsi_item_strangerDistance_textView"
+                    android:id="@+id/nsi_strangerDistance_textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -105,12 +105,12 @@
                     android:textSize="14sp" />
 
                 <TextView
-                    android:id="@+id/nsi_item_strangerPatCount_textView"
+                    android:id="@+id/nsi_strangerPatCount_textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="4dp"
-                    android:layout_toRightOf="@id/nsi_item_strangerDistance_textView"
+                    android:layout_toRightOf="@id/nsi_strangerDistance_textView"
                     android:drawableStart="@drawable/img_stranger_pat"
                     android:ellipsize="end"
                     android:gravity="center_vertical"
@@ -118,7 +118,7 @@
                     android:shadowDy="1"
                     android:shadowRadius="1"
                     android:singleLine="true"
-                    android:textColor="@color/gray"
+                    android:textColor="@color/dark_gray"
                     android:textSize="14sp" />
             </RelativeLayout>
         </LinearLayout>

@@ -59,8 +59,17 @@
     <string name="title_activity_schedule_walkInvite_groups" translatable="false">ScheduleWalkInviteGroupsActivity</string>
     <string name="scheduleWalkInviteGroups_activity_title">约走组</string>
 
-    <!-- group invite info editor activity -->
-    <string name="title_activity_groupInviteInfo_editor" translatable="false">GroupInviteInfoEditorActivity</string>
+    <!-- walk or within group compete invite info item -->
+    <string name="walkOrWithinGroupCompete_inviteInfo_label_suffix">：</string>
+    <string name="walkOrWithinGroupCompete_inviteInfoItem_indicator_imageView_contentDescription" translatable="false">this is walk or within group compete invite info item setting imageView</string>
+    <string name="walkOrWithinGroupCompete_inviteInfo_topic_label">约走主题：</string>
+    <string name="walkOrWithinGroupCompete_inviteInfo_topic_textView_hint"></string>
+    <string name="walkOrWithinGroupCompete_inviteInfo_scheduleTime_label">约走时间：</string>
+    <string name="walkOrWithinGroupCompete_inviteInfo_scheduleTime_textView_hint"></string>
+
+    <!-- group invite info item editor activity -->
+    <string name="title_activity_groupInviteInfo_item_editor" translatable="false">GroupInviteInfoItemEditorActivity</string>
+    <string name="save_editorGroupInviteInfo_barbtnitem_title">保存</string>
 
     <!-- schedule walk invite group item -->
     <string name="scheduleWalkInviteGroupItem_indicator_imageView_contentDescription" translatable="false">this is schedule walk invite group item setting imageView</string>
@@ -77,6 +86,9 @@
     <!-- walk invite info setting activity -->
     <string name="title_activity_walkInviteInfo_setting" translatable="false">WalkInviteInfoSettingActivity</string>
     <string name="walkInviteInfoSetting_activity_title">安排约走</string>
+    <string name="walkInvite_attendeeAvatar_imageView_contentDescription" translatable="false">this is walk invite attendee avatar imageView</string>
+    <string name="walkInvite_inviterNickname">我</string>
+    <string name="walkInvite_attendeePK_imageView_contentDescription" translatable="false">this is walk invite attendee pk imageView</string>
 
     <!-- walk invite invitee select item -->
     <string name="walkInviteInviteeSelectItem_friendAvatar_imageView_contentDescription" translatable="false">this is walk invite invitee select item user friend avatar imageView</string>

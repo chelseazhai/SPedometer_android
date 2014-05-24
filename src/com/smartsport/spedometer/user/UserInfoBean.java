@@ -52,6 +52,10 @@ public class UserInfoBean implements Serializable {
 
 		// initialize context
 		context = SSApplication.getContext();
+
+		// set user age, height and weight illegal value
+		age = Integer.MIN_VALUE;
+		height = weight = Float.MIN_EXPONENT;
 	}
 
 	/**

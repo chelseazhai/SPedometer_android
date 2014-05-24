@@ -52,8 +52,8 @@
             android:theme="@style/AppBaseActivityTheme" >
         </activity>
         <activity
-            android:name=".group.GroupInviteInfoEditorActivity"
-            android:label="@string/title_activity_groupInviteInfo_editor"
+            android:name=".group.GroupInviteInfoItemEditorActivity"
+            android:label="@string/title_activity_groupInviteInfo_item_editor"
             android:screenOrientation="portrait"
             android:theme="@style/AppBaseActivityTheme" >
         </activity>

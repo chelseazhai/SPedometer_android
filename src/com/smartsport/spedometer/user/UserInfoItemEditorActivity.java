@@ -170,11 +170,20 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 
 				// check editor age value and set the user input value if needed
 				if (null != editorInfoValue) {
-					// get user input value
-					int _userInputValue = Integer.parseInt(editorInfoValue);
+					// define user input value, using the default min value
+					int _userInputValue = ageNumberPicker.getMinValue();
 
-					// set age numberPicker value
-					ageNumberPicker.setValue(_userInputValue);
+					try {
+						// get user input value
+						_userInputValue = Integer.parseInt(editorInfoValue);
+
+						// set age numberPicker value
+						ageNumberPicker.setValue(_userInputValue);
+					} catch (NumberFormatException e) {
+						LOGGER.warning("Show user age info error, because it is not set");
+
+						e.printStackTrace();
+					}
 
 					// perform age picker on value changed listener on value
 					// change method
@@ -281,7 +290,7 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 
 		@Override
 		public void onClick(View v) {
-			// define user gender editor extra data map
+			// define user info editor extra data map
 			Map<String, Object> _extraMap = new HashMap<String, Object>();
 
 			// put editor user info attribute to extra data map as param

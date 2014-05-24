@@ -1,0 +1,104 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="20dp"
+    android:paddingTop="20dp"
+    tools:context=".group.walk.WalkInviteInfoSettingActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <LinearLayout
+        android:id="@+id/wiis_attendees_linearLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5" >
+
+            <ImageView
+                android:id="@+id/wiis_inviterAvatar_imageView"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/walkinvite_attendee_avatar_imageview_bg"
+                android:contentDescription="@string/walkInvite_attendeeAvatar_imageView_contentDescription"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_default_large_avatar" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/wiis_inviterAvatar_imageView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:ellipsize="middle"
+                android:shadowColor="@android:color/white"
+                android:shadowDx="0.6"
+                android:shadowDy="0.8"
+                android:shadowRadius="1"
+                android:singleLine="true"
+                android:text="@string/walkInvite_inviterNickname"
+                android:textColor="@color/dark_gray"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="6"
+            android:contentDescription="@string/walkInvite_attendeePK_imageView_contentDescription"
+            android:scaleType="centerInside"
+            android:src="@drawable/img_walkinvite_attendeepk" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5" >
+
+            <ImageView
+                android:id="@+id/wiis_inviteeAvatar_imageView"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/walkinvite_attendee_avatar_imageview_bg"
+                android:contentDescription="@string/walkInvite_attendeeAvatar_imageView_contentDescription"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_default_large_avatar" />
+
+            <TextView
+                android:id="@+id/wiis_inviteeNickname_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/wiis_inviteeAvatar_imageView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:ellipsize="middle"
+                android:shadowColor="@android:color/white"
+                android:shadowDx="0.6"
+                android:shadowDy="0.8"
+                android:shadowRadius="1"
+                android:singleLine="true"
+                android:textSize="18sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/wiis_walkInviteInfo_listView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/wiis_attendees_linearLayout"
+        android:layout_marginTop="40dp"
+        android:cacheColorHint="@android:color/transparent"
+        android:fadingEdge="none"
+        android:listSelector="@android:color/transparent"
+        android:scrollbars="none" >
+    </ListView>
+
+</RelativeLayout>
