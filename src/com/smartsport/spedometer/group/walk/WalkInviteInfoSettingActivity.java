@@ -3,6 +3,10 @@
  */
 package com.smartsport.spedometer.group.walk;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,8 +20,12 @@ import android.widget.TextView;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
+import com.smartsport.spedometer.group.GroupInviteInfoAttr4Setting;
+import com.smartsport.spedometer.group.GroupInviteInfoItemEditorActivity;
+import com.smartsport.spedometer.group.GroupInviteInfoItemEditorActivity.GroupInviteInfoItemEditorExtraData;
 import com.smartsport.spedometer.group.GroupInviteInfoListViewAdapter;
 import com.smartsport.spedometer.group.GroupInviteInfoListViewAdapter.GroupInviteInfo4SettingListViewAdapterKey;
+import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.user.UserInfoBean;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -36,6 +44,9 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 
 	// the selected walk invite invitee bean
 	private UserInfoBean selectedWalkInviteInvitee;
+
+	// walk invite info listView adapter
+	private GroupInviteInfoListViewAdapter walkInviteInfoListViewAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -90,11 +101,10 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 
 		// set its adapter
 		_walkInviteInfoListView
-				.setAdapter(new GroupInviteInfoListViewAdapter(
+				.setAdapter(walkInviteInfoListViewAdapter = new GroupInviteInfoListViewAdapter(
 						this,
-						getResources()
-								.getStringArray(
-										R.array.walkOrWithinGroupCompete_inviteInfo4Setting_labels),
+						getResources().getStringArray(
+								R.array.walk_inviteInfo4Setting_labels),
 						R.layout.group_inviteinfo_listview_item_layout,
 						new String[] {
 								GroupInviteInfo4SettingListViewAdapterKey.GROUPINVITEINFO_LABEL_KEY
@@ -142,6 +152,40 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 	}
 
 	/**
+	 * @name WIISInviteInfoEditorOnActivityResult
+	 * @descriptor walk invite info setting invite info editor on activity
+	 *             result
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class WIISInviteInfoEditorOnActivityResult implements ISSBaseActivityResult {
+
+		@Override
+		public void onActivityResult(int resultCode, Intent data) {
+			// check the result code
+			if (RESULT_OK == resultCode) {
+				// get and check the extra data
+				Bundle _extraData = data.getExtras();
+				if (null != _extraData) {
+					// get and check editor walk invite info attribute and value
+					GroupInviteInfoAttr4Setting _editorAttr = (GroupInviteInfoAttr4Setting) _extraData
+							.getSerializable(WalkInviteInfoSettingExtraData.WIIS_EI_ATTRIBUTE);
+					String _editorValue = _extraData
+							.getString(WalkInviteInfoSettingExtraData.WIIS_EI_VALUE);
+
+					LOGGER.info("@@, _editorAttr = " + _editorAttr
+							+ " and _editorValue = " + _editorValue);
+
+					// update editor walk invite info value
+					walkInviteInfoListViewAdapter.setData(_editorAttr,
+							_editorValue);
+				}
+			}
+		}
+
+	}
+
+	/**
 	 * @name SendWalkInviteInfoBarBtnItemOnClickListener
 	 * @descriptor send walk invite info bar button item on click listener
 	 * @author Ares
@@ -170,10 +214,24 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			LOGGER.debug("WalkInviteInfoOnItemClickListener, onItemClick");
+			// define walk invite info item editor extra data map
+			Map<String, Object> _extraMap = new HashMap<String, Object>();
 
-			//
+			// put editor walk invite info attribute, name and info to extra
+			// data map as param
+			_extraMap.put(GroupInviteInfoItemEditorExtraData.GII_EI_ATTRIBUTE,
+					walkInviteInfoListViewAdapter.getItemAttribute(position));
+			_extraMap.put(GroupInviteInfoItemEditorExtraData.GII_EI_NAME,
+					walkInviteInfoListViewAdapter.getItemLabel(position));
+			_extraMap.put(GroupInviteInfoItemEditorExtraData.GII_EI_VALUE,
+					walkInviteInfoListViewAdapter.getItemValue(position));
 
+			// go to group invite info item editor activity with extra data map
+			pushActivityForResult(
+					GroupInviteInfoItemEditorActivity.class,
+					_extraMap,
+					WalkInviteInfoSettingRequestCode.WIIS_WALKINVITEINFOITEM_EDITOR_REQCODE,
+					new WIISInviteInfoEditorOnActivityResult());
 		}
 
 	}

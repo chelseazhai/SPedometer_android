@@ -62,10 +62,7 @@
     <!-- walk or within group compete invite info item -->
     <string name="walkOrWithinGroupCompete_inviteInfo_label_suffix">：</string>
     <string name="walkOrWithinGroupCompete_inviteInfoItem_indicator_imageView_contentDescription" translatable="false">this is walk or within group compete invite info item setting imageView</string>
-    <string name="walkOrWithinGroupCompete_inviteInfo_topic_label">约走主题：</string>
-    <string name="walkOrWithinGroupCompete_inviteInfo_topic_textView_hint"></string>
-    <string name="walkOrWithinGroupCompete_inviteInfo_scheduleTime_label">约走时间：</string>
-    <string name="walkOrWithinGroupCompete_inviteInfo_scheduleTime_textView_hint"></string>
+    <string name="walkOrWithinGroupCompete_inviteInfo_topic_textView_hint">邀请好友一起走走吧&#8230;</string>
 
     <!-- group invite info item editor activity -->
     <string name="title_activity_groupInviteInfo_item_editor" translatable="false">GroupInviteInfoItemEditorActivity</string>
@@ -83,6 +80,9 @@
     <string name="cancel_selectWalkInviteInvitee_barbtnitem_title">取消</string>
     <string name="walkInviteInviteeSelect_activity_title">选择约走对象</string>
 
+    <!-- walk invite invitee select item -->
+    <string name="walkInviteInviteeSelectItem_friendAvatar_imageView_contentDescription" translatable="false">this is walk invite invitee select item user friend avatar imageView</string>
+
     <!-- walk invite info setting activity -->
     <string name="title_activity_walkInviteInfo_setting" translatable="false">WalkInviteInfoSettingActivity</string>
     <string name="walkInviteInfoSetting_activity_title">安排约走</string>
@@ -90,8 +90,20 @@
     <string name="walkInvite_inviterNickname">我</string>
     <string name="walkInvite_attendeePK_imageView_contentDescription" translatable="false">this is walk invite attendee pk imageView</string>
 
-    <!-- walk invite invitee select item -->
-    <string name="walkInviteInviteeSelectItem_friendAvatar_imageView_contentDescription" translatable="false">this is walk invite invitee select item user friend avatar imageView</string>
+    <!-- walk invite info item -->
+    <string name="walk_inviteInfo_topic_label">约走主题：</string>
+    <string name="walk_inviteInfo_scheduleTime_label">约走时间：</string>
+    <string name="walk_inviteInfo_scheduleTime_textView_hint">给好友一个邀约走走的时间吧!</string>
+    <string name="walk_inviteInfo_scheduleTime_beginTimeDuration_splitWord" translatable="false">||</string>
+
+    <!-- within group compete invite info setting activity -->
+
+
+    <!-- within group compete invite info item -->
+    <string name="withinGroupCompete_inviteInfo_topic_label">组内竞赛主题：</string>
+    <string name="withinGroupCompete_inviteInfo_durationTime_label">组内竞赛时长：</string>
+    <string name="withinGroupCompete_inviteInfo_durationTime_unit">分钟</string>
+    <string name="withinGroupCompete_inviteInfo_durationTime_textView_hint">给竞赛一个时长吧，不要太累哦!</string>
 
     <!-- nearby strangers activity -->
     <string name="title_activity_nearby_strangers" translatable="false">NearbyStrangersActivity</string>

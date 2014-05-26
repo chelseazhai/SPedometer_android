@@ -3,6 +3,8 @@
  */
 package com.smartsport.spedometer.utils;
 
+import java.util.Vector;
+
 /**
  * @name StringUtils
  * @descriptor string utils
@@ -105,6 +107,55 @@ public class StringUtils {
 
 		return (String) (null != _strippedStringBuilder ? _strippedStringBuilder
 				.toString() : _strippedStringBuilder);
+	}
+
+	/**
+	 * @title split
+	 * @descriptor split the string with the given split word
+	 * @param string
+	 *            : the string will be splitted
+	 * @param splitWord
+	 *            : the split word
+	 * @return the splitted string array
+	 * @author Ares
+	 */
+	public static String[] split(String string, String splitWord) {
+		// define return string array
+		String[] _ret = null;
+
+		// define sentences vector
+		Vector<String> _sentences = new Vector<String>();
+
+		// append split word to end for splitting if not ended with it
+		if (!string.endsWith(splitWord)) {
+			string += splitWord;
+		}
+
+		// process not null or empty string
+		if (null != string && !string.equals("")) {
+			for (int i = 0, j = 0;;) {
+				i = string.indexOf(splitWord, j);
+
+				if (i >= 0 && i > j) {
+					_sentences.addElement(string.substring(j, i));
+				}
+
+				if (i < 0 || i == (string.length() - splitWord.length())) {
+					break;
+				}
+
+				j = i + splitWord.length();
+			}
+
+		}
+
+		// reset return result
+		if (_sentences.size() > 0) {
+			_ret = new String[_sentences.size()];
+			_sentences.copyInto(_ret);
+		}
+
+		return _ret;
 	}
 
 }

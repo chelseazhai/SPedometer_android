@@ -3,6 +3,7 @@
  */
 package com.smartsport.spedometer.group;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -14,12 +15,21 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.DatePicker;
+import android.widget.DatePicker.OnDateChangedListener;
+import android.widget.EditText;
+import android.widget.NumberPicker;
+import android.widget.NumberPicker.OnValueChangeListener;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.TimePicker.OnTimeChangedListener;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
 import com.smartsport.spedometer.group.walk.WalkInviteInfoSettingActivity.WalkInviteInfoSettingExtraData;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.utils.SSLogger;
+import com.smartsport.spedometer.utils.StringUtils;
 
 /**
  * @name GroupInviteInfoItemEditorActivity
@@ -41,10 +51,23 @@ public class GroupInviteInfoItemEditorActivity extends SSBaseActivity {
 	private Timer SHOW_SOFTINPUT_TIMER = new Timer();
 	private TimerTask showSoftInputTimerTask;
 
+	// calendar
+	private final Calendar CALENDAR = Calendar.getInstance();
+
 	// group invite info attribute, editor info name and value
 	private GroupInviteInfoAttr4Setting editorAttr;
 	private String editorInfoName;
 	private String editorInfoValue;
+
+	// group invite info topic edittext, walk schedule time datePicker,
+	// timePicker, duration numberPicker, within group compete duration time
+	// numberPicker and selected time display textView
+	private EditText topicEditText;
+	private DatePicker walkScheduleTimeDatePicker;
+	private TimePicker walkScheduleTimeTimePicker;
+	private NumberPicker walkScheduleTimeDurationNumberPicker;
+	private NumberPicker withinGroupCompeteDurationTimeNumberPicker;
+	private TextView selectedTimeDisplayTextView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +110,327 @@ public class GroupInviteInfoItemEditorActivity extends SSBaseActivity {
 		setTitleSize(22.0f);
 		setShadow(1.0f, 0.6f, 0.8f, Color.GRAY);
 
+		// check editor group invite info attribute and get the editor operator
+		// widget
+		if (null != editorAttr) {
+			// check editor group invite info attribute again
+			if (GroupInviteInfoAttr4Setting.GROUP_TOPIC != editorAttr) {
+				// get group invite info time picker selected time display
+				// textView
+				selectedTimeDisplayTextView = (TextView) findViewById(R.id.giiie_selectedTime_display_textView);
+
+				// show group invite info time picker relativeLayout
+				findViewById(R.id.giiie_timePicker_relativeLayout)
+						.setVisibility(View.VISIBLE);
+			}
+
+			switch (editorAttr) {
+			case GROUP_TOPIC:
+				// get group invite info topic edittext
+				topicEditText = (EditText) findViewById(R.id.giiie_topic_editText);
+
+				// check editor group invite info topic value and set it as its
+				// text
+				if (null != editorInfoValue) {
+					topicEditText.setText(editorInfoValue);
+				}
+
+				// set its visible
+				topicEditText.setVisibility(View.VISIBLE);
+				break;
+
+			case WALKINVITE_SCHEDULETIME:
+				// get walk invite info schedule time datePicker
+				walkScheduleTimeDatePicker = (DatePicker) findViewById(R.id.giiie_walk_scheduleTime_datePicker);
+
+				// set the walk invite info schedule time datePicker descendant
+				// focusability
+				walkScheduleTimeDatePicker
+						.setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
+
+				// initialize it
+				walkScheduleTimeDatePicker
+						.init(CALENDAR.get(Calendar.YEAR),
+								CALENDAR.get(Calendar.MONTH),
+								CALENDAR.get(Calendar.DAY_OF_MONTH),
+								new WalkInviteScheduleTimeDatePickerOnDateChangedListener());
+
+				// get walk invite info schedule time timePicker
+				walkScheduleTimeTimePicker = (TimePicker) findViewById(R.id.giiie_walk_scheduleTime_timePicker);
+
+				// set the walk invite info schedule time timePicker descendant
+				// focusability
+				walkScheduleTimeTimePicker
+						.setDescendantFocusability(TimePicker.FOCUS_BLOCK_DESCENDANTS);
+
+				// set its as 24 hour view
+				walkScheduleTimeTimePicker.setIs24HourView(true);
+
+				// set current hour and minute
+				walkScheduleTimeTimePicker.setCurrentHour(CALENDAR
+						.get(Calendar.HOUR_OF_DAY));
+				walkScheduleTimeTimePicker.setCurrentMinute(CALENDAR
+						.get(Calendar.MINUTE));
+
+				// set its on time changed listener
+				walkScheduleTimeTimePicker
+						.setOnTimeChangedListener(new WalkInviteScheduleTimeTimePickerOnTimeChangedListener());
+
+				// get walk invite info schedule time duration numberPicker
+				walkScheduleTimeDurationNumberPicker = (NumberPicker) findViewById(R.id.giiie_walk_scheduleTime_duration_numberPicker);
+
+				// set the walk invite info schedule time duration numberPicker
+				// descendant focusability
+				walkScheduleTimeDurationNumberPicker
+						.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+
+				// set its min and max value
+				walkScheduleTimeDurationNumberPicker.setMinValue(1);
+				walkScheduleTimeDurationNumberPicker.setMaxValue(120);
+
+				// define walk invite info schedule time duration numberPicker
+				// on value changed listener
+				WalkInviteScheduleTimeDurationNumberPickerOnValueChangeListener _scheduleTimeDurationNumberPickerOnValueChangeListener = new WalkInviteScheduleTimeDurationNumberPickerOnValueChangeListener();
+
+				// set its on value changed listener
+				walkScheduleTimeDurationNumberPicker
+						.setOnValueChangedListener(_scheduleTimeDurationNumberPickerOnValueChangeListener);
+
+				// check editor walk invite schedule time and set the user input
+				// value if needed
+				if (null != editorInfoValue) {
+					// define user input walk invite schedule time duration
+					// value, using the default min value
+					int _userInputWalkInviteScheduleTimeDurationValue = walkScheduleTimeDurationNumberPicker
+							.getMinValue();
+
+					// split the editor walk invite schedule time and check
+					String[] _scheduleTimes = StringUtils
+							.split(editorInfoValue,
+									getString(R.string.walk_inviteInfo_scheduleTime_beginTimeDuration_splitWord));
+					if (null != _scheduleTimes && 2 == _scheduleTimes.length) {
+						try {
+							// get user input walk invite schedule time begin
+							// timestamp value
+							long _userInputWalkInviteScheduleTimeBeginTimestampValue = Long
+									.parseLong(_scheduleTimes[0]);
+
+							// define and initialize walk invite schedule time
+							// begin timestamp calendar
+							Calendar _beginTimeCalendar = Calendar
+									.getInstance();
+							_beginTimeCalendar
+									.setTimeInMillis(_userInputWalkInviteScheduleTimeBeginTimestampValue);
+
+							// update walk invite schedule time datePicker date
+							walkScheduleTimeDatePicker.updateDate(
+									_beginTimeCalendar.get(Calendar.YEAR),
+									_beginTimeCalendar.get(Calendar.MONTH),
+									_beginTimeCalendar
+											.get(Calendar.DAY_OF_MONTH));
+
+							// update walk invite schedule time timePicker time
+							walkScheduleTimeTimePicker
+									.setCurrentHour(_beginTimeCalendar
+											.get(Calendar.HOUR_OF_DAY));
+							walkScheduleTimeTimePicker
+									.setCurrentMinute(_beginTimeCalendar
+											.get(Calendar.MINUTE));
+
+							// get user input walk invite schedule time duration
+							// value
+							_userInputWalkInviteScheduleTimeDurationValue = Integer
+									.parseInt(_scheduleTimes[_scheduleTimes.length - 1]);
+
+							// set walk invite schedule time duration
+							// numberPicker
+							// value
+							walkScheduleTimeDurationNumberPicker
+									.setValue(_userInputWalkInviteScheduleTimeDurationValue);
+						} catch (NumberFormatException e) {
+							LOGGER.warning("Show walk invite schedule time error, because it is not set");
+
+							e.printStackTrace();
+						}
+					} else {
+						//
+					}
+
+					// perform walk invite schedule time duration numberPicker
+					// on value changed listener on value change method
+					_scheduleTimeDurationNumberPickerOnValueChangeListener
+							.onValueChange(
+									walkScheduleTimeDurationNumberPicker,
+									walkScheduleTimeDurationNumberPicker
+											.getMinValue(),
+									_userInputWalkInviteScheduleTimeDurationValue);
+				}
+
+				// show walk invite info schedule time picker linearLayout
+				findViewById(R.id.giiie_walk_scheduleTimePicker_linearLayout)
+						.setVisibility(View.VISIBLE);
+				break;
+
+			case WITHINGROUPCOMPETE_DURATIONTIME:
+				// get within group compete invite info duration time
+				// numberPicker
+				withinGroupCompeteDurationTimeNumberPicker = (NumberPicker) findViewById(R.id.giiie_withinGroupCompete_durationTime_numberPicker);
+
+				// set the within group compete invite info duration time
+				// numberPicker descendant focusability
+				withinGroupCompeteDurationTimeNumberPicker
+						.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+
+				// set its min and max value
+				withinGroupCompeteDurationTimeNumberPicker.setMinValue(5);
+				withinGroupCompeteDurationTimeNumberPicker.setMaxValue(30);
+
+				// define within group compete invite info duration time
+				// numberPicker on value changed listener
+				WithinGroupCompeteInviteDurationTimeNumberPickerOnValueChangeListener _durationTimeNumberPickerOnValueChangeListener = new WithinGroupCompeteInviteDurationTimeNumberPickerOnValueChangeListener();
+
+				// set its on value changed listener
+				withinGroupCompeteDurationTimeNumberPicker
+						.setOnValueChangedListener(_durationTimeNumberPickerOnValueChangeListener);
+
+				// check editor within group compete invite duration time and
+				// set the user input value if needed
+				if (null != editorInfoValue) {
+					// define user input value, using the default min value
+					int _userInputValue = withinGroupCompeteDurationTimeNumberPicker
+							.getMinValue();
+
+					try {
+						// get user input value
+						_userInputValue = Integer.parseInt(editorInfoValue);
+
+						// set within group compete invite duration time
+						// numberPicker value
+						withinGroupCompeteDurationTimeNumberPicker
+								.setValue(_userInputValue);
+					} catch (NumberFormatException e) {
+						LOGGER.warning("Show within group compete invite duration time error, because it is not set");
+
+						e.printStackTrace();
+					}
+
+					// perform within group compete invite duration time
+					// numberPicker on value changed listener on value change
+					// method
+					_durationTimeNumberPickerOnValueChangeListener
+							.onValueChange(
+									withinGroupCompeteDurationTimeNumberPicker,
+									withinGroupCompeteDurationTimeNumberPicker
+											.getMinValue(), _userInputValue);
+				}
+
+				// set its visible
+				withinGroupCompeteDurationTimeNumberPicker
+						.setVisibility(View.VISIBLE);
+				break;
+
+			default:
+				// nothing to do
+				LOGGER.warning("Group invite info attribute = " + editorAttr
+						+ " for editor not implementation now");
+				break;
+			}
+		} else {
+			LOGGER.error("Edit group invite info error, the editor group invite info type is null");
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		// check editor group invite info attribute
+		if (GroupInviteInfoAttr4Setting.GROUP_TOPIC == editorAttr) {
+			// set editor group topic editText focusable
+			topicEditText.setFocusable(true);
+			topicEditText.setFocusableInTouchMode(true);
+			topicEditText.requestFocus();
+
+			// show soft input after 250 milliseconds
+			SHOW_SOFTINPUT_TIMER.schedule(
+					showSoftInputTimerTask = new TimerTask() {
+
+						@Override
+						public void run() {
+							inputMethodManager.showSoftInput(topicEditText, 0);
+						}
+
+					}, 250);
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+
+		// check and cancel show soft input timer task
+		if (null != showSoftInputTimerTask) {
+			showSoftInputTimerTask.cancel();
+
+			showSoftInputTimerTask = null;
+		}
+	}
+
+	/**
+	 * @title getWalkInviteScheduleTimeBeginTimestamp
+	 * @descriptor get walk invite schedule time begin timestamp with date and
+	 *             time picker
+	 * @param scheduleTimeDatePicker
+	 *            : walk invite schedule time datePicker
+	 * @param scheduleTimeTimePicker
+	 *            : walk invite schedule time timePicker
+	 * @return walk invite schedule time begin timestamp
+	 * @author Ares
+	 */
+	private long getWalkInviteScheduleTimeBeginTimestamp(
+			DatePicker scheduleTimeDatePicker, TimePicker scheduleTimeTimePicker) {
+		Calendar _beginTimeCalendar = Calendar.getInstance();
+		_beginTimeCalendar.setTimeInMillis(0);
+
+		// check walk invite schedule time date and time picker
+		if (null != scheduleTimeDatePicker && null != scheduleTimeTimePicker) {
+			// set walk invite schedule time begin time date and time
+			_beginTimeCalendar.set(scheduleTimeDatePicker.getYear(),
+					scheduleTimeDatePicker.getMonth(),
+					scheduleTimeDatePicker.getDayOfMonth(),
+					scheduleTimeTimePicker.getCurrentHour(),
+					scheduleTimeTimePicker.getCurrentMinute());
+		} else {
+			LOGGER.error("Get walk invite schedule time begin timestamp error, schedule time datePicker = "
+					+ scheduleTimeDatePicker
+					+ " and timePicker = "
+					+ scheduleTimeTimePicker);
+		}
+
+		return _beginTimeCalendar.getTimeInMillis();
+	}
+
+	/**
+	 * @title getWalkInviteScheduleTimeFormat
+	 * @descriptor get walk invite schedule time with begin timestamp and
+	 *             duration
+	 * @param scheduleTimeBeginTimestamp
+	 *            : walk invite schedule time begin timestamp
+	 * @param scheduleTimeDuration
+	 *            : walk invite schedule time duration
+	 * @return walk invite schedule time format
+	 * @author Ares
+	 */
+	private String getWalkInviteScheduleTimeFormat(
+			long scheduleTimeBeginTimestamp, int scheduleTimeDuration) {
+		StringBuilder _walkInviteScheduleTimeFormat = new StringBuilder();
+
 		//
+		_walkInviteScheduleTimeFormat.append(scheduleTimeBeginTimestamp);
+		_walkInviteScheduleTimeFormat.append("***");
+		_walkInviteScheduleTimeFormat.append(scheduleTimeDuration);
+
+		return _walkInviteScheduleTimeFormat.toString();
 	}
 
 	// inner class
@@ -130,22 +473,123 @@ public class GroupInviteInfoItemEditorActivity extends SSBaseActivity {
 			switch (editorAttr) {
 			case GROUP_TOPIC:
 				// group invite topic
-				_extraMap.put(WalkInviteInfoSettingExtraData.WIIS_EI_VALUE, "");
+				_extraMap.put(WalkInviteInfoSettingExtraData.WIIS_EI_VALUE,
+						topicEditText.getText().toString());
 				break;
 
 			case WALKINVITE_SCHEDULETIME:
 				// walk invite schedule time(schedule begin and end time)
-				_extraMap.put(WalkInviteInfoSettingExtraData.WIIS_EI_VALUE, "");
+				_extraMap
+						.put(WalkInviteInfoSettingExtraData.WIIS_EI_VALUE,
+								new StringBuilder()
+										.append(getWalkInviteScheduleTimeBeginTimestamp(
+												walkScheduleTimeDatePicker,
+												walkScheduleTimeTimePicker))
+										.append(getString(R.string.walk_inviteInfo_scheduleTime_beginTimeDuration_splitWord))
+										.append(walkScheduleTimeDurationNumberPicker
+												.getValue()).toString());
 				break;
 
 			case WITHINGROUPCOMPETE_DURATIONTIME:
 				// within group compete duration time
-				_extraMap.put(WalkInviteInfoSettingExtraData.WIIS_EI_VALUE, "");
+				_extraMap
+						.put(WalkInviteInfoSettingExtraData.WIIS_EI_VALUE,
+								String.valueOf(withinGroupCompeteDurationTimeNumberPicker
+										.getValue()));
 				break;
 			}
 
 			// pop the activity with result code and extra map
 			popActivityWithResult(RESULT_OK, _extraMap);
+		}
+
+	}
+
+	/**
+	 * @name WalkInviteScheduleTimeDatePickerOnDateChangedListener
+	 * @descriptor editor walk invite schedule time datePicker on date changed
+	 *             listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class WalkInviteScheduleTimeDatePickerOnDateChangedListener implements
+			OnDateChangedListener {
+
+		@Override
+		public void onDateChanged(DatePicker view, int year, int monthOfYear,
+				int dayOfMonth) {
+			// get walk invite schedule time and set it as user selected time
+			// display textView text
+			selectedTimeDisplayTextView
+					.setText(getWalkInviteScheduleTimeFormat(
+							getWalkInviteScheduleTimeBeginTimestamp(view,
+									walkScheduleTimeTimePicker),
+							walkScheduleTimeDurationNumberPicker.getValue()));
+		}
+
+	}
+
+	/**
+	 * @name WalkInviteScheduleTimeTimePickerOnTimeChangedListener
+	 * @descriptor editor walk invite schedule time timePicker on time changed
+	 *             listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class WalkInviteScheduleTimeTimePickerOnTimeChangedListener implements
+			OnTimeChangedListener {
+
+		@Override
+		public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+			// get walk invite schedule time and set it as user selected time
+			// display textView text
+			selectedTimeDisplayTextView
+					.setText(getWalkInviteScheduleTimeFormat(
+							getWalkInviteScheduleTimeBeginTimestamp(
+									walkScheduleTimeDatePicker, view),
+							walkScheduleTimeDurationNumberPicker.getValue()));
+		}
+
+	}
+
+	/**
+	 * @name WalkInviteScheduleTimeDurationNumberPickerOnValueChangeListener
+	 * @descriptor editor walk invite schedule time duration numberPicker on
+	 *             value changed listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class WalkInviteScheduleTimeDurationNumberPickerOnValueChangeListener
+			implements OnValueChangeListener {
+
+		@Override
+		public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+			// get walk invite schedule time and set it as user selected time
+			// display textView text
+			selectedTimeDisplayTextView
+					.setText(getWalkInviteScheduleTimeFormat(
+							getWalkInviteScheduleTimeBeginTimestamp(
+									walkScheduleTimeDatePicker,
+									walkScheduleTimeTimePicker), newVal));
+		}
+
+	}
+
+	/**
+	 * @name 
+	 *       WithinGroupCompeteInviteDurationTimeNumberPickerOnValueChangeListener
+	 * @descriptor editor within group compete invite duration time numberPicker
+	 *             on value changed listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class WithinGroupCompeteInviteDurationTimeNumberPickerOnValueChangeListener
+			implements OnValueChangeListener {
+
+		@Override
+		public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+			// TODO Auto-generated method stub
+
 		}
 
 	}

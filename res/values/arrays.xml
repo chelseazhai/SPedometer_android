@@ -18,10 +18,16 @@
         <item>@string/nearbyStrangers_moreOperationActionSheet_clearLocationInfo_operate_tip</item>
     </string-array>
 
-    <!-- walk or within group compete invite info for setting item label array -->
-    <string-array name="walkOrWithinGroupCompete_inviteInfo4Setting_labels" translatable="false">
-        <item>@string/walkOrWithinGroupCompete_inviteInfo_topic_label</item>
-        <item>@string/walkOrWithinGroupCompete_inviteInfo_scheduleTime_label</item>
+    <!-- walk invite info for setting item label array -->
+    <string-array name="walk_inviteInfo4Setting_labels" translatable="false">
+        <item>@string/walk_inviteInfo_topic_label</item>
+        <item>@string/walk_inviteInfo_scheduleTime_label</item>
+    </string-array>
+
+    <!-- within group compete invite info for setting item label array -->
+    <string-array name="withinGroupCompete_inviteInfo4Setting_labels" translatable="false">
+        <item>@string/withinGroupCompete_inviteInfo_topic_label</item>
+        <item>@string/withinGroupCompete_inviteInfo_durationTime_label</item>
     </string-array>
 
 </resources>

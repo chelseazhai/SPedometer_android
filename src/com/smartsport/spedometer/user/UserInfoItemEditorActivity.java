@@ -57,7 +57,8 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 	private String editorInfoValue;
 	private List<String> editorInfoValueSelectorContent;
 
-	// user info editor edittext
+	// user info editor edittext, age numberPicker, display textView and gender
+	// spinner listView
 	private EditText editorEditText;
 	private NumberPicker ageNumberPicker;
 	private TextView ageDisplayTextView;
@@ -153,6 +154,10 @@ public class UserInfoItemEditorActivity extends SSBaseActivity {
 			case USER_AGE:
 				// get user age numberPicker
 				ageNumberPicker = (NumberPicker) findViewById(R.id.uiie_age_numberPicker);
+
+				// set the user age numberPicker descendant focusability
+				ageNumberPicker
+						.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
 				// set its min and max value
 				ageNumberPicker.setMinValue(10);

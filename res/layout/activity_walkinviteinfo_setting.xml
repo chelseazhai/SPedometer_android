@@ -89,16 +89,34 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/wiis_walkInviteInfo_listView"
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/wiis_attendees_linearLayout"
         android:layout_marginTop="40dp"
-        android:cacheColorHint="@android:color/transparent"
-        android:fadingEdge="none"
-        android:listSelector="@android:color/transparent"
-        android:scrollbars="none" >
-    </ListView>
+        android:orientation="vertical" >
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_middle_gray" />
+
+        <ListView
+            android:id="@+id/wiis_walkInviteInfo_listView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@drawable/groupinviteinfo_listview_item_divider"
+            android:fadingEdge="none"
+            android:listSelector="@android:color/transparent"
+            android:scrollbars="none" >
+        </ListView>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_middle_gray" />
+    </LinearLayout>
 
 </RelativeLayout>
