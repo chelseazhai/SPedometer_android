@@ -1,0 +1,126 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".group.walk.WalkInviteWalkActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <com.amap.api.maps2d.MapView
+        android:id="@+id/wiw_inviter_walkPath_mapView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@color/half_black_transparent"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5" >
+
+            <ImageView
+                android:id="@+id/wiw_inviterAvatar_imageView"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerHorizontal="true"
+                android:contentDescription=""
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_default_middle_avatar" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/wiw_inviterAvatar_imageView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:ellipsize="middle"
+                android:shadowColor="@android:color/black"
+                android:shadowDx="0.6"
+                android:shadowDy="0.8"
+                android:shadowRadius="1"
+                android:singleLine="true"
+                android:text="@string/walkInvite_inviterNickname"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="6" >
+
+            <ImageView
+                android:id="@+id/wiw_walkInvite_attendeePK_imageView"
+                android:layout_width="fill_parent"
+                android:layout_height="60dp"
+                android:contentDescription=""
+                android:scaleType="centerInside"
+                android:src="@drawable/img_walkinvite_attendeepk" />
+
+            <TextView
+                android:id="@+id/wiw_walkStartRemainTime_or_walkDurationTime_textView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/wiw_walkInvite_attendeePK_imageView"
+                android:layout_marginTop="6dp"
+                android:ellipsize="marquee"
+                android:gravity="center_horizontal"
+                android:shadowColor="@android:color/white"
+                android:shadowDx="0.6"
+                android:shadowDy="0.8"
+                android:shadowRadius="1"
+                android:singleLine="true"
+                android:text="01:30"
+                android:textColor="@android:color/holo_green_light"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5" >
+
+            <ImageView
+                android:id="@+id/wiw_inviteeAvatar_imageView"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerHorizontal="true"
+                android:contentDescription=""
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_default_middle_avatar" />
+
+            <TextView
+                android:id="@+id/wiw_inviteeNickname_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/wiw_inviteeAvatar_imageView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:ellipsize="middle"
+                android:shadowColor="@android:color/black"
+                android:shadowDx="0.6"
+                android:shadowDy="0.8"
+                android:shadowRadius="1"
+                android:singleLine="true"
+                android:text="小慧动"
+                android:textColor="@color/light_gray"
+                android:textSize="16sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" >
+    </RelativeLayout>
+
+</FrameLayout>

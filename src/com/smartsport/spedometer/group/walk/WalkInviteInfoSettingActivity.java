@@ -21,10 +21,12 @@ import android.widget.TextView;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
 import com.smartsport.spedometer.group.GroupInviteInfoAttr4Setting;
+import com.smartsport.spedometer.group.GroupInviteInfoBean;
 import com.smartsport.spedometer.group.GroupInviteInfoItemEditorActivity;
 import com.smartsport.spedometer.group.GroupInviteInfoItemEditorActivity.GroupInviteInfoItemEditorExtraData;
 import com.smartsport.spedometer.group.GroupInviteInfoListViewAdapter;
 import com.smartsport.spedometer.group.GroupInviteInfoListViewAdapter.GroupInviteInfo4SettingListViewAdapterKey;
+import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.user.UserInfoBean;
@@ -42,6 +44,9 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 	private static final SSLogger LOGGER = new SSLogger(
 			WalkInviteInfoSettingActivity.class);
 
+	// walk invite model
+	private WalkInviteModel walkInviteModel;
+
 	// the selected walk invite invitee bean
 	private UserInfoBean selectedWalkInviteInvitee;
 
@@ -51,6 +56,9 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// initialize walk invite model
+		walkInviteModel = new WalkInviteModel();
 
 		// get and check the extra data
 		Bundle _extraData = getIntent().getExtras();
@@ -173,9 +181,6 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 					String _editorValue = _extraData
 							.getString(WalkInviteInfoSettingExtraData.WIIS_EI_VALUE);
 
-					LOGGER.info("@@, _editorAttr = " + _editorAttr
-							+ " and _editorValue = " + _editorValue);
-
 					// update editor walk invite info value
 					walkInviteInfoListViewAdapter.setData(_editorAttr,
 							_editorValue);
@@ -196,9 +201,42 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 
 		@Override
 		public void onClick(View v) {
-			LOGGER.debug("SendWalkInviteInfoBarBtnItemOnClickListener");
+			// get walk invite topic, schedule begin and end time
+			String _topic = walkInviteInfoListViewAdapter.getGroupTopic();
+			String _scheduleBeginTime = walkInviteInfoListViewAdapter
+					.getWalkInviteScheduleBeginTime();
+			String _scheduleEndTime = walkInviteInfoListViewAdapter
+					.getWalkInviteScheduleEndTime();
 
-			//
+			// check the selected invitee and schedule time
+			if (null != selectedWalkInviteInvitee) {
+				try {
+					// generate walk invite info
+					GroupInviteInfoBean _walkInviteInfo = new GroupInviteInfoBean();
+					_walkInviteInfo.setTopic(_topic);
+					_walkInviteInfo.setBeginTime(Long
+							.parseLong(_scheduleBeginTime));
+					_walkInviteInfo
+							.setEndTime(Long.parseLong(_scheduleEndTime));
+
+					// send walk invite info with the selected user friend info
+					// to remote server
+					walkInviteModel.inviteWalk(123123, "token",
+							selectedWalkInviteInvitee.getUserId(),
+							_walkInviteInfo, new ICMConnector() {
+
+								//
+
+							});
+				} catch (NumberFormatException e) {
+					LOGGER.error("Generate walk invite info with schdule begin, end time error, walk invite schedule begin time = "
+							+ _scheduleBeginTime
+							+ " and schedule end time = "
+							+ _scheduleEndTime);
+
+					e.printStackTrace();
+				}
+			}
 		}
 
 	}

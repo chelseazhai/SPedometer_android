@@ -55,6 +55,10 @@
     <string name="save_editorUserInfo_barbtnitem_title">保存</string>
     <string name="userAge_editor_displayTextView_text_format">您的年龄为 %d 岁</string>
 
+    <!-- long and short date format -->
+    <string name="long_dateFormat" translatable="false">yy-MM-dd HH:mm</string>
+    <string name="short_dateFormat" translatable="false">HH:mm</string>
+
     <!-- schedule walk invite groups activity -->
     <string name="title_activity_schedule_walkInvite_groups" translatable="false">ScheduleWalkInviteGroupsActivity</string>
     <string name="scheduleWalkInviteGroups_activity_title">约走组</string>
@@ -95,6 +99,10 @@
     <string name="walk_inviteInfo_scheduleTime_label">约走时间：</string>
     <string name="walk_inviteInfo_scheduleTime_textView_hint">给好友一个邀约走走的时间吧!</string>
     <string name="walk_inviteInfo_scheduleTime_beginTimeDuration_splitWord" translatable="false">||</string>
+    <string name="walk_inviteInfo_scheduleTime_format" formatted="false">您选择的约走时间为：%s ~ %s</string>
+
+    <!-- walk invite walk activity -->
+    <string name="title_activity_walkInvite_walk" translatable="false">WalkInviteWalkActivity</string>
 
     <!-- within group compete invite info setting activity -->
 
@@ -104,6 +112,7 @@
     <string name="withinGroupCompete_inviteInfo_durationTime_label">组内竞赛时长：</string>
     <string name="withinGroupCompete_inviteInfo_durationTime_unit">分钟</string>
     <string name="withinGroupCompete_inviteInfo_durationTime_textView_hint">给竞赛一个时长吧，不要太累哦!</string>
+    <string name="withinGroupCompete_inviteInfo_durationTime_format">您选择的组内竞赛时长为：%s</string>
 
     <!-- nearby strangers activity -->
     <string name="title_activity_nearby_strangers" translatable="false">NearbyStrangersActivity</string>

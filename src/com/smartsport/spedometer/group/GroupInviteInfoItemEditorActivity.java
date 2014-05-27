@@ -3,12 +3,14 @@
  */
 package com.smartsport.spedometer.group;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import android.widget.TimePicker;
 import android.widget.TimePicker.OnTimeChangedListener;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
 import com.smartsport.spedometer.group.walk.WalkInviteInfoSettingActivity.WalkInviteInfoSettingExtraData;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
@@ -53,6 +56,17 @@ public class GroupInviteInfoItemEditorActivity extends SSBaseActivity {
 
 	// calendar
 	private final Calendar CALENDAR = Calendar.getInstance();
+
+	// milliseconds per minute
+	private final int MILLISECONDS_PER_MINUTE = 60 * 1000;
+
+	// timestamp long and short date format
+	@SuppressLint("SimpleDateFormat")
+	private final SimpleDateFormat TIMESTAMP_LONG_DATEFORMAT = new SimpleDateFormat(
+			SSApplication.getContext().getString(R.string.long_dateFormat));
+	@SuppressLint("SimpleDateFormat")
+	private final SimpleDateFormat TIMESTAMP_SHORT_DATEFORMAT = new SimpleDateFormat(
+			SSApplication.getContext().getString(R.string.short_dateFormat));
 
 	// group invite info attribute, editor info name and value
 	private GroupInviteInfoAttr4Setting editorAttr;
@@ -253,7 +267,8 @@ public class GroupInviteInfoItemEditorActivity extends SSBaseActivity {
 							e.printStackTrace();
 						}
 					} else {
-						//
+						LOGGER.error("The editor walk invite schedule time error, the editor info value = "
+								+ editorInfoValue);
 					}
 
 					// perform walk invite schedule time duration numberPicker
@@ -423,14 +438,26 @@ public class GroupInviteInfoItemEditorActivity extends SSBaseActivity {
 	 */
 	private String getWalkInviteScheduleTimeFormat(
 			long scheduleTimeBeginTimestamp, int scheduleTimeDuration) {
-		StringBuilder _walkInviteScheduleTimeFormat = new StringBuilder();
+		// get default locale and default timeZone calendar
+		Calendar _defaultCalendar = Calendar.getInstance();
 
-		//
-		_walkInviteScheduleTimeFormat.append(scheduleTimeBeginTimestamp);
-		_walkInviteScheduleTimeFormat.append("***");
-		_walkInviteScheduleTimeFormat.append(scheduleTimeDuration);
+		// define and get begin time calendar day
+		_defaultCalendar.setTimeInMillis(scheduleTimeBeginTimestamp);
+		int _beginTimeDay = _defaultCalendar.get(Calendar.DAY_OF_MONTH);
 
-		return _walkInviteScheduleTimeFormat.toString();
+		// define and get end time calendar day
+		_defaultCalendar.setTimeInMillis(scheduleTimeBeginTimestamp
+				+ scheduleTimeDuration * MILLISECONDS_PER_MINUTE);
+		int _endTimeDay = _defaultCalendar.get(Calendar.DAY_OF_MONTH);
+
+		// compare the schedule begin, end time calendar day, then generate
+		// schedule time and return
+		return String.format(
+				getString(R.string.walk_inviteInfo_scheduleTime_format),
+				TIMESTAMP_LONG_DATEFORMAT.format(scheduleTimeBeginTimestamp),
+				(_beginTimeDay == _endTimeDay ? TIMESTAMP_SHORT_DATEFORMAT
+						: TIMESTAMP_LONG_DATEFORMAT).format(_defaultCalendar
+						.getTimeInMillis()));
 	}
 
 	// inner class

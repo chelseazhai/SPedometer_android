@@ -42,6 +42,18 @@ public class GroupInviteInfoBean implements Serializable {
 
 	/**
 	 * @title GroupInviteInfoBean
+	 * @descriptor walk or compete group invite info bean constructor
+	 * @author Ares
+	 */
+	public GroupInviteInfoBean() {
+		super();
+
+		// get context
+		context = SSApplication.getContext();
+	}
+
+	/**
+	 * @title GroupInviteInfoBean
 	 * @descriptor walk or compete group invite info bean constructor with json
 	 *             object
 	 * @param info
@@ -49,10 +61,7 @@ public class GroupInviteInfoBean implements Serializable {
 	 * @author Ares
 	 */
 	public GroupInviteInfoBean(JSONObject info) {
-		super();
-
-		// get context
-		context = SSApplication.getContext();
+		this();
 
 		// check parsed walk or compete group invite info json object
 		if (null != info) {

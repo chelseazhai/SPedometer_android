@@ -27,11 +27,13 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
 import com.smartsport.spedometer.group.ScheduleWalkInviteGroupsActivity.ScheduleWalkInviteGroupListViewAdapter.ScheduleWalkInviteGroupListViewAdapterKey;
 import com.smartsport.spedometer.group.walk.WalkInviteInfoSettingActivity;
 import com.smartsport.spedometer.group.walk.WalkInviteInfoSettingActivity.WalkInviteInfoSettingExtraData;
 import com.smartsport.spedometer.group.walk.WalkInviteInviteeSelectActivity;
+import com.smartsport.spedometer.group.walk.WalkInviteWalkActivity;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
@@ -264,15 +266,15 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 				ScheduleWalkInviteGroupListViewAdapter.class);
 
 		// milliseconds per second
-		private static final int MILLISECONDS_PER_SECOND = 1000;
+		private final int MILLISECONDS_PER_SECOND = 1000;
 
 		// timestamp long and short date format
 		@SuppressLint("SimpleDateFormat")
-		private static final SimpleDateFormat TIMESTAMP_LONG_DATEFORMAT = new SimpleDateFormat(
-				"yy-MM-dd HH:mm");
+		private final SimpleDateFormat TIMESTAMP_LONG_DATEFORMAT = new SimpleDateFormat(
+				SSApplication.getContext().getString(R.string.long_dateFormat));
 		@SuppressLint("SimpleDateFormat")
-		private static final SimpleDateFormat TIMESTAMP_SHORT_DATEFORMAT = new SimpleDateFormat(
-				"HH:mm");
+		private final SimpleDateFormat TIMESTAMP_SHORT_DATEFORMAT = new SimpleDateFormat(
+				SSApplication.getContext().getString(R.string.short_dateFormat));
 
 		// context
 		private Context context;
@@ -375,8 +377,11 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 		/**
 		 * @title getScheduleTime
 		 * @descriptor get schedule walk invite group schedule time
-		 * @param scheduleWalkInviteGroups
-		 *            : new schedule walk invite group list
+		 * @param scheduleBeginTime
+		 *            : schedule walk invite group schedule begin time
+		 * @param scheduleEndTime
+		 *            : schedule walk invite group schedule end time
+		 * @return schedule walk invite group schedule time format
 		 */
 		private String getScheduleTime(long scheduleBeginTime,
 				long scheduleEndTime) {
@@ -445,6 +450,15 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 				long id) {
 			// TODO Auto-generated method stub
 
+			// define schedule walk invite group item extra data map
+			Map<String, Object> _extraMap = new HashMap<String, Object>();
+
+			// put the selected schedule walk invite group info to extra data
+			// map as param
+			//
+
+			// go to walk invite walk activity with extra data map
+			pushActivity(WalkInviteWalkActivity.class, _extraMap);
 		}
 
 	}

@@ -3,15 +3,20 @@
  */
 package com.smartsport.spedometer.group;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.widget.SimpleAdapter;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.SSApplication;
+import com.smartsport.spedometer.utils.SSLogger;
 import com.smartsport.spedometer.utils.StringUtils;
 
 /**
@@ -22,8 +27,25 @@ import com.smartsport.spedometer.utils.StringUtils;
  */
 public class GroupInviteInfoListViewAdapter extends SimpleAdapter {
 
-	// walk or within group compete invite info for setting attribute key
+	// logger
+	private static final SSLogger LOGGER = new SSLogger(
+			GroupInviteInfoListViewAdapter.class);
+
+	// walk or within group compete invite info for setting attribute and walk
+	// invite info for setting schedule time(begin time and duration) key
 	private static final String GROUPINVITEINFO4SETTING_ATTRIBUTE_KEY = "walkOrWithinGroupCompete_inviteInfo_attribute_key";
+	private static final String WALKINVITEINFO4SETTING_SCHEDULETIME_KEY = "walk_inviteInfo_scheduleTime_key";
+
+	// milliseconds per minute
+	private final int MILLISECONDS_PER_MINUTE = 60 * 1000;
+
+	// timestamp long and short date format
+	@SuppressLint("SimpleDateFormat")
+	private final SimpleDateFormat TIMESTAMP_LONG_DATEFORMAT = new SimpleDateFormat(
+			SSApplication.getContext().getString(R.string.long_dateFormat));
+	@SuppressLint("SimpleDateFormat")
+	private final SimpleDateFormat TIMESTAMP_SHORT_DATEFORMAT = new SimpleDateFormat(
+			SSApplication.getContext().getString(R.string.short_dateFormat));
 
 	// context
 	private Context context;
@@ -84,6 +106,13 @@ public class GroupInviteInfoListViewAdapter extends SimpleAdapter {
 						R.string.walk_inviteInfo_scheduleTime_label)
 						.equalsIgnoreCase(_label)) {
 					_attribute = GroupInviteInfoAttr4Setting.WALKINVITE_SCHEDULETIME;
+
+					// set walk invite schedule time(begin time and duration) as
+					// data attributes
+					_data.put(WALKINVITEINFO4SETTING_SCHEDULETIME_KEY, _value);
+
+					// format walk invite schedule time
+					_value = getWalkInviteScheduleTime(_value);
 				} else if (context
 						.getString(
 								R.string.withinGroupCompete_inviteInfo_durationTime_label)
@@ -165,14 +194,109 @@ public class GroupInviteInfoListViewAdapter extends SimpleAdapter {
 	public String getItemValue(int position) {
 		// get value with position
 		String _value = (String) getItem(position)
-				.get(GroupInviteInfo4SettingListViewAdapterKey.GROUPINVITEINFO_VALUE_KEY
-						.name());
+				.get(GroupInviteInfoAttr4Setting.WALKINVITE_SCHEDULETIME == getItemAttribute(position) ? WALKINVITEINFO4SETTING_SCHEDULETIME_KEY
+						: GroupInviteInfo4SettingListViewAdapterKey.GROUPINVITEINFO_VALUE_KEY
+								.name());
 
 		// return the value
 		return null == _value ? ""
 				: StringUtils
 						.cStrip(_value,
 								context.getString(R.string.withinGroupCompete_inviteInfo_durationTime_unit));
+	}
+
+	/**
+	 * @title getGroupTopic
+	 * @descriptor get editor walk or within group compete invite topic
+	 * @return editor walk or within group compete invite topic
+	 * @author Ares
+	 */
+	public String getGroupTopic() {
+		return getItemValue(0);
+	}
+
+	/**
+	 * @title getWalkInviteScheduleBeginTime
+	 * @descriptor get editor walk invite schedule begin time
+	 * @return editor walk invite schedule begin time
+	 * @author Ares
+	 */
+	public String getWalkInviteScheduleBeginTime() {
+		// define schedule begin time
+		String _scheduleBeginTime = "";
+
+		// get walk invite schedule time
+		String _scheduleTime = getItemValue(1);
+
+		// check schedule time
+		if (null != _scheduleTime) {
+			// split the walk invite schedule time and check
+			String[] _scheduleTimes = StringUtils
+					.split(_scheduleTime,
+							context.getString(R.string.walk_inviteInfo_scheduleTime_beginTimeDuration_splitWord));
+			if (null != _scheduleTimes && 2 == _scheduleTimes.length) {
+				_scheduleBeginTime = _scheduleTimes[0];
+			} else {
+				LOGGER.error("Get walk invite schedule begin time error, the schedule time = "
+						+ _scheduleTime);
+			}
+		} else {
+			LOGGER.error("Get walk invite schedule begin time error, schedule time is null");
+		}
+
+		return _scheduleBeginTime;
+	}
+
+	/**
+	 * @title getWalkInviteScheduleEndTime
+	 * @descriptor get editor walk invite schedule end time
+	 * @return editor walk invite schedule end time
+	 * @author Ares
+	 */
+	public String getWalkInviteScheduleEndTime() {
+		// define schedule end time
+		String _scheduleEndTime = "";
+
+		// get walk invite schedule time
+		String _scheduleTime = getItemValue(1);
+
+		// check schedule time
+		if (null != _scheduleTime) {
+			// split the walk invite schedule time and check
+			String[] _scheduleTimes = StringUtils
+					.split(_scheduleTime,
+							context.getString(R.string.walk_inviteInfo_scheduleTime_beginTimeDuration_splitWord));
+			if (null != _scheduleTimes && 2 == _scheduleTimes.length) {
+				try {
+					_scheduleEndTime = String
+							.valueOf(Long.parseLong(_scheduleTimes[0])
+									+ Integer
+											.parseInt(_scheduleTimes[_scheduleTimes.length - 1])
+									* MILLISECONDS_PER_MINUTE);
+				} catch (NumberFormatException e) {
+					LOGGER.warning("Get walk invite schedule end time error, because it is not set");
+
+					e.printStackTrace();
+				}
+			} else {
+				LOGGER.error("Get walk invite schedule end time error, the schedule time = "
+						+ _scheduleTime);
+			}
+		} else {
+			LOGGER.error("Get walk invite schedule end time error, schedule time is null");
+		}
+
+		return _scheduleEndTime;
+	}
+
+	/**
+	 * @title getWithinGroupCompeteInviteDurationTime
+	 * @descriptor get editor within group compete invite duration time
+	 * @return editor within group compete invite duration time
+	 * @author Ares
+	 */
+	public String getWithinGroupCompeteInviteDurationTime() {
+		return getItemValue(1);
 	}
 
 	/**
@@ -198,7 +322,13 @@ public class GroupInviteInfoListViewAdapter extends SimpleAdapter {
 					// value with attribute
 					switch (attr) {
 					case WALKINVITE_SCHEDULETIME:
-						value = "14-05-26 12:00 ~ 13:00";
+						// update editor walk invite info with attribute(walk
+						// invite schedule time(begin time and duration))
+						_editorGroupInfoData.put(
+								WALKINVITEINFO4SETTING_SCHEDULETIME_KEY, value);
+
+						// format walk invite schedule time
+						value = getWalkInviteScheduleTime(value);
 						break;
 
 					case WITHINGROUPCOMPETE_DURATIONTIME:
@@ -223,6 +353,74 @@ public class GroupInviteInfoListViewAdapter extends SimpleAdapter {
 
 		// notify data set changed
 		notifyDataSetChanged();
+	}
+
+	/**
+	 * @title getWalkInviteScheduleTime
+	 * @descriptor get walk invite schedule time
+	 * @param scheduleTime
+	 *            : walk invite schedule time(begin time and duration)
+	 * @return walk invite schedule time format
+	 */
+	private String getWalkInviteScheduleTime(String scheduleTime) {
+		String _scheduleTime = "";
+
+		// check schedule time
+		if (null != scheduleTime) {
+			// split the walk invite schedule time and check
+			String[] _scheduleTimes = StringUtils
+					.split(scheduleTime,
+							context.getString(R.string.walk_inviteInfo_scheduleTime_beginTimeDuration_splitWord));
+			if (null != _scheduleTimes && 2 == _scheduleTimes.length) {
+				try {
+					// get user input walk invite schedule time begin timestamp
+					// value
+					long _userInputWalkInviteScheduleTimeBeginTimestampValue = Long
+							.parseLong(_scheduleTimes[0]);
+
+					// get default locale and default timeZone calendar
+					Calendar _defaultCalendar = Calendar.getInstance();
+
+					// define and get begin time calendar day
+					_defaultCalendar
+							.setTimeInMillis(_userInputWalkInviteScheduleTimeBeginTimestampValue);
+					int _beginTimeDay = _defaultCalendar
+							.get(Calendar.DAY_OF_MONTH);
+
+					// define and get end time calendar day
+					_defaultCalendar
+							.setTimeInMillis(_userInputWalkInviteScheduleTimeBeginTimestampValue
+									+ Integer
+											.parseInt(_scheduleTimes[_scheduleTimes.length - 1])
+									* MILLISECONDS_PER_MINUTE);
+					int _endTimeDay = _defaultCalendar
+							.get(Calendar.DAY_OF_MONTH);
+
+					// compare the schedule begin, end time calendar day and
+					// then generate schedule time
+					_scheduleTime = String
+							.format(context
+									.getString(R.string.scheduleWalkInviteGroup_scheduleTime_format),
+									TIMESTAMP_LONG_DATEFORMAT
+											.format(_userInputWalkInviteScheduleTimeBeginTimestampValue),
+									(_beginTimeDay == _endTimeDay ? TIMESTAMP_SHORT_DATEFORMAT
+											: TIMESTAMP_LONG_DATEFORMAT)
+											.format(_defaultCalendar
+													.getTimeInMillis()));
+				} catch (NumberFormatException e) {
+					LOGGER.warning("Show walk invite schedule time error, because it is not set");
+
+					e.printStackTrace();
+				}
+			} else {
+				LOGGER.error("Walk invite schedule time error, the schedule time = "
+						+ scheduleTime);
+			}
+		} else {
+			LOGGER.error("Walk invite schedule time is null");
+		}
+
+		return _scheduleTime;
 	}
 
 	// inner class

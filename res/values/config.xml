@@ -4,6 +4,9 @@
     <!-- the duration (in milliseconds) of a activity animation -->
     <integer name="config_activityAnimTime">300</integer>
 
+    <!-- autoNavi map zoom level -->
+    <integer name="config_autoNaviMap_zoomLevel">16</integer>
+
     <!-- the limit count of stranger pat -->
     <integer name="config_limitCount_strangerPat">5</integer>
 
