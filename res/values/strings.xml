@@ -21,12 +21,25 @@
 
     <!-- pedometer activity -->
     <string name="title_activity_pedometer" translatable="false">PedometerActivity</string>
-    <string name="pedometer_activity_title">远程计步器</string>
-    <string name="stepCounter_button_text">计步器</string>
+    <string name="pedometer_activity_title">计步器</string>
+    <string name="stepCounter_button_text">个人计步器</string>
     <string name="walkInvite_button_text">约走</string>
     <string name="withinGroupCompete_button_text">组内竞赛</string>
     <string name="nearbyStrangers_button_text">附近的人</string>
     <string name="historyRecord_button_text">历史记录</string>
+
+    <!-- step counter activity -->
+    <string name="title_activity_stepCounter" translatable="false">StepCounterActivity</string>
+    <string name="stepCounter_activity_title">个人计步器</string>
+    <string name="walkInfo_distance_unit">公里</string>
+    <string name="walkInfo_step_unit">步</string>
+    <string name="walkInfo_energy_unit">大卡</string>
+    <string name="walkInfo_pace_label">配速\n</string>
+    <string name="walkInfo_pace_unit">/公里</string>
+    <string name="walkInfo_speed_label">速度\n</string>
+    <string name="walkInfo_speed_unit">公里/小时</string>
+    <string name="walkStart_button_text">开始</string>
+    <string name="walkStop_button_text">结束</string>
 
     <!-- user info setting activity -->
     <string name="title_activity_userinfo_setting" translatable="false">UserInfoSettingActivity</string>
@@ -78,6 +91,9 @@
     <string name="scheduleWalkInviteGroup_scheduleTime_label">约走时间：</string>
     <string name="scheduleWalkInviteGroup_scheduleTime_format" formatted="false">%s ~ %s</string>
     <string name="scheduleWalkInviteGroup_status_label">状态：</string>
+    <string name="scheduleWalkInviteGroup_status_startSoon">即将开始</string>
+    <string name="scheduleWalkInviteGroup_status_startReaminTime_format">%s 后开始</string>
+    <string name="scheduleWalkInviteGroup_status_invalid">已失效</string>
 
     <!-- walk invite invitee select activity -->
     <string name="title_activity_walkInvite_invitee_select" translatable="false">WalkInviteInviteeSelectActivity</string>
@@ -103,6 +119,7 @@
 
     <!-- walk invite walk activity -->
     <string name="title_activity_walkInvite_walk" translatable="false">WalkInviteWalkActivity</string>
+    <string name="walkInviteGroup_startReaminTime_format" formatted="false" translatable="false">%02d:%02d</string>
 
     <!-- within group compete invite info setting activity -->
 

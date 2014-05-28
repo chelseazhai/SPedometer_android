@@ -34,6 +34,7 @@ import com.smartsport.spedometer.group.walk.WalkInviteInfoSettingActivity;
 import com.smartsport.spedometer.group.walk.WalkInviteInfoSettingActivity.WalkInviteInfoSettingExtraData;
 import com.smartsport.spedometer.group.walk.WalkInviteInviteeSelectActivity;
 import com.smartsport.spedometer.group.walk.WalkInviteWalkActivity;
+import com.smartsport.spedometer.group.walk.WalkInviteWalkActivity.WalkInviteWalkExtraData;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
@@ -158,18 +159,24 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 		// select walk invite invitee request code
 		private static final int SWIG_SELECT_WALKINVITEINVITEE_REQCODE = 3000;
 
+		// walk invite walk control request code
+		private static final int SWIG_WALK_CONTROL_REQCODE = 3010;
+
 	}
 
 	/**
-	 * @name WalkInviteInviteeSelectExtraData
+	 * @name WalkInviteInviteeSelectOrWalkControlExtraData
 	 * @descriptor walk invite invitee select extra data constant
 	 * @author Ares
 	 * @version 1.0
 	 */
-	public static final class WalkInviteInviteeSelectExtraData {
+	public static final class WalkInviteInviteeSelectOrWalkControlExtraData {
 
 		// selected walk invite invitee info bean
 		public static final String WIIS_SELECTED_INVITEE_BEAN = "walkInviteInviteeSelect_selected_walkInviteInvitee_bean";
+
+		// start or stop walking flag
+		public static final String WIWC_WALK_STARTORSTOP_FLAG = "walkInviteWalkControl_walk_startOrStop_flag";
 
 	}
 
@@ -190,7 +197,7 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 				if (null != _extraData) {
 					// get and check the selected walk invite invitee bean
 					UserInfoBean _selectedInviteeBean = (UserInfoBean) _extraData
-							.getSerializable(WalkInviteInviteeSelectExtraData.WIIS_SELECTED_INVITEE_BEAN);
+							.getSerializable(WalkInviteInviteeSelectOrWalkControlExtraData.WIIS_SELECTED_INVITEE_BEAN);
 					if (null != _selectedInviteeBean) {
 						// define walk invite info setting extra data map
 						final Map<String, Object> _extraMap = new HashMap<String, Object>();
@@ -232,6 +239,36 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 	}
 
 	/**
+	 * @name WIWWalkControlOnActivityResult
+	 * @descriptor walk invite walk Walk control on activity result
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class WIWWalkControlOnActivityResult implements ISSBaseActivityResult {
+
+		@Override
+		public void onActivityResult(int resultCode, Intent data) {
+			// check the result code
+			if (RESULT_OK == resultCode) {
+				// get and check the extra data
+				Bundle _extraData = data.getExtras();
+				if (null != _extraData) {
+					// get and check walk start or stop flag
+					if (_extraData
+							.getBoolean(WalkInviteInviteeSelectOrWalkControlExtraData.WIWC_WALK_STARTORSTOP_FLAG)) {
+						LOGGER.info("@@@@");
+
+						//
+					}
+				} else {
+					LOGGER.error("Walk control error, the return extra data is null");
+				}
+			}
+		}
+
+	}
+
+	/**
 	 * @name NewWalkInviteGroupBarBtnItemOnClickListener
 	 * @descriptor new schedule walk invite group bar button item on click
 	 *             listener
@@ -264,6 +301,10 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 		// logger
 		private static final SSLogger LOGGER = new SSLogger(
 				ScheduleWalkInviteGroupListViewAdapter.class);
+
+		// schedule walk invite group schedule begin time and end time key
+		private static final String WALKINVITEGROUP_SCHEDULEBEGINTIME_KEY = "walkInviteGroup_scheduleBeginTime_key";
+		private static final String WALKINVITEGROUP_SCHEDULEENDTIME_KEY = "walkInviteGroup_scheduleEndTime_key";
 
 		// milliseconds per second
 		private final int MILLISECONDS_PER_SECOND = 1000;
@@ -350,6 +391,12 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 							ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_TOPIC_KEY
 									.name(), _scheduleWalkInviteInviteInfo
 									.getTopic());
+					_data.put(WALKINVITEGROUP_SCHEDULEBEGINTIME_KEY,
+							_scheduleWalkInviteInviteInfo.getBeginTime()
+									* MILLISECONDS_PER_SECOND);
+					_data.put(WALKINVITEGROUP_SCHEDULEENDTIME_KEY,
+							_scheduleWalkInviteInviteInfo.getEndTime()
+									* MILLISECONDS_PER_SECOND);
 					_data.put(
 							ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_SCHEDULETIME_KEY
 									.name(),
@@ -372,6 +419,65 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 			} else {
 				LOGGER.error("Set new schedule walk invite group list error, the new set data list is null");
 			}
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Map<String, ?> getItem(int position) {
+			return (Map<String, ?>) super.getItem(position);
+		}
+
+		/**
+		 * @title getGroupTopic
+		 * @descriptor get the selected schedule walk invite group item topic
+		 *             textView text
+		 * @param position
+		 *            : schedule walk invite group listView selected item
+		 *            position
+		 * @return the selected schedule walk invite group item topic
+		 * @author Ares
+		 */
+		public String getGroupTopic(int position) {
+			// return the schedule walk invite group topic with position
+			return (String) getItem(position)
+					.get(ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_TOPIC_KEY
+							.name());
+		}
+
+		/**
+		 * @title getGroupScheduleBeginTime
+		 * @descriptor get the selected schedule walk invite group item schedule
+		 *             begin time
+		 * @param position
+		 *            : schedule walk invite group listView selected item
+		 *            position
+		 * @return the selected schedule walk invite group item schedule begin
+		 *         time
+		 * @author Ares
+		 */
+		public Long getGroupScheduleBeginTime(int position) {
+			// return the schedule walk invite group schedule begin time with
+			// position
+			return (Long) getItem(position).get(
+					WALKINVITEGROUP_SCHEDULEBEGINTIME_KEY);
+		}
+
+		/**
+		 * @title getGroupScheduleEndTime
+		 * @descriptor get the selected schedule walk invite group item schedule
+		 *             end time
+		 * @param position
+		 *            : schedule walk invite group listView selected item
+		 *            position
+		 * @return the selected schedule walk invite group item schedule end
+		 *         time
+		 * @author Ares
+		 */
+		public Long getGroupScheduleEndTime(int position) {
+			// return the schedule walk invite group schedule end time with
+			// position
+			return (Long) getItem(position).get(
+					WALKINVITEGROUP_SCHEDULEENDTIME_KEY);
 		}
 
 		/**
@@ -448,17 +554,29 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			// TODO Auto-generated method stub
-
 			// define schedule walk invite group item extra data map
 			Map<String, Object> _extraMap = new HashMap<String, Object>();
 
-			// put the selected schedule walk invite group info to extra data
-			// map as param
-			//
+			// put the selected schedule walk invite group topic, schedule begin
+			// and end time to extra data map as param
+			_extraMap.put(WalkInviteWalkExtraData.WIW_WALKINVITEGROUP_TOPIC,
+					scheduleWalkInviteGroupListViewAdapter
+							.getGroupTopic(position));
+			_extraMap
+					.put(WalkInviteWalkExtraData.WIW_WALKINVITEGROUP_SCHEDULEBEGINTIME,
+							scheduleWalkInviteGroupListViewAdapter
+									.getGroupScheduleBeginTime(position));
+			_extraMap
+					.put(WalkInviteWalkExtraData.WIW_WALKINVITEGROUP_SCHEDULEENDTIME,
+							scheduleWalkInviteGroupListViewAdapter
+									.getGroupScheduleEndTime(position));
 
 			// go to walk invite walk activity with extra data map
-			pushActivity(WalkInviteWalkActivity.class, _extraMap);
+			pushActivityForResult(
+					WalkInviteWalkActivity.class,
+					_extraMap,
+					ScheduleWalkInviteGroupsRequestCode.SWIG_WALK_CONTROL_REQCODE,
+					new WIWWalkControlOnActivityResult());
 		}
 
 	}

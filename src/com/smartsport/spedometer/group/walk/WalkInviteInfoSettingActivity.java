@@ -229,7 +229,7 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 
 							});
 				} catch (NumberFormatException e) {
-					LOGGER.error("Generate walk invite info with schdule begin, end time error, walk invite schedule begin time = "
+					LOGGER.error("Generate walk invite info with schedule begin, end time error, walk invite schedule begin time = "
 							+ _scheduleBeginTime
 							+ " and schedule end time = "
 							+ _scheduleEndTime);

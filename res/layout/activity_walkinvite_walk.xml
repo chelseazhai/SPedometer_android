@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top"
         android:background="@color/half_black_transparent"
+        android:baselineAligned="false"
         android:orientation="horizontal"
         android:paddingBottom="10dp"
         android:paddingTop="10dp" >
@@ -29,7 +30,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_centerHorizontal="true"
-                android:contentDescription=""
+                android:contentDescription="@string/walkInvite_attendeeAvatar_imageView_contentDescription"
                 android:scaleType="centerCrop"
                 android:src="@drawable/img_default_middle_avatar" />
 
@@ -62,7 +63,7 @@
                 android:id="@+id/wiw_walkInvite_attendeePK_imageView"
                 android:layout_width="fill_parent"
                 android:layout_height="60dp"
-                android:contentDescription=""
+                android:contentDescription="@string/walkInvite_attendeePK_imageView_contentDescription"
                 android:scaleType="centerInside"
                 android:src="@drawable/img_walkinvite_attendeepk" />
 
@@ -79,8 +80,7 @@
                 android:shadowDy="0.8"
                 android:shadowRadius="1"
                 android:singleLine="true"
-                android:text="01:30"
-                android:textColor="@android:color/holo_green_light"
+                android:textColor="@color/light_gray"
                 android:textSize="18sp" />
         </RelativeLayout>
 
@@ -94,7 +94,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_centerHorizontal="true"
-                android:contentDescription=""
+                android:contentDescription="@string/walkInvite_attendeeAvatar_imageView_contentDescription"
                 android:scaleType="centerCrop"
                 android:src="@drawable/img_default_middle_avatar" />
 
@@ -111,16 +111,136 @@
                 android:shadowDy="0.8"
                 android:shadowRadius="1"
                 android:singleLine="true"
-                android:text="小慧动"
                 android:textColor="@color/light_gray"
                 android:textSize="16sp" />
         </RelativeLayout>
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/wiw_walkInfoAndControl_relativeLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom" >
+
+        <Button
+            android:id="@+id/wiw_walkInfo_slidingUp_button"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/img_walkinfo_slidingup_btn_bg" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/wiw_walkInfo_slidingUp_button"
+            android:background="@color/little_white_transparent"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/wiw_walkInfo_relativeLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="4dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/wiw_walkTotalDistance_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:singleLine="true"
+                    android:textColor="@android:color/holo_green_dark"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+
+                <TableRow
+                    android:id="@+id/wiw_stepAndEnergy_tableRow"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/wiw_walkTotalDistance_textView" >
+
+                    <TextView
+                        android:id="@+id/wiw_walkTotalStep_textView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        android:textColor="@color/gray"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/wiw_walkEnergy_textView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        android:textColor="@color/gray"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+                </TableRow>
+
+                <View
+                    android:id="@+id/wiw_walkInfo_tableRow_deviderLine"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/wiw_stepAndEnergy_tableRow"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/silver" />
+
+                <TableRow
+                    android:id="@+id/wiw_speeds_tableRow"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/wiw_walkInfo_tableRow_deviderLine"
+                    android:layout_marginTop="10dp" >
+
+                    <TextView
+                        android:id="@+id/wiw_walkPace_textView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:lineSpacingExtra="4dp"
+                        android:lines="2"
+                        android:textColor="@android:color/holo_orange_dark"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/wiw_walkSpeed_textView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:lineSpacingExtra="4dp"
+                        android:lines="2"
+                        android:textColor="@color/gray"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+                </TableRow>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/wiw_speeds_tableRow"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/silver" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/wiw_walkControl_button"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="14dp"
+                android:background="@drawable/walk_startbutton_bg"
+                android:text="@string/walkStart_button_text"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </LinearLayout>
     </RelativeLayout>
 
 </FrameLayout>

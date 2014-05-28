@@ -20,7 +20,7 @@ import android.widget.SimpleAdapter;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
-import com.smartsport.spedometer.group.ScheduleWalkInviteGroupsActivity.WalkInviteInviteeSelectExtraData;
+import com.smartsport.spedometer.group.ScheduleWalkInviteGroupsActivity.WalkInviteInviteeSelectOrWalkControlExtraData;
 import com.smartsport.spedometer.group.walk.WalkInviteInviteeSelectActivity.WalkInviteInviteeListViewAdapter.WalkInviteInviteeListViewAdapterKey;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
@@ -247,7 +247,7 @@ public class WalkInviteInviteeSelectActivity extends SSBaseActivity {
 			// put the selected walk invite invitee info to extra data map as
 			// param
 			_extraMap
-					.put(WalkInviteInviteeSelectExtraData.WIIS_SELECTED_INVITEE_BEAN,
+					.put(WalkInviteInviteeSelectOrWalkControlExtraData.WIIS_SELECTED_INVITEE_BEAN,
 							userInfoModel.getFriendsInfo().get(position));
 
 			// dismiss the activity with result code and extra map
