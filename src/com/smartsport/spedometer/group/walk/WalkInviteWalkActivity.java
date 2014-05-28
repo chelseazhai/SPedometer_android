@@ -223,14 +223,20 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 					.setText(formatWalkStartRemainTime(_walkStartRemainTime));
 		} else {
 			// invalid
-			// generate holo red dark foreground color span
+			// generate holo red dark foreground color span and text absolute
+			// size span
 			ForegroundColorSpan _holoRedDarkForegroundColorSpan = new ForegroundColorSpan(
 					getResources().getColor(android.R.color.holo_red_dark));
+			AbsoluteSizeSpan _textAbsoluteSizeSpan = new AbsoluteSizeSpan(16,
+					true);
 
 			// set invalid walk invite group tip
 			SpannableString _invalidWalkInviteGroup = new SpannableString(
 					getString(R.string.scheduleWalkInviteGroup_status_invalid));
 			_invalidWalkInviteGroup.setSpan(_holoRedDarkForegroundColorSpan, 0,
+					_invalidWalkInviteGroup.length(),
+					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			_invalidWalkInviteGroup.setSpan(_textAbsoluteSizeSpan, 0,
 					_invalidWalkInviteGroup.length(),
 					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -408,17 +414,31 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	 * @return the walk invite group walk start remain time format
 	 * @author Ares
 	 */
-	private String formatWalkStartRemainTime(long walkStartRemainTime) {
+	private SpannableString formatWalkStartRemainTime(long walkStartRemainTime) {
 		// get walk start remain time(minutes)
 		long _walkStartRemainTimeMinutes = walkStartRemainTime
 				/ MILLISECONDS_PER_MINUTE;
 
-		// return walk start remain time format
-		return 0 == _walkStartRemainTimeMinutes ? getString(R.string.scheduleWalkInviteGroup_status_startSoon)
-				: String.format(
-						getString(R.string.walkInviteGroup_startReaminTime_format),
-						_walkStartRemainTimeMinutes / MINUTES_PER_HOUR,
-						_walkStartRemainTimeMinutes % MINUTES_PER_HOUR);
+		// generate text absolute size span
+		AbsoluteSizeSpan _textAbsoluteSizeSpan = new AbsoluteSizeSpan(16, true);
+
+		// get walk start remain time format
+		SpannableString _walkStartRemainTimeFormat;
+		if (0 == _walkStartRemainTimeMinutes) {
+			_walkStartRemainTimeFormat = new SpannableString(
+					getString(R.string.scheduleWalkInviteGroup_status_startSoon));
+
+			_walkStartRemainTimeFormat.setSpan(_textAbsoluteSizeSpan, 0,
+					_walkStartRemainTimeFormat.length(),
+					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		} else {
+			_walkStartRemainTimeFormat = new SpannableString(String.format(
+					getString(R.string.walkInviteGroup_startReaminTime_format),
+					_walkStartRemainTimeMinutes / MINUTES_PER_HOUR,
+					_walkStartRemainTimeMinutes % MINUTES_PER_HOUR));
+		}
+
+		return _walkStartRemainTimeFormat;
 	}
 
 	/**
