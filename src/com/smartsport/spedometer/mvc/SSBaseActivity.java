@@ -1,6 +1,7 @@
 package com.smartsport.spedometer.mvc;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
@@ -39,6 +40,11 @@ public abstract class SSBaseActivity extends Activity {
 	// with request code, on activity result map(key: request code and value: on
 	// activity result interface)
 	private SparseArray<ISSBaseActivityResult> NAVPUSH_PRESENT_WITHREQCODE_ONACTIVITYRS_MAP = new SparseArray<ISSBaseActivityResult>();
+
+	// smartsport base activity push navigation target activity class and extra
+	// data map keys
+	private static final String NAV_TARGETACTIVITY_CLASS_KEY = "nav_targetActivity_class";
+	private static final String NAV_TARGETACTIVITY_EXTRADATA_KEY = "nav_targetActivity_extraData";
 
 	// navigation bar
 	private RelativeLayout navBar;
@@ -128,9 +134,36 @@ public abstract class SSBaseActivity extends Activity {
 		// on activity result map
 		ISSBaseActivityResult _onActivityResult = NAVPUSH_PRESENT_WITHREQCODE_ONACTIVITYRS_MAP
 				.get(requestCode);
+
 		if (null != _onActivityResult) {
-			// perform on activity result method
-			_onActivityResult.onActivityResult(resultCode, data);
+			// check result code
+			if (resultCode >= RESULT_FIRST_USER) {
+				// get and check the extra data
+				Bundle _extraData = data.getExtras();
+				if (null != _extraData) {
+					// get navigation target activity class and extra data
+					@SuppressWarnings("unchecked")
+					Class<? extends Activity> _targetActivityCls = (Class<? extends Activity>) _extraData
+							.getSerializable(NAV_TARGETACTIVITY_CLASS_KEY);
+					@SuppressWarnings("unchecked")
+					Map<String, ?> _targetActivityExtraData = (Map<String, ?>) _extraData
+							.getSerializable(NAV_TARGETACTIVITY_EXTRADATA_KEY);
+
+					// check navigation target activity class then start
+					// activity with extra data and request code to navigation
+					// activity stack
+					if (null != _targetActivityCls) {
+						pushActivity(_targetActivityCls,
+								_targetActivityExtraData, requestCode,
+								_onActivityResult);
+					}
+				} else {
+					LOGGER.error("Go to navigation target activity error, the data is null");
+				}
+			} else {
+				// perform on activity result method
+				_onActivityResult.onActivityResult(resultCode, data);
+			}
 		} else {
 			LOGGER.warning("Get on activity result interface with request code = "
 					+ requestCode
@@ -524,6 +557,35 @@ public abstract class SSBaseActivity extends Activity {
 	public void pushActivityForResult(Class<? extends Activity> activityCls,
 			int requestCode) {
 		pushActivityForResult(activityCls, null, requestCode);
+	}
+
+	/**
+	 * @title popPushActivityForResult
+	 * @descriptor pop the activity from navigation activity stack with result
+	 *             code then start another activity for result with extra data
+	 *             to navigation activity stack
+	 * @param activityCls
+	 *            : target activity class
+	 * @param extraData
+	 *            : start activity for result extra data
+	 * @author Ares
+	 */
+	public void popPushActivityForResult(Class<? extends Activity> activityCls,
+			Map<String, ?> extraData) {
+		// save target activity class using intent extra bundle
+		getIntent().putExtra(NAV_TARGETACTIVITY_CLASS_KEY, activityCls);
+
+		// check and process extra data
+		if (null != extraData) {
+			// save target activity extra data hash map using intent extra
+			// bundle
+			getIntent().putExtra(NAV_TARGETACTIVITY_EXTRADATA_KEY,
+					(HashMap<String, ?>) extraData);
+		}
+
+		// set result and then finish the activity
+		setResult(RESULT_FIRST_USER, getIntent());
+		finish();
 	}
 
 	/**

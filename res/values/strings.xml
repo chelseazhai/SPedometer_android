@@ -5,7 +5,6 @@
     <string name="app_name">SPedometer</string>
 
     <!-- splash screen -->
-    <string name="title_activity_splash_screen" translatable="false">SplashScreenActivity</string>
     <string name="appLaunch_imageView_contentDescription" translatable="false">this is smart sport pedometer application launch imageView</string>
 
     <!-- smartsport base activity navigation bar bar button item -->
@@ -91,9 +90,18 @@
     <string name="scheduleWalkInviteGroup_scheduleTime_label">约走时间：</string>
     <string name="scheduleWalkInviteGroup_scheduleTime_format" formatted="false">%s ~ %s</string>
     <string name="scheduleWalkInviteGroup_status_label">状态：</string>
+    <string name="scheduleWalkInviteGroup_status_walking">进行中&#8230;</string>
     <string name="scheduleWalkInviteGroup_status_startSoon">即将开始</string>
-    <string name="scheduleWalkInviteGroup_status_startReaminTime_format">%s 后开始</string>
+    <string name="scheduleWalkInviteGroup_status_startReaminTime_format">%s后开始</string>
+    <string name="scheduleWalkInviteGroup_status_startReaminTime_day_unit">天</string>
+    <string name="scheduleWalkInviteGroup_status_startReaminTime_hour_unit">小时</string>
+    <string name="scheduleWalkInviteGroup_status_startReaminTime_minute_unit">分钟</string>
     <string name="scheduleWalkInviteGroup_status_invalid">已失效</string>
+
+    <!-- group walk result activity -->
+    <string name="title_activity_group_walkResult" translatable="false">GroupWalkResultActivity</string>
+    <string name="walkInvite_walkResult_title">约走结果</string>
+    <string name="withinGroupCompete_walkResult_title">组内竞赛结果</string>
 
     <!-- walk invite invitee select activity -->
     <string name="title_activity_walkInvite_invitee_select" translatable="false">WalkInviteInviteeSelectActivity</string>

@@ -3,6 +3,10 @@
  */
 package com.smartsport.spedometer.group.walk;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
@@ -33,9 +37,14 @@ import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.customwidget.SSBNavBarButtonItem;
 import com.smartsport.spedometer.group.GroupInfoModel;
+import com.smartsport.spedometer.group.GroupType;
+import com.smartsport.spedometer.group.GroupWalkResultActivity;
+import com.smartsport.spedometer.group.GroupWalkResultActivity.GroupWalkResultExtraData;
 import com.smartsport.spedometer.group.info.member.MemberStatus;
 import com.smartsport.spedometer.group.info.member.UserInfoMemberStatusBean;
+import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.stepcounter.WalkInfoType;
@@ -54,8 +63,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private static final SSLogger LOGGER = new SSLogger(
 			WalkInviteWalkActivity.class);
 
-	// milliseconds per minute, minutes per hour
-	private final int MILLISECONDS_PER_MINUTE = 60 * 1000;
+	// milliseconds per second, seconds per minute and minutes per hour
+	private final int MILLISECONDS_PER_SECOND = 1000;
+	private final int SECONDS_PER_MINUTE = 60;
 	private final int MINUTES_PER_HOUR = 60;
 
 	// group info and walk invite model
@@ -68,6 +78,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	// walk invite inviter walk path mapView and autoNavi map
 	private MapView inviterWalkPathMapView;
 	private AMap autoNaviMap;
+
+	// autoNavi location source
+	private WalkStartPointLocationSource autoNaviMapLocationSource;
 
 	// autoNavi map location manager proxy
 	private LocationManagerProxy locationManagerProxy;
@@ -90,6 +103,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	// textView
 	private TextView walkDistanceTextView, walkStepsCountTextView,
 			walkEnergyTextView, walkPaceTextView, walkSpeedTextView;
+
+	// attendee walk control flag
+	private boolean isAttendeeWalkControlled;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -159,7 +175,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		// get autoNavi map
 		autoNaviMap = inviterWalkPathMapView.getMap();
 
-		// set my location style
+		// set its my location style
 		autoNaviMap.setMyLocationStyle(new MyLocationStyle()
 				.myLocationIcon(
 						BitmapDescriptorFactory
@@ -171,8 +187,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 				.strokeColor(
 						getResources().getColor(android.R.color.transparent)));
 
-		// set location source
-		autoNaviMap.setLocationSource(new WalkStartPointLocationSource());
+		// set its location source
+		autoNaviMap
+				.setLocationSource(autoNaviMapLocationSource = new WalkStartPointLocationSource());
 
 		// enable get my location, compass and hidden location, zoom controls
 		// button
@@ -365,6 +382,21 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 		// inviter walk path mapView perform onDestroy method
 		inviterWalkPathMapView.onDestroy();
+
+		// check autoNavi location source and then deactivate
+		if (null != autoNaviMapLocationSource) {
+			autoNaviMapLocationSource.deactivate();
+		}
+	}
+
+	@Override
+	protected void onBackBarButtonItemClick(SSBNavBarButtonItem backBarBtnItem) {
+		// check attendee walk control flag
+		if (isAttendeeWalkControlled) {
+			//
+		} else {
+			super.onBackBarButtonItemClick(backBarBtnItem);
+		}
 	}
 
 	/**
@@ -397,10 +429,10 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 				_walkStartRemainTime = null;
 			}
 		} else {
-			LOGGER.error("Get walk invite group walk start remain time error, walk invite group schedule begin time = "
-					+ scheduleBeginTime
-					+ " and schedule end time = "
-					+ scheduleEndTime);
+			LOGGER.error("Get walk invite group walk start remain time error, walk invite group schedule end time = "
+					+ scheduleEndTime
+					+ " is less than begin time = "
+					+ scheduleBeginTime);
 		}
 
 		return _walkStartRemainTime;
@@ -417,14 +449,15 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private SpannableString formatWalkStartRemainTime(long walkStartRemainTime) {
 		// get walk start remain time(minutes)
 		long _walkStartRemainTimeMinutes = walkStartRemainTime
-				/ MILLISECONDS_PER_MINUTE;
+				/ (SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND);
 
 		// generate text absolute size span
 		AbsoluteSizeSpan _textAbsoluteSizeSpan = new AbsoluteSizeSpan(16, true);
 
 		// get walk start remain time format
 		SpannableString _walkStartRemainTimeFormat;
-		if (0 == _walkStartRemainTimeMinutes) {
+		if (0 == _walkStartRemainTimeMinutes
+				&& 0 != walkStartRemainTime / MILLISECONDS_PER_SECOND) {
 			_walkStartRemainTimeFormat = new SpannableString(
 					getString(R.string.scheduleWalkInviteGroup_status_startSoon));
 
@@ -736,6 +769,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 					v.setBackgroundResource(R.drawable.walk_stopbutton_bg);
 					((Button) v).setText(_walkStopBtnText);
 					v.setTag(((Button) v).getText());
+					isAttendeeWalkControlled = true;
 				} else if (getString(R.string.walkStop_button_text)
 						.equalsIgnoreCase(_walkControlBtnText.toString())) {
 					// walk invite group attendee stop walk
@@ -747,7 +781,27 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 							});
 
 					// test by ares
-					//
+					// define walk invite walk extra data map
+					Map<String, Object> _extraMap = new HashMap<String, Object>();
+
+					// put walk invite group type, walk start, stop time and
+					// attendees walk result to extra data map as param
+					_extraMap.put(GroupWalkResultExtraData.GWR_GROUP_TYPE,
+							GroupType.WALK_GROUP);
+					_extraMap.put(
+							GroupWalkResultExtraData.GWR_GROUP_WALK_STARTTIME,
+							Long.valueOf(123456789));
+					_extraMap.put(
+							GroupWalkResultExtraData.GWR_GROUP_WALK_STARTTIME,
+							Long.valueOf(132465798));
+					_extraMap
+							.put(GroupWalkResultExtraData.GWR_GROUP_ATTENDEES_WALKRESULT,
+									new ArrayList<UserInfoGroupResultBean>());
+
+					// go to walk invite walk result activity with extra data
+					// map
+					popPushActivityForResult(GroupWalkResultActivity.class,
+							_extraMap);
 				}
 			}
 		}

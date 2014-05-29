@@ -16,7 +16,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
@@ -306,8 +306,11 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 		private static final String WALKINVITEGROUP_SCHEDULEBEGINTIME_KEY = "walkInviteGroup_scheduleBeginTime_key";
 		private static final String WALKINVITEGROUP_SCHEDULEENDTIME_KEY = "walkInviteGroup_scheduleEndTime_key";
 
-		// milliseconds per second
+		// milliseconds per second, seconds per day, hour and minute
 		private final int MILLISECONDS_PER_SECOND = 1000;
+		private final int SECONDS_PER_DAY = 24 * 60 * 60;
+		private final int SECONDS_PER_HOUR = 60 * 60;
+		private final int SECONDS_PER_MINUTE = 60;
 
 		// timestamp long and short date format
 		@SuppressLint("SimpleDateFormat")
@@ -376,15 +379,11 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 					GroupInviteInfoBean _scheduleWalkInviteInviteInfo = scheduleWalkInviteGroup
 							.getInviteInfo();
 
-					// generate holo green dark foreground color span
-					ForegroundColorSpan _holoGreenDarkForegroundColorSpan = new ForegroundColorSpan(
-							context.getResources().getColor(
-									android.R.color.holo_green_dark));
-
-					// check schedule walk invite group status
-					SpannableString _status = new SpannableString("即将开始");
-					_status.setSpan(_holoGreenDarkForegroundColorSpan, 0,
-							_status.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+					// get schedule walk invite group begin and end timestamp
+					long _scheduleWalkInviteGroupBeginTimestamp = _scheduleWalkInviteInviteInfo
+							.getBeginTime() * MILLISECONDS_PER_SECOND;
+					long _scheduleWalkInviteGroupEndTimestamp = _scheduleWalkInviteInviteInfo
+							.getEndTime() * MILLISECONDS_PER_SECOND;
 
 					// set data attributes
 					_data.put(
@@ -392,23 +391,21 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 									.name(), _scheduleWalkInviteInviteInfo
 									.getTopic());
 					_data.put(WALKINVITEGROUP_SCHEDULEBEGINTIME_KEY,
-							_scheduleWalkInviteInviteInfo.getBeginTime()
-									* MILLISECONDS_PER_SECOND);
+							_scheduleWalkInviteGroupBeginTimestamp);
 					_data.put(WALKINVITEGROUP_SCHEDULEENDTIME_KEY,
-							_scheduleWalkInviteInviteInfo.getEndTime()
-									* MILLISECONDS_PER_SECOND);
+							_scheduleWalkInviteGroupEndTimestamp);
 					_data.put(
 							ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_SCHEDULETIME_KEY
 									.name(),
 							getScheduleTime(
-									_scheduleWalkInviteInviteInfo
-											.getBeginTime()
-											* MILLISECONDS_PER_SECOND,
-									_scheduleWalkInviteInviteInfo.getEndTime()
-											* MILLISECONDS_PER_SECOND));
+									_scheduleWalkInviteGroupBeginTimestamp,
+									_scheduleWalkInviteGroupEndTimestamp));
 					_data.put(
 							ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_STATUS_KEY
-									.name(), _status);
+									.name(),
+							formatGroupStatus(
+									_scheduleWalkInviteGroupBeginTimestamp,
+									_scheduleWalkInviteGroupEndTimestamp));
 
 					// add data to list
 					_sDataList.add(_data);
@@ -522,6 +519,95 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 			}
 
 			return _scheduleTime;
+		}
+
+		/**
+		 * @title formatGroupStatus
+		 * @descriptor format schedule walk invite group status
+		 * @param scheduleBeginTime
+		 *            : schedule walk invite group schedule begin time
+		 * @param scheduleEndTime
+		 *            : schedule walk invite group schedule end time
+		 * @return schedule walk invite group status format
+		 */
+		private SpannableStringBuilder formatGroupStatus(
+				long scheduleBeginTime, long scheduleEndTime) {
+			// define schedule walk invite group status spannable string builder
+			SpannableStringBuilder _groupStatus = new SpannableStringBuilder();
+
+			// generate holo green dark foreground color span
+			ForegroundColorSpan _holoGreenDarkForegroundColorSpan = new ForegroundColorSpan(
+					context.getResources().getColor(
+							android.R.color.holo_green_dark));
+
+			// check schedule walk invite group begin and end time
+			if (scheduleBeginTime < scheduleEndTime) {
+				// get system current timestamp
+				long _currentTimestamp = System.currentTimeMillis();
+
+				// get schedule walk invite group start remain time
+				Long _remainTime = (scheduleBeginTime - _currentTimestamp)
+						/ MILLISECONDS_PER_SECOND;
+
+				// check it and initialize schedule walk invite group status
+				// string format
+				if (0 >= _remainTime) {
+					_groupStatus
+							.append(context
+									.getString(R.string.scheduleWalkInviteGroup_status_walking));
+					_groupStatus.setSpan(_holoGreenDarkForegroundColorSpan, 0,
+							_groupStatus.length(),
+							Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				} else if (scheduleEndTime < _currentTimestamp) {
+					_groupStatus
+							.append(context
+									.getString(R.string.scheduleWalkInviteGroup_status_invalid));
+				} else {
+					// define schedule walk invite group status value
+					String _groupStatusValue = null;
+
+					// days
+					if (SECONDS_PER_DAY <= _remainTime) {
+						_groupStatusValue = _remainTime
+								/ SECONDS_PER_DAY
+								+ context
+										.getResources()
+										.getString(
+												R.string.scheduleWalkInviteGroup_status_startReaminTime_day_unit);
+					}
+					// hours
+					else if (SECONDS_PER_HOUR <= _remainTime) {
+						_groupStatusValue = _remainTime
+								/ SECONDS_PER_HOUR
+								+ context
+										.getResources()
+										.getString(
+												R.string.scheduleWalkInviteGroup_status_startReaminTime_hour_unit);
+					}
+					// minutes
+					else {
+						_groupStatusValue = _remainTime
+								/ SECONDS_PER_MINUTE
+								+ context
+										.getResources()
+										.getString(
+												R.string.scheduleWalkInviteGroup_status_startReaminTime_minute_unit);
+					}
+
+					// generate schedule walk invite group status format
+					_groupStatus
+							.append(String.format(
+									context.getString(R.string.scheduleWalkInviteGroup_status_startReaminTime_format),
+									_groupStatusValue));
+				}
+			} else {
+				LOGGER.error("Format schedule walk invite group status error, schedule walk invite group schedule end time = "
+						+ scheduleEndTime
+						+ " is less than begin time = "
+						+ scheduleBeginTime);
+			}
+
+			return _groupStatus;
 		}
 
 		// inner class
