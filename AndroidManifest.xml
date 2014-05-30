@@ -94,6 +94,12 @@
             android:theme="@style/AppBaseActivityTheme" >
         </activity>
         <activity
+            android:name=".group.compete.WithinGroupCompeteInviteInfoSettingActivity"
+            android:label="@string/title_activity_withinGroupCompeteInviteInfo_setting"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseActivityTheme" >
+        </activity>
+        <activity
             android:name=".strangersocial.NearbyStrangersActivity"
             android:label="@string/title_activity_nearby_strangers"
             android:screenOrientation="portrait"

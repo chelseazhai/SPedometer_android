@@ -3,7 +3,9 @@
  */
 package com.smartsport.spedometer.group;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,7 +14,9 @@ import android.view.View.OnClickListener;
 import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.customwidget.SSBNavBarButtonItem;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
+import com.smartsport.spedometer.group.ScheduleWalkInviteGroupsActivity.WalkInviteInviteeSelectOrWalkControlExtraData;
 import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -84,6 +88,20 @@ public class GroupWalkResultActivity extends SSBaseActivity {
 		//
 	}
 
+	@Override
+	protected void onBackBarButtonItemClick(SSBNavBarButtonItem backBarBtnItem) {
+		// define walk invite walk result extra data map
+		Map<String, Object> _extraMap = new HashMap<String, Object>();
+
+		// put walk invite walk stop control flag to extra data map as param
+		_extraMap
+				.put(WalkInviteInviteeSelectOrWalkControlExtraData.WIWC_WALK_STARTORSTOP_FLAG,
+						Boolean.valueOf(true));
+
+		// pop the activity with result code and extra map
+		popActivityWithResult(RESULT_OK, _extraMap);
+	}
+
 	// inner class
 	/**
 	 * @name GroupWalkResultExtraData
@@ -117,21 +135,15 @@ public class GroupWalkResultActivity extends SSBaseActivity {
 			// share the walk invite or within group compete walk result
 			LOGGER.debug("Share the walk invite or within group compete walk result");
 
-			Toast.makeText(GroupWalkResultActivity.this, "", Toast.LENGTH_LONG)
-					.show();
+			Toast.makeText(
+					GroupWalkResultActivity.this,
+					null == groupType ? "分享失败"
+							: GroupType.WALK_GROUP == groupType ? "分享约走结果成功"
+									: "分享多人组内竞赛结果成功", Toast.LENGTH_LONG).show();
 
-			// // test by ares
-			// // define walk invite walk result extra data map
-			// Map<String, Object> _extraMap = new HashMap<String, Object>();
-			//
-			// // put walk invite walk stop control flag to extra data map as
-			// param
-			// _extraMap
-			// .put(WalkInviteInviteeSelectOrWalkControlExtraData.WIWC_WALK_STARTORSTOP_FLAG,
-			// Boolean.valueOf(true));
-			//
-			// // pop the activity with result code and extra map
-			// popActivityWithResult(RESULT_OK, _extraMap);
+			// test by ares
+			// pop walk invite walk result activity
+			popActivityWithResult();
 		}
 
 	}

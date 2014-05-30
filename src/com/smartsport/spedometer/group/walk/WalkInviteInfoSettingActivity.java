@@ -17,6 +17,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
@@ -201,12 +202,43 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 
 		@Override
 		public void onClick(View v) {
-			// get walk invite topic, schedule begin and end time
+			// get and check walk invite topic
 			String _topic = walkInviteInfoListViewAdapter.getGroupTopic();
+			if (null == _topic || "".equalsIgnoreCase(_topic)) {
+				LOGGER.error("Walk invite topic is null");
+
+				// show walk invite topic is null toast
+				Toast.makeText(WalkInviteInfoSettingActivity.this,
+						R.string.toast_walk_inviteInfo_topic_null,
+						Toast.LENGTH_SHORT).show();
+
+				return;
+			}
+
+			// get and check schedule begin and end time
 			String _scheduleBeginTime = walkInviteInfoListViewAdapter
 					.getWalkInviteScheduleBeginTime();
 			String _scheduleEndTime = walkInviteInfoListViewAdapter
 					.getWalkInviteScheduleEndTime();
+			if (null == _scheduleBeginTime
+					|| "".equalsIgnoreCase(_scheduleBeginTime)
+					|| null == _scheduleEndTime
+					|| "".equalsIgnoreCase(_scheduleEndTime)) {
+				// show walk invite schedule begin or end time is null toast
+				Toast.makeText(WalkInviteInfoSettingActivity.this,
+						R.string.toast_walk_inviteInfo_scheduleTime_null,
+						Toast.LENGTH_SHORT).show();
+
+				return;
+			} else if (Long.parseLong(_scheduleBeginTime) >= Long
+					.parseLong(_scheduleEndTime)) {
+				// show walk invite schedule begin and end time invalid toast
+				Toast.makeText(WalkInviteInfoSettingActivity.this,
+						R.string.toast_walk_inviteInfo_scheduleTime_invalid,
+						Toast.LENGTH_SHORT).show();
+
+				return;
+			}
 
 			// check the selected invitee and schedule time
 			if (null != selectedWalkInviteInvitee) {

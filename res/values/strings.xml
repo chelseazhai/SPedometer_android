@@ -127,10 +127,11 @@
 
     <!-- walk invite walk activity -->
     <string name="title_activity_walkInvite_walk" translatable="false">WalkInviteWalkActivity</string>
+    <string name="walkInvite_watchWalkAttendeeWalkPath_imageView_contentDescription" translatable="false">this is watch walk attendee walk path imageView</string>
     <string name="walkInviteGroup_startReaminTime_format" formatted="false" translatable="false">%02d:%02d</string>
 
     <!-- within group compete invite info setting activity -->
-
+    <string name="title_activity_withinGroupCompeteInviteInfo_setting">WithinGroupCompeteInviteInfoSettingActivity</string>
 
     <!-- within group compete invite info item -->
     <string name="withinGroupCompete_inviteInfo_topic_label">组内竞赛主题：</string>

@@ -198,9 +198,16 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		autoNaviMap.getUiSettings().setCompassEnabled(true);
 		autoNaviMap.getUiSettings().setZoomControlsEnabled(false);
 
-		// set walk invite inviter avatar imageView image
-		((ImageView) findViewById(R.id.wiw_inviterAvatar_imageView))
-				.setImageURI(null);
+		// get walk invite inviter avatar imageView
+		ImageView _inviterAvatarImgView = (ImageView) findViewById(R.id.wiw_inviterAvatar_imageView);
+
+		// set its image
+		_inviterAvatarImgView.setImageURI(null);
+
+		// get walk path watch badger imageView and set it as walk invite
+		// inviter avatar imageView tag
+		ImageView _selfWalkPathWatchBadgerImgView = (ImageView) findViewById(R.id.wiw_selfWalkPathWatchBadger_imageView);
+		_inviterAvatarImgView.setTag(_selfWalkPathWatchBadgerImgView);
 
 		// get walk invite walk start remain or walk duration time textView
 		walkStartRemainOrWalkDurationTimeTextView = (TextView) findViewById(R.id.wiw_walkStartRemainTime_or_walkDurationTime_textView);
@@ -223,7 +230,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 			// get attendee walk duration time from local storage
 			// test by ares
-			SpannableString _walkDurationTime = new SpannableString("23'30\"");
+			SpannableString _walkDurationTime = new SpannableString("123'30\"");
 			_walkDurationTime.setSpan(_holoGreenLightForegroundColorSpan, 0,
 					_walkDurationTime.length(),
 					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -263,12 +270,31 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 					.setText(_invalidWalkInviteGroup);
 		}
 
+		// get walk invite invitee avatar imageView
+		ImageView _inviteeAvatarImgView = (ImageView) findViewById(R.id.wiw_inviteeAvatar_imageView);
+
 		// check walk invite invitee user info with member status then set walk
 		// invite invitee avatar imageView image and nickname textView text
 		if (null != inviteeUserInfoWithMemberStatus) {
-			((ImageView) findViewById(R.id.wiw_inviteeAvatar_imageView))
-					.setImageURI(Uri.parse(inviteeUserInfoWithMemberStatus
-							.getAvatarUrl()));
+			// set its image
+			_inviteeAvatarImgView.setImageURI(Uri
+					.parse(inviteeUserInfoWithMemberStatus.getAvatarUrl()));
+
+			// get walk path watch badger imageView and set it as walk invite
+			// invitee avatar imageView tag
+			ImageView _walkPartnerWalkPathWatchBadgerImgView = (ImageView) findViewById(R.id.wiw_walkPartnerWalkPathWatchBadger_imageView);
+			_inviteeAvatarImgView
+					.setTag(_walkPartnerWalkPathWatchBadgerImgView);
+
+			// set walk invite walk attendee avatar imgView tag view tag using
+			// walk partner avatar imageView tag
+			_selfWalkPathWatchBadgerImgView
+					.setTag(_walkPartnerWalkPathWatchBadgerImgView);
+			_walkPartnerWalkPathWatchBadgerImgView
+					.setTag(_selfWalkPathWatchBadgerImgView);
+
+			// get walk invite invitee nickname textView
+			TextView _inviteeNicknameTextView = (TextView) findViewById(R.id.wiw_inviteeNickname_textView);
 
 			// check invitee member status in the schedule walk invite group
 			if (MemberStatus.MEM_ONLINE == inviteeUserInfoWithMemberStatus
@@ -287,10 +313,10 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 						_inviteeNicknameSpannableString.length(),
 						Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-				((TextView) findViewById(R.id.wiw_inviteeNickname_textView))
+				_inviteeNicknameTextView
 						.setText(_inviteeNicknameSpannableString);
 			} else {
-				((TextView) findViewById(R.id.wiw_inviteeNickname_textView))
+				_inviteeNicknameTextView
 						.setText(inviteeUserInfoWithMemberStatus.getNickname());
 			}
 		}
@@ -345,9 +371,19 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		// set its on click listener
 		_walkControlBtn.setOnClickListener(new WalkControlBtnOnClickListener());
 
-		// check walk invite walk start remain time and show walk control button
-		// if needed
+		// check walk invite walk start remain time
 		if (null != _walkStartRemainTime && 0 == _walkStartRemainTime) {
+			// define walk invite attendee avatar imageView on click listener
+			AttendeeAvatarImgViewOnClickListener _attendeeAvatarImgViewOnClickListener = new AttendeeAvatarImgViewOnClickListener();
+
+			// set walk attendee(inviter and invitee) avatar imageView on click
+			// listener
+			_inviterAvatarImgView
+					.setOnClickListener(_attendeeAvatarImgViewOnClickListener);
+			_inviteeAvatarImgView
+					.setOnClickListener(_attendeeAvatarImgViewOnClickListener);
+
+			// show walk control button
 			_walkControlBtn.setVisibility(View.VISIBLE);
 		}
 	}
@@ -393,6 +429,8 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	protected void onBackBarButtonItemClick(SSBNavBarButtonItem backBarBtnItem) {
 		// check attendee walk control flag
 		if (isAttendeeWalkControlled) {
+			LOGGER.debug("Alert user leave for a moment or misoperation");
+
 			//
 		} else {
 			super.onBackBarButtonItemClick(backBarBtnItem);
@@ -697,6 +735,40 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 		}
 
+	}
+
+	/**
+	 * @name AttendeeAvatarImgViewOnClickListener
+	 * @descriptor walk invite attendee avatar imageView on click listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class AttendeeAvatarImgViewOnClickListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			// get and the check clicked view tag
+			Object _tag = v.getTag();
+			if (null != _tag && _tag instanceof View) {
+				// get the clicked view tag view
+				View _tagView = (View) _tag;
+
+				// check the tag view(walk path watch badger visibility)
+				if (View.VISIBLE != _tagView.getVisibility()) {
+					// show walk path watch badger
+					_tagView.setVisibility(View.VISIBLE);
+
+					// get and the check clicked view tag view tag
+					Object _tagViewTag = _tagView.getTag();
+					if (null != _tagViewTag && _tagViewTag instanceof View) {
+						// hide the other walk attendee walk path watch badger
+						((View) _tagViewTag).setVisibility(View.GONE);
+					}
+				}
+			} else {
+				LOGGER.error("");
+			}
+		}
 	}
 
 	/**
