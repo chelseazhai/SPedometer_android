@@ -27,6 +27,7 @@ import com.smartsport.spedometer.group.GroupInviteInfoItemEditorActivity;
 import com.smartsport.spedometer.group.GroupInviteInfoItemEditorActivity.GroupInviteInfoItemEditorExtraData;
 import com.smartsport.spedometer.group.GroupInviteInfoListViewAdapter;
 import com.smartsport.spedometer.group.GroupInviteInfoListViewAdapter.GroupInviteInfo4SettingListViewAdapterKey;
+import com.smartsport.spedometer.group.GroupType;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
@@ -156,7 +157,7 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 		// walk invite info setting, editor invite info attribute and editor
 		// info value
 		public static final String WIIS_EI_ATTRIBUTE = "walkInviteInfoSetting_inviteInfo_attribute";
-		public static final String WIIS_EI_VALUE = "walkInviteInfoSetting_userInfo_editorInfo_value";
+		public static final String WIIS_EI_VALUE = "walkInviteInfoSetting_editorInfo_value";
 
 	}
 
@@ -286,6 +287,11 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 				long id) {
 			// define walk invite info item editor extra data map
 			Map<String, Object> _extraMap = new HashMap<String, Object>();
+
+			// put the editor group type to extra data map as param
+			_extraMap.put(
+					GroupInviteInfoItemEditorExtraData.GII_EDITORGROUPTYPE,
+					GroupType.WALK_GROUP);
 
 			// put editor walk invite info attribute, name and info to extra
 			// data map as param

@@ -6,4 +6,8 @@
     <string name="toast_walk_inviteInfo_scheduleTime_null">选定一个约走时间</string>
     <string name="toast_walk_inviteInfo_scheduleTime_invalid">约走时间异常</string>
 
+    <!-- within group compete invite info item -->
+    <string name="toast_withinGroupCompete_inviteInfo_topic_null">好歹给出一个多人组内竞赛提示主题</string>
+    <string name="toast_withinGroupCompete_inviteInfo_durationTime_null">选定一个竞赛时长</string>
+
 </resources>

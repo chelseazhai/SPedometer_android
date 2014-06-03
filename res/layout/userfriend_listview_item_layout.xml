@@ -6,23 +6,35 @@
     android:padding="8dp" >
 
     <ImageView
-        android:id="@+id/wiis_item_friendAvatar_imageView"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:id="@+id/userfriend_item_selectState_imageView"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
+        android:layout_marginRight="8dp"
+        android:contentDescription="@string/withinGroupCompeteInviteInviteeSelectItem_selectState_imageView_contentDescription"
+        android:scaleType="centerInside"
+        android:src="@drawable/img_withingroupcompete_invitee_unselected"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/userfriend_item_friendAvatar_imageView"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/userfriend_item_selectState_imageView"
         android:background="@color/silver"
-        android:contentDescription="@string/walkInviteInviteeSelectItem_friendAvatar_imageView_contentDescription"
+        android:contentDescription="@string/walkOrWithinGroupCompeteInviteInviteeSelectItem_friendAvatar_imageView_contentDescription"
         android:scaleType="centerInside"
         android:src="@drawable/img_default_small_avatar" />
 
     <TextView
-        android:id="@+id/wiis_item_friendNickname_textView"
+        android:id="@+id/userfriend_item_friendNickname_textView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@id/wiis_item_friendAvatar_imageView"
+        android:layout_toRightOf="@id/userfriend_item_friendAvatar_imageView"
         android:ellipsize="end"
         android:singleLine="true"
         android:textSize="16sp" />

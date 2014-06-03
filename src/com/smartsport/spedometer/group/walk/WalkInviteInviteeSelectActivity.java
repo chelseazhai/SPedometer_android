@@ -109,8 +109,8 @@ public class WalkInviteInviteeSelectActivity extends SSBaseActivity {
 										.name(),
 								WalkInviteInviteeListViewAdapterKey.WALKINVITEINVITEE_NICKNAME_KEY
 										.name() }, new int[] {
-								R.id.wiis_item_friendAvatar_imageView,
-								R.id.wiis_item_friendNickname_textView }));
+								R.id.userfriend_item_friendAvatar_imageView,
+								R.id.userfriend_item_friendNickname_textView }));
 
 		// set its on item click listener
 		_walkInviteInviteeListView

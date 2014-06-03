@@ -7,6 +7,9 @@
     <!-- autoNavi map zoom level -->
     <integer name="config_autoNaviMap_zoomLevel">16</integer>
 
+    <!-- the limit count of within group compete invitees -->
+    <integer name="config_limitCount_withinGroupCompeteInvitees">5</integer>
+
     <!-- the limit count of stranger pat -->
     <integer name="config_limitCount_strangerPat">5</integer>
 

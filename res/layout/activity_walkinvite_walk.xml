@@ -44,8 +44,8 @@
 
                 <ImageView
                     android:id="@+id/wiw_selfWalkPathWatchBadger_imageView"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:layout_gravity="right|bottom"
                     android:contentDescription="@string/walkInvite_watchWalkAttendeeWalkPath_imageView_contentDescription"
                     android:scaleType="centerCrop"
@@ -123,8 +123,8 @@
 
                 <ImageView
                     android:id="@+id/wiw_walkPartnerWalkPathWatchBadger_imageView"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
                     android:layout_gravity="right|bottom"
                     android:contentDescription="@string/walkInvite_watchWalkAttendeeWalkPath_imageView_contentDescription"
                     android:scaleType="centerCrop"

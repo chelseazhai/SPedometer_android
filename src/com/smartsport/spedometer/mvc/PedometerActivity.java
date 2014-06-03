@@ -9,6 +9,7 @@ import android.widget.Button;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
 import com.smartsport.spedometer.group.ScheduleWalkInviteGroupsActivity;
+import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteInfoSettingActivity;
 import com.smartsport.spedometer.strangersocial.NearbyStrangersActivity;
 import com.smartsport.spedometer.user.UserInfoSettingActivity;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -61,6 +62,13 @@ public class PedometerActivity extends SSBaseActivity {
 		// set its on click listener
 		walkInviteBtn.setOnClickListener(new WalkInviteBtnOnClickListener());
 
+		// get within group compete invite button
+		withinGroupCompeteBtn = (Button) findViewById(R.id.pfc_withinGroupCompete_button);
+
+		// set its on click listener
+		withinGroupCompeteBtn
+				.setOnClickListener(new WithinGroupCompeteInviteBtnOnClickListener());
+
 		// get nearby stranger button
 		nearbyStrangersBtn = (Button) findViewById(R.id.pfc_nearbyStrangers_button);
 
@@ -98,6 +106,22 @@ public class PedometerActivity extends SSBaseActivity {
 		public void onClick(View v) {
 			// go to schedule walk invite groups activity
 			pushActivity(ScheduleWalkInviteGroupsActivity.class);
+		}
+
+	}
+
+	/**
+	 * @name WithinGroupCompeteInviteBtnOnClickListener
+	 * @descriptor within group compete invite button on click listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class WithinGroupCompeteInviteBtnOnClickListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			// go to within group compete invite info setting activity
+			pushActivity(WithinGroupCompeteInviteInfoSettingActivity.class);
 		}
 
 	}

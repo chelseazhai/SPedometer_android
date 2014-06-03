@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/wigc_ia_og_operate_icon_imageView"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/withingroupcompete_inviteattendee_operationitem_icon_imageview_bg"
+        android:contentDescription="@string/withinGroupCompete_inviteAttendee_operateGridViewItem_icon_contentDescription"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_default_middle_avatar" />
+
+    <TextView
+        android:id="@+id/wigc_ia_og_operate_tip_textView"
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/wigc_ia_og_operate_icon_imageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="4dp"
+        android:ellipsize="middle"
+        android:gravity="top|center_horizontal"
+        android:singleLine="true"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
+
+</RelativeLayout>

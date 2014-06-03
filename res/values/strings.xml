@@ -98,6 +98,10 @@
     <string name="scheduleWalkInviteGroup_status_startReaminTime_minute_unit">分钟</string>
     <string name="scheduleWalkInviteGroup_status_invalid">已失效</string>
 
+    <!-- group invite invitee select item -->
+    <string name="withinGroupCompeteInviteInviteeSelectItem_selectState_imageView_contentDescription" translatable="false">this is within group compete invite invitee select item select state imageView</string>
+    <string name="walkOrWithinGroupCompeteInviteInviteeSelectItem_friendAvatar_imageView_contentDescription" translatable="false">this is walk or within group compete invite invitee select item user friend avatar imageView</string>
+
     <!-- group walk result activity -->
     <string name="title_activity_group_walkResult" translatable="false">GroupWalkResultActivity</string>
     <string name="walkInvite_walkResult_title">约走结果</string>
@@ -107,9 +111,6 @@
     <string name="title_activity_walkInvite_invitee_select" translatable="false">WalkInviteInviteeSelectActivity</string>
     <string name="cancel_selectWalkInviteInvitee_barbtnitem_title">取消</string>
     <string name="walkInviteInviteeSelect_activity_title">选择约走对象</string>
-
-    <!-- walk invite invitee select item -->
-    <string name="walkInviteInviteeSelectItem_friendAvatar_imageView_contentDescription" translatable="false">this is walk invite invitee select item user friend avatar imageView</string>
 
     <!-- walk invite info setting activity -->
     <string name="title_activity_walkInviteInfo_setting" translatable="false">WalkInviteInfoSettingActivity</string>
@@ -132,13 +133,23 @@
 
     <!-- within group compete invite info setting activity -->
     <string name="title_activity_withinGroupCompeteInviteInfo_setting">WithinGroupCompeteInviteInfoSettingActivity</string>
+    <string name="withinGroupCompeteInviteInfoSetting_activity_title">安排组内竞赛</string>
+    <string name="withinGroupCompeteInvite_inviterNickname">我</string>
+
+    <!-- within group compete invite attendee operate item -->
+    <string name="withinGroupCompete_inviteAttendee_operateGridViewItem_icon_contentDescription" translatable="false">this is within group compete invite attendee operate gridView item icon imageView</string>
 
     <!-- within group compete invite info item -->
     <string name="withinGroupCompete_inviteInfo_topic_label">组内竞赛主题：</string>
     <string name="withinGroupCompete_inviteInfo_durationTime_label">组内竞赛时长：</string>
     <string name="withinGroupCompete_inviteInfo_durationTime_unit">分钟</string>
     <string name="withinGroupCompete_inviteInfo_durationTime_textView_hint">给竞赛一个时长吧，不要太累哦!</string>
-    <string name="withinGroupCompete_inviteInfo_durationTime_format">您选择的组内竞赛时长为：%s</string>
+    <string name="withinGroupCompete_inviteInfo_durationTime_format">您选择的组内竞赛时长为 %d 分钟</string>
+
+    <!-- within group compete invitee select activity -->
+    <string name="title_activity_withinGroupCompete_invitee_select" translatable="false">WithinGroupCompeteInviteeSelectActivity</string>
+    <string name="cancel_selectWithinGroupCompeteInvitee_barbtnitem_title">取消</string>
+    <string name="withinGroupCompeteInviteeSelect_activity_title">选择竞赛对手</string>
 
     <!-- nearby strangers activity -->
     <string name="title_activity_nearby_strangers" translatable="false">NearbyStrangersActivity</string>

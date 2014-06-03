@@ -29,6 +29,7 @@ import android.widget.TimePicker.OnTimeChangedListener;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
+import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteInfoSettingActivity.WithinGroupCompeteInviteInfoSettingExtraData;
 import com.smartsport.spedometer.group.walk.WalkInviteInfoSettingActivity.WalkInviteInfoSettingExtraData;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -68,6 +69,9 @@ public class GroupInviteInfoItemEditorActivity extends SSBaseActivity {
 	private final SimpleDateFormat TIMESTAMP_SHORT_DATEFORMAT = new SimpleDateFormat(
 			SSApplication.getContext().getString(R.string.short_dateFormat));
 
+	// editor group type
+	private GroupType editorGroupType;
+
 	// group invite info attribute, editor info name and value
 	private GroupInviteInfoAttr4Setting editorAttr;
 	private String editorInfoName;
@@ -90,6 +94,10 @@ public class GroupInviteInfoItemEditorActivity extends SSBaseActivity {
 		// get and check the extra data
 		Bundle _extraData = getIntent().getExtras();
 		if (null != _extraData) {
+			// get the editor group type
+			editorGroupType = (GroupType) _extraData
+					.getSerializable(GroupInviteInfoItemEditorExtraData.GII_EDITORGROUPTYPE);
+
 			// get the editor group invite info attribute, editor name and value
 			editorAttr = (GroupInviteInfoAttr4Setting) _extraData
 					.getSerializable(GroupInviteInfoItemEditorExtraData.GII_EI_ATTRIBUTE);
@@ -469,6 +477,9 @@ public class GroupInviteInfoItemEditorActivity extends SSBaseActivity {
 	 */
 	public static final class GroupInviteInfoItemEditorExtraData {
 
+		// editor group type
+		public static final String GII_EDITORGROUPTYPE = "editorGroupType";
+
 		// group invite info attribute, editor info name and info value
 		public static final String GII_EI_ATTRIBUTE = "groupInviteInfo_attribute";
 		public static final String GII_EI_NAME = "groupInviteInfo_editorInfo_name";
@@ -488,46 +499,77 @@ public class GroupInviteInfoItemEditorActivity extends SSBaseActivity {
 
 		@Override
 		public void onClick(View v) {
-			// define group invite info editor extra data map
-			Map<String, Object> _extraMap = new HashMap<String, Object>();
+			// check editor group type
+			if (null != editorGroupType) {
+				// define group invite info editor extra data map
+				Map<String, Object> _extraMap = new HashMap<String, Object>();
 
-			// put editor group invite info attribute to extra data map as param
-			_extraMap.put(WalkInviteInfoSettingExtraData.WIIS_EI_ATTRIBUTE,
-					editorAttr);
+				// check editor group type and then put editor group invite info
+				// attribute to extra data map as param
+				switch (editorGroupType) {
+				case WALK_GROUP:
+					_extraMap.put(
+							WalkInviteInfoSettingExtraData.WIIS_EI_ATTRIBUTE,
+							editorAttr);
+					break;
 
-			// check editor group invite info attribute and put editor group
-			// invite info value to extra data map as param
-			switch (editorAttr) {
-			case GROUP_TOPIC:
-				// group invite topic
-				_extraMap.put(WalkInviteInfoSettingExtraData.WIIS_EI_VALUE,
-						topicEditText.getText().toString());
-				break;
+				case COMPETE_GROUP:
+					_extraMap
+							.put(WithinGroupCompeteInviteInfoSettingExtraData.WIGCIIS_EI_ATTRIBUTE,
+									editorAttr);
+					break;
+				}
 
-			case WALKINVITE_SCHEDULETIME:
-				// walk invite schedule time(schedule begin and end time)
-				_extraMap
-						.put(WalkInviteInfoSettingExtraData.WIIS_EI_VALUE,
-								new StringBuilder()
-										.append(getWalkInviteScheduleTimeBeginTimestamp(
-												walkScheduleTimeDatePicker,
-												walkScheduleTimeTimePicker))
-										.append(getString(R.string.walk_inviteInfo_scheduleTime_beginTimeDuration_splitWord))
-										.append(walkScheduleTimeDurationNumberPicker
-												.getValue()).toString());
-				break;
+				// check editor group type, invite info attribute and put editor
+				// group invite info value to extra data map as param
+				switch (editorAttr) {
+				case GROUP_TOPIC:
+					// group invite topic
+					switch (editorGroupType) {
+					case WALK_GROUP:
+						_extraMap.put(
+								WalkInviteInfoSettingExtraData.WIIS_EI_VALUE,
+								topicEditText.getText().toString());
+						break;
 
-			case WITHINGROUPCOMPETE_DURATIONTIME:
-				// within group compete duration time
-				_extraMap
-						.put(WalkInviteInfoSettingExtraData.WIIS_EI_VALUE,
-								String.valueOf(withinGroupCompeteDurationTimeNumberPicker
-										.getValue()));
-				break;
+					case COMPETE_GROUP:
+						_extraMap
+								.put(WithinGroupCompeteInviteInfoSettingExtraData.WIGCIIS_EI_VALUE,
+										topicEditText.getText().toString());
+						break;
+					}
+					break;
+
+				case WALKINVITE_SCHEDULETIME:
+					// walk invite schedule time(schedule begin and end time)
+					_extraMap
+							.put(WalkInviteInfoSettingExtraData.WIIS_EI_VALUE,
+									new StringBuilder()
+											.append(getWalkInviteScheduleTimeBeginTimestamp(
+													walkScheduleTimeDatePicker,
+													walkScheduleTimeTimePicker))
+											.append(getString(R.string.walk_inviteInfo_scheduleTime_beginTimeDuration_splitWord))
+											.append(walkScheduleTimeDurationNumberPicker
+													.getValue()).toString());
+					break;
+
+				case WITHINGROUPCOMPETE_DURATIONTIME:
+					// within group compete duration time
+					_extraMap
+							.put(WithinGroupCompeteInviteInfoSettingExtraData.WIGCIIS_EI_VALUE,
+									String.valueOf(withinGroupCompeteDurationTimeNumberPicker
+											.getValue()));
+					break;
+				}
+
+				// pop the activity with result code and extra map
+				popActivityWithResult(RESULT_OK, _extraMap);
+			} else {
+				LOGGER.error("The editor group type is null, can't get and return back the editor group invite info");
+
+				// pop the activity
+				popActivityWithResult();
 			}
-
-			// pop the activity with result code and extra map
-			popActivityWithResult(RESULT_OK, _extraMap);
 		}
 
 	}
@@ -615,8 +657,12 @@ public class GroupInviteInfoItemEditorActivity extends SSBaseActivity {
 
 		@Override
 		public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-			// TODO Auto-generated method stub
-
+			// update within group compete schedule duration time display
+			// textView text
+			selectedTimeDisplayTextView
+					.setText(String
+							.format(getString(R.string.withinGroupCompete_inviteInfo_durationTime_format),
+									newVal));
 		}
 
 	}
