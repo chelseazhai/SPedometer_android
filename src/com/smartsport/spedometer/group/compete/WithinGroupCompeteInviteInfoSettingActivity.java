@@ -31,6 +31,7 @@ import com.smartsport.spedometer.group.GroupInviteInfoListViewAdapter;
 import com.smartsport.spedometer.group.GroupInviteInfoListViewAdapter.GroupInviteInfo4SettingListViewAdapterKey;
 import com.smartsport.spedometer.group.GroupType;
 import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteInfoSettingActivity.WithinGroupCompeteInviteAttendeeOperateGridViewAdapters.OperateGridViewAdapterKey;
+import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteeSelectActivity.WithinGroupCompeteInviteeSelectExtraData;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
@@ -53,8 +54,8 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 	// within group compete model
 	private WithinGroupCompeteModel withinGroupCompeteModel;
 
-	// the selected within group compete invite invitees bean list
-	private List<UserInfoBean> selectedWithinGroupCompeteInviteInvitees;
+	// the selected within group compete invitees bean list
+	private List<UserInfoBean> selectedWithinGroupCompeteInvitees;
 
 	// within group compete invite info listView adapter
 	private GroupInviteInfoListViewAdapter withinGroupCompeteInviteInfoListViewAdapter;
@@ -66,19 +67,19 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 		// initialize within group compete model
 		withinGroupCompeteModel = new WithinGroupCompeteModel();
 
-		// initialize within group compete invite invitees list
-		selectedWithinGroupCompeteInviteInvitees = new ArrayList<UserInfoBean>();
+		// initialize within group compete invitees list
+		selectedWithinGroupCompeteInvitees = new ArrayList<UserInfoBean>();
 
 		// test by ares
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 3; i++) {
 			UserInfoBean _competeInvitee = new UserInfoBean();
-			_competeInvitee.setUserId(12312 + i);
+			_competeInvitee.setUserId(10020 + i);
 			_competeInvitee.setAvatarUrl("/img/avatar12" + i);
 			_competeInvitee.setGender(0 == i % 2 ? UserGender.MALE
 					: UserGender.FEMALE);
 			_competeInvitee.setNickname("参与者" + (i + 1));
 
-			selectedWithinGroupCompeteInviteInvitees.add(_competeInvitee);
+			selectedWithinGroupCompeteInvitees.add(_competeInvitee);
 		}
 
 		// set content view
@@ -110,7 +111,7 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 		_withinGroupCompeteInviteInviteeOperationGridView
 				.setAdapter(new WithinGroupCompeteInviteAttendeeOperateGridViewAdapters(
 						this,
-						selectedWithinGroupCompeteInviteInvitees,
+						selectedWithinGroupCompeteInvitees,
 						R.layout.withingroupcompete_inviteattendee_operationgridview_item_layout,
 						new String[] {
 								OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_ICON_KEY
@@ -146,6 +147,24 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 		// set its on item click listener
 		_withinGroupCompeteInviteInfoListView
 				.setOnItemClickListener(new WithinGroupCompeteInviteInfoOnItemClickListener());
+	}
+
+	/**
+	 * @title getWithinGroupCompeteInviteeIds
+	 * @descriptor get within group compete invitee id list
+	 * @return the within group compete invitee id list
+	 * @author Ares
+	 */
+	private List<Integer> getWithinGroupCompeteInviteeIds() {
+		// define within group compete invitee id list
+		List<Integer> _competeInviteesIdList = new ArrayList<Integer>();
+
+		// traversal selected within group compete invitees
+		for (UserInfoBean _selectedCompeteInvitee : selectedWithinGroupCompeteInvitees) {
+			_competeInviteesIdList.add(_selectedCompeteInvitee.getUserId());
+		}
+
+		return _competeInviteesIdList;
 	}
 
 	// inner class
@@ -281,14 +300,7 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 
 			// check the selected invitees and within group compete duration
 			// time
-			if (null != selectedWithinGroupCompeteInviteInvitees) {
-				// get within group compete invite invitees id list
-				List<Integer> _competeInviteesIdList = new ArrayList<Integer>();
-				for (UserInfoBean _selectedCompeteInvitee : selectedWithinGroupCompeteInviteInvitees) {
-					_competeInviteesIdList.add(_selectedCompeteInvitee
-							.getUserId());
-				}
-
+			if (null != selectedWithinGroupCompeteInvitees) {
 				try {
 					// generate within group compete invite info
 					GroupInviteInfoBean _withinGroupCompeteInviteInfo = new GroupInviteInfoBean();
@@ -299,7 +311,7 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 					// send within group compete invite info with the selected
 					// user friends info list to remote server
 					withinGroupCompeteModel.inviteWithinGroupCompete(123123,
-							"token", _competeInviteesIdList,
+							"token", getWithinGroupCompeteInviteeIds(),
 							_withinGroupCompeteInviteInfo, new ICMConnector() {
 
 								//
@@ -313,7 +325,6 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -456,16 +467,17 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			LOGGER.info("@@@, parent = " + parent + ", view = " + view
-					+ ", position = " + position + " and id = " + id);
-
 			// check the position and process the within group compete invite
 			// invitee operation item
 			if (parent.getAdapter().getCount() - 1 == position) {
 				// define within group compete invitee select extra data map
 				Map<String, Object> _extraMap = new HashMap<String, Object>();
 
-				// put *** to extra data map as param
+				// put selected within group compete invitee id list to extra
+				// data map as param
+				_extraMap
+						.put(WithinGroupCompeteInviteeSelectExtraData.WIGCIS_SELECTEDINVITEES_ID,
+								getWithinGroupCompeteInviteeIds());
 
 				// go to within group compete invitee select activity with extra
 				// data map

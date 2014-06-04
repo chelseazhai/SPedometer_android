@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:widget="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".group.compete.WithinGroupCompeteInviteeSelectActivity"
@@ -24,16 +25,26 @@
 
             <Button
                 android:id="@+id/wigciis_selectedInvitees_confirm_button"
-                android:layout_width="66dp"
+                android:layout_width="74dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginBottom="6dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="6dp"
                 android:background="@drawable/withingroupcompete_inviteeselectconfirm_button_bg"
-                android:text="确定(12)"
+                android:enabled="false"
+                android:text="@string/withinGroupCompete_inviteeSelect_confirm_button_disableText"
                 android:textColor="@android:color/white"
                 android:textSize="14sp" />
+
+            <com.smartsport.spedometer.customwidget.SSHorizontalListView
+                android:id="@+id/wigciis_selectedInvitees_horizontalListView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/wigciis_selectedInvitees_confirm_button"
+                widget:dividerWidth="5dp" >
+            </com.smartsport.spedometer.customwidget.SSHorizontalListView>
         </RelativeLayout>
     </LinearLayout>
 
@@ -43,6 +54,7 @@
         android:layout_height="fill_parent"
         android:layout_above="@id/wigciis_selectedInviteesAndConfirm_linearLayout"
         android:cacheColorHint="@android:color/transparent"
+        android:choiceMode="multipleChoice"
         android:fadingEdge="none"
         android:footerDividersEnabled="false"
         android:headerDividersEnabled="false"

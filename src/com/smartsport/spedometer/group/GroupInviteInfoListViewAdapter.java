@@ -361,6 +361,7 @@ public class GroupInviteInfoListViewAdapter extends SimpleAdapter {
 	 * @param scheduleTime
 	 *            : walk invite schedule time(begin time and duration)
 	 * @return walk invite schedule time format
+	 * @author Ares
 	 */
 	private String getWalkInviteScheduleTime(String scheduleTime) {
 		String _scheduleTime = "";

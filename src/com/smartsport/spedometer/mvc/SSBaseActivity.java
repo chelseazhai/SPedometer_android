@@ -400,60 +400,60 @@ public abstract class SSBaseActivity extends Activity {
 
 		// process extra data
 		if (null != extraData) {
-			for (String extraDataKey : extraData.keySet()) {
+			for (String _extraDataKey : extraData.keySet()) {
 				// check extra data key, if it equals NAV_ACTIVITY_PARAM_KEY,
 				// skip it
 				if (NAV_ACTIVITY_PARAM_BACKBARBTNITEM_KEY
-						.equalsIgnoreCase(extraDataKey)) {
+						.equalsIgnoreCase(_extraDataKey)) {
 					continue;
 				}
 
 				// get extra data value
-				Object _extraDataKeyValue = extraData.get(extraDataKey);
+				Object _extraDataKeyValue = extraData.get(_extraDataKey);
 
 				// check extra data value type
 				if (_extraDataKeyValue instanceof Short) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Short) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Integer) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Integer) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Long) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Long) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Float) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Float) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Double) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Double) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Character) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Character) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Byte) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Byte) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Boolean) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Boolean) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof String) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(String) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof CharSequence) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(CharSequence) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Serializable) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Serializable) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Parcelable) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Parcelable) _extraDataKeyValue);
 				} else {
 					// others, not implementation now
 					LOGGER.warning("Push activity, its class = "
 							+ activityCls
 							+ " with extra data value incompleted, extra data value type = "
-							+ extraData.get(extraDataKey).getClass().getName()
+							+ extraData.get(_extraDataKey).getClass().getName()
 							+ " not implementation now");
 				}
 			}
@@ -616,55 +616,55 @@ public abstract class SSBaseActivity extends Activity {
 			Map<String, ?> extraData) {
 		// check and process extra data
 		if (null != extraData) {
-			for (String extraDataKey : extraData.keySet()) {
+			for (String _extraDataKey : extraData.keySet()) {
 				// check extra data key, if it equals NAV_ACTIVITY_PARAM_KEY,
 				// skip it
 				if (NAV_ACTIVITY_PARAM_BACKBARBTNITEM_KEY
-						.equalsIgnoreCase(extraDataKey)) {
+						.equalsIgnoreCase(_extraDataKey)) {
 					continue;
 				}
 
 				// get extra data value
-				Object _extraDataKeyValue = extraData.get(extraDataKey);
+				Object _extraDataKeyValue = extraData.get(_extraDataKey);
 
 				// check extra data value type
 				if (_extraDataKeyValue instanceof Short) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Short) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Integer) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Integer) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Long) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Long) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Float) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Float) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Double) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Double) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Character) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Character) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Byte) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Byte) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Boolean) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Boolean) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof String) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(String) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof CharSequence) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(CharSequence) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Serializable) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Serializable) _extraDataKeyValue);
 				} else {
 					// others, not implementation now
 					LOGGER.warning("Pop activity with result with extra data value incompleted, extra data value type = "
-							+ extraData.get(extraDataKey).getClass().getName()
+							+ extraData.get(_extraDataKey).getClass().getName()
 							+ " not implementation now");
 				}
 			}
@@ -729,53 +729,53 @@ public abstract class SSBaseActivity extends Activity {
 
 		// process extra data
 		if (null != extraData) {
-			for (String extraDataKey : extraData.keySet()) {
+			for (String _extraDataKey : extraData.keySet()) {
 				// get extra data value
-				Object _extraDataKeyValue = extraData.get(extraDataKey);
+				Object _extraDataKeyValue = extraData.get(_extraDataKey);
 
 				// check extra data value type
 				if (_extraDataKeyValue instanceof Short) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Short) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Integer) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Integer) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Long) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Long) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Float) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Float) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Double) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Double) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Character) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Character) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Byte) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Byte) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Boolean) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Boolean) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof String) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(String) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof CharSequence) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(CharSequence) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Serializable) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Serializable) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Parcelable) {
-					_targetIntent.putExtra(extraDataKey,
+					_targetIntent.putExtra(_extraDataKey,
 							(Parcelable) _extraDataKeyValue);
 				} else {
 					// others, not implementation now
 					LOGGER.warning("Present activity, its class = "
 							+ activityCls
 							+ " with extra data value incompleted, extra data value type = "
-							+ extraData.get(extraDataKey).getClass().getName()
+							+ extraData.get(_extraDataKey).getClass().getName()
 							+ " not implementation now");
 				}
 			}
@@ -903,48 +903,48 @@ public abstract class SSBaseActivity extends Activity {
 			Map<String, ?> extraData) {
 		// check and process extra data
 		if (null != extraData) {
-			for (String extraDataKey : extraData.keySet()) {
+			for (String _extraDataKey : extraData.keySet()) {
 				// get extra data value
-				Object _extraDataKeyValue = extraData.get(extraDataKey);
+				Object _extraDataKeyValue = extraData.get(_extraDataKey);
 
 				// check extra data value type
 				if (_extraDataKeyValue instanceof Short) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Short) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Integer) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Integer) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Long) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Long) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Float) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Float) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Double) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Double) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Character) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Character) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Byte) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Byte) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Boolean) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Boolean) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof String) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(String) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof CharSequence) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(CharSequence) _extraDataKeyValue);
 				} else if (_extraDataKeyValue instanceof Serializable) {
-					getIntent().putExtra(extraDataKey,
+					getIntent().putExtra(_extraDataKey,
 							(Serializable) _extraDataKeyValue);
 				} else {
 					// others, not implementation now
 					LOGGER.warning("Dismiss activity with result with extra data value incompleted, extra data value type = "
-							+ extraData.get(extraDataKey).getClass().getName()
+							+ extraData.get(_extraDataKey).getClass().getName()
 							+ " not implementation now");
 				}
 			}

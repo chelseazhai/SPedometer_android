@@ -150,6 +150,11 @@
     <string name="title_activity_withinGroupCompete_invitee_select" translatable="false">WithinGroupCompeteInviteeSelectActivity</string>
     <string name="cancel_selectWithinGroupCompeteInvitee_barbtnitem_title">取消</string>
     <string name="withinGroupCompeteInviteeSelect_activity_title">选择竞赛对手</string>
+    <string name="withinGroupCompete_inviteeSelect_confirm_button_disableText">确定</string>
+    <string name="withinGroupCompete_inviteeSelect_confirm_button_text_format">确定(%d)</string>
+
+    <!-- within group compete invitee select selected invitee item -->
+    <string name="withinGroupCompete_selectedInvitee_avatar_imageView_contentDescription" translatable="false">this is the within group compete selected invitee avatar imageView</string>
 
     <!-- nearby strangers activity -->
     <string name="title_activity_nearby_strangers" translatable="false">NearbyStrangersActivity</string>

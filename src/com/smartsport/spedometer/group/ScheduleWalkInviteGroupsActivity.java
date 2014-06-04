@@ -371,12 +371,12 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 				_sDataList.clear();
 
 				// traversal new schedule walk invite group list
-				for (GroupBean scheduleWalkInviteGroup : scheduleWalkInviteGroups) {
+				for (GroupBean _scheduleWalkInviteGroup : scheduleWalkInviteGroups) {
 					// define schedule walk invite group listView adapter data
 					Map<String, Object> _data = new HashMap<String, Object>();
 
 					// get schedule walk invite group invite info
-					GroupInviteInfoBean _scheduleWalkInviteInviteInfo = scheduleWalkInviteGroup
+					GroupInviteInfoBean _scheduleWalkInviteInviteInfo = _scheduleWalkInviteGroup
 							.getInviteInfo();
 
 					// get schedule walk invite group begin and end timestamp

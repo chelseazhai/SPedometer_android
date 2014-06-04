@@ -37,9 +37,9 @@ public class JSONUtils {
 		// check json object
 		if (null != object) {
 			// reversal json object keys
-			for (Iterator<?> iterator = object.keys(); iterator.hasNext();) {
+			for (Iterator<?> _iterator = object.keys(); _iterator.hasNext();) {
 				// add json object key in set
-				_keys.add((String) iterator.next());
+				_keys.add((String) _iterator.next());
 			}
 		} else {
 			LOGGER.error("Json object is null, can't get all keys set");

@@ -658,18 +658,18 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 				_sDataList.clear();
 
 				// traversal nearby stranger list
-				for (UserInfoPatLocationExtBean nearbyStranger : nearbyStrangers) {
+				for (UserInfoPatLocationExtBean _nearbyStranger : nearbyStrangers) {
 					// define nearby stranger listView adapter data
 					Map<String, Object> _data = new HashMap<String, Object>();
 
 					// set data attributes
 					_data.put(
 							NearbyStrangerListViewAdapterKey.NEARBYSTRANGER_AVATAR_KEY
-									.name(), nearbyStranger.getAvatarUrl());
+									.name(), _nearbyStranger.getAvatarUrl());
 					_data.put(
 							NearbyStrangerListViewAdapterKey.NEARBYSTRANGER_NICKNAME_KEY
-									.name(), nearbyStranger.getNickname());
-					switch (nearbyStranger.getGender()) {
+									.name(), _nearbyStranger.getNickname());
+					switch (_nearbyStranger.getGender()) {
 					case MALE:
 						_data.put(
 								NearbyStrangerListViewAdapterKey.NEARBYSTRANGER_GENDER_KEY
@@ -690,8 +690,8 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 					int _step = Integer
 							.parseInt(context
 									.getString(R.string.nearbyStrangerItem_strangerDistance_step));
-					double _distance = sUserLocation.getDistance(nearbyStranger
-							.getLocation());
+					double _distance = sUserLocation
+							.getDistance(_nearbyStranger.getLocation());
 					_data.put(
 							NearbyStrangerListViewAdapterKey.NEARBYSTRANGER_DISTANCE_KEY
 									.name(),
@@ -701,7 +701,7 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 											: (int) (_distance / _step) + 1)
 											* _step));
 					// get stranger pat count
-					int _patCount = nearbyStranger.getPatCount();
+					int _patCount = _nearbyStranger.getPatCount();
 					if (0 != _patCount) {
 						_data.put(
 								NearbyStrangerListViewAdapterKey.NEARBYSTRANGER_PATCOUNT_KEY

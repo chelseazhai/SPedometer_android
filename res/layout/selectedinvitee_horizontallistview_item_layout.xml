@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="2dp" >
+
+    <ImageView
+        android:id="@+id/wigcis_selectedInviteeAvatar_imageView"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_gravity="center"
+        android:background="@drawable/withingroupcompete_selectedinvitee_avatar_imageview_bg"
+        android:contentDescription="@string/withinGroupCompete_selectedInvitee_avatar_imageView_contentDescription"
+        android:scaleType="centerInside"
+        android:src="@drawable/img_default_avatar" />
+
+</FrameLayout>

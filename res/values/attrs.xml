@@ -9,4 +9,12 @@
         <attr name="background" format="color|reference" />
     </declare-styleable>
 
+    <!-- smartsport horizontal listView -->
+    <declare-styleable name="ss_horizontal_listView">
+        <attr name="dividerWidth" format="dimension" />
+        <attr name="android:divider" />
+        <attr name="android:requiresFadingEdge" />
+        <attr name="android:fadingEdgeLength" />
+    </declare-styleable>
+
 </resources>
