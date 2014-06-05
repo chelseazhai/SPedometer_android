@@ -17,12 +17,14 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
+import com.smartsport.spedometer.customwidget.SSSimpleAdapterViewBinder;
 import com.smartsport.spedometer.group.GroupInviteInfoAttr4Setting;
 import com.smartsport.spedometer.group.GroupInviteInfoBean;
 import com.smartsport.spedometer.group.GroupInviteInfoItemEditorActivity;
@@ -30,12 +32,11 @@ import com.smartsport.spedometer.group.GroupInviteInfoItemEditorActivity.GroupIn
 import com.smartsport.spedometer.group.GroupInviteInfoListViewAdapter;
 import com.smartsport.spedometer.group.GroupInviteInfoListViewAdapter.GroupInviteInfo4SettingListViewAdapterKey;
 import com.smartsport.spedometer.group.GroupType;
-import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteInfoSettingActivity.WithinGroupCompeteInviteAttendeeOperateGridViewAdapters.OperateGridViewAdapterKey;
+import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteInfoSettingActivity.WithinGroupCompeteInviteAttendeeOperateGridViewAdapter.OperateGridViewAdapterKey;
 import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteeSelectActivity.WithinGroupCompeteInviteeSelectExtraData;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
-import com.smartsport.spedometer.user.UserGender;
 import com.smartsport.spedometer.user.UserInfoBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
@@ -57,6 +58,9 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 	// the selected within group compete invitees bean list
 	private List<UserInfoBean> selectedWithinGroupCompeteInvitees;
 
+	// within group compete invite attendee operate girdView adapter
+	private WithinGroupCompeteInviteAttendeeOperateGridViewAdapter withinGroupCompeteInviteAttendeeOperateGridViewAdapter;
+
 	// within group compete invite info listView adapter
 	private GroupInviteInfoListViewAdapter withinGroupCompeteInviteInfoListViewAdapter;
 
@@ -67,20 +71,17 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 		// initialize within group compete model
 		withinGroupCompeteModel = new WithinGroupCompeteModel();
 
-		// initialize within group compete invitees list
-		selectedWithinGroupCompeteInvitees = new ArrayList<UserInfoBean>();
-
-		// test by ares
-		for (int i = 0; i < 3; i++) {
-			UserInfoBean _competeInvitee = new UserInfoBean();
-			_competeInvitee.setUserId(10020 + i);
-			_competeInvitee.setAvatarUrl("/img/avatar12" + i);
-			_competeInvitee.setGender(0 == i % 2 ? UserGender.MALE
-					: UserGender.FEMALE);
-			_competeInvitee.setNickname("参与者" + (i + 1));
-
-			selectedWithinGroupCompeteInvitees.add(_competeInvitee);
-		}
+		// // test by ares
+		// for (int i = 0; i < 3; i++) {
+		// UserInfoBean _competeInvitee = new UserInfoBean();
+		// _competeInvitee.setUserId(10020 + i);
+		// _competeInvitee.setAvatarUrl("/img/avatar12" + i);
+		// _competeInvitee.setGender(0 == i % 2 ? UserGender.MALE
+		// : UserGender.FEMALE);
+		// _competeInvitee.setNickname("参与者" + (i + 1));
+		//
+		// selectedWithinGroupCompeteInvitees.add(_competeInvitee);
+		// }
 
 		// set content view
 		setContentView(R.layout.activity_withingroupcompete_inviteinfo_setting);
@@ -109,15 +110,18 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 
 		// set its adapter
 		_withinGroupCompeteInviteInviteeOperationGridView
-				.setAdapter(new WithinGroupCompeteInviteAttendeeOperateGridViewAdapters(
+				.setAdapter(withinGroupCompeteInviteAttendeeOperateGridViewAdapter = new WithinGroupCompeteInviteAttendeeOperateGridViewAdapter(
 						this,
 						selectedWithinGroupCompeteInvitees,
 						R.layout.withingroupcompete_inviteattendee_operationgridview_item_layout,
 						new String[] {
+								OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_ENABLE_KEY
+										.name(),
 								OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_ICON_KEY
 										.name(),
 								OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_TIP_KEY
 										.name() }, new int[] {
+								R.id.wigc_ia_og_operate_icon_imageView,
 								R.id.wigc_ia_og_operate_icon_imageView,
 								R.id.wigc_ia_og_operate_tip_textView }));
 
@@ -159,9 +163,12 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 		// define within group compete invitee id list
 		List<Integer> _competeInviteesIdList = new ArrayList<Integer>();
 
-		// traversal selected within group compete invitees
-		for (UserInfoBean _selectedCompeteInvitee : selectedWithinGroupCompeteInvitees) {
-			_competeInviteesIdList.add(_selectedCompeteInvitee.getUserId());
+		// check selected within group compete invitees bean list
+		if (null != selectedWithinGroupCompeteInvitees) {
+			// traversal selected within group compete invitees
+			for (UserInfoBean _selectedCompeteInvitee : selectedWithinGroupCompeteInvitees) {
+				_competeInviteesIdList.add(_selectedCompeteInvitee.getUserId());
+			}
 		}
 
 		return _competeInviteesIdList;
@@ -210,6 +217,7 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 	class WIGCIISSelectInviteInviteeOnActivityResult implements
 			ISSBaseActivityResult {
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void onActivityResult(int resultCode, Intent data) {
 			// check the result code
@@ -217,7 +225,16 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 				// get and check the extra data
 				Bundle _extraData = data.getExtras();
 				if (null != _extraData) {
-					//
+					// get and check the selected within group compete invitees
+					// list
+					selectedWithinGroupCompeteInvitees = (List<UserInfoBean>) _extraData
+							.getSerializable(WithinGroupCompeteInviteInfoSettingExtraData.WIGCIIS_SELECTED_INVITEES_BEAN_LIST);
+					LOGGER.info("@@, selectedWithinGroupCompeteInvitees = "
+							+ selectedWithinGroupCompeteInvitees);
+
+					// set new within group compete invitee list
+					withinGroupCompeteInviteAttendeeOperateGridViewAdapter
+							.setWithinGroupCompeteInvitees(selectedWithinGroupCompeteInvitees);
 				}
 			}
 		}
@@ -328,21 +345,24 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 	}
 
 	/**
-	 * @name WithinGroupCompeteInviteAttendeeOperateGridViewAdapters
+	 * @name WithinGroupCompeteInviteAttendeeOperateGridViewAdapter
 	 * @descriptor within group compete invite attendee operate gridView adapter
 	 * @author Ares
 	 * @version 1.0
 	 */
-	static class WithinGroupCompeteInviteAttendeeOperateGridViewAdapters extends
+	static class WithinGroupCompeteInviteAttendeeOperateGridViewAdapter extends
 			SimpleAdapter {
 
 		// logger
 		private static final SSLogger LOGGER = new SSLogger(
-				WithinGroupCompeteInviteAttendeeOperateGridViewAdapters.class);
+				WithinGroupCompeteInviteAttendeeOperateGridViewAdapter.class);
 
 		// within group compete invite attendee operate gridView adapter data
 		// list
 		private static List<Map<String, Object>> _sDataList;
+
+		// context
+		private Context context;
 
 		/**
 		 * @title WithinGroupCompeteInviteAttendeeOperateGridViewAdapters
@@ -361,17 +381,26 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 		 * @param ids
 		 *            : content view subview id array
 		 */
-		public WithinGroupCompeteInviteAttendeeOperateGridViewAdapters(
+		public WithinGroupCompeteInviteAttendeeOperateGridViewAdapter(
 				Context context, List<UserInfoBean> competeInvitees,
 				int resource, String[] dataKeys, int[] ids) {
 			super(context, _sDataList = new ArrayList<Map<String, Object>>(),
 					resource, dataKeys, ids);
+
+			// save context
+			this.context = context;
+
+			// set view binder
+			setViewBinder(new WithinGroupCompeteInviteAttendeeOperateGridViewAdapterViewBinder());
 
 			// define within group compete invite attendee operate gridView
 			// adapter data for inviter
 			Map<String, Object> _inviterData = new HashMap<String, Object>();
 
 			// set data attributes
+			_inviterData
+					.put(OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_ENABLE_KEY
+							.name(), Boolean.valueOf(false));
 			_inviterData
 					.put(OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_ICON_KEY
 							.name(), null);
@@ -383,45 +412,14 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 			// add inviter data to list
 			_sDataList.add(_inviterData);
 
-			// check within group compete invite invitee list and add to list
-			if (null != competeInvitees) {
-				// get within group compete invite invitee list size
-				int _competeInviteeListSize = competeInvitees.size();
-				int _competeInviteeLimitCount = context
-						.getResources()
-						.getInteger(
-								R.integer.config_limitCount_withinGroupCompeteInvitees);
-
-				for (UserInfoBean _competeInvitee : competeInvitees
-						.subList(
-								0,
-								_competeInviteeLimitCount > _competeInviteeListSize ? _competeInviteeListSize
-										: _competeInviteeLimitCount)) {
-					// define within group compete invite attendee operate
-					// gridView adapter data for invitee
-					Map<String, Object> _inviteeData = new HashMap<String, Object>();
-
-					// set data attributes
-					_inviteeData
-							.put(OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_ICON_KEY
-									.name(),
-									R.drawable.img_default_middle_avatar);
-					_inviteeData
-							.put(OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_TIP_KEY
-									.name(), _competeInvitee.getNickname());
-
-					// add inviter data to list
-					_sDataList.add(_inviteeData);
-				}
-			} else {
-				LOGGER.warning("No within group compete invite invitee was selected");
-			}
-
 			// define within group compete invite attendee operate gridView
 			// adapter data for operate
 			Map<String, Object> _operateData = new HashMap<String, Object>();
 
 			// set data attributes
+			_operateData
+					.put(OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_ENABLE_KEY
+							.name(), Boolean.valueOf(true));
 			_operateData
 					.put(OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_ICON_KEY
 							.name(),
@@ -430,7 +428,71 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 					OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_TIP_KEY
 							.name(), null);
 
-			// add inviter data to list
+			// add operate data to list
+			_sDataList.add(_operateData);
+
+			// check within group compete invite invitee list and add to list
+			if (null != competeInvitees) {
+				// set new within group compete invitee list
+				setWithinGroupCompeteInvitees(competeInvitees);
+			} else {
+				LOGGER.warning("No within group compete invite invitee was selected");
+
+				// notify data set changed
+				notifyDataSetChanged();
+			}
+		}
+
+		/**
+		 * @title setWithinGroupCompeteInvitees
+		 * @descriptor set new within group compete invitee list
+		 * @param competeInvitees
+		 *            : within group compete invitee list
+		 * @author Ares
+		 */
+		public void setWithinGroupCompeteInvitees(
+				List<UserInfoBean> competeInvitees) {
+			// get within group compete invite attendee operate gridView adapter
+			// data for operate
+			Map<String, Object> _operateData = _sDataList
+					.get(_sDataList.size() - 1);
+
+			// clear the within group compete invite attendee operate gridView
+			// adapter data list except the first
+			while (1 < _sDataList.size()) {
+				_sDataList.remove(_sDataList.size() - 1);
+			}
+
+			// get within group compete invite invitee list size
+			int _competeInviteeListSize = competeInvitees.size();
+			int _competeInviteeLimitCount = context.getResources().getInteger(
+					R.integer.config_limitCount_withinGroupCompeteInvitees);
+
+			for (UserInfoBean _competeInvitee : competeInvitees
+					.subList(
+							0,
+							_competeInviteeLimitCount > _competeInviteeListSize ? _competeInviteeListSize
+									: _competeInviteeLimitCount)) {
+				// define within group compete invite attendee operate gridView
+				// adapter data for invitee
+				Map<String, Object> _inviteeData = new HashMap<String, Object>();
+
+				// set data attributes
+				_inviteeData
+						.put(OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_ENABLE_KEY
+								.name(), Boolean.valueOf(false));
+				_inviteeData
+						.put(OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_ICON_KEY
+								.name(), R.drawable.img_default_middle_avatar);
+				_inviteeData
+						.put(OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_TIP_KEY
+								.name(), _competeInvitee.getNickname());
+
+				// add invitee data to list
+				_sDataList.add(_inviteeData);
+			}
+
+			// add operate data to list
 			_sDataList.add(_operateData);
 
 			// notify data set changed
@@ -447,8 +509,47 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 		 */
 		public enum OperateGridViewAdapterKey {
 
-			// within group compete invite attendee operate icon and tip key
-			ATTENDEEOPERATION_OPERATE_ICON_KEY, ATTENDEEOPERATION_OPERATE_TIP_KEY;
+			// within group compete invite attendee operate enable or disable
+			// flag, icon and tip key
+			ATTENDEEOPERATION_OPERATE_ENABLE_KEY, ATTENDEEOPERATION_OPERATE_ICON_KEY, ATTENDEEOPERATION_OPERATE_TIP_KEY;
+
+		}
+
+		/**
+		 * @name 
+		 *       WithinGroupCompeteInviteAttendeeOperateGridViewAdapterViewBinder
+		 * @descriptor within group compete invite attendee operate gridView
+		 *             adapter view binder
+		 * @author Ares
+		 * @version 1.0
+		 */
+		class WithinGroupCompeteInviteAttendeeOperateGridViewAdapterViewBinder
+				extends SSSimpleAdapterViewBinder {
+
+			@Override
+			public boolean setViewValue(View view, Object data,
+					String textRepresentation) {
+				boolean _ret = false;
+
+				// check view type
+				// imageView with its enable or disable
+				if (view instanceof ImageView && data instanceof Boolean) {
+					// convert data to boolean
+					Boolean _booleanData = (Boolean) data;
+
+					// check the boolean data and set the view enable or disable
+					view.setEnabled((null != _booleanData && _booleanData) ? true
+							: false);
+
+					// update return flag
+					_ret = true;
+				} else {
+					// update return flag
+					_ret = super.setViewValue(view, data, textRepresentation);
+				}
+
+				return _ret;
+			}
 
 		}
 

@@ -18,6 +18,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
@@ -25,6 +26,7 @@ import com.smartsport.spedometer.customwidget.SSHorizontalListView;
 import com.smartsport.spedometer.group.GroupInviteInviteeListViewAdapter;
 import com.smartsport.spedometer.group.GroupInviteInviteeListViewAdapter.GroupInviteInviteeListViewAdapterKey;
 import com.smartsport.spedometer.group.GroupType;
+import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteInfoSettingActivity.WithinGroupCompeteInviteInfoSettingExtraData;
 import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteeSelectActivity.SelectedInviteesHorizontalListViewAdapter.SelectedInviteesHorizontalListViewAdapterKey;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
@@ -59,6 +61,9 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 
 	// within group compete invitee select selected invitee list
 	private List<UserInfoBean> selectedInviteeList;
+
+	// within group compete invitee select selected invitee listView adapter
+	private SelectedInviteesHorizontalListViewAdapter selectedInviteesHorizontalListViewAdapter;
 
 	// within group compete invitee select confirm button
 	private Button inviteeSelectConfirmBtn;
@@ -158,6 +163,8 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 					withinGroupCompeteInviteeListView.setItemChecked(i, true);
 					withinGroupCompeteInviteeListViewAdapter
 							.setFriendSelectState(i, true);
+					(null == selectedInviteeList ? selectedInviteeList = new ArrayList<UserInfoBean>()
+							: selectedInviteeList).add(_friend);
 				}
 			}
 		}
@@ -172,7 +179,7 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 
 		// set its adapter
 		_selectedInviteesHorizontalListView
-				.setAdapter(new SelectedInviteesHorizontalListViewAdapter(
+				.setAdapter(selectedInviteesHorizontalListViewAdapter = new SelectedInviteesHorizontalListViewAdapter(
 						this,
 						selectedInviteeList,
 						R.layout.selectedinvitee_horizontallistview_item_layout,
@@ -201,27 +208,20 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 	 * @author Ares
 	 */
 	private void updateWithinGroupCompeteInviteeSelectConfirmBtn() {
-		// check the checked within group compete invitee listView item count
-		switch (withinGroupCompeteInviteeListView.getCheckedItemCount()) {
-		case 0:
-			// disable within group compete invitee select confirm button and
-			// set its text
-			inviteeSelectConfirmBtn.setEnabled(false);
-			inviteeSelectConfirmBtn
-					.setText(R.string.withinGroupCompete_inviteeSelect_confirm_button_disableText);
-			break;
+		// get the checked within group compete invitee listView item count
+		int _checkedItemCount = withinGroupCompeteInviteeListView
+				.getCheckedItemCount();
 
-		default:
-			// enable within group compete invitee select confirm button and set
-			// its text
-			inviteeSelectConfirmBtn.setEnabled(true);
-			inviteeSelectConfirmBtn
-					.setText(String
-							.format(getString(R.string.withinGroupCompete_inviteeSelect_confirm_button_text_format),
-									withinGroupCompeteInviteeListView
-											.getCheckedItemCount()));
-			break;
-		}
+		// check it then enable or disable within group compete invitee select
+		// confirm button and update its text
+		inviteeSelectConfirmBtn.setEnabled(0 == _checkedItemCount ? false
+				: true);
+		inviteeSelectConfirmBtn
+				.setText(0 == _checkedItemCount ? getString(R.string.withinGroupCompete_inviteeSelect_confirm_button_disableText)
+						: String.format(
+								getString(R.string.withinGroupCompete_inviteeSelect_confirm_button_text_format),
+								withinGroupCompeteInviteeListView
+										.getCheckedItemCount()));
 	}
 
 	// inner class
@@ -268,13 +268,53 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			// set the friend be selected
-			withinGroupCompeteInviteeListViewAdapter.setFriendSelectState(
-					position, withinGroupCompeteInviteeListView
-							.getCheckedItemPositions().get(position));
+			// check the checked within group compete invitee listView item
+			// count
+			if (getResources().getInteger(
+					R.integer.config_limitCount_withinGroupCompeteInvitees) >= withinGroupCompeteInviteeListView
+					.getCheckedItemCount()) {
+				// get the click item be checked or not
+				boolean _isClickItemChecked = withinGroupCompeteInviteeListView
+						.getCheckedItemPositions().get(position);
 
-			// update within group compete invitee select confirm button
-			updateWithinGroupCompeteInviteeSelectConfirmBtn();
+				// set the friend select state
+				withinGroupCompeteInviteeListViewAdapter.setFriendSelectState(
+						position, _isClickItemChecked);
+
+				// get the click user friend user info
+				UserInfoBean _clickFriend = userInfoModel.getFriendsInfo().get(
+						position);
+
+				// check the click item checked flag then add or remove the
+				// click user friend
+				if (_isClickItemChecked) {
+					(null == selectedInviteeList ? selectedInviteeList = new ArrayList<UserInfoBean>()
+							: selectedInviteeList).add(_clickFriend);
+				} else {
+					selectedInviteeList.remove(selectedInviteeList
+							.indexOf(_clickFriend));
+				}
+
+				// set new selected invitees
+				selectedInviteesHorizontalListViewAdapter
+						.setSelectedInvitees(selectedInviteeList);
+
+				// update within group compete invitee select confirm button
+				updateWithinGroupCompeteInviteeSelectConfirmBtn();
+			} else {
+				// set the friend be unselected
+				withinGroupCompeteInviteeListView.setItemChecked(position,
+						false);
+
+				LOGGER.warning("The selected within group compete invitees is max");
+
+				// show within group compete invite select selected invitees is
+				// max toast
+				Toast.makeText(
+						WithinGroupCompeteInviteeSelectActivity.this,
+						R.string.toast_withinGroupCompete_inviteeSelect_selectedInvitees_isMax,
+						Toast.LENGTH_LONG).show();
+			}
 		}
 
 	}
@@ -320,26 +360,57 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 
 			// check the selected invitee list
 			if (null != selectedInvitees) {
-				// traversal the selected within group compete invitees
-				for (UserInfoBean _selectedInvitee : selectedInvitees) {
-					// define the selected invitees horizontal listView adapter
-					// data
-					Map<String, Object> _data = new HashMap<String, Object>();
-
-					// set data attributes
-					_data.put(
-							SelectedInviteesHorizontalListViewAdapterKey.SELECTEDINVITEE_AVATAR_KEY
-									.name(), R.drawable.img_default_avatar);
-
-					// add data to list
-					_sDataList.add(_data);
-				}
-
-				// notify data set changed
-				notifyDataSetChanged();
+				// set selected within group compete invitees
+				setSelectedInvitees(selectedInvitees);
 			} else {
 				LOGGER.warning("There is no selected invitees for within group compete invitee selecting");
 			}
+		}
+
+		/**
+		 * @title setSelectedInvitees
+		 * @descriptor set new selected within group compete invitees
+		 * @param selectedInvitees
+		 *            : new selected within group compete invitees
+		 * @author Ares
+		 */
+		public void setSelectedInvitees(List<UserInfoBean> selectedInvitees) {
+			// clear the selected invitees horizontal listView adapter data list
+			_sDataList.clear();
+
+			// traversal the selected within group compete invitees
+			for (UserInfoBean _selectedInvitee : selectedInvitees) {
+				// define the selected invitees horizontal listView adapter
+				// data
+				Map<String, Object> _data = new HashMap<String, Object>();
+
+				// set data attributes
+				_data.put(
+						SelectedInviteesHorizontalListViewAdapterKey.SELECTEDINVITEE_AVATAR_KEY
+								.name(), R.drawable.img_default_avatar);
+
+				// add data to list
+				_sDataList.add(_data);
+			}
+
+			// notify data set changed
+			notifyDataSetChanged();
+		}
+
+		/**
+		 * @title deleteSelectedInvitee
+		 * @descriptor delete the clicked selected within group compete invitee
+		 *             with position
+		 * @param position
+		 *            : the clicked selected within group compete invitee
+		 * @author Ares
+		 */
+		public void deleteSelectedInvitee(int position) {
+			// remove the clicked selected within group compete invitee
+			_sDataList.remove(position);
+
+			// notify data set changed
+			notifyDataSetChanged();
 		}
 
 		// inner class
@@ -371,15 +442,27 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			LOGGER.info("SelectedInviteesOnItemClickListener - onItemClick, parent = "
-					+ parent
-					+ ", view = "
-					+ view
-					+ ", position = "
-					+ position
-					+ " and id = " + id);
+			// get the clicked selected within group compete invitee
+			UserInfoBean _clickedSelectedInvitee = selectedInviteeList
+					.get(position);
 
-			//
+			// remove the clicked selected within group compete invitee
+			selectedInviteeList.remove(position);
+			selectedInviteesHorizontalListViewAdapter
+					.deleteSelectedInvitee(position);
+
+			// get the need to cancel select user friend index
+			int _cancelSelectFriendIndex = userInfoModel.getFriendsInfo()
+					.indexOf(_clickedSelectedInvitee);
+
+			// set the friend be unselected
+			withinGroupCompeteInviteeListView.setItemChecked(
+					_cancelSelectFriendIndex, false);
+			withinGroupCompeteInviteeListViewAdapter.setFriendSelectState(
+					_cancelSelectFriendIndex, false);
+
+			// update within group compete invitee select confirm button
+			updateWithinGroupCompeteInviteeSelectConfirmBtn();
 		}
 
 	}
@@ -396,17 +479,17 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 
 		@Override
 		public void onClick(View v) {
-			LOGGER.info("WithinGroupCompeteInviteeSelectConfirmBtnOnClickListener");
+			// define within group compete invite invitees select extra data map
+			Map<String, Object> _extraMap = new HashMap<String, Object>();
 
-			for (int i = 0; i < withinGroupCompeteInviteeListView.getAdapter()
-					.getCount(); i++) {
-				if (withinGroupCompeteInviteeListView.getCheckedItemPositions()
-						.get(i)) {
-					LOGGER.info("@@, iii = " + i);
-				}
-			}
+			// put the selected within group compete invite invitees info to
+			// extra data map as param
+			_extraMap
+					.put(WithinGroupCompeteInviteInfoSettingExtraData.WIGCIIS_SELECTED_INVITEES_BEAN_LIST,
+							selectedInviteeList);
 
-			//
+			// dismiss the activity with result code and extra map
+			dismissActivityWithResult(RESULT_OK, _extraMap);
 		}
 
 	}

@@ -9,8 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 
+import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSSimpleAdapterViewBinder;
 import com.smartsport.spedometer.user.UserInfoBean;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -63,7 +66,7 @@ public class GroupInviteInviteeListViewAdapter extends SimpleAdapter {
 		this.groupType = groupType;
 
 		// set view binder
-		setViewBinder(new SSSimpleAdapterViewBinder());
+		setViewBinder(new GroupInviteInviteeListViewAdapterViewBinder());
 
 		// set user friends as walk or within group compete invite invitee list
 		setFriendsAsGroupInviteInvitees(userFriends);
@@ -151,6 +154,51 @@ public class GroupInviteInviteeListViewAdapter extends SimpleAdapter {
 		// walk or within group compete invite invitee selected flag, invitee
 		// avatar and nickname key
 		GROUPINVITEINVITEE_SELECTEDFLAG_KEY, GROUPINVITEINVITEE_AVATAR_KEY, GROUPINVITEINVITEE_NICKNAME_KEY;
+
+	}
+
+	/**
+	 * @name GroupInviteInviteeListViewAdapterViewBinder
+	 * @descriptor walk or within group compete invite invitee listView adapter
+	 *             view binder
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class GroupInviteInviteeListViewAdapterViewBinder extends
+			SSSimpleAdapterViewBinder {
+
+		@Override
+		public boolean setViewValue(View view, Object data,
+				String textRepresentation) {
+			boolean _ret = false;
+
+			// check view type
+			// imageView with its visibility, and image resource
+			if (view instanceof ImageView && data instanceof Boolean) {
+				// show the view
+				view.setVisibility(View.VISIBLE);
+
+				// convert data to boolean
+				Boolean _booleanData = (Boolean) data;
+
+				// check the boolean data and get resource id
+				int _imgResourceId = R.drawable.img_withingroupcompete_invitee_unselected;
+				if (null != _booleanData && _booleanData) {
+					_imgResourceId = R.drawable.img_withingroupcompete_invitee_selected;
+				}
+
+				// set the imageView image resource
+				((ImageView) view).setImageResource(_imgResourceId);
+
+				// update return flag
+				_ret = true;
+			} else {
+				// update return flag
+				_ret = super.setViewValue(view, data, textRepresentation);
+			}
+
+			return _ret;
+		}
 
 	}
 
