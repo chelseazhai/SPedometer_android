@@ -6,6 +6,9 @@
     <string name="toast_walk_inviteInfo_scheduleTime_null">选定一个约走时间</string>
     <string name="toast_walk_inviteInfo_scheduleTime_invalid">约走时间异常</string>
 
+    <!-- within group compete invite info setting activity -->
+    <string name="toast_withinGroupCompete_inviteInvitees_empty">邀请好友一起走走比赛</string>
+
     <!-- within group compete invite select activity -->
     <string name="toast_withinGroupCompete_inviteeSelect_selectedInvitees_isMax">不可以再邀请更多的人来参加多人组内竞赛</string>
 

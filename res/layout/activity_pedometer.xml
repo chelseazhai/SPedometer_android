@@ -64,13 +64,13 @@
         android:layout_above="@id/p_functionController" >
 
         <Button
-            android:id="@+id/p_stepCounter_button"
+            android:id="@+id/p_personalPedometer_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:minHeight="140dp"
             android:minWidth="140dp"
-            android:text="@string/stepCounter_button_text" />
+            android:text="@string/personalPedometer_button_text" />
     </FrameLayout>
 
 </RelativeLayout>

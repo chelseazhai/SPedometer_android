@@ -34,6 +34,7 @@ import com.smartsport.spedometer.group.GroupInviteInfoListViewAdapter.GroupInvit
 import com.smartsport.spedometer.group.GroupType;
 import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteInfoSettingActivity.WithinGroupCompeteInviteAttendeeOperateGridViewAdapter.OperateGridViewAdapterKey;
 import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteeSelectActivity.WithinGroupCompeteInviteeSelectExtraData;
+import com.smartsport.spedometer.group.compete.WithinGroupCompeteWalkActivity.WithinGroupCompeteWalkExtraData;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
@@ -143,9 +144,12 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 						new String[] {
 								GroupInviteInfo4SettingListViewAdapterKey.GROUPINVITEINFO_LABEL_KEY
 										.name(),
+								GroupInviteInfo4SettingListViewAdapterKey.GROUPINVITEINFO_VALUEHINT_KEY
+										.name(),
 								GroupInviteInfo4SettingListViewAdapterKey.GROUPINVITEINFO_VALUE_KEY
 										.name() }, new int[] {
 								R.id.gii_label_textView,
+								R.id.gii_value_textView,
 								R.id.gii_value_textView }));
 
 		// set its on item click listener
@@ -229,8 +233,6 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 					// list
 					selectedWithinGroupCompeteInvitees = (List<UserInfoBean>) _extraData
 							.getSerializable(WithinGroupCompeteInviteInfoSettingExtraData.WIGCIIS_SELECTED_INVITEES_BEAN_LIST);
-					LOGGER.info("@@, selectedWithinGroupCompeteInvitees = "
-							+ selectedWithinGroupCompeteInvitees);
 
 					// set new within group compete invitee list
 					withinGroupCompeteInviteAttendeeOperateGridViewAdapter
@@ -306,6 +308,8 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 					.getWithinGroupCompeteInviteDurationTime();
 			if (null == _withinGroupCompeteDurationTime
 					|| "".equalsIgnoreCase(_withinGroupCompeteDurationTime)) {
+				LOGGER.error("Within group compete invite compete duration time is null");
+
 				// show within group compete invite duration time is null toast
 				Toast.makeText(
 						WithinGroupCompeteInviteInfoSettingActivity.this,
@@ -340,6 +344,38 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 
 					e.printStackTrace();
 				}
+
+				// test by ares
+				// the within group compete group id, topic and start time
+				int _competeGroupId = 12322;
+				String _competeGroupTopic = "走路竞赛吧，少年";
+				long _competeGroupStartTime = System.currentTimeMillis() / 1000L + 3 * 60;
+
+				// define within group compete walk extra data map
+				Map<String, Object> _extraMap = new HashMap<String, Object>();
+
+				// put the within group compete group id, topic and start time
+				// to extra data map as param
+				_extraMap.put(
+						WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_ID,
+						Integer.valueOf(_competeGroupId));
+				_extraMap
+						.put(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_TOPIC,
+								_competeGroupTopic);
+				_extraMap
+						.put(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_STARTTIME,
+								Long.valueOf(_competeGroupStartTime));
+
+				// go to within group compete walk activity with extra data map
+				popPushActivity(WithinGroupCompeteWalkActivity.class, _extraMap);
+			} else {
+				LOGGER.error("Within group compete invite invitees is empty");
+
+				// show within group compete invite invitees is empty toast
+				Toast.makeText(
+						WithinGroupCompeteInviteInfoSettingActivity.this,
+						R.string.toast_withinGroupCompete_inviteInvitees_empty,
+						Toast.LENGTH_SHORT).show();
 			}
 		}
 	}

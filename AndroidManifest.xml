@@ -106,6 +106,12 @@
             android:theme="@style/AppBaseActivityTheme" >
         </activity>
         <activity
+            android:name=".group.compete.WithinGroupCompeteWalkActivity"
+            android:label="@string/title_activity_withinGroupCompete_walk"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseActivityTheme" >
+        </activity>
+        <activity
             android:name=".strangersocial.NearbyStrangersActivity"
             android:label="@string/title_activity_nearby_strangers"
             android:screenOrientation="portrait"

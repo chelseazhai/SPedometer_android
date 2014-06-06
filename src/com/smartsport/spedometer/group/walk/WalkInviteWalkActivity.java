@@ -6,9 +6,10 @@ package com.smartsport.spedometer.group.walk;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.graphics.Color;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -24,17 +25,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationListener;
-import com.amap.api.location.LocationManagerProxy;
-import com.amap.api.location.LocationProviderProxy;
 import com.amap.api.maps2d.AMap;
-import com.amap.api.maps2d.CameraUpdateFactory;
-import com.amap.api.maps2d.LocationSource;
-import com.amap.api.maps2d.LocationSource.OnLocationChangedListener;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
-import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavBarButtonItem;
@@ -47,6 +40,7 @@ import com.smartsport.spedometer.group.info.member.UserInfoMemberStatusBean;
 import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
+import com.smartsport.spedometer.pedometer.WalkStartPointLocationSource;
 import com.smartsport.spedometer.stepcounter.WalkInfoType;
 import com.smartsport.spedometer.user.UserGender;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -68,6 +62,10 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private final int SECONDS_PER_MINUTE = 60;
 	private final int MINUTES_PER_HOUR = 60;
 
+	// locate my location timer and timer task
+	private Timer LOCATE_MYLOCATION_TIMER = new Timer();
+	private TimerTask locateMyLocationTimerTask;
+
 	// group info and walk invite model
 	private GroupInfoModel groupInfoModel;
 	private WalkInviteModel walkInviteModel;
@@ -75,20 +73,15 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	// walk invite walk saved instance state
 	private Bundle walkInviteWalkSavedInstanceState;
 
-	// walk invite inviter walk path mapView and autoNavi map
-	private MapView inviterWalkPathMapView;
+	// walk invite attendee walk path mapView and autoNavi map
+	private MapView attendeeWalkPathMapView;
 	private AMap autoNaviMap;
 
 	// autoNavi location source
 	private WalkStartPointLocationSource autoNaviMapLocationSource;
 
-	// autoNavi map location manager proxy
-	private LocationManagerProxy locationManagerProxy;
-
-	// inviter walk location changed listener
-	private OnLocationChangedListener inviterWalkLocationChangedListener;
-
-	// the schedule walk invite group topic, schedule begin and end time
+	// the schedule walk invite group id, topic, schedule begin and end time
+	private Integer scheduleWalkInviteGroupId;
 	private String scheduleWalkInviteGroupTopic;
 	private Long scheduleWalkInviteGroupBeginTime;
 	private Long scheduleWalkInviteGroupEndTime;
@@ -114,8 +107,10 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		// get and check the extra data
 		Bundle _extraData = getIntent().getExtras();
 		if (null != _extraData) {
-			// get the schedule walk invite group topic, schedule begin and end
-			// time
+			// get the schedule walk invite group id, topic, schedule begin and
+			// end time
+			scheduleWalkInviteGroupId = _extraData
+					.getInt(WalkInviteWalkExtraData.WIW_WALKINVITEGROUP_ID);
 			scheduleWalkInviteGroupTopic = _extraData
 					.getString(WalkInviteWalkExtraData.WIW_WALKINVITEGROUP_TOPIC);
 			scheduleWalkInviteGroupBeginTime = _extraData
@@ -128,28 +123,31 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		groupInfoModel = new GroupInfoModel();
 		walkInviteModel = new WalkInviteModel();
 
-		// test by ares
-		inviteeUserInfoWithMemberStatus = new UserInfoMemberStatusBean();
-		inviteeUserInfoWithMemberStatus.setUserId(123321);
-		inviteeUserInfoWithMemberStatus.setAvatarUrl("/img/jshd123");
-		inviteeUserInfoWithMemberStatus.setNickname("小慧动");
-		inviteeUserInfoWithMemberStatus.setGender(UserGender.FEMALE);
-		inviteeUserInfoWithMemberStatus.setAge(28);
-		inviteeUserInfoWithMemberStatus.setHeight(165.0f);
-		inviteeUserInfoWithMemberStatus.setWeight(55.0f);
-		inviteeUserInfoWithMemberStatus
-				.setMemberSratus(MemberStatus.MEM_OFFLINE);
-
 		// set content view
 		setContentView(R.layout.activity_walkinvite_walk);
 
-		// get the schedule walk invite group info from remote server
-		groupInfoModel.getUserScheduleGroupInfo(123123, "token", 0,
-				new ICMConnector() {
+		// check the schedule walk invite group id and then get its info from
+		// remote server
+		if (null != scheduleWalkInviteGroupId) {
+			groupInfoModel.getUserScheduleGroupInfo(123123, "token",
+					scheduleWalkInviteGroupId, new ICMConnector() {
 
-					//
+						//
 
-				});
+					});
+
+			// test by ares
+			inviteeUserInfoWithMemberStatus = new UserInfoMemberStatusBean();
+			inviteeUserInfoWithMemberStatus.setUserId(123321);
+			inviteeUserInfoWithMemberStatus.setAvatarUrl("/img/jshd123");
+			inviteeUserInfoWithMemberStatus.setNickname("小慧动");
+			inviteeUserInfoWithMemberStatus.setGender(UserGender.FEMALE);
+			inviteeUserInfoWithMemberStatus.setAge(28);
+			inviteeUserInfoWithMemberStatus.setHeight(165.0f);
+			inviteeUserInfoWithMemberStatus.setWeight(55.0f);
+			inviteeUserInfoWithMemberStatus
+					.setMemberSratus(MemberStatus.MEM_OFFLINE);
+		}
 	}
 
 	@Override
@@ -166,14 +164,14 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		setTitleSize(22.0f);
 		setShadow(1.0f, 0.6f, 0.8f, Color.GRAY);
 
-		// get walk invite inviter walk path mapView
-		inviterWalkPathMapView = (MapView) findViewById(R.id.wiw_inviter_walkPath_mapView);
+		// get walk invite attendee walk path mapView
+		attendeeWalkPathMapView = (MapView) findViewById(R.id.wiw_attendee_walkPath_mapView);
 
-		// inviter walk path mapView perform onCreate method
-		inviterWalkPathMapView.onCreate(walkInviteWalkSavedInstanceState);
+		// attendee walk path mapView perform onCreate method
+		attendeeWalkPathMapView.onCreate(walkInviteWalkSavedInstanceState);
 
 		// get autoNavi map
-		autoNaviMap = inviterWalkPathMapView.getMap();
+		autoNaviMap = attendeeWalkPathMapView.getMap();
 
 		// set its my location style
 		autoNaviMap.setMyLocationStyle(new MyLocationStyle()
@@ -187,9 +185,24 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 				.strokeColor(
 						getResources().getColor(android.R.color.transparent)));
 
+		// // set its location source after 250 milliseconds
+		// LOCATE_MYLOCATION_TIMER.schedule(
+		// locateMyLocationTimerTask = new TimerTask() {
+		//
+		// @Override
+		// public void run() {
+		// autoNaviMap
+		// .setLocationSource(autoNaviMapLocationSource = new
+		// WalkStartPointLocationSource(
+		// WalkInviteWalkActivity.this,
+		// autoNaviMap));
+		// }
+		//
+		// }, 250);
 		// set its location source
 		autoNaviMap
-				.setLocationSource(autoNaviMapLocationSource = new WalkStartPointLocationSource());
+				.setLocationSource(autoNaviMapLocationSource = new WalkStartPointLocationSource(
+						this, autoNaviMap));
 
 		// enable get my location, compass and hidden location, zoom controls
 		// button
@@ -392,36 +405,43 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	protected void onResume() {
 		super.onResume();
 
-		// inviter walk path mapView perform onResume method
-		inviterWalkPathMapView.onResume();
+		// attendee walk path mapView perform onResume method
+		attendeeWalkPathMapView.onResume();
 	}
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
-		// inviter walk path mapView perform onSaveInstanceState method
-		inviterWalkPathMapView.onSaveInstanceState(outState);
+		// attendee walk path mapView perform onSaveInstanceState method
+		attendeeWalkPathMapView.onSaveInstanceState(outState);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 
-		// inviter walk path mapView perform onPause method
-		inviterWalkPathMapView.onPause();
+		// attendee walk path mapView perform onPause method
+		attendeeWalkPathMapView.onPause();
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 
-		// inviter walk path mapView perform onDestroy method
-		inviterWalkPathMapView.onDestroy();
+		// attendee walk path mapView perform onDestroy method
+		attendeeWalkPathMapView.onDestroy();
 
 		// check autoNavi location source and then deactivate
 		if (null != autoNaviMapLocationSource) {
 			autoNaviMapLocationSource.deactivate();
+		}
+
+		// check and cancel locate my location timer task
+		if (null != locateMyLocationTimerTask) {
+			locateMyLocationTimerTask.cancel();
+
+			locateMyLocationTimerTask = null;
 		}
 	}
 
@@ -618,122 +638,11 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	 */
 	public static final class WalkInviteWalkExtraData {
 
-		// the schedule walk invite group topic, schedule begin and end time
+		// the schedule walk invite group id, topic, schedule begin and end time
+		public static final String WIW_WALKINVITEGROUP_ID = "walkInviteWalk_walkInviteGroup_id";
 		public static final String WIW_WALKINVITEGROUP_TOPIC = "walkInviteWalk_walkInviteGroup_topic";
 		public static final String WIW_WALKINVITEGROUP_SCHEDULEBEGINTIME = "walkInviteWalk_walkInviteGroup_scheduleBeginTime";
 		public static final String WIW_WALKINVITEGROUP_SCHEDULEENDTIME = "walkInviteWalk_walkInviteGroup_scheduleEndTime";
-
-	}
-
-	/**
-	 * @name WalkStartPointLocationSource
-	 * @descriptor smartsport walk start point location source
-	 * @author Ares
-	 * @version 1.0
-	 */
-	class WalkStartPointLocationSource implements LocationSource {
-
-		// logger
-		private final SSLogger LOGGER = new SSLogger(
-				WalkStartPointLocationSource.class);
-
-		// autoNavi map location listener
-		private AutoNaviMapLocationListener autoNaviMapLocationListener;
-
-		@Override
-		public void activate(OnLocationChangedListener locationChangedListener) {
-			// save inviter walk location changed listener
-			inviterWalkLocationChangedListener = locationChangedListener;
-
-			// check autoNavi map location manager proxy and initialize
-			if (null == locationManagerProxy) {
-				locationManagerProxy = LocationManagerProxy
-						.getInstance(WalkInviteWalkActivity.this);
-
-				// request location update
-				locationManagerProxy
-						.requestLocationUpdates(
-								LocationProviderProxy.AMapNetwork,
-								2000,
-								10,
-								autoNaviMapLocationListener = new AutoNaviMapLocationListener());
-			}
-		}
-
-		@Override
-		public void deactivate() {
-			// clear inviter walk location changed listener
-			inviterWalkLocationChangedListener = null;
-
-			// check autoNavi map location manager proxy and clear
-			if (null != locationManagerProxy) {
-				locationManagerProxy.removeUpdates(autoNaviMapLocationListener);
-				locationManagerProxy.destory();
-			}
-			locationManagerProxy = null;
-		}
-
-		// inner class
-		/**
-		 * @name AutoNaviMapLocationListener
-		 * @descriptor smartsport walk invite autoNavi map location listener
-		 * @author Ares
-		 * @version 1.0
-		 */
-		class AutoNaviMapLocationListener implements AMapLocationListener {
-
-			@Override
-			@Deprecated
-			public void onLocationChanged(Location location) {
-				// nothing to do
-			}
-
-			@Override
-			public void onStatusChanged(String provider, int status,
-					Bundle extras) {
-				// nothing to do
-			}
-
-			@Override
-			public void onProviderEnabled(String provider) {
-				// nothing to do
-			}
-
-			@Override
-			public void onProviderDisabled(String provider) {
-				// nothing to do
-			}
-
-			@Override
-			public void onLocationChanged(AMapLocation autoNaviMapLocation) {
-				LOGGER.info("@@@, autoNaviMapLocation = " + autoNaviMapLocation);
-
-				// check inviter walk location changed listener and autoNavi map
-				// location
-				if (null != inviterWalkLocationChangedListener
-						&& null != autoNaviMapLocation) {
-					// show location
-					inviterWalkLocationChangedListener
-							.onLocationChanged(autoNaviMapLocation);
-
-					// animate camera
-					autoNaviMap
-							.animateCamera(CameraUpdateFactory.newLatLngZoom(
-									new LatLng(autoNaviMapLocation
-											.getLatitude(), autoNaviMapLocation
-											.getLongitude()),
-									getResources()
-											.getInteger(
-													R.integer.config_autoNaviMap_zoomLevel)));
-				} else {
-					LOGGER.error("AutoNavi mapView location error, inviter walk location changed listener = "
-							+ inviterWalkLocationChangedListener
-							+ " and autoNavi map location = "
-							+ autoNaviMapLocation);
-				}
-			}
-
-		}
 
 	}
 
@@ -829,51 +738,57 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 				// update walk control button background, text and tag
 				if (_walkStartBtnText.equalsIgnoreCase(_walkControlBtnText
 						.toString())) {
-					// walk invite group attendee start walk
-					walkInviteModel.startWalking(123123, "token", 0,
-							new ICMConnector() {
+					// check walk invite group id and then set attendee start
+					// walk
+					if (null != scheduleWalkInviteGroupId) {
+						walkInviteModel.startWalking(123123, "token",
+								scheduleWalkInviteGroupId, new ICMConnector() {
 
-								//
+									//
 
-							});
+								});
 
-					// test by ares
-					v.setBackgroundResource(R.drawable.walk_stopbutton_bg);
-					((Button) v).setText(_walkStopBtnText);
-					v.setTag(((Button) v).getText());
-					isAttendeeWalkControlled = true;
+						// test by ares
+						v.setBackgroundResource(R.drawable.walk_stopbutton_bg);
+						((Button) v).setText(_walkStopBtnText);
+						v.setTag(((Button) v).getText());
+						isAttendeeWalkControlled = true;
+					}
 				} else if (getString(R.string.walkStop_button_text)
 						.equalsIgnoreCase(_walkControlBtnText.toString())) {
-					// walk invite group attendee stop walk
-					walkInviteModel.stopWalking(123123, "token", 0,
-							new ICMConnector() {
+					if (null != scheduleWalkInviteGroupId) {
+						// check walk invite group id and then set attendee stop
+						// walk
+						walkInviteModel.stopWalking(123123, "token",
+								scheduleWalkInviteGroupId, new ICMConnector() {
 
-								//
+									//
 
-							});
+								});
 
-					// test by ares
-					// define walk invite walk extra data map
-					Map<String, Object> _extraMap = new HashMap<String, Object>();
+						// test by ares
+						// define walk invite walk extra data map
+						Map<String, Object> _extraMap = new HashMap<String, Object>();
 
-					// put walk invite group type, walk start, stop time and
-					// attendees walk result to extra data map as param
-					_extraMap.put(GroupWalkResultExtraData.GWR_GROUP_TYPE,
-							GroupType.WALK_GROUP);
-					_extraMap.put(
-							GroupWalkResultExtraData.GWR_GROUP_WALK_STARTTIME,
-							Long.valueOf(123456789));
-					_extraMap.put(
-							GroupWalkResultExtraData.GWR_GROUP_WALK_STARTTIME,
-							Long.valueOf(132465798));
-					_extraMap
-							.put(GroupWalkResultExtraData.GWR_GROUP_ATTENDEES_WALKRESULT,
-									new ArrayList<UserInfoGroupResultBean>());
+						// put walk invite group type, walk start, stop time and
+						// attendees walk result to extra data map as param
+						_extraMap.put(GroupWalkResultExtraData.GWR_GROUP_TYPE,
+								GroupType.WALK_GROUP);
+						_extraMap
+								.put(GroupWalkResultExtraData.GWR_GROUP_WALK_STARTTIME,
+										Long.valueOf(123456789));
+						_extraMap
+								.put(GroupWalkResultExtraData.GWR_GROUP_WALK_STARTTIME,
+										Long.valueOf(132465798));
+						_extraMap
+								.put(GroupWalkResultExtraData.GWR_GROUP_ATTENDEES_WALKRESULT,
+										new ArrayList<UserInfoGroupResultBean>());
 
-					// go to walk invite walk result activity with extra data
-					// map
-					popPushActivityForResult(GroupWalkResultActivity.class,
-							_extraMap);
+						// go to walk invite walk result activity with extra
+						// data map
+						popPushActivityForResult(GroupWalkResultActivity.class,
+								_extraMap);
+					}
 				}
 			}
 		}

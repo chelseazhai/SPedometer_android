@@ -119,9 +119,12 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 						new String[] {
 								GroupInviteInfo4SettingListViewAdapterKey.GROUPINVITEINFO_LABEL_KEY
 										.name(),
+								GroupInviteInfo4SettingListViewAdapterKey.GROUPINVITEINFO_VALUEHINT_KEY
+										.name(),
 								GroupInviteInfo4SettingListViewAdapterKey.GROUPINVITEINFO_VALUE_KEY
 										.name() }, new int[] {
 								R.id.gii_label_textView,
+								R.id.gii_value_textView,
 								R.id.gii_value_textView }));
 
 		// set its on item click listener
@@ -225,6 +228,8 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 					|| "".equalsIgnoreCase(_scheduleBeginTime)
 					|| null == _scheduleEndTime
 					|| "".equalsIgnoreCase(_scheduleEndTime)) {
+				LOGGER.error("Walk invite schedule time is null");
+
 				// show walk invite schedule begin or end time is null toast
 				Toast.makeText(WalkInviteInfoSettingActivity.this,
 						R.string.toast_walk_inviteInfo_scheduleTime_null,
@@ -233,6 +238,8 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 				return;
 			} else if (Long.parseLong(_scheduleBeginTime) >= Long
 					.parseLong(_scheduleEndTime)) {
+				LOGGER.error("Walk invite schedule time is invalid");
+
 				// show walk invite schedule begin and end time invalid toast
 				Toast.makeText(WalkInviteInfoSettingActivity.this,
 						R.string.toast_walk_inviteInfo_scheduleTime_invalid,
@@ -269,6 +276,10 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 
 					e.printStackTrace();
 				}
+
+				// test by ares
+				// pop the activity
+				popActivityWithResult();
 			}
 		}
 

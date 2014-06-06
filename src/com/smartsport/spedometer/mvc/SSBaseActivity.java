@@ -508,6 +508,38 @@ public abstract class SSBaseActivity extends Activity {
 	}
 
 	/**
+	 * @title popPushActivity
+	 * @descriptor pop the activity from navigation activity stack then start
+	 *             another activity with extra data to navigation activity stack
+	 * @param activityCls
+	 *            : target activity class
+	 * @param extraData
+	 *            : start activity extra data
+	 * @author Ares
+	 */
+	public void popPushActivity(Class<? extends Activity> activityCls,
+			Map<String, ?> extraData) {
+		// finish the activity
+		finish();
+
+		// start the target activity with extra data to navigation activity
+		// stack
+		pushActivity(activityCls, extraData, null, null);
+	}
+
+	/**
+	 * @title popPushActivity
+	 * @descriptor pop the activity from navigation activity stack then start
+	 *             another activity to navigation activity stack
+	 * @param activityCls
+	 *            : target activity class
+	 * @author Ares
+	 */
+	public void popPushActivity(Class<? extends Activity> activityCls) {
+		popPushActivity(activityCls, null);
+	}
+
+	/**
 	 * @title pushActivityForResult
 	 * @descriptor start activity for result with extra data and request code to
 	 *             navigation activity stack

@@ -1,0 +1,172 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".group.compete.WithinGroupCompeteWalkActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <com.amap.api.maps2d.MapView
+        android:id="@+id/wigcw_inviter_walkPath_mapView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/wigcw_walkInfo_slidingUp_button"
+                android:layout_width="fill_parent"
+                android:layout_height="20dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/img_walkinfo_slidingup_btn_bg" />
+
+            <RelativeLayout
+                android:id="@+id/wigcw_walkInfo_relativeLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/wigcw_walkInfo_slidingUp_button"
+                android:background="@color/little_white_transparent"
+                android:paddingBottom="4dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:visibility="gone" >
+
+                <RelativeLayout
+                    android:id="@+id/wigcw_totalDistanceAndTrend_relativeLayout"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp" >
+
+                    <ImageView
+                        android:id="@+id/wigcw_attendeesWalkTrend_imageView"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="@string/withinGroupCompete_attendeesWalkTrend_imageView_contentDescription"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/img_withingroupcompete_attendees_walktrend" />
+
+                    <TextView
+                        android:id="@+id/wigcw_walkTotalDistance_textView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:layout_toLeftOf="@id/wigcw_attendeesWalkTrend_imageView"
+                        android:singleLine="true"
+                        android:textColor="@android:color/holo_green_dark"
+                        android:textSize="36sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+                <TableRow
+                    android:id="@+id/wigcw_stepAndEnergy_tableRow"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/wigcw_totalDistanceAndTrend_relativeLayout" >
+
+                    <TextView
+                        android:id="@+id/wigcw_walkTotalStep_textView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        android:textColor="@color/gray"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/wigcw_walkEnergy_textView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        android:textColor="@color/gray"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+                </TableRow>
+
+                <View
+                    android:id="@+id/wigcw_walkInfo_tableRow_deviderLine"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/wigcw_stepAndEnergy_tableRow"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/silver" />
+
+                <TableRow
+                    android:id="@+id/wigcw_speeds_tableRow"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/wigcw_walkInfo_tableRow_deviderLine"
+                    android:layout_marginTop="10dp" >
+
+                    <TextView
+                        android:id="@+id/wigcw_walkPace_textView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:lineSpacingExtra="4dp"
+                        android:lines="2"
+                        android:textColor="@android:color/holo_orange_dark"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/wigcw_walkSpeed_textView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:lineSpacingExtra="4dp"
+                        android:lines="2"
+                        android:textColor="@color/gray"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+                </TableRow>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/wigcw_speeds_tableRow"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/silver" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/little_white_transparent"
+            android:padding="8dp" >
+
+            <TextView
+                android:id="@+id/wigcw_walk_remainTime_textView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/withingroupcompete_walk_remaintime_textview_bg"
+                android:ellipsize="marquee"
+                android:gravity="center"
+                android:paddingBottom="6dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="6dp"
+                android:shadowColor="@android:color/white"
+                android:shadowDx="0.6"
+                android:shadowDy="0.8"
+                android:shadowRadius="1"
+                android:singleLine="true"
+                android:text="04:24"
+                android:textColor="@color/light_gray"
+                android:textSize="22sp" />
+        </FrameLayout>
+    </LinearLayout>
+
+</FrameLayout>

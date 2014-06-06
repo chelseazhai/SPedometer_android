@@ -12,10 +12,13 @@ import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.view.View;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.SSApplication;
+import com.smartsport.spedometer.customwidget.SSSimpleAdapterViewBinder;
 import com.smartsport.spedometer.utils.SSLogger;
 import com.smartsport.spedometer.utils.StringUtils;
 
@@ -79,12 +82,16 @@ public class GroupInviteInfoListViewAdapter extends SimpleAdapter {
 		// save context
 		this.context = context;
 
+		// set view binder
+		setViewBinder(new GroupInviteInfo4SettingListViewAdapterViewBinder());
+
 		// check the for setting walk or within group compete invite info label
 		// array
 		if (null != labels) {
 			// define walk or within group compete invite info for setting
-			// attribute and value
+			// attribute, value hint string resource id and value
 			GroupInviteInfoAttr4Setting _attribute = null;
+			Integer _valueHintResId = null;
 			String _value = null;
 
 			for (int i = 0; i < labels.length; i++) {
@@ -102,10 +109,12 @@ public class GroupInviteInfoListViewAdapter extends SimpleAdapter {
 										R.string.withinGroupCompete_inviteInfo_topic_label)
 								.equalsIgnoreCase(_label)) {
 					_attribute = GroupInviteInfoAttr4Setting.GROUP_TOPIC;
+					_valueHintResId = R.string.walkOrWithinGroupCompete_inviteInfo_topic_textView_hint;
 				} else if (context.getString(
 						R.string.walk_inviteInfo_scheduleTime_label)
 						.equalsIgnoreCase(_label)) {
 					_attribute = GroupInviteInfoAttr4Setting.WALKINVITE_SCHEDULETIME;
+					_valueHintResId = R.string.walk_inviteInfo_scheduleTime_textView_hint;
 
 					// set walk invite schedule time(begin time and duration) as
 					// data attributes
@@ -118,6 +127,7 @@ public class GroupInviteInfoListViewAdapter extends SimpleAdapter {
 								R.string.withinGroupCompete_inviteInfo_durationTime_label)
 						.equalsIgnoreCase(_label)) {
 					_attribute = GroupInviteInfoAttr4Setting.WITHINGROUPCOMPETE_DURATIONTIME;
+					_valueHintResId = R.string.withinGroupCompete_inviteInfo_durationTime_textView_hint;
 				}
 
 				// set data attributes
@@ -125,6 +135,11 @@ public class GroupInviteInfoListViewAdapter extends SimpleAdapter {
 				_data.put(
 						GroupInviteInfo4SettingListViewAdapterKey.GROUPINVITEINFO_LABEL_KEY
 								.name(), _label);
+				if (null != _valueHintResId) {
+					_data.put(
+							GroupInviteInfo4SettingListViewAdapterKey.GROUPINVITEINFO_VALUEHINT_KEY
+									.name(), _valueHintResId);
+				}
 				_data.put(
 						GroupInviteInfo4SettingListViewAdapterKey.GROUPINVITEINFO_VALUE_KEY
 								.name(), _value);
@@ -434,8 +449,42 @@ public class GroupInviteInfoListViewAdapter extends SimpleAdapter {
 	 */
 	public enum GroupInviteInfo4SettingListViewAdapterKey {
 
-		// walk or within group compete invite info label and value key
-		GROUPINVITEINFO_LABEL_KEY, GROUPINVITEINFO_VALUE_KEY;
+		// walk or within group compete invite info label, value hint and value
+		// key
+		GROUPINVITEINFO_LABEL_KEY, GROUPINVITEINFO_VALUEHINT_KEY, GROUPINVITEINFO_VALUE_KEY;
+
+	}
+
+	/**
+	 * @name GroupInviteInfo4SettingListViewAdapter
+	 * @descriptor walk or within group compete invite info for setting listView
+	 *             adapter view binder
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class GroupInviteInfo4SettingListViewAdapterViewBinder extends
+			SSSimpleAdapterViewBinder {
+
+		@Override
+		public boolean setViewValue(View view, Object data,
+				String textRepresentation) {
+			boolean _ret = false;
+
+			// check view type
+			// textView with its hint string resource id
+			if (view instanceof TextView && data instanceof Integer) {
+				// convert data to integer then set the textView hint
+				((TextView) view).setHint((Integer) data);
+
+				// update return flag
+				_ret = true;
+			} else {
+				// update return flag
+				_ret = super.setViewValue(view, data, textRepresentation);
+			}
+
+			return _ret;
+		}
 
 	}
 

@@ -302,7 +302,8 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 		private static final SSLogger LOGGER = new SSLogger(
 				ScheduleWalkInviteGroupListViewAdapter.class);
 
-		// schedule walk invite group schedule begin time and end time key
+		// schedule walk invite group id, schedule begin time and end time key
+		private static final String WALKINVITEGROUP_ID_KEY = "walkInviteGroup_id_key";
 		private static final String WALKINVITEGROUP_SCHEDULEBEGINTIME_KEY = "walkInviteGroup_scheduleBeginTime_key";
 		private static final String WALKINVITEGROUP_SCHEDULEENDTIME_KEY = "walkInviteGroup_scheduleEndTime_key";
 
@@ -386,6 +387,8 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 							.getEndTime() * MILLISECONDS_PER_SECOND;
 
 					// set data attributes
+					_data.put(WALKINVITEGROUP_ID_KEY,
+							_scheduleWalkInviteGroup.getGroupId());
 					_data.put(
 							ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_TOPIC_KEY
 									.name(), _scheduleWalkInviteInviteInfo
@@ -422,6 +425,20 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 		@Override
 		public Map<String, ?> getItem(int position) {
 			return (Map<String, ?>) super.getItem(position);
+		}
+
+		/**
+		 * @title getGroupId
+		 * @descriptor get the selected schedule walk invite group item group id
+		 * @param position
+		 *            : schedule walk invite group listView selected item
+		 *            position
+		 * @return the selected schedule walk invite group item group id
+		 * @author Ares
+		 */
+		public Integer getGroupId(int position) {
+			// return the schedule walk invite group id with position
+			return (Integer) getItem(position).get(WALKINVITEGROUP_ID_KEY);
 		}
 
 		/**
@@ -643,8 +660,12 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 			// define schedule walk invite group item extra data map
 			Map<String, Object> _extraMap = new HashMap<String, Object>();
 
-			// put the selected schedule walk invite group topic, schedule begin
-			// and end time to extra data map as param
+			// put the selected schedule walk invite group id, topic, schedule
+			// begin and end time to extra data map as param
+			_extraMap
+					.put(WalkInviteWalkExtraData.WIW_WALKINVITEGROUP_ID,
+							scheduleWalkInviteGroupListViewAdapter
+									.getGroupId(position));
 			_extraMap.put(WalkInviteWalkExtraData.WIW_WALKINVITEGROUP_TOPIC,
 					scheduleWalkInviteGroupListViewAdapter
 							.getGroupTopic(position));

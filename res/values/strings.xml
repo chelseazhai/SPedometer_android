@@ -21,7 +21,7 @@
     <!-- pedometer activity -->
     <string name="title_activity_pedometer" translatable="false">PedometerActivity</string>
     <string name="pedometer_activity_title">计步器</string>
-    <string name="stepCounter_button_text">个人计步器</string>
+    <string name="personalPedometer_button_text">个人计步器</string>
     <string name="walkInvite_button_text">约走</string>
     <string name="withinGroupCompete_button_text">组内竞赛</string>
     <string name="nearbyStrangers_button_text">附近的人</string>
@@ -143,7 +143,7 @@
     <string name="withinGroupCompete_inviteInfo_topic_label">组内竞赛主题：</string>
     <string name="withinGroupCompete_inviteInfo_durationTime_label">组内竞赛时长：</string>
     <string name="withinGroupCompete_inviteInfo_durationTime_unit">分钟</string>
-    <string name="withinGroupCompete_inviteInfo_durationTime_textView_hint">给竞赛一个时长吧，不要太累哦!</string>
+    <string name="withinGroupCompete_inviteInfo_durationTime_textView_hint">给竞赛一个时长吧!</string>
     <string name="withinGroupCompete_inviteInfo_durationTime_format">您选择的组内竞赛时长为 %d 分钟</string>
 
     <!-- within group compete invitee select activity -->
@@ -155,6 +155,10 @@
 
     <!-- within group compete invitee select selected invitee item -->
     <string name="withinGroupCompete_selectedInvitee_avatar_imageView_contentDescription" translatable="false">this is the within group compete selected invitee avatar imageView</string>
+
+    <!-- within group compete walk activity -->
+    <string name="title_activity_withinGroupCompete_walk" translatable="false">WithinGroupCompeteWalkActivity</string>
+    <string name="withinGroupCompete_attendeesWalkTrend_imageView_contentDescription" translatable="false">this is within group compete attendees walk trend imageView</string>
 
     <!-- nearby strangers activity -->
     <string name="title_activity_nearby_strangers" translatable="false">NearbyStrangersActivity</string>
