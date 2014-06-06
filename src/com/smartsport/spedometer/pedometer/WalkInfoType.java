@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.smartsport.spedometer.stepcounter;
+package com.smartsport.spedometer.pedometer;
 
 /**
  * @name WalkInfoType

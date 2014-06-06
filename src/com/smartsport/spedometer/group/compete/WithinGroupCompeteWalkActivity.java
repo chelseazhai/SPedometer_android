@@ -10,6 +10,12 @@ import java.util.TimerTask;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -27,8 +33,8 @@ import com.smartsport.spedometer.group.info.member.MemberStatus;
 import com.smartsport.spedometer.group.info.member.UserInfoMemberStatusBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
+import com.smartsport.spedometer.pedometer.WalkInfoType;
 import com.smartsport.spedometer.pedometer.WalkStartPointLocationSource;
-import com.smartsport.spedometer.stepcounter.WalkInfoType;
 import com.smartsport.spedometer.user.UserGender;
 import com.smartsport.spedometer.utils.SSLogger;
 
@@ -43,6 +49,10 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(
 			WithinGroupCompeteWalkActivity.class);
+
+	// milliseconds per second and seconds per minute
+	private final int MILLISECONDS_PER_SECOND = 1000;
+	private final int SECONDS_PER_MINUTE = 60;
 
 	// locate my location timer and timer task
 	private Timer LOCATE_MYLOCATION_TIMER = new Timer();
@@ -62,13 +72,17 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 	// autoNavi location source
 	private WalkStartPointLocationSource autoNaviMapLocationSource;
 
-	// within group compete group id, topic and start time
+	// within group compete group id, topic, start and duration time
 	private Integer competeGroupId;
 	private String competeGroupTopic;
 	private Long competeGroupStartTime;
+	private Integer competeGroupDurationTime;
 
 	// invitees user info with status list in the within group compete group
 	private List<UserInfoMemberStatusBean> inviteesUserInfoWithMemberStatusList;
+
+	// walk remain time textView
+	private TextView walkRemainTimeTextView;
 
 	// walk info: walk total distance, total steps count, energy, pace and speed
 	// textView
@@ -85,13 +99,16 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 		// get and check the extra data
 		Bundle _extraData = getIntent().getExtras();
 		if (null != _extraData) {
-			// get the within group compete group id, topic and start time
+			// get the within group compete group id, topic, start and duration
+			// time
 			competeGroupId = _extraData
 					.getInt(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_ID);
 			competeGroupTopic = _extraData
 					.getString(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_TOPIC);
 			competeGroupStartTime = _extraData
 					.getLong(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_STARTTIME);
+			competeGroupDurationTime = _extraData
+					.getInt(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_DURATIONTIME);
 		}
 
 		// initialize group info and within group compete model
@@ -192,9 +209,66 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 		autoNaviMap.setMyLocationEnabled(true);
 		autoNaviMap.getUiSettings().setCompassEnabled(true);
 		autoNaviMap.getUiSettings().setZoomControlsEnabled(false);
-		
+
+		// get walk remain time textView
+		walkRemainTimeTextView = (TextView) findViewById(R.id.wigcw_walk_remainTime_textView);
+
 		// define compete attendee walk flag
-				boolean _isWalking = false;
+		boolean _isWalking = false;
+
+		// get and check within group compete group walk start remain time
+		Long _walkStartRemainTime = getWalkStartRemainTime(
+				competeGroupStartTime, competeGroupDurationTime);
+		if (null == _walkStartRemainTime) {
+			// invalid
+			// // generate holo red dark foreground color span and text absolute
+			// // size span
+			// ForegroundColorSpan _holoRedDarkForegroundColorSpan = new
+			// ForegroundColorSpan(
+			// getResources().getColor(android.R.color.holo_red_dark));
+			// AbsoluteSizeSpan _textAbsoluteSizeSpan = new AbsoluteSizeSpan(16,
+			// true);
+			//
+			// // set invalid walk invite group tip
+			// SpannableString _invalidWalkInviteGroup = new SpannableString(
+			// getString(R.string.scheduleWalkInviteGroup_status_invalid));
+			// _invalidWalkInviteGroup.setSpan(_holoRedDarkForegroundColorSpan,
+			// 0,
+			// _invalidWalkInviteGroup.length(),
+			// Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			// _invalidWalkInviteGroup.setSpan(_textAbsoluteSizeSpan, 0,
+			// _invalidWalkInviteGroup.length(),
+			// Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			//
+			// // set walk invite walk start remain or walk duration time
+			// textView
+			// // text
+			// walkStartRemainOrWalkDurationTimeTextView
+			// .setText(_invalidWalkInviteGroup);
+		} else if (0 <= _walkStartRemainTime) {
+			// waiting for start
+			// set within group compete group walk start remain time textView
+			// text
+			walkRemainTimeTextView.setText("03:22");
+		} else {
+			// walking
+			// set attendee walk flag
+			_isWalking = true;
+
+			// generate holo green light foreground color span
+			ForegroundColorSpan _holoGreenLightForegroundColorSpan = new ForegroundColorSpan(
+					getResources().getColor(android.R.color.holo_green_light));
+
+			// get compete attendee walk remain time from local storage
+			// test by ares
+			SpannableString _walkRemainTime = new SpannableString("3'30\"");
+			_walkRemainTime.setSpan(_holoGreenLightForegroundColorSpan, 0,
+					_walkRemainTime.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+			// set within group compete group walk stop remain time textView
+			// text
+			walkRemainTimeTextView.setText(_walkRemainTime);
+		}
 
 		// get walk info sliding up button
 		Button _walkInfoSlidingUpBtn = (Button) findViewById(R.id.wigcw_walkInfo_slidingUp_button);
@@ -215,9 +289,13 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 		walkEnergyTextView = (TextView) findViewById(R.id.wigcw_walkEnergy_textView);
 		walkPaceTextView = (TextView) findViewById(R.id.wigcw_walkPace_textView);
 		walkSpeedTextView = (TextView) findViewById(R.id.wigcw_walkSpeed_textView);
-		
+
 		// get attendees walk trend imageView
 		attendeesWalkTrendImgView = (ImageView) findViewById(R.id.wigcw_attendeesWalkTrend_imageView);
+
+		// set its on click listener
+		attendeesWalkTrendImgView
+				.setOnClickListener(new AttendeesWalkTrendBtnOnClickListener());
 
 		// test by ares
 		updateWalkInfoTextViewText(WalkInfoType.WALKINFO_WALKDISTANCE,
@@ -278,6 +356,143 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 		}
 	}
 
+	/**
+	 * @title getWalkStartRemainTime
+	 * @descriptor get the within group compete group walk start remain time
+	 * @param startTime
+	 *            : within group compete group walk start time
+	 * @param durationTime
+	 *            : within group compete group duration time
+	 * @return the within group compete group walk start remain time
+	 * @author Ares
+	 */
+	private Long getWalkStartRemainTime(Long startTime, Integer durationTime) {
+		LOGGER.info("@@, startTime = " + startTime + " and durationTime = " + durationTime);
+		
+		// define walk start remain time
+		Long _walkStartRemainTime = 0L;
+
+		// check within group compete group walk start and duration time
+		if (null != startTime && null != durationTime && 0 < durationTime) {
+			// get system current timestamp
+			long _currentTimestamp = System.currentTimeMillis();
+
+			// compare current time with within group compete group walk start
+			// and stop time
+			if (_currentTimestamp < startTime) {
+				// get remain time
+				_walkStartRemainTime = startTime - _currentTimestamp;
+			} else if (_currentTimestamp >= (durationTime * SECONDS_PER_MINUTE)) {
+				// invalid
+				_walkStartRemainTime = null;
+			}
+		} else {
+			LOGGER.error("Get within group compete group walk start remain time error, compete group walk start time = "
+					+ startTime
+					+ " is less than stop time = "
+					+ (startTime + durationTime * SECONDS_PER_MINUTE));
+		}
+
+		return _walkStartRemainTime;
+	}
+
+	/**
+	 * @title updateWalkInfoTextViewText
+	 * @descriptor update walk info(walk total distance, total steps count,
+	 *             energy, pace and speed) textView text
+	 * @param walkInfoType
+	 *            : walk info type
+	 * @param walkInfo
+	 *            : walk info value
+	 * @author Ares
+	 */
+	private void updateWalkInfoTextViewText(WalkInfoType walkInfoType,
+			String walkInfo) {
+		// check walk info
+		if (null != walkInfo) {
+			// define walk info textView text absolute size span
+			AbsoluteSizeSpan _textAbsoluteSizeSpan = new AbsoluteSizeSpan(22,
+					true);
+
+			// define the need to update its text textView and its text
+			// spannable string builder
+			TextView _need2UpdateTextTextView = null;
+			SpannableStringBuilder _textSpannableStringBuilder = new SpannableStringBuilder();
+
+			try {
+				// check walk info type then get the need to update its text
+				// textView and generate its text spannable string builder
+				switch (walkInfoType) {
+				case WALKINFO_WALKSTEPS:
+					_need2UpdateTextTextView = walkStepsCountTextView;
+					_textSpannableStringBuilder.append(String.valueOf(Integer
+							.parseInt(walkInfo)));
+					_textSpannableStringBuilder.setSpan(_textAbsoluteSizeSpan,
+							0, _textSpannableStringBuilder.length(),
+							Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+					_textSpannableStringBuilder.append("\t").append(
+							getString(R.string.walkInfo_step_unit));
+					break;
+
+				case WALKINFO_WALKENERGY:
+					_need2UpdateTextTextView = walkEnergyTextView;
+					_textSpannableStringBuilder.append(String.valueOf(Float
+							.parseFloat(walkInfo)));
+					_textSpannableStringBuilder.setSpan(_textAbsoluteSizeSpan,
+							0, _textSpannableStringBuilder.length(),
+							Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+					_textSpannableStringBuilder.append("\t").append(
+							getString(R.string.walkInfo_energy_unit));
+					break;
+
+				case WALKINFO_WALKPACE:
+					_need2UpdateTextTextView = walkPaceTextView;
+					_textSpannableStringBuilder.append(String.valueOf(Integer
+							.parseInt(walkInfo)));
+					_textSpannableStringBuilder.setSpan(_textAbsoluteSizeSpan,
+							0, _textSpannableStringBuilder.length(),
+							Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+					_textSpannableStringBuilder.insert(0,
+							getString(R.string.walkInfo_pace_label));
+					_textSpannableStringBuilder.append("\t").append(
+							getString(R.string.walkInfo_pace_unit));
+					break;
+
+				case WALKINFO_WALKSPEED:
+					_need2UpdateTextTextView = walkSpeedTextView;
+					_textSpannableStringBuilder.append(String.valueOf(Double
+							.parseDouble(walkInfo)));
+					_textSpannableStringBuilder.setSpan(_textAbsoluteSizeSpan,
+							0, _textSpannableStringBuilder.length(),
+							Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+					_textSpannableStringBuilder.insert(0,
+							getString(R.string.walkInfo_speed_label));
+					_textSpannableStringBuilder.append("\t").append(
+							getString(R.string.walkInfo_speed_unit));
+					break;
+
+				case WALKINFO_WALKDISTANCE:
+				default:
+					_need2UpdateTextTextView = walkDistanceTextView;
+					_textSpannableStringBuilder.append(
+							String.valueOf(Double.parseDouble(walkInfo)))
+							.append(getString(R.string.walkInfo_distance_unit));
+					break;
+				}
+			} catch (NumberFormatException e) {
+				LOGGER.error("Update walk info textView text error, get walk info value exception, exception message = "
+						+ e.getMessage());
+
+				e.printStackTrace();
+			}
+
+			// update walk info textView text
+			_need2UpdateTextTextView.setText(_textSpannableStringBuilder);
+		} else {
+			LOGGER.error("Update walk info textView text error, walk info value is null");
+		}
+	}
+
 	// inner class
 	/**
 	 * @name WithinGroupCompeteWalkExtraData
@@ -287,10 +502,11 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 	 */
 	public static final class WithinGroupCompeteWalkExtraData {
 
-		// the within group compete group id, topic and start time
+		// the within group compete group id, topic, start and duration time
 		public static final String WIGCW_COMPETEGROUP_ID = "withinGroupCompeteWalk_competeGroup_Id";
 		public static final String WIGCW_COMPETEGROUP_TOPIC = "withinGroupCompeteWalk_competeGroup_topic";
 		public static final String WIGCW_COMPETEGROUP_STARTTIME = "withinGroupCompeteWalk_competeGroup_startTime";
+		public static final String WIGCW_COMPETEGROUP_DURATIONTIME = "withinGroupCompeteWalk_competeGroup_durationTime";
 
 	}
 
@@ -325,6 +541,22 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 					//
 				}
 			}
+		}
+
+	}
+
+	/**
+	 * @name AttendeesWalkTrendBtnOnClickListener
+	 * @descriptor attendees walk trend button on click listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class AttendeesWalkTrendBtnOnClickListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			LOGGER.info("@@");
+
 		}
 
 	}

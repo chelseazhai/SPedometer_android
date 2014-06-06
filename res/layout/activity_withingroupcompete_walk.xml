@@ -154,10 +154,7 @@
                 android:background="@drawable/withingroupcompete_walk_remaintime_textview_bg"
                 android:ellipsize="marquee"
                 android:gravity="center"
-                android:paddingBottom="6dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="6dp"
+                android:padding="10dp"
                 android:shadowColor="@android:color/white"
                 android:shadowDx="0.6"
                 android:shadowDy="0.8"
@@ -165,7 +162,7 @@
                 android:singleLine="true"
                 android:text="04:24"
                 android:textColor="@color/light_gray"
-                android:textSize="22sp" />
+                android:textSize="28sp" />
         </FrameLayout>
     </LinearLayout>
 

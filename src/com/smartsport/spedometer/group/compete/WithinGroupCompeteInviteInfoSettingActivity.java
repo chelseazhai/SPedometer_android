@@ -322,12 +322,16 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 			// check the selected invitees and within group compete duration
 			// time
 			if (null != selectedWithinGroupCompeteInvitees) {
+				// define within group compete invite schedule duration time
+				int _competeScheduleDurationTime = 0;
+
 				try {
 					// generate within group compete invite info
 					GroupInviteInfoBean _withinGroupCompeteInviteInfo = new GroupInviteInfoBean();
 					_withinGroupCompeteInviteInfo.setTopic(_topic);
-					_withinGroupCompeteInviteInfo.setDuration(Long
-							.parseLong(_withinGroupCompeteDurationTime));
+					_withinGroupCompeteInviteInfo
+							.setDuration(_competeScheduleDurationTime = Integer
+									.parseInt(_withinGroupCompeteDurationTime));
 
 					// send within group compete invite info with the selected
 					// user friends info list to remote server
@@ -354,8 +358,8 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 				// define within group compete walk extra data map
 				Map<String, Object> _extraMap = new HashMap<String, Object>();
 
-				// put the within group compete group id, topic and start time
-				// to extra data map as param
+				// put the within group compete group id, topic, start and
+				// duration time to extra data map as param
 				_extraMap.put(
 						WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_ID,
 						Integer.valueOf(_competeGroupId));
@@ -365,6 +369,9 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 				_extraMap
 						.put(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_STARTTIME,
 								Long.valueOf(_competeGroupStartTime));
+				_extraMap
+						.put(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_DURATIONTIME,
+								Integer.valueOf(_competeScheduleDurationTime));
 
 				// go to within group compete walk activity with extra data map
 				popPushActivity(WithinGroupCompeteWalkActivity.class, _extraMap);

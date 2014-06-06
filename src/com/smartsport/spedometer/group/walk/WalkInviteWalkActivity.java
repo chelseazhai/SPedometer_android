@@ -40,8 +40,8 @@ import com.smartsport.spedometer.group.info.member.UserInfoMemberStatusBean;
 import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
+import com.smartsport.spedometer.pedometer.WalkInfoType;
 import com.smartsport.spedometer.pedometer.WalkStartPointLocationSource;
-import com.smartsport.spedometer.stepcounter.WalkInfoType;
 import com.smartsport.spedometer.user.UserGender;
 import com.smartsport.spedometer.utils.SSLogger;
 
@@ -233,32 +233,6 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 				scheduleWalkInviteGroupBeginTime,
 				scheduleWalkInviteGroupEndTime);
 		if (null == _walkStartRemainTime) {
-			// walking
-			// set attendee walk flag
-			_isWalking = true;
-
-			// generate holo green light foreground color span
-			ForegroundColorSpan _holoGreenLightForegroundColorSpan = new ForegroundColorSpan(
-					getResources().getColor(android.R.color.holo_green_light));
-
-			// get attendee walk duration time from local storage
-			// test by ares
-			SpannableString _walkDurationTime = new SpannableString("123'30\"");
-			_walkDurationTime.setSpan(_holoGreenLightForegroundColorSpan, 0,
-					_walkDurationTime.length(),
-					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-			// set walk invite walk start remain or walk duration time textView
-			// text
-			walkStartRemainOrWalkDurationTimeTextView
-					.setText(_walkDurationTime);
-		} else if (0 <= _walkStartRemainTime) {
-			// waiting for start
-			// set walk invite walk start remain or walk duration time textView
-			// text
-			walkStartRemainOrWalkDurationTimeTextView
-					.setText(formatWalkStartRemainTime(_walkStartRemainTime));
-		} else {
 			// invalid
 			// generate holo red dark foreground color span and text absolute
 			// size span
@@ -281,6 +255,32 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 			// text
 			walkStartRemainOrWalkDurationTimeTextView
 					.setText(_invalidWalkInviteGroup);
+		} else if (0 <= _walkStartRemainTime) {
+			// waiting for start
+			// set walk invite walk start remain or walk duration time textView
+			// text
+			walkStartRemainOrWalkDurationTimeTextView
+					.setText(formatWalkStartRemainTime(_walkStartRemainTime));
+		} else {
+			// walking
+			// set attendee walk flag
+			_isWalking = true;
+
+			// generate holo green light foreground color span
+			ForegroundColorSpan _holoGreenLightForegroundColorSpan = new ForegroundColorSpan(
+					getResources().getColor(android.R.color.holo_green_light));
+
+			// get attendee walk duration time from local storage
+			// test by ares
+			SpannableString _walkDurationTime = new SpannableString("123'30\"");
+			_walkDurationTime.setSpan(_holoGreenLightForegroundColorSpan, 0,
+					_walkDurationTime.length(),
+					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+			// set walk invite walk start remain or walk duration time textView
+			// text
+			walkStartRemainOrWalkDurationTimeTextView
+					.setText(_walkDurationTime);
 		}
 
 		// get walk invite invitee avatar imageView
