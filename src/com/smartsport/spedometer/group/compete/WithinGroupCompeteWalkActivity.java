@@ -4,7 +4,9 @@
 package com.smartsport.spedometer.group.compete;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,6 +31,7 @@ import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.group.GroupInfoModel;
+import com.smartsport.spedometer.group.compete.CompeteAttendeesWalkTrendActivity.CompeteAttendeesWalkTrendExtraData;
 import com.smartsport.spedometer.group.info.member.MemberStatus;
 import com.smartsport.spedometer.group.info.member.UserInfoMemberStatusBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
@@ -221,35 +224,41 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 				competeGroupStartTime, competeGroupDurationTime);
 		if (null == _walkStartRemainTime) {
 			// invalid
-			// // generate holo red dark foreground color span and text absolute
-			// // size span
-			// ForegroundColorSpan _holoRedDarkForegroundColorSpan = new
-			// ForegroundColorSpan(
-			// getResources().getColor(android.R.color.holo_red_dark));
-			// AbsoluteSizeSpan _textAbsoluteSizeSpan = new AbsoluteSizeSpan(16,
-			// true);
-			//
-			// // set invalid walk invite group tip
-			// SpannableString _invalidWalkInviteGroup = new SpannableString(
-			// getString(R.string.scheduleWalkInviteGroup_status_invalid));
-			// _invalidWalkInviteGroup.setSpan(_holoRedDarkForegroundColorSpan,
-			// 0,
-			// _invalidWalkInviteGroup.length(),
-			// Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-			// _invalidWalkInviteGroup.setSpan(_textAbsoluteSizeSpan, 0,
-			// _invalidWalkInviteGroup.length(),
-			// Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-			//
-			// // set walk invite walk start remain or walk duration time
-			// textView
-			// // text
-			// walkStartRemainOrWalkDurationTimeTextView
-			// .setText(_invalidWalkInviteGroup);
+			// generate holo red dark foreground color span and text absolute
+			// size span
+			ForegroundColorSpan _holoRedDarkForegroundColorSpan = new ForegroundColorSpan(
+					getResources().getColor(android.R.color.holo_red_dark));
+			AbsoluteSizeSpan _textAbsoluteSizeSpan = new AbsoluteSizeSpan(20,
+					true);
+
+			// set invalid within group compete group tip
+			SpannableString _invalidWithinGroupCompeteGroup = new SpannableString(
+					getString(R.string.withinGroupCompeteGroup_isInvalid));
+			_invalidWithinGroupCompeteGroup.setSpan(
+					_holoRedDarkForegroundColorSpan, 0,
+					_invalidWithinGroupCompeteGroup.length(),
+					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+			_invalidWithinGroupCompeteGroup.setSpan(_textAbsoluteSizeSpan, 0,
+					_invalidWithinGroupCompeteGroup.length(),
+					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+			// set within group compete walk start remain time textView text
+			walkRemainTimeTextView.setText(_invalidWithinGroupCompeteGroup);
 		} else if (0 <= _walkStartRemainTime) {
 			// waiting for start
+			// get walk start remain time(seconds)
+			long _walkStartRemainTimeSeconds = _walkStartRemainTime
+					/ MILLISECONDS_PER_SECOND;
+
 			// set within group compete group walk start remain time textView
 			// text
-			walkRemainTimeTextView.setText("03:22");
+			walkRemainTimeTextView
+					.setText(String
+							.format(getString(R.string.withinGroupCompeteGroup_startReaminTime_format),
+									_walkStartRemainTimeSeconds
+											/ SECONDS_PER_MINUTE,
+									_walkStartRemainTimeSeconds
+											% SECONDS_PER_MINUTE));
 		} else {
 			// walking
 			// set attendee walk flag
@@ -261,7 +270,7 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 
 			// get compete attendee walk remain time from local storage
 			// test by ares
-			SpannableString _walkRemainTime = new SpannableString("3'30\"");
+			SpannableString _walkRemainTime = new SpannableString("01:11");
 			_walkRemainTime.setSpan(_holoGreenLightForegroundColorSpan, 0,
 					_walkRemainTime.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
@@ -281,6 +290,11 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 		// set walk info sliding up button on click listener
 		_walkInfoSlidingUpBtn
 				.setOnClickListener(new WalkInfoSlidingUpBtnOnClickListener());
+
+		// check the within group compete group validity and then set its enable
+		if (null == _walkStartRemainTime) {
+			_walkInfoSlidingUpBtn.setEnabled(false);
+		}
 
 		// get walk total distance, total steps count, energy, pace and speed
 		// textView
@@ -367,10 +381,8 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 	 * @author Ares
 	 */
 	private Long getWalkStartRemainTime(Long startTime, Integer durationTime) {
-		LOGGER.info("@@, startTime = " + startTime + " and durationTime = " + durationTime);
-		
 		// define walk start remain time
-		Long _walkStartRemainTime = 0L;
+		Long _walkStartRemainTime = Long.MIN_VALUE;
 
 		// check within group compete group walk start and duration time
 		if (null != startTime && null != durationTime && 0 < durationTime) {
@@ -382,7 +394,8 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 			if (_currentTimestamp < startTime) {
 				// get remain time
 				_walkStartRemainTime = startTime - _currentTimestamp;
-			} else if (_currentTimestamp >= (durationTime * SECONDS_PER_MINUTE)) {
+			} else if (_currentTimestamp >= (startTime + durationTime
+					* SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND)) {
 				// invalid
 				_walkStartRemainTime = null;
 			}
@@ -390,7 +403,8 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 			LOGGER.error("Get within group compete group walk start remain time error, compete group walk start time = "
 					+ startTime
 					+ " is less than stop time = "
-					+ (startTime + durationTime * SECONDS_PER_MINUTE));
+					+ (startTime + durationTime * SECONDS_PER_MINUTE
+							* MILLISECONDS_PER_SECOND));
 		}
 
 		return _walkStartRemainTime;
@@ -555,8 +569,21 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 
 		@Override
 		public void onClick(View v) {
-			LOGGER.info("@@");
+			// define within group compete attendees walk trend extra data map
+			Map<String, Object> _extraMap = new HashMap<String, Object>();
 
+			// put within group compete group id and attendees user info with
+			// status list to extra data map as param
+			_extraMap.put(
+					CompeteAttendeesWalkTrendExtraData.CAWT_COMPETEGROUP_ID,
+					competeGroupId);
+			_extraMap
+					.put(CompeteAttendeesWalkTrendExtraData.CAWT_COMPETEGROUP_ATTENDEES,
+							inviteesUserInfoWithMemberStatusList);
+
+			// go to within group compete attendees walk trend activity with
+			// extra data map
+			pushActivity(CompeteAttendeesWalkTrendActivity.class, _extraMap);
 		}
 
 	}

@@ -1,0 +1,68 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".group.compete.CompeteAttendeesWalkTrendActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <LinearLayout
+        android:id="@+id/cawt_attendees_walkTrend_segment_linearLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="65dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+
+        <View
+            android:id="@+id/cawt_attendees_walkTrend_segment_radioGroup_deviderLine"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_gray" />
+
+        <RadioGroup
+            android:id="@+id/cawt_attendees_walkTrend_segment_radioGroup"
+            android:layout_width="fill_parent"
+            android:layout_height="64dp"
+            android:background="@android:color/white"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="10dp" >
+
+            <RadioButton
+                android:id="@+id/cawt_attendees_walkTotalDistance_segment"
+                android:layout_width="44dp"
+                android:layout_height="fill_parent"
+                android:background="@drawable/competeattendees_walktotaldistance_segment_bg"
+                android:button="@null"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/cawt_attendees_walkSpeed_segment"
+                android:layout_width="44dp"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="30dp"
+                android:background="@drawable/competeattendees_walkspeed_segment_bg"
+                android:button="@null" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/cawt_attendees_walkTrend_segment_linearLayout" >
+
+        <ViewStub
+            android:id="@+id/cawt_attendees_walkTotalDistance_barChart_viewStub"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout="@layout/compete_attendees_walk_totaldistance_layout" />
+
+        <ViewStub
+            android:id="@+id/cawt_attendees_walkSpeed_lineChart_viewStub"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout="@layout/compete_attendees_walk_speed_layout" />
+    </FrameLayout>
+
+</RelativeLayout>

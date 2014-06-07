@@ -16,6 +16,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -25,10 +27,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
+import com.smartsport.spedometer.customwidget.SSSimpleAdapterViewBinder;
 import com.smartsport.spedometer.group.ScheduleWalkInviteGroupsActivity.ScheduleWalkInviteGroupListViewAdapter.ScheduleWalkInviteGroupListViewAdapterKey;
 import com.smartsport.spedometer.group.walk.WalkInviteInfoSettingActivity;
 import com.smartsport.spedometer.group.walk.WalkInviteInfoSettingActivity.WalkInviteInfoSettingExtraData;
@@ -75,10 +79,10 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 			GroupBean _group = new GroupBean();
 
 			GroupInviteInfoBean _inviteInfo = new GroupInviteInfoBean(null);
-			_inviteInfo.setBeginTime(System.currentTimeMillis() / 1000L + 100
-					* (i + 1));
-			_inviteInfo
-					.setDuration(0 == i ? 3000 : 0 == i % 2 ? 150000 : 50000);
+			_inviteInfo.setBeginTime(System.currentTimeMillis() / 1000L
+					+ (0 == i ? 0 : 100 * i));
+			_inviteInfo.setDuration(0 == i ? 300 : (1 == i ? 100
+					: 0 == i % 2 ? 150000 : 50000));
 			_inviteInfo.setEndTime(_inviteInfo.getBeginTime()
 					+ _inviteInfo.getDuration());
 			_inviteInfo.setTopic("欢迎加入我们的约走组" + i);
@@ -131,15 +135,24 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 						scheduleWalkInviteGroupList,
 						R.layout.schedulewalkinvitegroup_listview_item_layout,
 						new String[] {
+								ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_TOPIC_LABEL_KEY
+										.name(),
 								ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_TOPIC_KEY
 										.name(),
+								ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_SCHEDULETIME_LABEL_KEY
+										.name(),
 								ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_SCHEDULETIME_KEY
+										.name(),
+								ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_STATUS_LABEL_KEY
 										.name(),
 								ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_STATUS_KEY
 										.name() },
 						new int[] {
+								R.id.swigi_walkInviteGroupTopic_label_textView,
 								R.id.swigi_walkInviteGroupTopic_textView,
+								R.id.swigi_walkInviteGroupScheduleTime_label_textView,
 								R.id.swigi_walkInviteGroupScheduleTime_textView,
+								R.id.swigi_walkInviteGroupStatus_label_textView,
 								R.id.swigi_walkInviteGroupStatus_textView }));
 
 		// set its on item click listener
@@ -353,6 +366,9 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 			// save context
 			this.context = context;
 
+			// set view binder
+			setViewBinder(new ScheduleWalkInviteGroupListViewAdapterViewBinder());
+
 			// set schedule walk invite group list
 			setScheduleWalkInviteGroups(scheduleWalkInviteGroups);
 		}
@@ -386,6 +402,12 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 					long _scheduleWalkInviteGroupEndTimestamp = _scheduleWalkInviteInviteInfo
 							.getEndTime() * MILLISECONDS_PER_SECOND;
 
+					// get schedule walk invite group status format spannable
+					// string builder
+					SpannableStringBuilder _scheduleWalkInviteGroupStatusSpannableStringBuilder = formatGroupStatus(
+							_scheduleWalkInviteGroupBeginTimestamp,
+							_scheduleWalkInviteGroupEndTimestamp);
+
 					// set data attributes
 					_data.put(WALKINVITEGROUP_ID_KEY,
 							_scheduleWalkInviteGroup.getGroupId());
@@ -406,9 +428,51 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 					_data.put(
 							ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_STATUS_KEY
 									.name(),
-							formatGroupStatus(
-									_scheduleWalkInviteGroupBeginTimestamp,
-									_scheduleWalkInviteGroupEndTimestamp));
+							_scheduleWalkInviteGroupStatusSpannableStringBuilder);
+
+					// get and check schedule walk invite group status format
+					// spannable string builder foreground color spans array
+					ForegroundColorSpan[] _foregroundColorSpans = _scheduleWalkInviteGroupStatusSpannableStringBuilder
+							.getSpans(0,
+									_scheduleWalkInviteGroupStatusSpannableStringBuilder
+											.length(),
+									ForegroundColorSpan.class);
+					if (null != _foregroundColorSpans
+							&& 0 < _foregroundColorSpans.length
+							&& context.getResources().getColor(
+									android.R.color.holo_green_dark) == _foregroundColorSpans[0]
+									.getForegroundColor()) {
+						// define schedule walk invite group topic and schedule
+						// time spannable string
+						SpannableString _scheduleWalkInviteGroupTopicSpannableString = new SpannableString(
+								_scheduleWalkInviteInviteInfo.getTopic());
+						SpannableString _scheduleWalkInviteGroupScheduleTimeSpannableString = new SpannableString(
+								(CharSequence) _data
+										.get(ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_SCHEDULETIME_KEY
+												.name()));
+
+						// set their foreground color span
+						_scheduleWalkInviteGroupTopicSpannableString.setSpan(
+								_foregroundColorSpans[0], 0,
+								_scheduleWalkInviteGroupTopicSpannableString
+										.length(),
+								Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+						_scheduleWalkInviteGroupScheduleTimeSpannableString
+								.setSpan(_foregroundColorSpans[0], 0,
+										_scheduleWalkInviteGroupScheduleTimeSpannableString
+												.length(),
+										Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+						//
+						_data.put(
+								ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_TOPIC_KEY
+										.name(),
+								_scheduleWalkInviteGroupTopicSpannableString);
+						_data.put(
+								ScheduleWalkInviteGroupListViewAdapterKey.WALKINVITEGROUP_SCHEDULETIME_KEY
+										.name(),
+								_scheduleWalkInviteGroupScheduleTimeSpannableString);
+					}
 
 					// add data to list
 					_sDataList.add(_data);
@@ -637,9 +701,47 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 		 */
 		public enum ScheduleWalkInviteGroupListViewAdapterKey {
 
-			// schedule walk invite group topic, schedule time(begin and end
-			// time) and status key
-			WALKINVITEGROUP_TOPIC_KEY, WALKINVITEGROUP_SCHEDULETIME_KEY, WALKINVITEGROUP_STATUS_KEY;
+			// schedule walk invite group indicate, topic, schedule time(begin
+			// and end time), status and their label key
+			WALKINVITEGROUP_INDICATE_KEY, WALKINVITEGROUP_TOPIC_LABEL_KEY, WALKINVITEGROUP_TOPIC_KEY, WALKINVITEGROUP_SCHEDULETIME_LABEL_KEY, WALKINVITEGROUP_SCHEDULETIME_KEY, WALKINVITEGROUP_STATUS_LABEL_KEY, WALKINVITEGROUP_STATUS_KEY;
+
+		}
+
+		/**
+		 * @name ScheduleWalkInviteGroupListViewAdapter
+		 * @descriptor schedule walk invite group listView adapter view binder
+		 * @author Ares
+		 * @version 1.0
+		 */
+		class ScheduleWalkInviteGroupListViewAdapterViewBinder extends
+				SSSimpleAdapterViewBinder {
+
+			@Override
+			public boolean setViewValue(View view, Object data,
+					String textRepresentation) {
+				boolean _ret = false;
+
+				// check view type
+				// textView
+				if (view instanceof TextView) {
+					// set view text
+					if (null != data) {
+						((TextView) view)
+								.setText(data instanceof Spannable ? (Spannable) data
+										: data.toString());
+					} else {
+						// nothing to do
+					}
+
+					// update return flag
+					_ret = true;
+				} else {
+					// update return flag
+					_ret = super.setViewValue(view, data, textRepresentation);
+				}
+
+				return _ret;
+			}
 
 		}
 

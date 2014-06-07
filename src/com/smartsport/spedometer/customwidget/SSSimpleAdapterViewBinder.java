@@ -3,7 +3,7 @@
  */
 package com.smartsport.spedometer.customwidget;
 
-import android.text.SpannableString;
+import android.text.Spannable;
 import android.view.View;
 import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.TextView;
@@ -32,8 +32,8 @@ public class SSSimpleAdapterViewBinder implements ViewBinder {
 		if (view instanceof TextView) {
 			// set view text
 			((TextView) view).setText(null == data ? ""
-					: data instanceof SpannableString ? (SpannableString) data
-							: data.toString());
+					: data instanceof Spannable ? (Spannable) data : data
+							.toString());
 
 			// update return flag
 			_ret = true;

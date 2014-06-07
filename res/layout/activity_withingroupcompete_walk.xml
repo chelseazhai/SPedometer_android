@@ -160,7 +160,6 @@
                 android:shadowDy="0.8"
                 android:shadowRadius="1"
                 android:singleLine="true"
-                android:text="04:24"
                 android:textColor="@color/light_gray"
                 android:textSize="28sp" />
         </FrameLayout>

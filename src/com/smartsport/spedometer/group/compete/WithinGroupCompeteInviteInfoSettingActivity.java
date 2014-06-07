@@ -53,6 +53,9 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 	private static final SSLogger LOGGER = new SSLogger(
 			WithinGroupCompeteInviteInfoSettingActivity.class);
 
+	// milliseconds per second
+	private final int MILLISECONDS_PER_SECOND = 1000;
+
 	// within group compete model
 	private WithinGroupCompeteModel withinGroupCompeteModel;
 
@@ -353,7 +356,8 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 				// the within group compete group id, topic and start time
 				int _competeGroupId = 12322;
 				String _competeGroupTopic = "走路竞赛吧，少年";
-				long _competeGroupStartTime = System.currentTimeMillis() / 1000L + 3 * 60;
+				long _competeGroupStartTime = System.currentTimeMillis()
+						/ MILLISECONDS_PER_SECOND - 8 * 60;
 
 				// define within group compete walk extra data map
 				Map<String, Object> _extraMap = new HashMap<String, Object>();
@@ -368,7 +372,8 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 								_competeGroupTopic);
 				_extraMap
 						.put(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_STARTTIME,
-								Long.valueOf(_competeGroupStartTime));
+								Long.valueOf(_competeGroupStartTime
+										* MILLISECONDS_PER_SECOND));
 				_extraMap
 						.put(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_DURATIONTIME,
 								Integer.valueOf(_competeScheduleDurationTime));

@@ -243,7 +243,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 			// set invalid walk invite group tip
 			SpannableString _invalidWalkInviteGroup = new SpannableString(
-					getString(R.string.scheduleWalkInviteGroup_status_invalid));
+					getString(R.string.walkInviteGroup_isInvalid));
 			_invalidWalkInviteGroup.setSpan(_holoRedDarkForegroundColorSpan, 0,
 					_invalidWalkInviteGroup.length(),
 					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -272,7 +272,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 			// get attendee walk duration time from local storage
 			// test by ares
-			SpannableString _walkDurationTime = new SpannableString("123'30\"");
+			SpannableString _walkDurationTime = new SpannableString("13'30\"");
 			_walkDurationTime.setSpan(_holoGreenLightForegroundColorSpan, 0,
 					_walkDurationTime.length(),
 					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -345,6 +345,11 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		// set walk info sliding up button on click listener
 		_walkInfoSlidingUpBtn
 				.setOnClickListener(new WalkInfoSlidingUpBtnOnClickListener());
+
+		// check the walk invite group validity and then set its enable
+		if (null == _walkStartRemainTime) {
+			_walkInfoSlidingUpBtn.setEnabled(false);
+		}
 
 		// get walk total distance, total steps count, energy, pace and speed
 		// textView
@@ -470,7 +475,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private Long getWalkStartRemainTime(Long scheduleBeginTime,
 			Long scheduleEndTime) {
 		// define walk start remain time
-		Long _walkStartRemainTime = 0L;
+		Long _walkStartRemainTime = Long.MIN_VALUE;
 
 		// check walk invite group schedule begin and end time
 		if (null != scheduleBeginTime && null != scheduleEndTime
@@ -517,7 +522,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		if (0 == _walkStartRemainTimeMinutes
 				&& 0 != walkStartRemainTime / MILLISECONDS_PER_SECOND) {
 			_walkStartRemainTimeFormat = new SpannableString(
-					getString(R.string.scheduleWalkInviteGroup_status_startSoon));
+					getString(R.string.walkInviteGroup_willStartSoon));
 
 			_walkStartRemainTimeFormat.setSpan(_textAbsoluteSizeSpan, 0,
 					_walkStartRemainTimeFormat.length(),

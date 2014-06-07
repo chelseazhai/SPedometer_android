@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- the duration (in milliseconds) of a activity animation -->
+    <!-- the duration(in milliseconds) of a activity animation -->
     <integer name="config_activityAnimTime">300</integer>
 
     <!-- autoNavi map zoom level -->
     <integer name="config_autoNaviMap_zoomLevel">16</integer>
 
+    <!-- walk invite walk publish selft and get partner walk info period(in seconds) -->
+    <integer name="config_walkInviteWalk_publishSelfAndGetPartner_walkInfo_period">15</integer>
+
     <!-- the limit count of within group compete invitees -->
     <integer name="config_limitCount_withinGroupCompeteInvitees">5</integer>
+
+    <!-- within group compete walk publish and get attendees walk info period(in seconds) -->
+    <integer name="config_withinGroupCompeteWalk_publishAndGetAttendees_walkInfo_period">30</integer>
 
     <!-- the limit count of stranger pat -->
     <integer name="config_limitCount_strangerPat">5</integer>

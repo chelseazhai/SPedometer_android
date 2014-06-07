@@ -40,6 +40,7 @@
                 android:textSize="15sp" />
 
             <TextView
+                android:id="@+id/swigi_walkInviteGroupTopic_label_textView"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -71,6 +72,7 @@
                 android:textSize="15sp" />
 
             <TextView
+                android:id="@+id/swigi_walkInviteGroupScheduleTime_label_textView"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -102,6 +104,7 @@
                 android:textSize="15sp" />
 
             <TextView
+                android:id="@+id/swigi_walkInviteGroupStatus_label_textView"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
