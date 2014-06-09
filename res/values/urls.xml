@@ -2,10 +2,11 @@
 <resources>
 
     <!-- server root url -->
-    <string name="server_rootUrl" translatable="false">http://192.168.0.64:8080/pedometer</string>
+    <string name="server_rootUrl" translatable="false">http://192.168.0.54:8080/qmjs_FEP/pedometer</string>
 
     <!-- user -->
-    <string name="getUserInfo_url" translatable="false">/user/getUserInfo</string>
+    <!-- <string name="getUserInfo_url" translatable="false">/user/getUserInfo</string> -->
+    <string name="getUserInfo_url" translatable="false">/getUserInfo.action</string>
     <string name="updateUserInfo_url" translatable="false">/user/updateUserInfo</string>
     <string name="getUserFriends_url" translatable="false">/user/getFriendList</string>
 

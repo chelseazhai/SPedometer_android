@@ -83,7 +83,7 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 		setContentView(R.layout.activity_userinfo_setting);
 
 		// get user info from remote server
-		userInfoModel.getUserInfo(123123, "token", new ICMConnector() {
+		userInfoModel.getUserInfo(1002, "token", new ICMConnector() {
 
 			//
 

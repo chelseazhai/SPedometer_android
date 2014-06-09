@@ -3,6 +3,7 @@
 
     <!-- pure color -->
     <color name="dark_gray">#696969</color>
+    <color name="holo_green_middle">#6DB529</color>
     <color name="gray">#808080</color>
     <color name="light_dark_gray">#A0A0A0</color>
     <color name="light_gray">#C0C0C0</color>

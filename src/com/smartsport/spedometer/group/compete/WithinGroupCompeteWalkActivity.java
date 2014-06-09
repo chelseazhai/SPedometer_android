@@ -270,7 +270,7 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 
 			// get compete attendee walk remain time from local storage
 			// test by ares
-			SpannableString _walkRemainTime = new SpannableString("01:11");
+			SpannableString _walkRemainTime = new SpannableString("03'21\"");
 			_walkRemainTime.setSpan(_holoGreenLightForegroundColorSpan, 0,
 					_walkRemainTime.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 

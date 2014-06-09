@@ -14,7 +14,17 @@
     <string name="userComReqParam_appId" translatable="false">appId</string>
     <string name="userComReqParam_appVersion" translatable="false">appVersion</string>
     <string name="userComReqParam_funcId" translatable="false">funcId</string>
+    <!-- body -->
     <string name="userComReqParam_body" translatable="false">body</string>
+
+    <!-- user http request response -->
+    <!-- header -->
+    <string name="userComReqResp_interceptTime" translatable="false">interceptTime</string>
+    <string name="userComReqResp_statusCode" translatable="false">retStatus</string>
+    <string name="userComReqResp_statusCode_ok" translatable="false">0</string>
+    <string name="userComReqResp_statusMsg" translatable="false">retMessage</string>
+    <!-- body -->
+    <string name="userComReqResp_body" translatable="false">body</string>
 
     <!-- http response error -->
     <string name="comReqResp_errorCode" translatable="false">errorCode</string>

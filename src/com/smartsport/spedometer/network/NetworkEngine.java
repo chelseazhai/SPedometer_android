@@ -4,12 +4,12 @@
 package com.smartsport.spedometer.network;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.http.Header;
 import org.apache.http.entity.StringEntity;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -21,6 +21,8 @@ import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespFileHandler;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespStringHandler;
+import com.smartsport.spedometer.network.hoperun.HopeRunHttpReqEntity;
+import com.smartsport.spedometer.network.hoperun.HopeRunHttpReqRespEntity;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -128,22 +130,16 @@ public class NetworkEngine {
 				+ " and response string handler = "
 				+ asyncHttpRespStringHandler);
 
-		// generate json string parameter(charset:utf-8)
-		StringEntity _jsonStringEntity = null;
-		try {
-			_jsonStringEntity = new StringEntity(
-					new JSONObject(parameter).toString(), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			LOGGER.error("Generate asynchronous post http request json string param error, exception message = "
-					+ e.getMessage());
-
-			e.printStackTrace();
+		// get, check json string parameter and then post asynchronous http
+		// request
+		StringEntity _jsonStringEntity = new HopeRunHttpReqEntity(parameter)
+				.genReqStringEntity();
+		if (null != _jsonStringEntity) {
+			asyncHttpClient.post(context, genHttpRequestUrl(api),
+					_jsonStringEntity, "text/json charset=\"utf-8\"",
+					new TextAsyncHttpRespStringHandler(
+							asyncHttpRespStringHandler));
 		}
-
-		// post asynchronous http request
-		asyncHttpClient.post(context, genHttpRequestUrl(api),
-				_jsonStringEntity, "text/json charset=\"utf-8\"",
-				new TextAsyncHttpRespStringHandler(asyncHttpRespStringHandler));
 
 		// asyncHttpClient.post(genHttpRequestUrl(api), new RequestParams(
 		// parameter), new TextAsyncHttpRespStringHandler(
@@ -240,8 +236,29 @@ public class NetworkEngine {
 
 			// check asynchronous http response string handler
 			if (null != asyncHttpRespStringHandler) {
-				// asynchronous http response string handle successful
-				asyncHttpRespStringHandler.onSuccess(statusCode, responseBody);
+				try {
+					// get hope run http request response entity
+					HopeRunHttpReqRespEntity _hopeRunHttpReqRespEntity = new HopeRunHttpReqRespEntity(
+							statusCode, new JSONObject(responseBody));
+
+					// get and check status code
+					Integer _statusCode = _hopeRunHttpReqRespEntity
+							.getStatusCode();
+					if (statusCode == _statusCode) {
+						// asynchronous http response string handle successful
+						asyncHttpRespStringHandler.onSuccess(statusCode,
+								_hopeRunHttpReqRespEntity.getBody());
+					} else {
+						// asynchronous http response string handle failed
+						asyncHttpRespStringHandler.onFailure(_statusCode,
+								_hopeRunHttpReqRespEntity.getStatusMsg());
+					}
+				} catch (JSONException e) {
+					LOGGER.error("Get hope run http request response entity json object error, exception message = "
+							+ e.getMessage());
+
+					e.printStackTrace();
+				}
 			} else {
 				LOGGER.warning("Text asynchronous http response string handler is null, not need to throw up");
 			}
