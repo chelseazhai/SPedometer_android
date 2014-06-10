@@ -74,35 +74,64 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 		groupInfoModel = new GroupInfoModel();
 		scheduleWalkInviteGroupList = new ArrayList<GroupBean>();
 
-		// test by ares
-		for (int i = 0; i < 10; i++) {
-			GroupBean _group = new GroupBean();
-
-			GroupInviteInfoBean _inviteInfo = new GroupInviteInfoBean(null);
-			_inviteInfo.setBeginTime(System.currentTimeMillis() / 1000L
-					+ (0 == i ? 0 : 100 * i));
-			_inviteInfo.setDuration(0 == i ? 300 : (1 == i ? 100
-					: 0 == i % 2 ? 150000 : 50000));
-			_inviteInfo.setEndTime(_inviteInfo.getBeginTime()
-					+ _inviteInfo.getDuration());
-			_inviteInfo.setTopic("欢迎加入我们的约走组" + i);
-
-			_group.setGroupId(10000 + i);
-			_group.setInviteInfo(_inviteInfo);
-			_group.setType(GroupType.WALK_GROUP);
-			_group.setMemberNumber(2);
-
-			scheduleWalkInviteGroupList.add(_group);
-		}
+		// // test by ares
+		// for (int i = 0; i < 10; i++) {
+		// GroupBean _group = new GroupBean();
+		//
+		// GroupInviteInfoBean _inviteInfo = new GroupInviteInfoBean(null);
+		// _inviteInfo.setBeginTime(System.currentTimeMillis() / 1000L
+		// + (0 == i ? 0 : 100 * i));
+		// _inviteInfo.setDuration(0 == i ? 300 : (1 == i ? 100
+		// : 0 == i % 2 ? 150000 : 50000));
+		// _inviteInfo.setEndTime(_inviteInfo.getBeginTime()
+		// + _inviteInfo.getDuration());
+		// _inviteInfo.setTopic("欢迎加入我们的约走组" + i);
+		//
+		// _group.setGroupId("10000" + i);
+		// _group.setInviteInfo(_inviteInfo);
+		// _group.setType(GroupType.WALK_GROUP);
+		// _group.setMemberNumber(2);
+		//
+		// scheduleWalkInviteGroupList.add(_group);
+		// }
 
 		// set content view
 		setContentView(R.layout.activity_schedule_walkinvite_groups);
 
 		// get schedule walk invite group list from remote server
-		groupInfoModel.getUserScheduleGroups(123123, "token",
+		groupInfoModel.getUserScheduleGroups(1002, "token",
 				GroupType.WALK_GROUP, new ICMConnector() {
 
-					//
+					@SuppressWarnings("unchecked")
+					@Override
+					public void onSuccess(Object... retValue) {
+						// check return values
+						if (null != retValue && 1 < retValue.length) {
+							// get and check group type, the update walk invite
+							// group list
+							if (retValue[0] instanceof GroupType) {
+								if (GroupType.WALK_GROUP == (GroupType) retValue[0]
+										&& retValue[retValue.length - 1] instanceof List) {
+									// reset schedule walk invite group list
+									scheduleWalkInviteGroupList.clear();
+									scheduleWalkInviteGroupList
+											.addAll((List<GroupBean>) retValue[retValue.length - 1]);
+									scheduleWalkInviteGroupListViewAdapter
+											.setScheduleWalkInviteGroups(scheduleWalkInviteGroupList);
+								}
+							}
+						} else {
+							LOGGER.error("Update schedule walk invite groups UI error");
+						}
+					}
+
+					@Override
+					public void onFailure(int errorCode, String errorMsg) {
+						LOGGER.error("Get schedule walk invite groups from remote server error, error code = "
+								+ errorCode + " and message = " + errorMsg);
+
+						//
+					}
 
 				});
 	}
@@ -557,9 +586,9 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 		 * @return the selected schedule walk invite group item group id
 		 * @author Ares
 		 */
-		public Integer getGroupId(int position) {
+		public String getGroupId(int position) {
 			// return the schedule walk invite group id with position
-			return (Integer) getItem(position).get(WALKINVITEGROUP_ID_KEY);
+			return (String) getItem(position).get(WALKINVITEGROUP_ID_KEY);
 		}
 
 		/**
@@ -688,17 +717,20 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 
 				// check it and initialize schedule walk invite group status
 				// string format
-				if (0 >= _remainTime) {
-					_groupStatus
-							.append(context
-									.getString(R.string.scheduleWalkInviteGroup_status_walking));
-					_groupStatus.setSpan(_holoGreenMiddleForegroundColorSpan,
-							0, _groupStatus.length(),
-							Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-				} else if (scheduleEndTime < _currentTimestamp) {
-					_groupStatus
-							.append(context
-									.getString(R.string.scheduleWalkInviteGroup_status_invalid));
+				if (0 > _remainTime) {
+					if (scheduleEndTime < _currentTimestamp) {
+						_groupStatus
+								.append(context
+										.getString(R.string.scheduleWalkInviteGroup_status_invalid));
+					} else {
+						_groupStatus
+								.append(context
+										.getString(R.string.scheduleWalkInviteGroup_status_walking));
+						_groupStatus.setSpan(
+								_holoGreenMiddleForegroundColorSpan, 0,
+								_groupStatus.length(),
+								Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+					}
 				} else {
 					// define schedule walk invite group status value
 					String _groupStatusValue = null;

@@ -57,7 +57,7 @@ public class UserInfoModel {
 	 * @author Ares
 	 */
 	public void getUserInfo(final int userId, String token,
-			ICMConnector executant) {
+			final ICMConnector executant) {
 		// get user info with user id and token
 		((UserInfoNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(UserInfoNetworkAdapter.class))
@@ -89,7 +89,7 @@ public class UserInfoModel {
 						userInfo.setUserId(userId);
 
 						// get user info successful
-						//
+						executant.onSuccess(userInfo);
 					}
 
 					@Override
@@ -99,7 +99,7 @@ public class UserInfoModel {
 								+ errorMsg);
 
 						// get user info failed
-						//
+						executant.onFailure(statusCode, errorMsg);
 					}
 
 				});
@@ -124,9 +124,9 @@ public class UserInfoModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void updateUserInfo(int userId, String token, Integer age,
+	public void updateUserInfo(final int userId, String token, Integer age,
 			UserGender gender, Float height, Float weight,
-			ICMConnector executant) {
+			final ICMConnector executant) {
 		// update user info with user id, token and need to update user
 		// info(perhaps including user age, gender, height and weight)
 		((UserInfoNetworkAdapter) NetworkAdapter.getInstance()
@@ -154,37 +154,62 @@ public class UserInfoModel {
 									Context _context = SSApplication
 											.getContext();
 
+									// check user info and update its user info
+									if (null == userInfo) {
+										// initialize user info object
+										userInfo = new UserInfoBean();
+									}
+									// user id
+									userInfo.setUserId(userId);
+									// gender
+									userInfo.setGender(UserGender.getGender(JSONUtils.getStringFromJSONObject(
+											respJSONObject,
+											_context.getString(R.string.userInfoReqResp_userGender))));
+									// age
 									try {
-										// get and check response result code
-										int _respResultCode = Integer.parseInt(JSONUtils
+										userInfo.setAge(Integer.parseInt(JSONUtils
 												.getStringFromJSONObject(
 														respJSONObject,
-														_context.getString(R.string.updateUserInfoReqResp_resultCode)));
-										if (Integer.parseInt(_context
-												.getString(R.string.updateUserInfoReqResp_updateSuccessful)) == _respResultCode) {
-											// update user info successful
-											//
-										} else if (Integer.parseInt(_context
-												.getString(R.string.updateUserInfoReqResp_updateFailed)) == _respResultCode) {
-											// update user info failed
-											//
-										} else {
-											LOGGER.error("Update user info failed, response result code = "
-													+ _respResultCode
-													+ " unrecognized");
-
-											// update user info failed
-											//
-										}
+														_context.getString(R.string.userInfoReqResp_userAge))));
 									} catch (NumberFormatException e) {
-										LOGGER.error("Get update user info response result code failed, exception message = "
+										LOGGER.error("Get update user age integer from user json info object = "
+												+ respJSONObject
+												+ " error, exception message = "
 												+ e.getMessage());
-
-										// update user info failed
-										//
 
 										e.printStackTrace();
 									}
+									// height
+									try {
+										userInfo.setHeight(Float.parseFloat(JSONUtils
+												.getStringFromJSONObject(
+														respJSONObject,
+														_context.getString(R.string.userInfoReqResp_userHeight))));
+									} catch (NumberFormatException e) {
+										LOGGER.error("Get update user height float from user json info object = "
+												+ respJSONObject
+												+ " error, exception message = "
+												+ e.getMessage());
+
+										e.printStackTrace();
+									}
+									// weight
+									try {
+										userInfo.setWeight(Float.parseFloat(JSONUtils
+												.getStringFromJSONObject(
+														respJSONObject,
+														_context.getString(R.string.userInfoReqResp_userWeight))));
+									} catch (NumberFormatException e) {
+										LOGGER.error("Get update user weight float from user json info object = "
+												+ respJSONObject
+												+ " error, exception message = "
+												+ e.getMessage());
+
+										e.printStackTrace();
+									}
+
+									// update user info successful
+									executant.onSuccess(userInfo);
 								} else {
 									LOGGER.error("Update user info response json object is null");
 								}
@@ -199,7 +224,7 @@ public class UserInfoModel {
 										+ errorMsg);
 
 								// update user info failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});
@@ -216,7 +241,8 @@ public class UserInfoModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void getFriends(int userId, String token, ICMConnector executant) {
+	public void getFriends(int userId, String token,
+			final ICMConnector executant) {
 		// get user all friends with user id and token
 		((UserInfoNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(UserInfoNetworkAdapter.class))
@@ -254,7 +280,7 @@ public class UserInfoModel {
 							}
 
 							// get user all friends successful
-							//
+							executant.onSuccess(friendsInfo);
 						} else {
 							LOGGER.error("Get user friends info response json array is null");
 						}
@@ -273,7 +299,7 @@ public class UserInfoModel {
 								+ errorMsg);
 
 						// get user all friends failed
-						//
+						executant.onFailure(statusCode, errorMsg);
 					}
 
 				});

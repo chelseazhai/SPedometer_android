@@ -91,6 +91,7 @@ public class DemoActivity extends Activity {
 					JSONUtils.putObject2JSONObject(_param, "header", _head);
 
 					// body
+					@SuppressWarnings("unused")
 					String _bodyString = "this is body";
 
 					JSONUtils.putObject2JSONObject(_param, "body", null);
@@ -153,6 +154,19 @@ public class DemoActivity extends Activity {
 					_userInfoModel.updateUserInfo(123123, "AJH12AHG33", null,
 							UserGender.FEMALE, null, null, new ICMConnector() {
 
+								@Override
+								public void onSuccess(Object... retValue) {
+									// TODO Auto-generated method stub
+
+								}
+
+								@Override
+								public void onFailure(int errorCode,
+										String errorMsg) {
+									// TODO Auto-generated method stub
+
+								}
+
 								//
 
 							});
@@ -162,6 +176,19 @@ public class DemoActivity extends Activity {
 					// get user friend list
 					_userInfoModel.getFriends(12123, "sdjh@s",
 							new ICMConnector() {
+
+								@Override
+								public void onSuccess(Object... retValue) {
+									// TODO Auto-generated method stub
+
+								}
+
+								@Override
+								public void onFailure(int errorCode,
+										String errorMsg) {
+									// TODO Auto-generated method stub
+
+								}
 
 								//
 

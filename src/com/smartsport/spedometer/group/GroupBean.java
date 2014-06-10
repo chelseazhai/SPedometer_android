@@ -5,6 +5,7 @@ package com.smartsport.spedometer.group;
 
 import java.io.Serializable;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -31,7 +32,7 @@ public class GroupBean implements Serializable {
 	private static final SSLogger LOGGER = new SSLogger(GroupBean.class);
 
 	// group id, type, invite info and member number
-	private int groupId;
+	private String groupId;
 	private GroupType type;
 	private GroupInviteInfoBean inviteInfo;
 	private int memberNumber;
@@ -59,11 +60,11 @@ public class GroupBean implements Serializable {
 		parseGroup(info);
 	}
 
-	public int getGroupId() {
+	public String getGroupId() {
 		return groupId;
 	}
 
-	public void setGroupId(int groupId) {
+	public void setGroupId(String groupId) {
 		this.groupId = groupId;
 	}
 
@@ -113,19 +114,9 @@ public class GroupBean implements Serializable {
 			Context _context = SSApplication.getContext();
 
 			// set walk or compete group attributes
-			try {
-				// group id
-				groupId = Integer.parseInt(JSONUtils.getStringFromJSONObject(
-						info,
-						_context.getString(R.string.getGroupsReqResp_groupId)));
-			} catch (NumberFormatException e) {
-				LOGGER.error("Get walk or compete group id from json info object = "
-						+ info
-						+ " error, exception message = "
-						+ e.getMessage());
-
-				e.printStackTrace();
-			}
+			// group id
+			groupId = JSONUtils.getStringFromJSONObject(info,
+					_context.getString(R.string.getGroupsReqResp_groupId));
 
 			// type
 			// check is or not has type
@@ -140,10 +131,68 @@ public class GroupBean implements Serializable {
 			}
 
 			// invite info
-			inviteInfo = new GroupInviteInfoBean(
-					JSONUtils.getJSONObjectFromJSONObject(
-							info,
-							_context.getString(R.string.getGroupsReqResp_groupInviteInfo)));
+			// inviteInfo = new GroupInviteInfoBean(
+			// JSONUtils.getJSONObjectFromJSONObject(
+			// info,
+			// _context.getString(R.string.getGroupsReqResp_groupInviteInfo)));
+
+			// test by ares
+			// define group invite info topic, begin, duration and end time key
+			String _groupInviteTopicKey = _context
+					.getString(R.string.groupInviteInfo_topic);
+			String _groupInviteBeginTimeKey = _context
+					.getString(R.string.groupInviteInfo_beginTime);
+			String _groupInviteDurationTimeKey = _context
+					.getString(R.string.groupInviteInfo_duration);
+			String _groupInviteEndTimeKey = _context
+					.getString(R.string.groupInviteInfo_endTime);
+
+			// get group invite info: topic, begin, duration and end time object
+			String _groupInviteTopic = JSONUtils.getStringFromJSONObject(info,
+					_groupInviteTopicKey);
+			String _groupInviteBeginTime = JSONUtils.getStringFromJSONObject(
+					info, _groupInviteBeginTimeKey);
+			String _groupInviteDurationTime = JSONUtils
+					.getStringFromJSONObject(info, _groupInviteDurationTimeKey);
+			String _groupInviteEndTime = JSONUtils.getStringFromJSONObject(
+					info, _groupInviteEndTimeKey);
+
+			// generate group invite info json object
+			JSONObject _groupInviteInfo = new JSONObject();
+			try {
+				// topic
+				if (null != _groupInviteTopic) {
+					_groupInviteInfo.put(_groupInviteTopicKey,
+							_groupInviteTopic);
+
+				}
+				// begin time
+				if (null != _groupInviteBeginTime) {
+					_groupInviteInfo.put(_groupInviteBeginTimeKey,
+							_groupInviteBeginTime);
+
+				}
+				// duration time
+				if (null != _groupInviteDurationTime) {
+					_groupInviteInfo.put(_groupInviteDurationTimeKey,
+							_groupInviteDurationTime);
+
+				}
+				// end time
+				if (null != _groupInviteEndTime) {
+					_groupInviteInfo.put(_groupInviteEndTimeKey,
+							_groupInviteEndTime);
+
+				}
+			} catch (JSONException e) {
+				LOGGER.error("Generate group invite info json object error, exception message = "
+						+ e.getMessage());
+
+				e.printStackTrace();
+			}
+
+			// invite info
+			inviteInfo = new GroupInviteInfoBean(_groupInviteInfo);
 
 			try {
 				// member number

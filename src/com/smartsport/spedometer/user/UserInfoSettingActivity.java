@@ -74,8 +74,6 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 		// load user info with step length and its calculate type from local
 		// storage
 		// test by ares
-		userInfoModel.getUserInfo().setAge(20);
-		userInfoModel.getUserInfo().setHeight(173.0f);
 		userStepLenCalcType = UserStepLenCalcType.MANUAL_CALC_SETPLEN;
 		//
 
@@ -85,7 +83,26 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 		// get user info from remote server
 		userInfoModel.getUserInfo(1002, "token", new ICMConnector() {
 
-			//
+			@Override
+			public void onSuccess(Object... retValue) {
+				// check return values
+				if (null != retValue
+						&& 0 < retValue.length
+						&& retValue[retValue.length - 1] instanceof UserInfoBean) {
+					// get the user info object and update its info for setting
+					updateUserInfo((UserInfoBean) retValue[retValue.length - 1]);
+				} else {
+					LOGGER.error("Update user info for setting UI error");
+				}
+			}
+
+			@Override
+			public void onFailure(int errorCode, String errorMsg) {
+				LOGGER.error("Get user info from remote server error, error code = "
+						+ errorCode + " and message = " + errorMsg);
+
+				//
+			}
 
 		});
 	}
@@ -163,6 +180,28 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 				.setOnCheckedChangeListener(new StepLenCalcSwitchOnCheckedChangeListener());
 	}
 
+	/**
+	 * @title updateUserInfo
+	 * @descriptor update user info for setting listView UI
+	 * @param userInfo
+	 *            : new set user info
+	 * @author Ares
+	 */
+	private void updateUserInfo(UserInfoBean userInfo) {
+		// update user info for setting listView UI
+		userInfo4SettingListViewAdapter.setData(
+				UserInfoAttr4Setting.USER_GENDER, userInfo.getGender()
+						.getLabel());
+		userInfo4SettingListViewAdapter.setData(UserInfoAttr4Setting.USER_AGE,
+				String.valueOf(userInfo.getAge()));
+		userInfo4SettingListViewAdapter.setData(
+				UserInfoAttr4Setting.USER_HEIGHT,
+				String.valueOf(userInfo.getHeight()));
+		userInfo4SettingListViewAdapter.setData(
+				UserInfoAttr4Setting.USER_WEIGHT,
+				String.valueOf(userInfo.getWeight()));
+	}
+
 	// inner class
 	/**
 	 * @name UserInfoSettingRequestCode
@@ -211,6 +250,7 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 							.getSerializable(UserInfoSettingExtraData.UIS_EI_ATTRIBUTE);
 					String _editorValue = _extraData
 							.getString(UserInfoSettingExtraData.UIS_EI_VALUE);
+
 					switch (_editorAttr) {
 					case USER_GENDER:
 					case USER_AGE:
@@ -225,26 +265,72 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 						if (!"".equalsIgnoreCase(_editorValue)) {
 							userInfoModel
 									.updateUserInfo(
-											123123,
+											1002,
 											"token",
 											UserInfoAttr4Setting.USER_AGE == _editorAttr
 													&& null != _editorValue ? Integer
 													.parseInt(_editorValue)
-													: null,
+													: (0 < userInfoModel
+															.getUserInfo()
+															.getAge() ? userInfoModel
+															.getUserInfo()
+															.getAge() : 0),
 											UserInfoAttr4Setting.USER_GENDER == _editorAttr
 													&& null != _editorValue ? UserGender
-													.getGender(_editorValue)
-													: null,
+													.getGenderWithLabel(_editorValue)
+													: (null != userInfoModel
+															.getUserInfo()
+															.getGender() ? userInfoModel
+															.getUserInfo()
+															.getGender()
+															: UserGender
+																	.getGender("")),
 											UserInfoAttr4Setting.USER_HEIGHT == _editorAttr
 													&& null != _editorValue ? Float
 													.parseFloat(_editorValue)
-													: null,
+													: (0 < userInfoModel
+															.getUserInfo()
+															.getHeight() ? userInfoModel
+															.getUserInfo()
+															.getHeight() : 0.0f),
 											UserInfoAttr4Setting.USER_WEIGHT == _editorAttr
 													&& null != _editorValue ? Float
 													.parseFloat(_editorValue)
-													: null, new ICMConnector() {
+													: (0 < userInfoModel
+															.getUserInfo()
+															.getWeight() ? userInfoModel
+															.getUserInfo()
+															.getWeight() : 0.0f),
+											new ICMConnector() {
 
-												//
+												@Override
+												public void onSuccess(
+														Object... retValue) {
+													// check return values
+													if (null != retValue
+															&& 0 < retValue.length
+															&& retValue[retValue.length - 1] instanceof UserInfoBean) {
+														// get the update user
+														// info object and
+														// update its info for
+														// setting
+														updateUserInfo((UserInfoBean) retValue[retValue.length - 1]);
+													} else {
+														LOGGER.error("Update user info for setting UI error");
+													}
+												}
+
+												@Override
+												public void onFailure(
+														int errorCode,
+														String errorMsg) {
+													LOGGER.error("Update user info error, error code = "
+															+ errorCode
+															+ " and message = "
+															+ errorMsg);
+
+													//
+												}
 
 											});
 						}
@@ -678,7 +764,7 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 
 				// save editor user step length
 				// test by ares
-				userStepLength = Float.parseFloat("13.0");
+				userStepLength = Float.parseFloat("22.0");
 
 				// update user step length
 				userStepLengthTextView

@@ -5,6 +5,8 @@ package com.smartsport.spedometer.group.walk;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -45,6 +47,9 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(
 			WalkInviteInfoSettingActivity.class);
+
+	// milliseconds per second
+	private final int MILLISECONDS_PER_SECOND = 1000;
 
 	// walk invite model
 	private WalkInviteModel walkInviteModel;
@@ -255,17 +260,89 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 					GroupInviteInfoBean _walkInviteInfo = new GroupInviteInfoBean();
 					_walkInviteInfo.setTopic(_topic);
 					_walkInviteInfo.setBeginTime(Long
-							.parseLong(_scheduleBeginTime));
-					_walkInviteInfo
-							.setEndTime(Long.parseLong(_scheduleEndTime));
+							.parseLong(_scheduleBeginTime)
+							/ MILLISECONDS_PER_SECOND);
+					_walkInviteInfo.setEndTime(Long.parseLong(_scheduleEndTime)
+							/ MILLISECONDS_PER_SECOND);
 
 					// send walk invite info with the selected user friend info
 					// to remote server
-					walkInviteModel.inviteWalk(123123, "token",
+					walkInviteModel.inviteWalk(1002, "token",
 							selectedWalkInviteInvitee.getUserId(),
 							_walkInviteInfo, new ICMConnector() {
 
-								//
+								@Override
+								public void onSuccess(Object... retValue) {
+									// check return values
+									if (null != retValue
+											&& 0 < retValue.length
+											&& retValue[retValue.length - 1] instanceof String) {
+										// test by ares
+										final String _walkInviteTmpGroupId = (String) retValue[retValue.length - 1];
+										LOGGER.info("Walk invite temp group id = "
+												+ _walkInviteTmpGroupId);
+										new Timer().schedule(new TimerTask() {
+
+											@Override
+											public void run() {
+												// respond user friend walk
+												// invite info with the temp
+												// group id to remote server
+												walkInviteModel.respondWalkInvite(
+														selectedWalkInviteInvitee
+																.getUserId(),
+														"token",
+														_walkInviteTmpGroupId,
+														true,
+														new ICMConnector() {
+
+															@Override
+															public void onSuccess(
+																	Object... retValue) {
+																// check return
+																// values
+																for (Object _value : retValue) {
+																	LOGGER.info("onSuccess, value = "
+																			+ _value);
+																}
+
+																//
+															}
+
+															@Override
+															public void onFailure(
+																	int errorCode,
+																	String errorMsg) {
+																LOGGER.error("Respond user friend walk invite error, error code = "
+																		+ errorCode
+																		+ " and message = "
+																		+ errorMsg);
+
+																//
+															}
+
+														});
+											}
+
+										}, 15 * MILLISECONDS_PER_SECOND);
+
+										// pop the activity
+										popActivityWithResult();
+									} else {
+										LOGGER.error("Pop the walk invite info setting activity error");
+									}
+								}
+
+								@Override
+								public void onFailure(int errorCode,
+										String errorMsg) {
+									LOGGER.error("Invite one of user friends to walk together error, error code = "
+											+ errorCode
+											+ " and message = "
+											+ errorMsg);
+
+									//
+								}
 
 							});
 				} catch (NumberFormatException e) {
@@ -276,10 +353,6 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 
 					e.printStackTrace();
 				}
-
-				// test by ares
-				// pop the activity
-				popActivityWithResult();
 			}
 		}
 

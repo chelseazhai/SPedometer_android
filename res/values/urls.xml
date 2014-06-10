@@ -7,18 +7,24 @@
     <!-- user -->
     <!-- <string name="getUserInfo_url" translatable="false">/user/getUserInfo</string> -->
     <string name="getUserInfo_url" translatable="false">/getUserInfo.action</string>
-    <string name="updateUserInfo_url" translatable="false">/user/updateUserInfo</string>
-    <string name="getUserFriends_url" translatable="false">/user/getFriendList</string>
+    <!-- <string name="updateUserInfo_url" translatable="false">/user/updateUserInfo</string> -->
+    <string name="updateUserInfo_url" translatable="false">/updateUserInfo.action</string>
+    <!-- <string name="getUserFriends_url" translatable="false">/user/getFriendList</string> -->
+    <string name="getUserFriends_url" translatable="false">/getFriendList.action</string>
 
     <!-- group -->
-    <string name="getScheduleGroups_url" translatable="false">/group/getGroupList</string>
-    <string name="getScheduleGroupInfo_url" translatable="false">/group/getGroupInfo</string>
+    <!-- <string name="getScheduleGroups_url" translatable="false">/group/getGroupList</string> -->
+    <string name="getScheduleGroups_url" translatable="false">/getGroupList.action</string>
+    <!-- <string name="getScheduleGroupInfo_url" translatable="false">/group/getGroupInfo</string> -->
+    <string name="getScheduleGroupInfo_url" translatable="false">/getGroupInfo.action</string>
     <string name="getHistoryGroups_url" translatable="false">/group/getHistoryGroupList</string>
     <string name="getHistoryGroupInfo_url" translatable="false">/group/getHistoryGroupInfo</string>
 
     <!-- walk -->
-    <string name="walkInvite_url" translatable="false">/walk/invite</string>
-    <string name="respondWalkInvite_url" translatable="false">/walk/respondInvite</string>
+    <!-- <string name="walkInvite_url" translatable="false">/walk/invite</string> -->
+    <string name="walkInvite_url" translatable="false">/invite.action</string>
+    <!-- <string name="respondWalkInvite_url" translatable="false">/walk/respondInvite</string> -->
+    <string name="respondWalkInvite_url" translatable="false">/responseInvite.action</string>
     <string name="walkStart_url" translatable="false">/walk/startMove</string>
     <string name="walkStop_url" translatable="false">/walk/stopMove</string>
     <string name="publishWalkInfo_url" translatable="false">/walk/updateLocation</string>

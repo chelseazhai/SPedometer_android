@@ -3,17 +3,19 @@
  */
 package com.smartsport.spedometer.group;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import android.util.SparseArray;
 
 import com.smartsport.spedometer.group.info.HistoryGroupInfoBean;
 import com.smartsport.spedometer.group.info.ScheduleGroupInfoBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.network.NetworkAdapter;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespJSONHandler;
-import com.smartsport.spedometer.strangersocial.pat.StrangerPatModel;
 import com.smartsport.spedometer.utils.JSONUtils;
 import com.smartsport.spedometer.utils.SSLogger;
 
@@ -26,11 +28,11 @@ import com.smartsport.spedometer.utils.SSLogger;
 public class GroupInfoModel {
 
 	// logger
-	private static final SSLogger LOGGER = new SSLogger(StrangerPatModel.class);
+	private static final SSLogger LOGGER = new SSLogger(GroupInfoModel.class);
 
 	// user schedule, history walk and compete group map(key: group id and
 	// value: group object)
-	private SparseArray<GroupBean> walkOrCompeteGroupMap;
+	private Map<String, GroupBean> walkOrCompeteGroupMap;
 
 	/**
 	 * @title getUserScheduleGroups
@@ -46,7 +48,7 @@ public class GroupInfoModel {
 	 * @author Ares
 	 */
 	public void getUserScheduleGroups(int userId, String token,
-			final GroupType groupType, ICMConnector executant) {
+			final GroupType groupType, final ICMConnector executant) {
 		// get user all schedule groups with user id, token and schedule group
 		// type
 		((GroupInfoNetworkAdapter) NetworkAdapter.getInstance()
@@ -69,8 +71,12 @@ public class GroupInfoModel {
 								if (null != respJSONArray) {
 									// check user walk or compete group map
 									if (null == walkOrCompeteGroupMap) {
-										walkOrCompeteGroupMap = new SparseArray<GroupBean>();
+										walkOrCompeteGroupMap = new HashMap<String, GroupBean>();
 									}
+
+									// define schedule walk or compete group
+									// list
+									List<GroupBean> _scheduleGroupList = new ArrayList<GroupBean>();
 
 									for (int i = 0; i < respJSONArray.length(); i++) {
 										// get and check user schedule group
@@ -89,21 +95,17 @@ public class GroupInfoModel {
 													_scheduleGroupBean
 															.getGroupId(),
 													_scheduleGroupBean);
+
+											// add user schedule group object to
+											// list
+											_scheduleGroupList
+													.add(_scheduleGroupBean);
 										}
 									}
 
 									// get user all schedule groups successful
-									// check user schedule group type
-									switch (groupType) {
-									case WALK_GROUP:
-										//
-										break;
-
-									case COMPETE_GROUP:
-									default:
-										//
-										break;
-									}
+									executant.onSuccess(groupType,
+											_scheduleGroupList);
 								} else {
 									LOGGER.error("Get user schedule groups, type = "
 											+ groupType
@@ -128,7 +130,7 @@ public class GroupInfoModel {
 										+ errorMsg);
 
 								// get user all schedule groups failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});
@@ -148,7 +150,7 @@ public class GroupInfoModel {
 	 * @author Ares
 	 */
 	public void getUserScheduleGroupInfo(int userId, String token,
-			final int groupId, ICMConnector executant) {
+			final String groupId, final ICMConnector executant) {
 		// get user schedule group info with user id, token and schedule group
 		// id
 		((GroupInfoNetworkAdapter) NetworkAdapter.getInstance()
@@ -203,7 +205,7 @@ public class GroupInfoModel {
 										+ errorMsg);
 
 								// get user schedule group info failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});
@@ -241,7 +243,7 @@ public class GroupInfoModel {
 								if (null != respJSONArray) {
 									// check user walk or compete group map
 									if (null == walkOrCompeteGroupMap) {
-										walkOrCompeteGroupMap = new SparseArray<GroupBean>();
+										walkOrCompeteGroupMap = new HashMap<String, GroupBean>();
 									}
 
 									for (int i = 0; i < respJSONArray.length(); i++) {
@@ -306,7 +308,7 @@ public class GroupInfoModel {
 	 * @author Ares
 	 */
 	public void getUserHistoryGroupInfo(int userId, String token,
-			final int groupId, ICMConnector executant) {
+			final String groupId, ICMConnector executant) {
 		// get user history group info with user id, token and history group id
 		((GroupInfoNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(GroupInfoNetworkAdapter.class))

@@ -130,51 +130,53 @@ public class HopeRunHttpReqRespEntity extends HopeRunHttpEntity {
 		if (null != header) {
 			// traversal response json object info and check each key
 			for (String _respHeaderKey : JSONUtils.jsonObjectKeys(header)) {
+				// get request response header string value with key
+				String _headerStringValue = JSONUtils.getStringFromJSONObject(
+						header, _respHeaderKey);
+
 				if (HopeRunHttpEntityHeaderKeys.USER_ID.getValue()
 						.equalsIgnoreCase(_respHeaderKey)) {
 					// user id
-					setUserId(JSONUtils.getIntFromJSONObject(header,
-							_respHeaderKey));
+					try {
+						setUserId(Integer.parseInt(_headerStringValue));
+					} catch (NumberFormatException e) {
+						LOGGER.error("Set request response header user id error, exception message = "
+								+ e.getMessage());
+
+						e.printStackTrace();
+					}
 				} else if (HopeRunHttpEntityHeaderKeys.ACCESS_TOKEN.getValue()
 						.equalsIgnoreCase(_respHeaderKey)) {
 					// access token
-					setAccessToken(JSONUtils.getStringFromJSONObject(header,
-							_respHeaderKey));
+					setAccessToken(_headerStringValue);
 				} else if (HopeRunHttpEntityHeaderKeys.USER_TYPE.getValue()
 						.equalsIgnoreCase(_respHeaderKey)) {
 					// user type
-					setUserType(JSONUtils.getStringFromJSONObject(header,
-							_respHeaderKey));
+					setUserType(_headerStringValue);
 				} else if (HopeRunHttpEntityHeaderKeys.DEVICE_ID.getValue()
 						.equalsIgnoreCase(_respHeaderKey)) {
 					// device id
-					setDeviceId(JSONUtils.getStringFromJSONObject(header,
-							_respHeaderKey));
+					setDeviceId(_headerStringValue);
 				} else if (HopeRunHttpEntityHeaderKeys.DEVICE_TYPE.getValue()
 						.equalsIgnoreCase(_respHeaderKey)) {
 					// device type
-					setDeviceType(JSONUtils.getStringFromJSONObject(header,
-							_respHeaderKey));
+					setDeviceType(_headerStringValue);
 				} else if (HopeRunHttpEntityHeaderKeys.OS_VERSION.getValue()
 						.equalsIgnoreCase(_respHeaderKey)) {
 					// os version
-					setOsVersion(JSONUtils.getStringFromJSONObject(header,
-							_respHeaderKey));
+					setOsVersion(_headerStringValue);
 				} else if (HopeRunHttpEntityHeaderKeys.APP_ID.getValue()
 						.equalsIgnoreCase(_respHeaderKey)) {
 					// application id
-					setAppId(JSONUtils.getStringFromJSONObject(header,
-							_respHeaderKey));
+					setAppId(_headerStringValue);
 				} else if (HopeRunHttpEntityHeaderKeys.APP_VERSION.getValue()
 						.equalsIgnoreCase(_respHeaderKey)) {
 					// application version
-					setAppVersion(JSONUtils.getStringFromJSONObject(header,
-							_respHeaderKey));
+					setAppVersion(_headerStringValue);
 				} else if (HopeRunHttpEntityHeaderKeys.FUNC_ID.getValue()
 						.equalsIgnoreCase(_respHeaderKey)) {
 					// function id
-					setFunId(JSONUtils.getStringFromJSONObject(header,
-							_respHeaderKey));
+					setFunId(_headerStringValue);
 				} else if (HopeRunHttpReqRespEntityHeaderExtKeys.INTERCEPT_TIME
 						.getValue().equalsIgnoreCase(_respHeaderKey)) {
 					// intercept time
@@ -183,21 +185,24 @@ public class HopeRunHttpReqRespEntity extends HopeRunHttpEntity {
 				} else if (HopeRunHttpReqRespEntityHeaderExtKeys.STATUS_CODE
 						.getValue().equalsIgnoreCase(_respHeaderKey)) {
 					// status code
-					// get and check status code
-					Integer _statusCode = JSONUtils.getIntFromJSONObject(
-							header, _respHeaderKey);
-					if (null != _statusCode
-							&& Integer
-									.parseInt(_sContext
-											.getString(R.string.userComReqResp_statusCode_ok)) != _statusCode
-									.intValue()) {
-						setStatusCode(_statusCode);
+					try {
+						// get and check status code
+						int _statusCode = Integer.parseInt(_headerStringValue);
+						if (Integer
+								.parseInt(_sContext
+										.getString(R.string.userComReqResp_statusCode_ok)) != _statusCode) {
+							setStatusCode(_statusCode);
+						}
+					} catch (NumberFormatException e) {
+						LOGGER.error("Set request response header status code error, exception message = "
+								+ e.getMessage());
+
+						e.printStackTrace();
 					}
 				} else if (HopeRunHttpReqRespEntityHeaderExtKeys.STATUS_MSG
 						.getValue().equalsIgnoreCase(_respHeaderKey)) {
 					// status message
-					setStatusMsg(JSONUtils.getStringFromJSONObject(header,
-							_respHeaderKey));
+					setStatusMsg(_headerStringValue);
 				}
 			}
 		} else {

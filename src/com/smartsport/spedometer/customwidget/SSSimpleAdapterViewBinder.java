@@ -30,6 +30,8 @@ public class SSSimpleAdapterViewBinder implements ViewBinder {
 		// check view type
 		// textView
 		if (view instanceof TextView) {
+			LOGGER.info("Overwrite textView data view binder");
+
 			// set view text
 			((TextView) view).setText(null == data ? ""
 					: data instanceof Spannable ? (Spannable) data : data

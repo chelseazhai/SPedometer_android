@@ -103,7 +103,17 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 		sStrangerPatModel.getNearbyStrangers(123123, "token", sStrangerGender,
 				sUserLocation, new ICMConnector() {
 
-					//
+					@Override
+					public void onSuccess(Object... retValue) {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onFailure(int errorCode, String errorMsg) {
+						// TODO Auto-generated method stub
+
+					}
 
 				});
 	}
@@ -505,7 +515,18 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 					sStrangerPatModel.getNearbyStrangers(123123, "token",
 							gender, sUserLocation, new ICMConnector() {
 
-								//
+								@Override
+								public void onSuccess(Object... retValue) {
+									// TODO Auto-generated method stub
+
+								}
+
+								@Override
+								public void onFailure(int errorCode,
+										String errorMsg) {
+									// TODO Auto-generated method stub
+
+								}
 
 							});
 				}

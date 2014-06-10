@@ -81,7 +81,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private WalkStartPointLocationSource autoNaviMapLocationSource;
 
 	// the schedule walk invite group id, topic, schedule begin and end time
-	private Integer scheduleWalkInviteGroupId;
+	private String scheduleWalkInviteGroupId;
 	private String scheduleWalkInviteGroupTopic;
 	private Long scheduleWalkInviteGroupBeginTime;
 	private Long scheduleWalkInviteGroupEndTime;
@@ -110,7 +110,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 			// get the schedule walk invite group id, topic, schedule begin and
 			// end time
 			scheduleWalkInviteGroupId = _extraData
-					.getInt(WalkInviteWalkExtraData.WIW_WALKINVITEGROUP_ID);
+					.getString(WalkInviteWalkExtraData.WIW_WALKINVITEGROUP_ID);
 			scheduleWalkInviteGroupTopic = _extraData
 					.getString(WalkInviteWalkExtraData.WIW_WALKINVITEGROUP_TOPIC);
 			scheduleWalkInviteGroupBeginTime = _extraData
@@ -129,10 +129,20 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		// check the schedule walk invite group id and then get its info from
 		// remote server
 		if (null != scheduleWalkInviteGroupId) {
-			groupInfoModel.getUserScheduleGroupInfo(123123, "token",
+			groupInfoModel.getUserScheduleGroupInfo(1002, "token",
 					scheduleWalkInviteGroupId, new ICMConnector() {
 
-						//
+						@Override
+						public void onSuccess(Object... retValue) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void onFailure(int errorCode, String errorMsg) {
+							// TODO Auto-generated method stub
+
+						}
 
 					});
 
@@ -749,7 +759,18 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 						walkInviteModel.startWalking(123123, "token",
 								scheduleWalkInviteGroupId, new ICMConnector() {
 
-									//
+									@Override
+									public void onSuccess(Object... retValue) {
+										// TODO Auto-generated method stub
+
+									}
+
+									@Override
+									public void onFailure(int errorCode,
+											String errorMsg) {
+										// TODO Auto-generated method stub
+
+									}
 
 								});
 
@@ -767,7 +788,18 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 						walkInviteModel.stopWalking(123123, "token",
 								scheduleWalkInviteGroupId, new ICMConnector() {
 
-									//
+									@Override
+									public void onSuccess(Object... retValue) {
+										// TODO Auto-generated method stub
+
+									}
+
+									@Override
+									public void onFailure(int errorCode,
+											String errorMsg) {
+										// TODO Auto-generated method stub
+
+									}
 
 								});
 

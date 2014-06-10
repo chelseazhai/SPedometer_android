@@ -38,7 +38,7 @@ public abstract class GroupInfoBean implements Serializable {
 	protected transient Context context;
 
 	// group id, type, invite info and members info
-	private int groupId;
+	private String groupId;
 	private GroupType type;
 	private GroupInviteInfoBean inviteInfo;
 	private List<UserInfoBean> membersInfo;
@@ -72,11 +72,11 @@ public abstract class GroupInfoBean implements Serializable {
 		}
 	}
 
-	public int getGroupId() {
+	public String getGroupId() {
 		return groupId;
 	}
 
-	public void setGroupId(int groupId) {
+	public void setGroupId(String groupId) {
 		this.groupId = groupId;
 	}
 

@@ -342,7 +342,18 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 							"token", getWithinGroupCompeteInviteeIds(),
 							_withinGroupCompeteInviteInfo, new ICMConnector() {
 
-								//
+								@Override
+								public void onSuccess(Object... retValue) {
+									// TODO Auto-generated method stub
+
+								}
+
+								@Override
+								public void onFailure(int errorCode,
+										String errorMsg) {
+									// TODO Auto-generated method stub
+
+								}
 
 							});
 				} catch (NumberFormatException e) {

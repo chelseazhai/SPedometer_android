@@ -38,7 +38,8 @@
 
     <!-- info -->
     <string name="userInfoReqResp_userId" translatable="false">userId</string>
-    <string name="userInfoReqResp_userNickname" translatable="false">nickname</string>
+    <!-- <string name="userInfoReqResp_userNickname" translatable="false">nickname</string> -->
+    <string name="userInfoReqResp_userNickname" translatable="false">nickName</string>
     <string name="userInfoReqResp_userAvatarUrl" translatable="false">avatarUrl</string>
     <string name="userInfoReqResp_userAge" translatable="false">age</string>
     <string name="userInfoReqResp_userGender" translatable="false">gender</string>
@@ -50,9 +51,6 @@
     <string name="updateUserInfoReqParam_userGender" translatable="false">gender</string>
     <string name="updateUserInfoReqParam_userHeight" translatable="false">height</string>
     <string name="updateUserInfoReqParam_userWeight" translatable="false">weight</string>
-    <string name="updateUserInfoReqResp_resultCode" translatable="false">resultCode</string>
-    <string name="updateUserInfoReqResp_updateSuccessful" translatable="false">0</string>
-    <string name="updateUserInfoReqResp_updateFailed" translatable="false">1</string>
 
     <!-- group -->
     <!-- list -->
@@ -105,9 +103,7 @@
     <!-- invite -->
     <string name="walkInviteReqParam_inviteeId" translatable="false">friendId</string>
     <string name="walkInviteReqParam_inviteInfo" translatable="false">info</string>
-    <string name="walkInviteReqResp_serverAcceptResultCode" translatable="false">resultCode</string>
-    <string name="walkInviteReqResp_serverAccepted" translatable="false">0</string>
-    <string name="walkInviteReqResp_serverRefused" translatable="false">1</string>
+    <string name="walkInviteReqResp_serverAcceptTmpGroupId" translatable="false">groupId</string>
 
     <!-- invite accepted notify -->
     <string name="walkInviteAcceptedNotify_inviterId" translatable="false">friendId</string>

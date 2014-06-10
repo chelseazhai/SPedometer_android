@@ -64,8 +64,8 @@ public class GroupInfoNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void getUserScheduleGroupInfo(int userId, String token, int groupId,
-			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
+	public void getUserScheduleGroupInfo(int userId, String token,
+			String groupId, AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _getUserScheduleGroupInfoReqParam = NetworkUtils
 				.genUserComReqParam(userId, token);
@@ -73,7 +73,7 @@ public class GroupInfoNetworkAdapter implements INetworkAdapter {
 		// set user schedule group id to param
 		_getUserScheduleGroupInfoReqParam.put(NETWORK_ENGINE.getContext()
 				.getString(R.string.getScheduleGroupInfoReqParam_groupId),
-				String.valueOf(groupId));
+				groupId);
 
 		// send get user schedule group info asynchronous post http request
 		NETWORK_ENGINE.postWithAPI(
@@ -116,8 +116,8 @@ public class GroupInfoNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void getUserHistoryGroupInfo(int userId, String token, int groupId,
-			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
+	public void getUserHistoryGroupInfo(int userId, String token,
+			String groupId, AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _getUserHistoryGroupInfoReqParam = NetworkUtils
 				.genUserComReqParam(userId, token);
@@ -125,7 +125,7 @@ public class GroupInfoNetworkAdapter implements INetworkAdapter {
 		// set user history group id to param
 		_getUserHistoryGroupInfoReqParam.put(NETWORK_ENGINE.getContext()
 				.getString(R.string.getHistoryGroupInfoReqParam_groupId),
-				String.valueOf(groupId));
+				groupId);
 
 		// send get user history group info asynchronous post http request
 		NETWORK_ENGINE.postWithAPI(

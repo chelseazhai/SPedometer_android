@@ -4,11 +4,14 @@
 package com.smartsport.spedometer.network;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.http.Header;
+import org.apache.http.ParseException;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -134,6 +137,16 @@ public class NetworkEngine {
 		// request
 		StringEntity _jsonStringEntity = new HopeRunHttpReqEntity(parameter)
 				.genReqStringEntity();
+		try {
+			LOGGER.info("!@#$, _jsonStringEntity = "
+					+ EntityUtils.toString(_jsonStringEntity));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (null != _jsonStringEntity) {
 			asyncHttpClient.post(context, genHttpRequestUrl(api),
 					_jsonStringEntity, "text/json charset=\"utf-8\"",

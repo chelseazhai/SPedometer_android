@@ -209,7 +209,17 @@ public class StrangerPatActivity extends SSBaseActivity {
 						strangerInfo.getUserId(),
 						userPatLocation.toLatLonPoint(), new ICMConnector() {
 
-							//
+							@Override
+							public void onSuccess(Object... retValue) {
+								// TODO Auto-generated method stub
+
+							}
+
+							@Override
+							public void onFailure(int errorCode, String errorMsg) {
+								// TODO Auto-generated method stub
+
+							}
 
 						});
 

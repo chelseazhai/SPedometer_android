@@ -76,7 +76,7 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 	private WalkStartPointLocationSource autoNaviMapLocationSource;
 
 	// within group compete group id, topic, start and duration time
-	private Integer competeGroupId;
+	private String competeGroupId;
 	private String competeGroupTopic;
 	private Long competeGroupStartTime;
 	private Integer competeGroupDurationTime;
@@ -105,7 +105,7 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 			// get the within group compete group id, topic, start and duration
 			// time
 			competeGroupId = _extraData
-					.getInt(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_ID);
+					.getString(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_ID);
 			competeGroupTopic = _extraData
 					.getString(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_TOPIC);
 			competeGroupStartTime = _extraData
@@ -127,7 +127,17 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 			groupInfoModel.getUserScheduleGroupInfo(123123, "token",
 					competeGroupId, new ICMConnector() {
 
-						//
+						@Override
+						public void onSuccess(Object... retValue) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void onFailure(int errorCode, String errorMsg) {
+							// TODO Auto-generated method stub
+
+						}
 
 					});
 

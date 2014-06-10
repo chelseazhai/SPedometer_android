@@ -102,7 +102,17 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 		// get user friend list from remote server
 		userInfoModel.getFriends(123123, "token", new ICMConnector() {
 
-			//
+			@Override
+			public void onSuccess(Object... retValue) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onFailure(int errorCode, String errorMsg) {
+				// TODO Auto-generated method stub
+
+			}
 
 		});
 

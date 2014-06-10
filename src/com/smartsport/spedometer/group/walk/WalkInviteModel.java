@@ -4,13 +4,14 @@
 package com.smartsport.spedometer.group.walk;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.util.SparseArray;
 
 import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
@@ -36,7 +37,7 @@ public class WalkInviteModel {
 
 	// schedule walk group last walking info timestamp map(key: schedule walk
 	// group, value: last walking info timestamp)
-	private SparseArray<Long> lastWalkingInfoTimestampMap;
+	private Map<String, Long> lastWalkingInfoTimestampMap;
 
 	/**
 	 * @title inviteWalk
@@ -54,7 +55,7 @@ public class WalkInviteModel {
 	 * @author Ares
 	 */
 	public void inviteWalk(int userId, String token, final int inviteeId,
-			GroupInviteInfoBean inviteInfo, ICMConnector executant) {
+			GroupInviteInfoBean inviteInfo, final ICMConnector executant) {
 		// invite one of user friends to walk together with his user id and walk
 		// invite info
 		((WalkInviteNetworkAdapter) NetworkAdapter.getInstance()
@@ -81,52 +82,16 @@ public class WalkInviteModel {
 								// check invite one of user friends to walk
 								// together response json object
 								if (null != respJSONObject) {
-									// get context
-									Context _context = SSApplication
-											.getContext();
-
-									try {
-										// get and check response result code
-										int _respResultCode = Integer.parseInt(JSONUtils
-												.getStringFromJSONObject(
-														respJSONObject,
-														_context.getString(R.string.walkInviteReqResp_serverAcceptResultCode)));
-										if (Integer.parseInt(_context
-												.getString(R.string.walkInviteReqResp_serverAccepted)) == _respResultCode) {
-											// invite one of user friends to
-											// walk together successful, remote
-											// server accept the user's walk
-											// invite
-											//
-										} else if (Integer.parseInt(_context
-												.getString(R.string.walkInviteReqResp_serverRefused)) == _respResultCode) {
-											// invite one of user friends to
-											// walk together failed, remote
-											// server refuse the user's walk
-											// invite
-											//
-										} else {
-											LOGGER.error("Invite one of user friends, whose id = "
-													+ inviteeId
-													+ " to walk together failed, response result code = "
-													+ _respResultCode);
-
-											// invite one of user friends to
-											// walk together failed
-											//
-										}
-									} catch (NumberFormatException e) {
-										LOGGER.error("Invite one of user friends, whose id = "
-												+ inviteeId
-												+ " to walk together failed, exception message = "
-												+ e.getMessage());
-
-										// invite one of user friends to walk
-										// together failed
-										//
-
-										e.printStackTrace();
-									}
+									// invite one of user friends to walk
+									// together successful, remote server accept
+									// the user's walk invite
+									executant.onSuccess(JSONUtils
+											.getStringFromJSONObject(
+													respJSONObject,
+													SSApplication
+															.getContext()
+															.getString(
+																	R.string.walkInviteReqResp_serverAcceptTmpGroupId)));
 								} else {
 									LOGGER.error("Invite one of user friends, whose id = "
 											+ inviteeId
@@ -146,7 +111,7 @@ public class WalkInviteModel {
 
 								// invite one of user friends to walk together
 								// failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});
@@ -168,7 +133,8 @@ public class WalkInviteModel {
 	 * @author Ares
 	 */
 	public void respondWalkInvite(int userId, String token,
-			final int tmpGroupId, final boolean isAgreed, ICMConnector executant) {
+			final String tmpGroupId, final boolean isAgreed,
+			final ICMConnector executant) {
 		// respond the friend walk together invite with temp group id and user
 		// decision
 		((WalkInviteNetworkAdapter) NetworkAdapter.getInstance()
@@ -201,48 +167,19 @@ public class WalkInviteModel {
 									Context _context = SSApplication
 											.getContext();
 
-									try {
-										// get and check response group id and
-										// group info
-										// walk group id
-										int _walkGroupId = Integer.parseInt(JSONUtils
-												.getStringFromJSONObject(
-														respJSONObject,
-														_context.getString(R.string.respondWalkInviteReqResp_groupId)));
-
-										// walk group info
-										GroupInviteInfoBean _walkInviteInfo = new GroupInviteInfoBean(
-												JSONUtils
-														.getJSONObjectFromJSONObject(
-																respJSONObject,
-																_context.getString(R.string.respondWalkInviteReqResp_groupInfo)));
-
-										LOGGER.debug("Respond the friend walk together invite, its temp group id = "
-												+ tmpGroupId
-												+ ", my decision agreed = "
-												+ isAgreed
-												+ " to walk, the schedule walk group id = "
-												+ _walkGroupId
-												+ " and invite info = "
-												+ _walkInviteInfo);
-
-										// respond the friend walk together
-										// invite successful
-										//
-									} catch (NumberFormatException e) {
-										LOGGER.error("Respond the friend walk together invite failed, temp group id = "
-												+ tmpGroupId
-												+ ", my decision agreed = "
-												+ isAgreed
-												+ " failed, exception message = "
-												+ e.getMessage());
-
-										// respond the friend walk together
-										// invite failed
-										//
-
-										e.printStackTrace();
-									}
+									// respond the friend walk together invite
+									// successful with response group id and
+									// group invite info
+									executant.onSuccess(
+											JSONUtils
+													.getStringFromJSONObject(
+															respJSONObject,
+															_context.getString(R.string.respondWalkInviteReqResp_groupId)),
+											new GroupInviteInfoBean(
+													JSONUtils
+															.getJSONObjectFromJSONObject(
+																	respJSONObject,
+																	_context.getString(R.string.respondWalkInviteReqResp_groupInfo))));
 								} else {
 									LOGGER.error("Respond the friend walk together invite failed, temp group id = "
 											+ tmpGroupId
@@ -265,7 +202,7 @@ public class WalkInviteModel {
 
 								// respond the friend walk together invite
 								// failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});
@@ -284,7 +221,7 @@ public class WalkInviteModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void startWalking(int userId, String token, final int groupId,
+	public void startWalking(int userId, String token, final String groupId,
 			ICMConnector executant) {
 		// start one of your schedule walk group with the group id
 		((WalkInviteNetworkAdapter) NetworkAdapter.getInstance()
@@ -334,7 +271,7 @@ public class WalkInviteModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void stopWalking(int userId, String token, final int groupId,
+	public void stopWalking(int userId, String token, final String groupId,
 			ICMConnector executant) {
 		// stop one of your walking group with the group id
 		((WalkInviteNetworkAdapter) NetworkAdapter.getInstance()
@@ -425,9 +362,9 @@ public class WalkInviteModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void publishWalkingInfo(int userId, String token, final int groupId,
-			final LatLonPoint walkingLocation, final int totalStep,
-			ICMConnector executant) {
+	public void publishWalkingInfo(int userId, String token,
+			final String groupId, final LatLonPoint walkingLocation,
+			final int totalStep, ICMConnector executant) {
 		// publish user walking info with group id, walking location and total
 		// step
 		((WalkInviteNetworkAdapter) NetworkAdapter.getInstance()
@@ -485,7 +422,7 @@ public class WalkInviteModel {
 	 * @author Ares
 	 */
 	public void getPartnerWalkingInfo(int userId, String token,
-			final int groupId, final long lastFetchTimestamp,
+			final String groupId, final long lastFetchTimestamp,
 			ICMConnector executant) {
 		// get the walking group partner walking info including walking location
 		// and total step with group id and last fetch timestamp
@@ -531,7 +468,7 @@ public class WalkInviteModel {
 										// check walking group last walking info
 										// timestamp list
 										if (null == lastWalkingInfoTimestampMap) {
-											lastWalkingInfoTimestampMap = new SparseArray<Long>();
+											lastWalkingInfoTimestampMap = new HashMap<String, Long>();
 										}
 
 										_walkingGroupPartnerWalkingInfoLatestTimestamp = Long.parseLong(JSONUtils

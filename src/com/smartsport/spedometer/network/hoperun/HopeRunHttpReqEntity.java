@@ -69,6 +69,10 @@ public class HopeRunHttpReqEntity extends HopeRunHttpEntity {
 						_userAccessToken));
 			}
 
+			// set application version to header
+			// test by ares
+			setAppVersion("1.1.1");
+
 			// set real request parameter
 			this.body.putAll(_reqParamMap);
 		} else {

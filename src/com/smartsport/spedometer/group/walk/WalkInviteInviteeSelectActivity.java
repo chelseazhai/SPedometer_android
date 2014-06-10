@@ -4,6 +4,7 @@
 package com.smartsport.spedometer.group.walk;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.graphics.Color;
@@ -22,9 +23,9 @@ import com.smartsport.spedometer.group.GroupType;
 import com.smartsport.spedometer.group.ScheduleWalkInviteGroupsActivity.WalkInviteInviteeSelectOrWalkControlExtraData;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
-import com.smartsport.spedometer.user.UserGender;
 import com.smartsport.spedometer.user.UserInfoBean;
 import com.smartsport.spedometer.user.UserInfoModel;
+import com.smartsport.spedometer.utils.SSLogger;
 
 /**
  * @name WalkInviteInviteeSelectActivity
@@ -34,8 +35,15 @@ import com.smartsport.spedometer.user.UserInfoModel;
  */
 public class WalkInviteInviteeSelectActivity extends SSBaseActivity {
 
+	// logger
+	private static final SSLogger LOGGER = new SSLogger(
+			WalkInviteInviteeSelectActivity.class);
+
 	// user info model
 	private UserInfoModel userInfoModel;
+
+	// walk invite invitee listView adapter
+	private GroupInviteInviteeListViewAdapter walkInviteInviteeListViewAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,31 +52,51 @@ public class WalkInviteInviteeSelectActivity extends SSBaseActivity {
 		// initialize user info model
 		userInfoModel = new UserInfoModel();
 
-		// test by ares
-		for (int i = 0; i < 20; i++) {
-			UserInfoBean _friend = new UserInfoBean();
-
-			_friend.setUserId(10020 + i);
-			_friend.setAvatarUrl("/avatar/img_jhsd_sdjhf111");
-			_friend.setNickname("好友" + i);
-			_friend.setGender(0 == i ? UserGender.GENDER_UNKNOWN
-					: 0 == i % 2 ? UserGender.FEMALE : UserGender.MALE);
-			_friend.setAge(10 + i);
-			_friend.setHeight(170.0f + i);
-			_friend.setWeight(70.0f + i);
-
-			userInfoModel.getFriendsInfo().add(_friend);
-		}
-
-		// get user friend list from remote server
-		userInfoModel.getFriends(123123, "token", new ICMConnector() {
-
-			//
-
-		});
+		// // test by ares
+		// for (int i = 0; i < 20; i++) {
+		// UserInfoBean _friend = new UserInfoBean();
+		//
+		// _friend.setUserId(10020 + i);
+		// _friend.setAvatarUrl("/avatar/img_jhsd_sdjhf111");
+		// _friend.setNickname("好友" + i);
+		// _friend.setGender(0 == i ? UserGender.GENDER_UNKNOWN
+		// : 0 == i % 2 ? UserGender.FEMALE : UserGender.MALE);
+		// _friend.setAge(10 + i);
+		// _friend.setHeight(170.0f + i);
+		// _friend.setWeight(70.0f + i);
+		//
+		// userInfoModel.getFriendsInfo().add(_friend);
+		// }
 
 		// set content view
 		setContentView(R.layout.activity_walkinvite_invitee_select_layout);
+
+		// get user friend list from remote server
+		userInfoModel.getFriends(1002, "token", new ICMConnector() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public void onSuccess(Object... retValue) {
+				// check return values
+				if (null != retValue && 0 < retValue.length
+						&& retValue[retValue.length - 1] instanceof List) {
+					// get the user info object and update its info for setting
+					walkInviteInviteeListViewAdapter
+							.setFriendsAsGroupInviteInvitees((List<UserInfoBean>) retValue[retValue.length - 1]);
+				} else {
+					LOGGER.error("Update user friends for walk invite invitee select UI error");
+				}
+			}
+
+			@Override
+			public void onFailure(int errorCode, String errorMsg) {
+				LOGGER.error("Get user friends from remote server error, error code = "
+						+ errorCode + " and message = " + errorMsg);
+
+				//
+			}
+
+		});
 	}
 
 	@Override
@@ -94,7 +122,7 @@ public class WalkInviteInviteeSelectActivity extends SSBaseActivity {
 
 		// set its adapter
 		_walkInviteInviteeListView
-				.setAdapter(new GroupInviteInviteeListViewAdapter(
+				.setAdapter(walkInviteInviteeListViewAdapter = new GroupInviteInviteeListViewAdapter(
 						this,
 						GroupType.WALK_GROUP,
 						userInfoModel.getFriendsInfo(),

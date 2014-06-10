@@ -90,6 +90,37 @@ public enum UserGender {
 	}
 
 	/**
+	 * @title getGenderWithLabel
+	 * @descriptor get user gender with its label value
+	 * @param genderLabel
+	 *            : user gender label value
+	 * @return user gender
+	 * @author Ares
+	 */
+	public static UserGender getGenderWithLabel(String genderLabel) {
+		// define default user gender
+		UserGender _gender = GENDER_UNKNOWN;
+
+		// check remote server return value
+		if (null != genderLabel) {
+			if (String.valueOf(MALE.label).equalsIgnoreCase(genderLabel)) {
+				_gender = MALE;
+			} else if (String.valueOf(FEMALE.label).equalsIgnoreCase(
+					genderLabel)) {
+				_gender = FEMALE;
+			} else if (!String.valueOf(GENDER_UNKNOWN.label).equalsIgnoreCase(
+					genderLabel)) {
+				LOGGER.error("Get user gender with its label value error, label value = "
+						+ genderLabel + " unrecognized");
+			}
+		} else {
+			LOGGER.error("Get user gender with its label value error, label value is null");
+		}
+
+		return _gender;
+	}
+
+	/**
 	 * @title getGenders
 	 * @descriptor get user genders
 	 * @return user gender list

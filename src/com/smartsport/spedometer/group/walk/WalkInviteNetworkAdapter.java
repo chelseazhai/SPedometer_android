@@ -78,7 +78,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void respondWalkInvite(int userId, String token, int tmpGroupId,
+	public void respondWalkInvite(int userId, String token, String tmpGroupId,
 			boolean isAgreed, AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _respondWalkInviteReqParam = NetworkUtils
@@ -88,7 +88,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 		_respondWalkInviteReqParam.put(
 				NETWORK_ENGINE.getContext().getString(
 						R.string.respondWalkInviteReqParam_tmpGroupId),
-				String.valueOf(tmpGroupId));
+				tmpGroupId);
 		_respondWalkInviteReqParam.put(
 				NETWORK_ENGINE.getContext().getString(
 						R.string.respondWalkInviteReqParam_decision),
@@ -116,7 +116,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void startWalking(int userId, String token, int groupId,
+	public void startWalking(int userId, String token, String groupId,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _startWalkingReqParam = NetworkUtils
@@ -125,8 +125,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 		// set user start walking group id to param
 		_startWalkingReqParam.put(
 				NETWORK_ENGINE.getContext().getString(
-						R.string.walkStartOrStopReqParam_groupId),
-				String.valueOf(groupId));
+						R.string.walkStartOrStopReqParam_groupId), groupId);
 
 		// send start walking asynchronous post http request
 		NETWORK_ENGINE.postWithAPI(
@@ -147,7 +146,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void stopWalking(int userId, String token, int groupId,
+	public void stopWalking(int userId, String token, String groupId,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _stopWalkingReqParam = NetworkUtils
@@ -156,8 +155,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 		// set user stop walking group id to param
 		_stopWalkingReqParam.put(
 				NETWORK_ENGINE.getContext().getString(
-						R.string.walkStartOrStopReqParam_groupId),
-				String.valueOf(groupId));
+						R.string.walkStartOrStopReqParam_groupId), groupId);
 
 		// send stop walking asynchronous post http request
 		NETWORK_ENGINE.postWithAPI(
@@ -183,7 +181,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void publishWalkingInfo(int userId, String token, int groupId,
+	public void publishWalkingInfo(int userId, String token, String groupId,
 			LatLonPoint walkingLocation, int totalStep,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
@@ -193,8 +191,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 		// set user walking group id and total step to param
 		_publishWalkingInfoReqParam.put(
 				NETWORK_ENGINE.getContext().getString(
-						R.string.publishWalkInfoReqParam_groupId),
-				String.valueOf(groupId));
+						R.string.publishWalkInfoReqParam_groupId), groupId);
 		_publishWalkingInfoReqParam.put(
 				NETWORK_ENGINE.getContext().getString(
 						R.string.publishWalkInfoReqParam_walkTotalStep),
@@ -234,7 +231,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void getPartnerWalkingInfo(int userId, String token, int groupId,
+	public void getPartnerWalkingInfo(int userId, String token, String groupId,
 			long lastFetchTimestamp,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
@@ -244,8 +241,8 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 		// set user walking group id and last fetched walk partner walking info
 		// to param
 		_getPartnerWalkingInfoReqParam.put(NETWORK_ENGINE.getContext()
-				.getString(R.string.getPartnerWalkInfoReqParam_groupId), String
-				.valueOf(groupId));
+				.getString(R.string.getPartnerWalkInfoReqParam_groupId),
+				groupId);
 		_getPartnerWalkingInfoReqParam
 				.put(NETWORK_ENGINE.getContext().getString(
 						R.string.getPartnerWalkInfoReqParam_lastFetchTimestamp),
