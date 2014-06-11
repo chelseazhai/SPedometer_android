@@ -3,6 +3,7 @@
  */
 package com.smartsport.spedometer.group.info.result;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.smartsport.spedometer.R;
@@ -74,10 +75,37 @@ public class UserInfoGroupResultBean extends UserInfoBean {
 		// parse user group status of walk or compete group info
 		// check parsed user info group status extension json object
 		if (null != info) {
-			result = new GroupResultInfoBean(
-					JSONUtils.getJSONObjectFromJSONObject(
-							info,
-							context.getString(R.string.getHistoryGroupInfoResp_walkResultInfo)));
+			// result = new GroupResultInfoBean(
+			// JSONUtils.getJSONObjectFromJSONObject(
+			// info,
+			// context.getString(R.string.getHistoryGroupInfoResp_walkResultInfo)));
+
+			// test by ares
+			// define walk invite or within group compete group walk result info
+			JSONObject _walkResultInfo = new JSONObject();
+
+			// define walk result info total step and distance key
+			String _walkResultInfoTotalStep = context
+					.getString(R.string.groupWalkResultInfo_totalStep);
+			String _walkResultInfoTotalDistance = context
+					.getString(R.string.groupWalkResultInfo_totalDistance);
+
+			// set walk result info to it
+			try {
+				_walkResultInfo.put(_walkResultInfoTotalStep,
+						JSONUtils.getStringFromJSONObject(info,
+								_walkResultInfoTotalStep));
+				_walkResultInfo.put(_walkResultInfoTotalDistance, JSONUtils
+						.getStringFromJSONObject(info,
+								_walkResultInfoTotalDistance));
+			} catch (JSONException e) {
+				LOGGER.error("Initialize walk invite or within group compete walk result info error, exception message = "
+						+ e.getMessage());
+
+				e.printStackTrace();
+			}
+
+			result = new GroupResultInfoBean(_walkResultInfo);
 		} else {
 			LOGGER.error("Parse user info group status extension json object error, the info with group status is null");
 		}

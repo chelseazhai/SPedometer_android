@@ -126,7 +126,7 @@ public class ScheduleGroupInfoBean extends GroupInfoBean {
 				// schedule compete group member status online
 				if (GroupType.COMPETE_GROUP == getType()) {
 					_memberInfoWithStatus
-							.setMemberSratus(MemberStatus.MEM_ONLINE);
+							.setMemberStatus(MemberStatus.MEM_ONLINE);
 				}
 
 				// set schedule walk or compete group info attributes
@@ -135,7 +135,7 @@ public class ScheduleGroupInfoBean extends GroupInfoBean {
 
 				// member status
 				memberStatusMap.append(_memberInfoWithStatus.hashCode(),
-						_memberInfoWithStatus.getMemberSratus());
+						_memberInfoWithStatus.getMemberStatus());
 			}
 		} else {
 			LOGGER.error("Parse schedule walk or compete group info with members status error, the info is null");

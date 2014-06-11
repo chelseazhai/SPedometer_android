@@ -27,6 +27,9 @@ public class UserInfoMemberStatusBean extends UserInfoBean {
 	private static final SSLogger LOGGER = new SSLogger(
 			UserInfoMemberStatusBean.class);
 
+	// member status in schedule group
+	private MemberStatus memberStatus;
+
 	/**
 	 * @title UserInfoMemberStatusBean
 	 * @descriptor user info member status extension bean constructor
@@ -48,21 +51,18 @@ public class UserInfoMemberStatusBean extends UserInfoBean {
 		super(info);
 	}
 
-	// member status in schedule group
-	private MemberStatus memberSratus;
-
-	public MemberStatus getMemberSratus() {
-		return memberSratus;
+	public MemberStatus getMemberStatus() {
+		return memberStatus;
 	}
 
-	public void setMemberSratus(MemberStatus memberSratus) {
-		this.memberSratus = memberSratus;
+	public void setMemberStatus(MemberStatus memberStatus) {
+		this.memberStatus = memberStatus;
 	}
 
 	@Override
 	public String toString() {
 		return "UserInfoMemberStatusBean [user info=" + super.toString()
-				+ " and memberSratus=" + memberSratus + "]";
+				+ " and memberStatus=" + memberStatus + "]";
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class UserInfoMemberStatusBean extends UserInfoBean {
 		// parse user member status in schedule group info
 		// check parsed user info member status extension json object
 		if (null != info) {
-			memberSratus = MemberStatus
+			memberStatus = MemberStatus
 					.getMemberStatus(JSONUtils.getStringFromJSONObject(
 							info,
 							context.getString(R.string.getScheduleGroupInfoReqResp_memStatus)));

@@ -57,7 +57,8 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 	private final int MILLISECONDS_PER_SECOND = 1000;
 
 	// within group compete model
-	private WithinGroupCompeteModel withinGroupCompeteModel;
+	private WithinGroupCompeteModel withinGroupCompeteModel = WithinGroupCompeteModel
+			.getInstance();
 
 	// the selected within group compete invitees bean list
 	private List<UserInfoBean> selectedWithinGroupCompeteInvitees;
@@ -71,9 +72,6 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// initialize within group compete model
-		withinGroupCompeteModel = new WithinGroupCompeteModel();
 
 		// // test by ares
 		// for (int i = 0; i < 3; i++) {
@@ -338,7 +336,7 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 
 					// send within group compete invite info with the selected
 					// user friends info list to remote server
-					withinGroupCompeteModel.inviteWithinGroupCompete(123123,
+					withinGroupCompeteModel.inviteWithinGroupCompete(1002,
 							"token", getWithinGroupCompeteInviteeIds(),
 							_withinGroupCompeteInviteInfo, new ICMConnector() {
 
@@ -365,7 +363,7 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 
 				// test by ares
 				// the within group compete group id, topic and start time
-				int _competeGroupId = 12322;
+				String _competeGroupId = "12322";
 				String _competeGroupTopic = "走路竞赛吧，少年";
 				long _competeGroupStartTime = System.currentTimeMillis()
 						/ MILLISECONDS_PER_SECOND - 8 * 60;
@@ -377,7 +375,7 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 				// duration time to extra data map as param
 				_extraMap.put(
 						WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_ID,
-						Integer.valueOf(_competeGroupId));
+						_competeGroupId);
 				_extraMap
 						.put(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_TOPIC,
 								_competeGroupTopic);
@@ -390,7 +388,7 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 								Integer.valueOf(_competeScheduleDurationTime));
 
 				// go to within group compete walk activity with extra data map
-				popPushActivity(WithinGroupCompeteWalkActivity.class, _extraMap);
+//				popPushActivity(WithinGroupCompeteWalkActivity.class, _extraMap);
 			} else {
 				LOGGER.error("Within group compete invite invitees is empty");
 

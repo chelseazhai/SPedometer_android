@@ -3,8 +3,8 @@
  */
 package com.smartsport.spedometer.group.walk;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -35,14 +35,14 @@ import com.smartsport.spedometer.group.GroupInfoModel;
 import com.smartsport.spedometer.group.GroupType;
 import com.smartsport.spedometer.group.GroupWalkResultActivity;
 import com.smartsport.spedometer.group.GroupWalkResultActivity.GroupWalkResultExtraData;
+import com.smartsport.spedometer.group.info.ScheduleGroupInfoBean;
 import com.smartsport.spedometer.group.info.member.MemberStatus;
 import com.smartsport.spedometer.group.info.member.UserInfoMemberStatusBean;
-import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.pedometer.WalkInfoType;
 import com.smartsport.spedometer.pedometer.WalkStartPointLocationSource;
-import com.smartsport.spedometer.user.UserGender;
+import com.smartsport.spedometer.user.UserInfoBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -67,8 +67,8 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private TimerTask locateMyLocationTimerTask;
 
 	// group info and walk invite model
-	private GroupInfoModel groupInfoModel;
-	private WalkInviteModel walkInviteModel;
+	private GroupInfoModel groupInfoModel = GroupInfoModel.getInstance();
+	private WalkInviteModel walkInviteModel = WalkInviteModel.getInstance();
 
 	// walk invite walk saved instance state
 	private Bundle walkInviteWalkSavedInstanceState;
@@ -89,8 +89,18 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	// invitee user info with status in the schedule walk invite group
 	private UserInfoMemberStatusBean inviteeUserInfoWithMemberStatus;
 
+	// walk invite inviter avatar imageView and walk path watch badger imageView
+	private ImageView inviterAvatarImgView;
+	private ImageView inviterWalkPathWatchBadgerImgView;
+
 	// walk invite start remain or walk duration time textView
 	private TextView walkStartRemainOrWalkDurationTimeTextView;
+
+	// walk invite invitee avatar imageView, walk path watch badger imageView
+	// and nickname textView
+	private ImageView inviteeAvatarImgView;
+	private ImageView inviteeWalkPathWatchBadgerImgView;
+	private TextView inviteeNicknameTextView;
 
 	// walk info: walk total distance, total steps count, energy, pace and speed
 	// textView
@@ -119,10 +129,6 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 					.getLong(WalkInviteWalkExtraData.WIW_WALKINVITEGROUP_SCHEDULEENDTIME);
 		}
 
-		// initialize group info and walk invite model
-		groupInfoModel = new GroupInfoModel();
-		walkInviteModel = new WalkInviteModel();
-
 		// set content view
 		setContentView(R.layout.activity_walkinvite_walk);
 
@@ -134,29 +140,74 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 						@Override
 						public void onSuccess(Object... retValue) {
-							// TODO Auto-generated method stub
+							// check return values
+							if (null != retValue
+									&& 0 < retValue.length
+									&& retValue[retValue.length - 1] instanceof ScheduleGroupInfoBean) {
+								// get the schedule group info
+								ScheduleGroupInfoBean _scheduleGroupInfo = (ScheduleGroupInfoBean) retValue[retValue.length - 1];
 
+								LOGGER.info("The schedule group info = "
+										+ _scheduleGroupInfo);
+
+								// traversal walk invite attendees user info
+								// with member status
+								for (UserInfoBean _userInfoMemberStatus : _scheduleGroupInfo
+										.getMembersInfo()) {
+									// update walk invite inviter avatar and
+									// invitee user info
+									if (1002 == _userInfoMemberStatus
+											.getUserId()) {
+										// inviter
+										// update walk invite inviter avatar
+										inviterAvatarImgView.setImageURI(Uri
+												.parse(_userInfoMemberStatus
+														.getAvatarUrl()));
+									} else {
+										// invitee
+										inviteeUserInfoWithMemberStatus = (UserInfoMemberStatusBean) _userInfoMemberStatus;
+
+										// update walk invite invitee user info
+										// UI
+										updateWalkInviteInviteeUserInfo();
+									}
+								}
+
+								// // test by ares
+								// inviteeUserInfoWithMemberStatus = new
+								// UserInfoMemberStatusBean();
+								// inviteeUserInfoWithMemberStatus
+								// .setUserId(123321);
+								// inviteeUserInfoWithMemberStatus
+								// .setAvatarUrl("/img/jshd123");
+								// inviteeUserInfoWithMemberStatus
+								// .setNickname("小慧动");
+								// inviteeUserInfoWithMemberStatus
+								// .setGender(UserGender.FEMALE);
+								// inviteeUserInfoWithMemberStatus.setAge(28);
+								// inviteeUserInfoWithMemberStatus
+								// .setHeight(165.0f);
+								// inviteeUserInfoWithMemberStatus
+								// .setWeight(55.0f);
+								// inviteeUserInfoWithMemberStatus
+								// .setMemberStatus(MemberStatus.MEM_OFFLINE);
+								//
+								// // update walk invite invitee user info UI
+								// updateWalkInviteInviteeUserInfo();
+							} else {
+								LOGGER.error("Update walk invite walk invitee user info UI error");
+							}
 						}
 
 						@Override
 						public void onFailure(int errorCode, String errorMsg) {
-							// TODO Auto-generated method stub
+							LOGGER.error("Get walk invite group info from remote server error, error code = "
+									+ errorCode + " and message = " + errorMsg);
 
+							//
 						}
 
 					});
-
-			// test by ares
-			inviteeUserInfoWithMemberStatus = new UserInfoMemberStatusBean();
-			inviteeUserInfoWithMemberStatus.setUserId(123321);
-			inviteeUserInfoWithMemberStatus.setAvatarUrl("/img/jshd123");
-			inviteeUserInfoWithMemberStatus.setNickname("小慧动");
-			inviteeUserInfoWithMemberStatus.setGender(UserGender.FEMALE);
-			inviteeUserInfoWithMemberStatus.setAge(28);
-			inviteeUserInfoWithMemberStatus.setHeight(165.0f);
-			inviteeUserInfoWithMemberStatus.setWeight(55.0f);
-			inviteeUserInfoWithMemberStatus
-					.setMemberSratus(MemberStatus.MEM_OFFLINE);
 		}
 	}
 
@@ -222,15 +273,15 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		autoNaviMap.getUiSettings().setZoomControlsEnabled(false);
 
 		// get walk invite inviter avatar imageView
-		ImageView _inviterAvatarImgView = (ImageView) findViewById(R.id.wiw_inviterAvatar_imageView);
+		inviterAvatarImgView = (ImageView) findViewById(R.id.wiw_inviterAvatar_imageView);
 
 		// set its image
-		_inviterAvatarImgView.setImageURI(null);
+		inviterAvatarImgView.setImageURI(null);
 
 		// get walk path watch badger imageView and set it as walk invite
 		// inviter avatar imageView tag
-		ImageView _selfWalkPathWatchBadgerImgView = (ImageView) findViewById(R.id.wiw_selfWalkPathWatchBadger_imageView);
-		_inviterAvatarImgView.setTag(_selfWalkPathWatchBadgerImgView);
+		inviterWalkPathWatchBadgerImgView = (ImageView) findViewById(R.id.wiw_selfWalkPathWatchBadger_imageView);
+		inviterAvatarImgView.setTag(inviterWalkPathWatchBadgerImgView);
 
 		// get walk invite walk start remain or walk duration time textView
 		walkStartRemainOrWalkDurationTimeTextView = (TextView) findViewById(R.id.wiw_walkStartRemainTime_or_walkDurationTime_textView);
@@ -272,9 +323,10 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 			walkStartRemainOrWalkDurationTimeTextView
 					.setText(formatWalkStartRemainTime(_walkStartRemainTime));
 		} else {
-			// walking
-			// set attendee walk flag
-			_isWalking = true;
+			// ready for walking
+			// get attendee walk flag from local storage
+			// test by ares
+			_isWalking = false;
 
 			// generate holo green light foreground color span
 			ForegroundColorSpan _holoGreenLightForegroundColorSpan = new ForegroundColorSpan(
@@ -282,7 +334,8 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 			// get attendee walk duration time from local storage
 			// test by ares
-			SpannableString _walkDurationTime = new SpannableString("13'30\"");
+			SpannableString _walkDurationTime = new SpannableString(
+					_isWalking ? "13'30\"" : "0'0\"");
 			_walkDurationTime.setSpan(_holoGreenLightForegroundColorSpan, 0,
 					_walkDurationTime.length(),
 					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -294,54 +347,23 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		}
 
 		// get walk invite invitee avatar imageView
-		ImageView _inviteeAvatarImgView = (ImageView) findViewById(R.id.wiw_inviteeAvatar_imageView);
+		inviteeAvatarImgView = (ImageView) findViewById(R.id.wiw_inviteeAvatar_imageView);
 
-		// check walk invite invitee user info with member status then set walk
-		// invite invitee avatar imageView image and nickname textView text
-		if (null != inviteeUserInfoWithMemberStatus) {
-			// set its image
-			_inviteeAvatarImgView.setImageURI(Uri
-					.parse(inviteeUserInfoWithMemberStatus.getAvatarUrl()));
+		// get walk invite invitee walk path watch badger imageView and set it
+		// as walk invite invitee avatar imageView tag
+		inviteeWalkPathWatchBadgerImgView = (ImageView) findViewById(R.id.wiw_walkPartnerWalkPathWatchBadger_imageView);
+		inviteeAvatarImgView.setTag(inviteeWalkPathWatchBadgerImgView);
 
-			// get walk path watch badger imageView and set it as walk invite
-			// invitee avatar imageView tag
-			ImageView _walkPartnerWalkPathWatchBadgerImgView = (ImageView) findViewById(R.id.wiw_walkPartnerWalkPathWatchBadger_imageView);
-			_inviteeAvatarImgView
-					.setTag(_walkPartnerWalkPathWatchBadgerImgView);
+		// get walk invite invitee nickname textView
+		inviteeNicknameTextView = (TextView) findViewById(R.id.wiw_inviteeNickname_textView);
 
-			// set walk invite walk attendee avatar imgView tag view tag using
-			// walk partner avatar imageView tag
-			_selfWalkPathWatchBadgerImgView
-					.setTag(_walkPartnerWalkPathWatchBadgerImgView);
-			_walkPartnerWalkPathWatchBadgerImgView
-					.setTag(_selfWalkPathWatchBadgerImgView);
+		// update walk invite invitee user info UI
+		updateWalkInviteInviteeUserInfo();
 
-			// get walk invite invitee nickname textView
-			TextView _inviteeNicknameTextView = (TextView) findViewById(R.id.wiw_inviteeNickname_textView);
-
-			// check invitee member status in the schedule walk invite group
-			if (MemberStatus.MEM_ONLINE == inviteeUserInfoWithMemberStatus
-					.getMemberSratus()) {
-				// generate holo green light foreground color span
-				ForegroundColorSpan _holoGreenLightForegroundColorSpan = new ForegroundColorSpan(
-						getResources().getColor(
-								android.R.color.holo_green_light));
-
-				// define invitee nickname spannable string and set its
-				// attributes
-				SpannableString _inviteeNicknameSpannableString = new SpannableString(
-						inviteeUserInfoWithMemberStatus.getNickname());
-				_inviteeNicknameSpannableString.setSpan(
-						_holoGreenLightForegroundColorSpan, 0,
-						_inviteeNicknameSpannableString.length(),
-						Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-				_inviteeNicknameTextView
-						.setText(_inviteeNicknameSpannableString);
-			} else {
-				_inviteeNicknameTextView
-						.setText(inviteeUserInfoWithMemberStatus.getNickname());
-			}
+		// check attendee walk flag and then set walk attendee(inviter and
+		// invitee) avatar imageView on click listener
+		if (_isWalking) {
+			setWalkAttendeeAvatarImgViewOnClickListener();
 		}
 
 		// get walk info sliding up button
@@ -384,13 +406,12 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		// get walk control button
 		Button _walkControlBtn = (Button) findViewById(R.id.wiw_walkControl_button);
 
-		// check attendee walk flag and update walk control button text,
-		// background and show walk control button
+		// check attendee walk flag and update walk control button text and
+		// background
 		if (_isWalking) {
 			_walkControlBtn.setText(R.string.walkStop_button_text);
 			_walkControlBtn
 					.setBackgroundResource(R.drawable.walk_stopbutton_bg);
-			_walkControlBtn.setVisibility(View.VISIBLE);
 		}
 
 		// set its text as the tag
@@ -399,18 +420,8 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		// set its on click listener
 		_walkControlBtn.setOnClickListener(new WalkControlBtnOnClickListener());
 
-		// check walk invite walk start remain time
-		if (null != _walkStartRemainTime && 0 == _walkStartRemainTime) {
-			// define walk invite attendee avatar imageView on click listener
-			AttendeeAvatarImgViewOnClickListener _attendeeAvatarImgViewOnClickListener = new AttendeeAvatarImgViewOnClickListener();
-
-			// set walk attendee(inviter and invitee) avatar imageView on click
-			// listener
-			_inviterAvatarImgView
-					.setOnClickListener(_attendeeAvatarImgViewOnClickListener);
-			_inviteeAvatarImgView
-					.setOnClickListener(_attendeeAvatarImgViewOnClickListener);
-
+		// check walk invite walk start remain time and show walk control button
+		if (null != _walkStartRemainTime && 0 > _walkStartRemainTime) {
 			// show walk control button
 			_walkControlBtn.setVisibility(View.VISIBLE);
 		}
@@ -470,6 +481,22 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		} else {
 			super.onBackBarButtonItemClick(backBarBtnItem);
 		}
+	}
+
+	/**
+	 * @title setWalkAttendeeAvatarImgViewOnClickListener
+	 * @descriptor set walk attendee(inviter and invitee) avatar imageView on
+	 *             click listener
+	 * @author Ares
+	 */
+	private void setWalkAttendeeAvatarImgViewOnClickListener() {
+		// define walk invite attendee avatar imageView on click listener and
+		// set it as inviter and invitee avatar imageView on click listener
+		AttendeeAvatarImgViewOnClickListener _attendeeAvatarImgViewOnClickListener = new AttendeeAvatarImgViewOnClickListener();
+		inviterAvatarImgView
+				.setOnClickListener(_attendeeAvatarImgViewOnClickListener);
+		inviteeAvatarImgView
+				.setOnClickListener(_attendeeAvatarImgViewOnClickListener);
 	}
 
 	/**
@@ -545,6 +572,52 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		}
 
 		return _walkStartRemainTimeFormat;
+	}
+
+	/**
+	 * @title updateWalkInviteInviteeUserInfo
+	 * @descriptor update walk invite invitee user info UI
+	 * @author Ares
+	 */
+	private void updateWalkInviteInviteeUserInfo() {
+		// check walk invite invitee user info with member status then set walk
+		// invite invitee avatar imageView image and nickname textView text
+		if (null != inviteeUserInfoWithMemberStatus) {
+			// set its image
+			inviteeAvatarImgView.setImageURI(Uri
+					.parse(inviteeUserInfoWithMemberStatus.getAvatarUrl()));
+
+			// set walk invite walk attendee avatar imgView tag view tag using
+			// walk partner avatar imageView tag
+			inviterWalkPathWatchBadgerImgView
+					.setTag(inviteeWalkPathWatchBadgerImgView);
+			inviteeWalkPathWatchBadgerImgView
+					.setTag(inviterWalkPathWatchBadgerImgView);
+
+			// check invitee member status in the schedule walk invite group
+			if (MemberStatus.MEM_ONLINE == inviteeUserInfoWithMemberStatus
+					.getMemberStatus()) {
+				// generate holo green light foreground color span
+				ForegroundColorSpan _holoGreenLightForegroundColorSpan = new ForegroundColorSpan(
+						getResources().getColor(
+								android.R.color.holo_green_light));
+
+				// define invitee nickname spannable string and set its
+				// attributes
+				SpannableString _inviteeNicknameSpannableString = new SpannableString(
+						inviteeUserInfoWithMemberStatus.getNickname());
+				_inviteeNicknameSpannableString.setSpan(
+						_holoGreenLightForegroundColorSpan, 0,
+						_inviteeNicknameSpannableString.length(),
+						Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+				inviteeNicknameTextView
+						.setText(_inviteeNicknameSpannableString);
+			} else {
+				inviteeNicknameTextView.setText(inviteeUserInfoWithMemberStatus
+						.getNickname());
+			}
+		}
 	}
 
 	/**
@@ -739,7 +812,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	class WalkControlBtnOnClickListener implements OnClickListener {
 
 		@Override
-		public void onClick(View v) {
+		public void onClick(final View v) {
 			// get and check walk control button tag
 			Object _tag = v.getTag();
 			if (null != _tag && _tag instanceof CharSequence) {
@@ -748,7 +821,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 				// get walk start and stop button text
 				String _walkStartBtnText = getString(R.string.walkStart_button_text);
-				String _walkStopBtnText = getString(R.string.walkStop_button_text);
+				final String _walkStopBtnText = getString(R.string.walkStop_button_text);
 
 				// update walk control button background, text and tag
 				if (_walkStartBtnText.equalsIgnoreCase(_walkControlBtnText
@@ -756,75 +829,97 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 					// check walk invite group id and then set attendee start
 					// walk
 					if (null != scheduleWalkInviteGroupId) {
-						walkInviteModel.startWalking(123123, "token",
+						walkInviteModel.startWalking(1002, "token",
 								scheduleWalkInviteGroupId, new ICMConnector() {
 
 									@Override
 									public void onSuccess(Object... retValue) {
-										// TODO Auto-generated method stub
+										// set walk attendee(inviter and
+										// invitee) avatar imageView on click
+										// listener
+										setWalkAttendeeAvatarImgViewOnClickListener();
 
+										// update walk control button text,
+										// background resource and tag
+										((Button) v).setText(_walkStopBtnText);
+										v.setBackgroundResource(R.drawable.walk_stopbutton_bg);
+										v.setTag(((Button) v).getText());
+
+										// mark attendee walk started
+										isAttendeeWalkControlled = true;
 									}
 
 									@Override
 									public void onFailure(int errorCode,
 											String errorMsg) {
-										// TODO Auto-generated method stub
+										LOGGER.error("Schedule walk invite group start walk error, error code = "
+												+ errorCode
+												+ " and message = "
+												+ errorMsg);
 
+										//
 									}
 
 								});
-
-						// test by ares
-						v.setBackgroundResource(R.drawable.walk_stopbutton_bg);
-						((Button) v).setText(_walkStopBtnText);
-						v.setTag(((Button) v).getText());
-						isAttendeeWalkControlled = true;
 					}
 				} else if (getString(R.string.walkStop_button_text)
 						.equalsIgnoreCase(_walkControlBtnText.toString())) {
 					if (null != scheduleWalkInviteGroupId) {
 						// check walk invite group id and then set attendee stop
 						// walk
-						walkInviteModel.stopWalking(123123, "token",
+						walkInviteModel.stopWalking(1002, "token",
 								scheduleWalkInviteGroupId, new ICMConnector() {
 
 									@Override
 									public void onSuccess(Object... retValue) {
-										// TODO Auto-generated method stub
+										// check return values
+										if (null != retValue
+												&& 2 < retValue.length
+												&& (retValue[0] instanceof Long && retValue[1] instanceof Long)
+												&& retValue[retValue.length - 1] instanceof List) {
+											// define walk invite walk extra
+											// data map
+											Map<String, Object> _extraMap = new HashMap<String, Object>();
 
+											// put walk invite group type, walk
+											// start, stop time and attendees
+											// walk result to extra data map as
+											// param
+											_extraMap
+													.put(GroupWalkResultExtraData.GWR_GROUP_TYPE,
+															GroupType.WALK_GROUP);
+											_extraMap
+													.put(GroupWalkResultExtraData.GWR_GROUP_WALK_STARTTIME,
+															retValue[0]);
+											_extraMap
+													.put(GroupWalkResultExtraData.GWR_GROUP_WALK_STARTTIME,
+															retValue[1]);
+											_extraMap
+													.put(GroupWalkResultExtraData.GWR_GROUP_ATTENDEES_WALKRESULT,
+															retValue[retValue.length - 1]);
+
+											// go to walk invite walk result
+											// activity with extra data map
+											popPushActivityForResult(
+													GroupWalkResultActivity.class,
+													_extraMap);
+										} else {
+											LOGGER.error("Get walk invite group walk start, stop time and attendees walk result info error");
+										}
 									}
 
 									@Override
 									public void onFailure(int errorCode,
 											String errorMsg) {
-										// TODO Auto-generated method stub
+										LOGGER.error("Schedule walk invite group stop walk error, error code = "
+												+ errorCode
+												+ " and message = "
+												+ errorMsg);
 
+										//
 									}
 
 								});
-
-						// test by ares
-						// define walk invite walk extra data map
-						Map<String, Object> _extraMap = new HashMap<String, Object>();
-
-						// put walk invite group type, walk start, stop time and
-						// attendees walk result to extra data map as param
-						_extraMap.put(GroupWalkResultExtraData.GWR_GROUP_TYPE,
-								GroupType.WALK_GROUP);
-						_extraMap
-								.put(GroupWalkResultExtraData.GWR_GROUP_WALK_STARTTIME,
-										Long.valueOf(123456789));
-						_extraMap
-								.put(GroupWalkResultExtraData.GWR_GROUP_WALK_STARTTIME,
-										Long.valueOf(132465798));
-						_extraMap
-								.put(GroupWalkResultExtraData.GWR_GROUP_ATTENDEES_WALKRESULT,
-										new ArrayList<UserInfoGroupResultBean>());
-
-						// go to walk invite walk result activity with extra
-						// data map
-						popPushActivityForResult(GroupWalkResultActivity.class,
-								_extraMap);
 					}
 				}
 			}

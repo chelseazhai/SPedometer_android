@@ -48,7 +48,7 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 			UserInfoSettingActivity.class);
 
 	// user info model
-	private UserInfoModel userInfoModel;
+	private UserInfoModel userInfoModel = UserInfoModel.getInstance();
 
 	// user info for setting listView adapter
 	private UserInfo4SettingListViewAdapter userInfo4SettingListViewAdapter;
@@ -67,9 +67,6 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// initialize user info model
-		userInfoModel = new UserInfoModel();
 
 		// load user info with step length and its calculate type from local
 		// storage

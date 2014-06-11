@@ -30,7 +30,6 @@ import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteInfoSetti
 import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteeSelectActivity.SelectedInviteesHorizontalListViewAdapter.SelectedInviteesHorizontalListViewAdapterKey;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
-import com.smartsport.spedometer.user.UserGender;
 import com.smartsport.spedometer.user.UserInfoBean;
 import com.smartsport.spedometer.user.UserInfoModel;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -48,7 +47,7 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 			WithinGroupCompeteInviteeSelectActivity.class);
 
 	// user info model
-	private UserInfoModel userInfoModel;
+	private UserInfoModel userInfoModel = UserInfoModel.getInstance();
 
 	// within group compete selected invitee id list
 	private List<Integer> selectedInviteesIds;
@@ -72,9 +71,6 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// initialize user info model
-		userInfoModel = new UserInfoModel();
-
 		// get and check the extra data
 		Bundle _extraData = getIntent().getExtras();
 		if (null != _extraData) {
@@ -83,41 +79,65 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 					.getIntegerArrayList(WithinGroupCompeteInviteeSelectExtraData.WIGCIS_SELECTEDINVITEES_ID);
 		}
 
-		// test by ares
-		for (int i = 0; i < 20; i++) {
-			UserInfoBean _friend = new UserInfoBean();
+		// // test by ares
+		// for (int i = 0; i < 20; i++) {
+		// UserInfoBean _friend = new UserInfoBean();
+		//
+		// _friend.setUserId(10020 + i);
+		// _friend.setAvatarUrl("/avatar/img_jhsd_sdjhf111");
+		// _friend.setNickname("好友" + i);
+		// _friend.setGender(0 == i ? UserGender.GENDER_UNKNOWN
+		// : 0 == i % 2 ? UserGender.FEMALE : UserGender.MALE);
+		// _friend.setAge(10 + i);
+		// _friend.setHeight(170.0f + i);
+		// _friend.setWeight(70.0f + i);
+		//
+		// userInfoModel.getFriendsInfo().add(_friend);
+		// }
 
-			_friend.setUserId(10020 + i);
-			_friend.setAvatarUrl("/avatar/img_jhsd_sdjhf111");
-			_friend.setNickname("好友" + i);
-			_friend.setGender(0 == i ? UserGender.GENDER_UNKNOWN
-					: 0 == i % 2 ? UserGender.FEMALE : UserGender.MALE);
-			_friend.setAge(10 + i);
-			_friend.setHeight(170.0f + i);
-			_friend.setWeight(70.0f + i);
-
-			userInfoModel.getFriendsInfo().add(_friend);
-		}
+		// set content view
+		setContentView(R.layout.activity_withingroupcompete_invitee_select_layout);
 
 		// get user friend list from remote server
-		userInfoModel.getFriends(123123, "token", new ICMConnector() {
+		userInfoModel.getFriends(1002, "token", new ICMConnector() {
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public void onSuccess(Object... retValue) {
-				// TODO Auto-generated method stub
+				// check return values
+				if (null != retValue && 0 < retValue.length
+						&& retValue[retValue.length - 1] instanceof List) {
+					// get the user friends info and update its listView for
+					// within group compete invitee selecting
+					withinGroupCompeteInviteeListViewAdapter
+							.setFriendsAsGroupInviteInvitees((List<UserInfoBean>) retValue[retValue.length - 1]);
 
+					// set the selected within group compete invitees be
+					// selected
+					setSelectedCompeteInviteesBeSelected();
+
+					// check the selected invitee list
+					if (null != selectedInviteeList) {
+						// set selected within group compete invitees
+						selectedInviteesHorizontalListViewAdapter
+								.setSelectedInvitees(selectedInviteeList);
+					} else {
+						LOGGER.warning("There is no selected invitees for within group compete invitee selecting");
+					}
+				} else {
+					LOGGER.error("Update user friends for within group compete invitee select UI error");
+				}
 			}
 
 			@Override
 			public void onFailure(int errorCode, String errorMsg) {
-				// TODO Auto-generated method stub
+				LOGGER.error("Get user friends from remote server error, error code = "
+						+ errorCode + " and message = " + errorMsg);
 
+				//
 			}
 
 		});
-
-		// set content view
-		setContentView(R.layout.activity_withingroupcompete_invitee_select_layout);
 	}
 
 	@Override
@@ -160,24 +180,8 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 								R.id.userfriend_item_friendAvatar_imageView,
 								R.id.userfriend_item_friendNickname_textView }));
 
-		// check within group compete selected invitee id list and set selected
-		// invitees be selected
-		if (null != selectedInviteesIds) {
-			for (int i = 0; i < userInfoModel.getFriendsInfo().size(); i++) {
-				// get each friend
-				UserInfoBean _friend = userInfoModel.getFriendsInfo().get(i);
-
-				// check it if is or not be selected
-				if (selectedInviteesIds.contains(_friend.getUserId())) {
-					// set the friend be selected
-					withinGroupCompeteInviteeListView.setItemChecked(i, true);
-					withinGroupCompeteInviteeListViewAdapter
-							.setFriendSelectState(i, true);
-					(null == selectedInviteeList ? selectedInviteeList = new ArrayList<UserInfoBean>()
-							: selectedInviteeList).add(_friend);
-				}
-			}
-		}
+		// set the selected within group compete invitees be selected
+		setSelectedCompeteInviteesBeSelected();
 
 		// set its on item click listener
 		withinGroupCompeteInviteeListView
@@ -210,6 +214,42 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 
 		// update within group compete invitee select confirm button
 		updateWithinGroupCompeteInviteeSelectConfirmBtn();
+	}
+
+	/**
+	 * @title setSelectedCompeteInviteesBeSelected
+	 * @descriptor set the within group compete selected invitees be selected
+	 * @author Ares
+	 */
+	private void setSelectedCompeteInviteesBeSelected() {
+		// check within group compete selected invitee id list and set selected
+		// invitees be selected
+		if (null != selectedInviteesIds) {
+			// define the selected invitee list reset flag
+			boolean _isSelectedInviteeListReset = false;
+
+			for (int i = 0; i < userInfoModel.getFriendsInfo().size(); i++) {
+				// get each friend
+				UserInfoBean _friend = userInfoModel.getFriendsInfo().get(i);
+
+				// check it if is or not be selected
+				if (selectedInviteesIds.contains(_friend.getUserId())) {
+					// set the friend be selected
+					withinGroupCompeteInviteeListView.setItemChecked(i, true);
+					withinGroupCompeteInviteeListViewAdapter
+							.setFriendSelectState(i, true);
+					if (null == selectedInviteeList) {
+						// initialize selected invitee list
+						selectedInviteeList = new ArrayList<UserInfoBean>();
+					} else if (!_isSelectedInviteeListReset) {
+						// reset selected invitee list only once
+						_isSelectedInviteeListReset = true;
+						selectedInviteeList.clear();
+					}
+					selectedInviteeList.add(_friend);
+				}
+			}
+		}
 	}
 
 	/**

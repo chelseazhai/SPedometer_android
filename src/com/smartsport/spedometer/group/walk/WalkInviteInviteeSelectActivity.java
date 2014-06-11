@@ -40,7 +40,7 @@ public class WalkInviteInviteeSelectActivity extends SSBaseActivity {
 			WalkInviteInviteeSelectActivity.class);
 
 	// user info model
-	private UserInfoModel userInfoModel;
+	private UserInfoModel userInfoModel = UserInfoModel.getInstance();
 
 	// walk invite invitee listView adapter
 	private GroupInviteInviteeListViewAdapter walkInviteInviteeListViewAdapter;
@@ -48,9 +48,6 @@ public class WalkInviteInviteeSelectActivity extends SSBaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// initialize user info model
-		userInfoModel = new UserInfoModel();
 
 		// // test by ares
 		// for (int i = 0; i < 20; i++) {
@@ -80,7 +77,8 @@ public class WalkInviteInviteeSelectActivity extends SSBaseActivity {
 				// check return values
 				if (null != retValue && 0 < retValue.length
 						&& retValue[retValue.length - 1] instanceof List) {
-					// get the user info object and update its info for setting
+					// get the user friends info and update its listView for
+					// walk invite invitee selecting
 					walkInviteInviteeListViewAdapter
 							.setFriendsAsGroupInviteInvitees((List<UserInfoBean>) retValue[retValue.length - 1]);
 				} else {

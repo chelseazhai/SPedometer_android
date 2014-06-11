@@ -62,8 +62,9 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 	private TimerTask locateMyLocationTimerTask;
 
 	// group info and within group compete model
-	private GroupInfoModel groupInfoModel;
-	private WithinGroupCompeteModel withinGroupCompeteModel;
+	private GroupInfoModel groupInfoModel = GroupInfoModel.getInstance();
+	private WithinGroupCompeteModel withinGroupCompeteModel = WithinGroupCompeteModel
+			.getInstance();
 
 	// within group compete inviter walk saved instance state
 	private Bundle withinGroupCompeteInviterWalkSavedInstanceState;
@@ -114,10 +115,6 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 					.getInt(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_DURATIONTIME);
 		}
 
-		// initialize group info and within group compete model
-		groupInfoModel = new GroupInfoModel();
-		withinGroupCompeteModel = new WithinGroupCompeteModel();
-
 		// set content view
 		setContentView(R.layout.activity_withingroupcompete_walk);
 
@@ -153,7 +150,7 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 						.setGender(0 == i % 2 ? UserGender.MALE
 								: UserGender.FEMALE);
 				_inviteeUserInfoWithMemberStatus
-						.setMemberSratus(0 == i % 2 ? MemberStatus.MEM_ONLINE
+						.setMemberStatus(0 == i % 2 ? MemberStatus.MEM_ONLINE
 								: MemberStatus.MEM_OFFLINE);
 
 				inviteesUserInfoWithMemberStatusList

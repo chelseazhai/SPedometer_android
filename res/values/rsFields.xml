@@ -129,8 +129,8 @@
 
     <!-- walk control -->
     <string name="walkStartOrStopReqParam_groupId" translatable="false">groupId</string>
-    <string name="walkStopReqResp_walkStartTime" translatable="false">startTime</string>
-    <string name="walkStopReqResp_walkStopTime" translatable="false">stopTime</string>
+    <string name="walkStopReqResp_walkStartTime" translatable="false">beginTime</string>
+    <string name="walkStopReqResp_walkStopTime" translatable="false">endTime</string>
     <string name="walkStopReqResp_walkResult" translatable="false">result</string>
     <string name="walkStopReqResp_walkResultInfo" translatable="false">info</string>
 

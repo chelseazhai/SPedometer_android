@@ -30,9 +30,37 @@ public class GroupInfoModel {
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(GroupInfoModel.class);
 
+	// singleton instance
+	private static volatile GroupInfoModel _singletonInstance;
+
 	// user schedule, history walk and compete group map(key: group id and
 	// value: group object)
 	private Map<String, GroupBean> walkOrCompeteGroupMap;
+
+	/**
+	 * @title GroupInfoModel
+	 * @descriptor user walk or compete group info model private constructor
+	 * @author Ares
+	 */
+	private GroupInfoModel() {
+		super();
+
+		// initialize user walk or compete group map
+		walkOrCompeteGroupMap = new HashMap<String, GroupBean>();
+	}
+
+	// get user walk or compete group info model singleton instance
+	public static GroupInfoModel getInstance() {
+		if (null == _singletonInstance) {
+			synchronized (GroupInfoModel.class) {
+				if (null == _singletonInstance) {
+					_singletonInstance = new GroupInfoModel();
+				}
+			}
+		}
+
+		return _singletonInstance;
+	}
 
 	/**
 	 * @title getUserScheduleGroups
@@ -69,11 +97,6 @@ public class GroupInfoModel {
 								// check get user schedule groups response json
 								// array
 								if (null != respJSONArray) {
-									// check user walk or compete group map
-									if (null == walkOrCompeteGroupMap) {
-										walkOrCompeteGroupMap = new HashMap<String, GroupBean>();
-									}
-
 									// define schedule walk or compete group
 									// list
 									List<GroupBean> _scheduleGroupList = new ArrayList<GroupBean>();
@@ -171,19 +194,12 @@ public class GroupInfoModel {
 								// check get user schedule group info response
 								// json array
 								if (null != respJSONArray) {
-									// generate schedule walk or compete group
-									// info
-									ScheduleGroupInfoBean _scheduleGroupInfo = new ScheduleGroupInfoBean(
-											walkOrCompeteGroupMap.get(groupId),
-											respJSONArray);
-
-									LOGGER.debug("Get user schedule group info successful, group id = "
-											+ groupId
-											+ " and group info = "
-											+ _scheduleGroupInfo);
-
 									// get user schedule group info successful
-									//
+									executant
+											.onSuccess(new ScheduleGroupInfoBean(
+													walkOrCompeteGroupMap
+															.get(groupId),
+													respJSONArray));
 								} else {
 									LOGGER.error("Get user schedule group info response json array is null, group id = "
 											+ groupId);
@@ -241,11 +257,6 @@ public class GroupInfoModel {
 								// check get user history groups response json
 								// array
 								if (null != respJSONArray) {
-									// check user walk or compete group map
-									if (null == walkOrCompeteGroupMap) {
-										walkOrCompeteGroupMap = new HashMap<String, GroupBean>();
-									}
-
 									for (int i = 0; i < respJSONArray.length(); i++) {
 										// get and check user history group json
 										// object from response json array

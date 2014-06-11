@@ -35,9 +35,37 @@ public class WalkInviteModel {
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(WalkInviteModel.class);
 
+	// singleton instance
+	private static volatile WalkInviteModel _singletonInstance;
+
 	// schedule walk group last walking info timestamp map(key: schedule walk
 	// group, value: last walking info timestamp)
 	private Map<String, Long> lastWalkingInfoTimestampMap;
+
+	/**
+	 * @title WalkInviteModel
+	 * @descriptor walk invite model private constructor
+	 * @author Ares
+	 */
+	private WalkInviteModel() {
+		super();
+
+		// initialize schedule walk group last walking info timestamp map
+		lastWalkingInfoTimestampMap = new HashMap<String, Long>();
+	}
+
+	// get walk invite model singleton instance
+	public static WalkInviteModel getInstance() {
+		if (null == _singletonInstance) {
+			synchronized (WalkInviteModel.class) {
+				if (null == _singletonInstance) {
+					_singletonInstance = new WalkInviteModel();
+				}
+			}
+		}
+
+		return _singletonInstance;
+	}
 
 	/**
 	 * @title inviteWalk
@@ -222,7 +250,7 @@ public class WalkInviteModel {
 	 * @author Ares
 	 */
 	public void startWalking(int userId, String token, final String groupId,
-			ICMConnector executant) {
+			final ICMConnector executant) {
 		// start one of your schedule walk group with the group id
 		((WalkInviteNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(WalkInviteNetworkAdapter.class))
@@ -233,12 +261,18 @@ public class WalkInviteModel {
 							public void onSuccess(int statusCode,
 									JSONArray respJSONArray) {
 								// nothing to do
+
+								// start the schedule walk group successful
+								executant.onSuccess((Object) null);
 							}
 
 							@Override
 							public void onSuccess(int statusCode,
 									JSONObject respJSONObject) {
 								// nothing to do
+
+								// start the schedule walk group successful
+								executant.onSuccess((Object) null);
 							}
 
 							@Override
@@ -252,7 +286,7 @@ public class WalkInviteModel {
 										+ errorMsg);
 
 								// start the schedule walk group failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});
@@ -272,7 +306,7 @@ public class WalkInviteModel {
 	 * @author Ares
 	 */
 	public void stopWalking(int userId, String token, final String groupId,
-			ICMConnector executant) {
+			final ICMConnector executant) {
 		// stop one of your walking group with the group id
 		((WalkInviteNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(WalkInviteNetworkAdapter.class))
@@ -282,49 +316,100 @@ public class WalkInviteModel {
 							@Override
 							public void onSuccess(int statusCode,
 									JSONArray respJSONArray) {
+								// nothing to do
+							}
+
+							@Override
+							public void onSuccess(int statusCode,
+									JSONObject respJSONObject) {
 								LOGGER.info("Stop the walking group successful, group id = "
 										+ groupId
 										+ ", status code = "
 										+ statusCode
-										+ " and response json array = "
-										+ respJSONArray);
+										+ " and response json object = "
+										+ respJSONObject);
 
 								// check stop the walking group response json
-								// array
-								if (null != respJSONArray) {
+								// object
+								if (null != respJSONObject) {
+									// get context
+									Context _context = SSApplication
+											.getContext();
+
+									// define the walking group start and stop
+									// time
+									long _walkingGroupStartTime, _walkingGroupStopTime;
+									_walkingGroupStartTime = _walkingGroupStopTime = 0L;
+
+									// get the walking group start and stop time
+									// start time
+									try {
+										_walkingGroupStartTime = Long.parseLong(JSONUtils
+												.getStringFromJSONObject(
+														respJSONObject,
+														_context.getString(R.string.walkStopReqResp_walkStartTime)));
+									} catch (NumberFormatException e) {
+										LOGGER.error("Get the walking group, its id = "
+												+ groupId
+												+ " start time error, exception message = "
+												+ e.getMessage());
+
+										e.printStackTrace();
+									}
+									// stop time
+									try {
+										_walkingGroupStopTime = Long.parseLong(JSONUtils
+												.getStringFromJSONObject(
+														respJSONObject,
+														_context.getString(R.string.walkStopReqResp_walkStopTime)));
+									} catch (Exception e) {
+										LOGGER.error("Get the walking group, its id = "
+												+ groupId
+												+ " stop time error, exception message = "
+												+ e.getMessage());
+
+										e.printStackTrace();
+									}
+
 									// define the walking group member result
 									// info list
 									List<UserInfoGroupResultBean> _walkingGroupMemberResultInfoList = new ArrayList<UserInfoGroupResultBean>();
 
-									for (int i = 0; i < respJSONArray.length(); i++) {
+									// get and traversal walking group members
+									// result info
+									JSONArray _walkingGroupMemsResultInfo = JSONUtils.getJSONArrayFromJSONObject(
+											respJSONObject,
+											_context.getString(R.string.walkStopReqResp_walkResult));
+									for (int i = 0; i < _walkingGroupMemsResultInfo
+											.length(); i++) {
 										// get members info with result info in
 										// the walking group and add it to list
 										_walkingGroupMemberResultInfoList
 												.add(new UserInfoGroupResultBean(
 														JSONUtils
 																.getJSONObjectFromJSONArray(
-																		respJSONArray,
+																		_walkingGroupMemsResultInfo,
 																		i)));
 									}
 
 									LOGGER.debug("Stop the walking group, group id = "
 											+ groupId
+											+ ", walk start time = "
+											+ _walkingGroupStartTime
+											+ ", stop time = "
+											+ _walkingGroupStopTime
 											+ " and members result info = "
 											+ _walkingGroupMemberResultInfoList);
 
 									// stop the walking group successful
-									//
+									executant.onSuccess(_walkingGroupStartTime,
+											_walkingGroupStopTime,
+											_walkingGroupMemberResultInfoList);
 								} else {
 									LOGGER.error("Stop the walking group successful, group id = "
 											+ groupId
-											+ " response json array is null");
+											+ " response json object is null");
 								}
-							}
-
-							@Override
-							public void onSuccess(int statusCode,
-									JSONObject respJSONObject) {
-								// nothing to do
 							}
 
 							@Override
@@ -338,7 +423,7 @@ public class WalkInviteModel {
 										+ errorMsg);
 
 								// stop the walking group failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});
@@ -465,12 +550,6 @@ public class WalkInviteModel {
 										// and total step
 										// walking group partner walking info
 										// latest timestamp
-										// check walking group last walking info
-										// timestamp list
-										if (null == lastWalkingInfoTimestampMap) {
-											lastWalkingInfoTimestampMap = new HashMap<String, Long>();
-										}
-
 										_walkingGroupPartnerWalkingInfoLatestTimestamp = Long.parseLong(JSONUtils
 												.getStringFromJSONObject(
 														respJSONObject,

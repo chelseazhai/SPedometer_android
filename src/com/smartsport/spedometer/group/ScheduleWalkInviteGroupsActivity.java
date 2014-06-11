@@ -58,7 +58,7 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 			ScheduleWalkInviteGroupsActivity.class);
 
 	// group info model
-	private GroupInfoModel groupInfoModel;
+	private GroupInfoModel groupInfoModel = GroupInfoModel.getInstance();
 
 	// schedule walk invite group list
 	private List<GroupBean> scheduleWalkInviteGroupList;
@@ -70,8 +70,7 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// initialize group info model and schedule walk invite group list
-		groupInfoModel = new GroupInfoModel();
+		// initialize schedule walk invite group list
 		scheduleWalkInviteGroupList = new ArrayList<GroupBean>();
 
 		// // test by ares

@@ -30,19 +30,47 @@ public class UserInfoModel {
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(UserInfoModel.class);
 
+	// singleton instance
+	private static volatile UserInfoModel _singletonInstance;
+
 	// user info
 	private UserInfoBean userInfo;
 
 	// user friend list
 	private List<UserInfoBean> friendsInfo;
 
+	/**
+	 * @title UserInfoModel
+	 * @descriptor user info model private constructor
+	 * @author Ares
+	 */
+	private UserInfoModel() {
+		super();
+
+		// initialize user info and its friend list info
+		userInfo = new UserInfoBean();
+		friendsInfo = new ArrayList<UserInfoBean>();
+	}
+
+	// get user info model singleton instance
+	public static UserInfoModel getInstance() {
+		if (null == _singletonInstance) {
+			synchronized (UserInfoModel.class) {
+				if (null == _singletonInstance) {
+					_singletonInstance = new UserInfoModel();
+				}
+			}
+		}
+
+		return _singletonInstance;
+	}
+
 	public UserInfoBean getUserInfo() {
-		return null == userInfo ? userInfo = new UserInfoBean() : userInfo;
+		return userInfo;
 	}
 
 	public List<UserInfoBean> getFriendsInfo() {
-		return null == friendsInfo ? friendsInfo = new ArrayList<UserInfoBean>()
-				: friendsInfo;
+		return friendsInfo;
 	}
 
 	/**
@@ -76,14 +104,8 @@ public class UserInfoModel {
 								+ statusCode + " and response json object = "
 								+ respJSONObject);
 
-						// check user info
-						if (null == userInfo) {
-							// initialize user info object
-							userInfo = new UserInfoBean(respJSONObject);
-						} else {
-							// parse user info json object
-							userInfo = userInfo.parseUserInfo(respJSONObject);
-						}
+						// parse user info json object
+						userInfo.parseUserInfo(respJSONObject);
 
 						// set user info user id
 						userInfo.setUserId(userId);
@@ -154,11 +176,7 @@ public class UserInfoModel {
 									Context _context = SSApplication
 											.getContext();
 
-									// check user info and update its user info
-									if (null == userInfo) {
-										// initialize user info object
-										userInfo = new UserInfoBean();
-									}
+									// update its user info
 									// user id
 									userInfo.setUserId(userId);
 									// gender
@@ -258,12 +276,8 @@ public class UserInfoModel {
 
 						// check get user friends info response json array
 						if (null != respJSONArray) {
-							// check user friend info list
-							if (null == friendsInfo) {
-								friendsInfo = new ArrayList<UserInfoBean>();
-							} else {
-								friendsInfo.clear();
-							}
+							// clear user friend info list
+							friendsInfo.clear();
 
 							// traversal response json array
 							for (int i = 0; i < respJSONArray.length(); i++) {

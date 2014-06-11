@@ -52,7 +52,7 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 	private final int MILLISECONDS_PER_SECOND = 1000;
 
 	// walk invite model
-	private WalkInviteModel walkInviteModel;
+	private WalkInviteModel walkInviteModel = WalkInviteModel.getInstance();
 
 	// the selected walk invite invitee bean
 	private UserInfoBean selectedWalkInviteInvitee;
@@ -63,9 +63,6 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// initialize walk invite model
-		walkInviteModel = new WalkInviteModel();
 
 		// get and check the extra data
 		Bundle _extraData = getIntent().getExtras();

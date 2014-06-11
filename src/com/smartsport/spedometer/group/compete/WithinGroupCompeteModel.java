@@ -31,6 +31,32 @@ public class WithinGroupCompeteModel {
 	private static final SSLogger LOGGER = new SSLogger(
 			WithinGroupCompeteModel.class);
 
+	// singleton instance
+	private static volatile WithinGroupCompeteModel _singletonInstance;
+
+	/**
+	 * @title WithinGroupCompeteModel
+	 * @descriptor within group compete model private constructor
+	 * @author Ares
+	 */
+	private WithinGroupCompeteModel() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	// get within group compete model singleton instance
+	public static WithinGroupCompeteModel getInstance() {
+		if (null == _singletonInstance) {
+			synchronized (WithinGroupCompeteModel.class) {
+				if (null == _singletonInstance) {
+					_singletonInstance = new WithinGroupCompeteModel();
+				}
+			}
+		}
+
+		return _singletonInstance;
+	}
+
 	/**
 	 * @title inviteWithinGroupCompete
 	 * @descriptor invite more than one of user friends to walk compete

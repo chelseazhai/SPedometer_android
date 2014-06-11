@@ -56,7 +56,7 @@ public class DemoActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// user test
-				UserInfoModel _userInfoModel = new UserInfoModel();
+				UserInfoModel _userInfoModel = UserInfoModel.getInstance();
 
 				// check position
 				switch (position) {

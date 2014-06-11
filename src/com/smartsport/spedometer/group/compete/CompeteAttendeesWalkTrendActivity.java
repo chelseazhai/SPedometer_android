@@ -39,7 +39,8 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 	private TimerTask getCompeteWalkInfoTimerTask;
 
 	// within group or groups compete model
-	private WithinGroupCompeteModel withinGroupCompeteModel;
+	private WithinGroupCompeteModel withinGroupCompeteModel = WithinGroupCompeteModel
+			.getInstance();
 
 	// within group or groups compete attendees walk total distance bar and
 	// speed line chart
@@ -57,9 +58,6 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 			// with status list
 			//
 		}
-
-		// initialize within group compete model
-		withinGroupCompeteModel = new WithinGroupCompeteModel();
 
 		// set content view
 		setContentView(R.layout.activity_competeattendees_walktrend);
