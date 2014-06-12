@@ -32,6 +32,7 @@ import com.amap.api.maps2d.model.MyLocationStyle;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.group.GroupInfoModel;
 import com.smartsport.spedometer.group.compete.CompeteAttendeesWalkTrendActivity.CompeteAttendeesWalkTrendExtraData;
+import com.smartsport.spedometer.group.info.ScheduleGroupInfoBean;
 import com.smartsport.spedometer.group.info.member.MemberStatus;
 import com.smartsport.spedometer.group.info.member.UserInfoMemberStatusBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
@@ -57,9 +58,8 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 	private final int MILLISECONDS_PER_SECOND = 1000;
 	private final int SECONDS_PER_MINUTE = 60;
 
-	// locate my location timer and timer task
-	private Timer LOCATE_MYLOCATION_TIMER = new Timer();
-	private TimerTask locateMyLocationTimerTask;
+	// within group compete attendees walk timer
+	private Timer WALK_TIMER = new Timer();
 
 	// group info and within group compete model
 	private GroupInfoModel groupInfoModel = GroupInfoModel.getInstance();
@@ -87,6 +87,9 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 
 	// walk remain time textView
 	private TextView walkRemainTimeTextView;
+
+	// publish self and get walk partner walk info timer task
+	private TimerTask publishAndGetWalkInfoTimerTask;
 
 	// walk info: walk total distance, total steps count, energy, pace and speed
 	// textView
@@ -121,41 +124,62 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 		// check the within group compete group id and get its info from remote
 		// server
 		if (null != competeGroupId) {
-			groupInfoModel.getUserScheduleGroupInfo(123123, "token",
+			groupInfoModel.getUserScheduleGroupInfo(1002, "token",
 					competeGroupId, new ICMConnector() {
 
 						@Override
 						public void onSuccess(Object... retValue) {
-							// TODO Auto-generated method stub
+							// set autoNavi map location source
+							autoNaviMap
+									.setLocationSource(autoNaviMapLocationSource = new WalkStartPointLocationSource(
+											WithinGroupCompeteWalkActivity.this,
+											autoNaviMap));
 
+							// enable get my location and hidden location button
+							autoNaviMap.getUiSettings()
+									.setMyLocationButtonEnabled(false);
+							autoNaviMap.setMyLocationEnabled(true);
+
+							// check return values
+							if (null != retValue
+									&& 0 < retValue.length
+									&& retValue[retValue.length - 1] instanceof ScheduleGroupInfoBean) {
+								//
+							} else {
+								LOGGER.error("Update within group compete walk invitee user info UI error");
+							}
+
+							// test by ares
+							inviteesUserInfoWithMemberStatusList = new ArrayList<UserInfoMemberStatusBean>();
+							for (int i = 0; i < 3; i++) {
+								UserInfoMemberStatusBean _inviteeUserInfoWithMemberStatus = new UserInfoMemberStatusBean();
+								_inviteeUserInfoWithMemberStatus
+										.setUserId(12332 + i);
+								_inviteeUserInfoWithMemberStatus
+										.setAvatarUrl("/img/jshd123" + i);
+								_inviteeUserInfoWithMemberStatus
+										.setNickname("小慧动" + i);
+								_inviteeUserInfoWithMemberStatus
+										.setGender(0 == i % 2 ? UserGender.MALE
+												: UserGender.FEMALE);
+								_inviteeUserInfoWithMemberStatus
+										.setMemberStatus(0 == i % 2 ? MemberStatus.MEM_ONLINE
+												: MemberStatus.MEM_OFFLINE);
+
+								inviteesUserInfoWithMemberStatusList
+										.add(_inviteeUserInfoWithMemberStatus);
+							}
 						}
 
 						@Override
 						public void onFailure(int errorCode, String errorMsg) {
-							// TODO Auto-generated method stub
+							LOGGER.error("Get within group compete group info from remote server error, error code = "
+									+ errorCode + " and message = " + errorMsg);
 
+							//
 						}
 
 					});
-
-			// test by ares
-			inviteesUserInfoWithMemberStatusList = new ArrayList<UserInfoMemberStatusBean>();
-			for (int i = 0; i < 3; i++) {
-				UserInfoMemberStatusBean _inviteeUserInfoWithMemberStatus = new UserInfoMemberStatusBean();
-				_inviteeUserInfoWithMemberStatus.setUserId(12332 + i);
-				_inviteeUserInfoWithMemberStatus.setAvatarUrl("/img/jshd123"
-						+ i);
-				_inviteeUserInfoWithMemberStatus.setNickname("小慧动" + i);
-				_inviteeUserInfoWithMemberStatus
-						.setGender(0 == i % 2 ? UserGender.MALE
-								: UserGender.FEMALE);
-				_inviteeUserInfoWithMemberStatus
-						.setMemberStatus(0 == i % 2 ? MemberStatus.MEM_ONLINE
-								: MemberStatus.MEM_OFFLINE);
-
-				inviteesUserInfoWithMemberStatusList
-						.add(_inviteeUserInfoWithMemberStatus);
-			}
 		}
 	}
 
@@ -194,29 +218,7 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 				.strokeColor(
 						getResources().getColor(android.R.color.transparent)));
 
-		// // set its location source after 250 milliseconds
-		// LOCATE_MYLOCATION_TIMER.schedule(
-		// locateMyLocationTimerTask = new TimerTask() {
-		//
-		// @Override
-		// public void run() {
-		// autoNaviMap
-		// .setLocationSource(autoNaviMapLocationSource = new
-		// WalkStartPointLocationSource(
-		// WithinGroupCompeteWalkActivity.this,
-		// autoNaviMap));
-		// }
-		//
-		// }, 250);
-		// set its location source
-		autoNaviMap
-				.setLocationSource(autoNaviMapLocationSource = new WalkStartPointLocationSource(
-						this, autoNaviMap));
-
-		// enable get my location, compass and hidden location, zoom controls
-		// button
-		autoNaviMap.getUiSettings().setMyLocationButtonEnabled(false);
-		autoNaviMap.setMyLocationEnabled(true);
+		// enable compass and hidden zoom controls button
 		autoNaviMap.getUiSettings().setCompassEnabled(true);
 		autoNaviMap.getUiSettings().setZoomControlsEnabled(false);
 
@@ -329,8 +331,6 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 				_isWalking ? "2000" : "0");
 		updateWalkInfoTextViewText(WalkInfoType.WALKINFO_WALKSPEED,
 				_isWalking ? "2.25" : "0.00");
-
-		//
 	}
 
 	@Override
@@ -369,11 +369,12 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 			autoNaviMapLocationSource.deactivate();
 		}
 
-		// check and cancel locate my location timer task
-		if (null != locateMyLocationTimerTask) {
-			locateMyLocationTimerTask.cancel();
+		// check and cancel publish self and get walk partner walk info timer
+		// task
+		if (null != publishAndGetWalkInfoTimerTask) {
+			publishAndGetWalkInfoTimerTask.cancel();
 
-			locateMyLocationTimerTask = null;
+			publishAndGetWalkInfoTimerTask = null;
 		}
 	}
 

@@ -5,7 +5,6 @@ package com.smartsport.spedometer.group;
 
 import java.io.Serializable;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -159,36 +158,28 @@ public class GroupBean implements Serializable {
 
 			// generate group invite info json object
 			JSONObject _groupInviteInfo = new JSONObject();
-			try {
-				// topic
-				if (null != _groupInviteTopic) {
-					_groupInviteInfo.put(_groupInviteTopicKey,
-							_groupInviteTopic);
+			// topic
+			if (null != _groupInviteTopic) {
+				JSONUtils.putObject2JSONObject(_groupInviteInfo,
+						_groupInviteTopicKey, _groupInviteTopic);
+			}
+			// begin time
+			if (null != _groupInviteBeginTime) {
+				JSONUtils.putObject2JSONObject(_groupInviteInfo,
+						_groupInviteBeginTimeKey, _groupInviteBeginTime);
 
-				}
-				// begin time
-				if (null != _groupInviteBeginTime) {
-					_groupInviteInfo.put(_groupInviteBeginTimeKey,
-							_groupInviteBeginTime);
+			}
+			// duration time
+			if (null != _groupInviteDurationTime) {
+				JSONUtils.putObject2JSONObject(_groupInviteInfo,
+						_groupInviteDurationTimeKey, _groupInviteDurationTime);
 
-				}
-				// duration time
-				if (null != _groupInviteDurationTime) {
-					_groupInviteInfo.put(_groupInviteDurationTimeKey,
-							_groupInviteDurationTime);
+			}
+			// end time
+			if (null != _groupInviteEndTime) {
+				JSONUtils.putObject2JSONObject(_groupInviteInfo,
+						_groupInviteEndTimeKey, _groupInviteEndTime);
 
-				}
-				// end time
-				if (null != _groupInviteEndTime) {
-					_groupInviteInfo.put(_groupInviteEndTimeKey,
-							_groupInviteEndTime);
-
-				}
-			} catch (JSONException e) {
-				LOGGER.error("Generate group invite info json object error, exception message = "
-						+ e.getMessage());
-
-				e.printStackTrace();
 			}
 
 			// invite info

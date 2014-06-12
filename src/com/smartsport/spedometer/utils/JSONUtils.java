@@ -111,7 +111,7 @@ public class JSONUtils {
 	 * @return json object integer value
 	 * @author Ares
 	 */
-	public static int getIntFromJSONObject(JSONObject object, String key) {
+	public static Integer getIntFromJSONObject(JSONObject object, String key) {
 		return (Integer) objectFromJSONObject(object, key, Integer.class);
 	}
 
@@ -125,7 +125,7 @@ public class JSONUtils {
 	 * @return json object long value
 	 * @author Ares
 	 */
-	public static long getLongFromJSONObject(JSONObject object, String key) {
+	public static Long getLongFromJSONObject(JSONObject object, String key) {
 		return (Long) objectFromJSONObject(object, key, Long.class);
 	}
 

@@ -274,6 +274,9 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 									if (null != retValue
 											&& 0 < retValue.length
 											&& retValue[retValue.length - 1] instanceof String) {
+										// // pop the activity
+										// popActivityWithResult();
+
 										// test by ares
 										final String _walkInviteTmpGroupId = (String) retValue[retValue.length - 1];
 										LOGGER.info("Walk invite temp group id = "
@@ -304,6 +307,11 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 																}
 
 																//
+
+																// test by ares
+																// pop the
+																// activity
+																popActivityWithResult();
 															}
 
 															@Override
@@ -321,10 +329,7 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 														});
 											}
 
-										}, 15 * MILLISECONDS_PER_SECOND);
-
-										// pop the activity
-										popActivityWithResult();
+										}, 10 * MILLISECONDS_PER_SECOND);
 									} else {
 										LOGGER.error("Pop the walk invite info setting activity error");
 									}

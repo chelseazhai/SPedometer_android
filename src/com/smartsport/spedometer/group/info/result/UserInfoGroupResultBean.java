@@ -3,7 +3,6 @@
  */
 package com.smartsport.spedometer.group.info.result;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.smartsport.spedometer.R;
@@ -91,19 +90,14 @@ public class UserInfoGroupResultBean extends UserInfoBean {
 					.getString(R.string.groupWalkResultInfo_totalDistance);
 
 			// set walk result info to it
-			try {
-				_walkResultInfo.put(_walkResultInfoTotalStep,
-						JSONUtils.getStringFromJSONObject(info,
-								_walkResultInfoTotalStep));
-				_walkResultInfo.put(_walkResultInfoTotalDistance, JSONUtils
-						.getStringFromJSONObject(info,
-								_walkResultInfoTotalDistance));
-			} catch (JSONException e) {
-				LOGGER.error("Initialize walk invite or within group compete walk result info error, exception message = "
-						+ e.getMessage());
-
-				e.printStackTrace();
-			}
+			JSONUtils.putObject2JSONObject(_walkResultInfo,
+					_walkResultInfoTotalStep, JSONUtils
+							.getStringFromJSONObject(info,
+									_walkResultInfoTotalStep));
+			JSONUtils.putObject2JSONObject(_walkResultInfo,
+					_walkResultInfoTotalDistance, JSONUtils
+							.getStringFromJSONObject(info,
+									_walkResultInfoTotalDistance));
 
 			result = new GroupResultInfoBean(_walkResultInfo);
 		} else {

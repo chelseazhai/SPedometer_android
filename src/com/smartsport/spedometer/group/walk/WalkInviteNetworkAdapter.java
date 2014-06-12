@@ -165,8 +165,8 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 
 	/**
 	 * @title publishWalkingInfo
-	 * @descriptor publish walking info including walking location and total
-	 *             step
+	 * @descriptor publish walking info including walking location, total step
+	 *             and distance
 	 * @param userId
 	 *            : user id
 	 * @param token
@@ -177,18 +177,20 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 	 *            : walking location info
 	 * @param totalStep
 	 *            : walking total step
+	 * @param totalDistance
+	 *            : walking total distance
 	 * @param asyncHttpRespJSONHandler
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
 	public void publishWalkingInfo(int userId, String token, String groupId,
-			LatLonPoint walkingLocation, int totalStep,
+			LatLonPoint walkingLocation, int totalStep, double totalDistance,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _publishWalkingInfoReqParam = NetworkUtils
 				.genUserComReqParam(userId, token);
 
-		// set user walking group id and total step to param
+		// set user walking group id, total step and distance to param
 		_publishWalkingInfoReqParam.put(
 				NETWORK_ENGINE.getContext().getString(
 						R.string.publishWalkInfoReqParam_groupId), groupId);
@@ -196,6 +198,10 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 				NETWORK_ENGINE.getContext().getString(
 						R.string.publishWalkInfoReqParam_walkTotalStep),
 				String.valueOf(totalStep));
+		_publishWalkingInfoReqParam.put(
+				NETWORK_ENGINE.getContext().getString(
+						R.string.publishWalkInfoReqParam_walkTotalDistance),
+				String.valueOf(totalDistance));
 
 		// check user walking location longitude and latitude and set it to
 		// param

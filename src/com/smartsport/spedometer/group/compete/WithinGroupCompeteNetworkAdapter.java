@@ -63,7 +63,7 @@ public class WithinGroupCompeteNetworkAdapter implements INetworkAdapter {
 										.getContext()
 										.getString(
 												R.string.withinGroupCompeteInviteReqParam_inviteeId),
-								_inviteeId);
+								String.valueOf(_inviteeId));
 
 				// add it to list
 				_withinGroupCompeteInviteesIdJSONArray
@@ -119,7 +119,7 @@ public class WithinGroupCompeteNetworkAdapter implements INetworkAdapter {
 	 * @author Ares
 	 */
 	public void respondWithinGroupCompeteInvite(int userId, String token,
-			int groupId, boolean isAgreed,
+			String groupId, boolean isAgreed,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _respondWithinGroupCompeteInviteReqParam = NetworkUtils
@@ -132,7 +132,7 @@ public class WithinGroupCompeteNetworkAdapter implements INetworkAdapter {
 						.getContext()
 						.getString(
 								R.string.respondWithinGroupCompeteInviteReqParam_groupId),
-						String.valueOf(groupId));
+						groupId);
 		_respondWithinGroupCompeteInviteReqParam
 				.put(NETWORK_ENGINE
 						.getContext()
@@ -172,7 +172,7 @@ public class WithinGroupCompeteNetworkAdapter implements INetworkAdapter {
 	 * @author Ares
 	 */
 	public void publishWithinGroupCompeteWalkingInfo(int userId, String token,
-			int groupId, float walkingVelocity, int totalDistance,
+			String groupId, float walkingVelocity, int totalDistance,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _publishWithinGroupCompeteWalkingInfoReqParam = NetworkUtils
@@ -185,7 +185,7 @@ public class WithinGroupCompeteNetworkAdapter implements INetworkAdapter {
 						.getContext()
 						.getString(
 								R.string.publishWithinGroupCompeteWalkInfoReqParam_groupId),
-						String.valueOf(groupId));
+						groupId);
 		_publishWithinGroupCompeteWalkingInfoReqParam
 				.put(NETWORK_ENGINE
 						.getContext()
@@ -223,7 +223,7 @@ public class WithinGroupCompeteNetworkAdapter implements INetworkAdapter {
 	 * @author Ares
 	 */
 	public void getWithinGroupCompeteWalkingInfo(int userId, String token,
-			int groupId, AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
+			String groupId, AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _getWithinGroupCompeteWalkingInfoReqParam = NetworkUtils
 				.genUserComReqParam(userId, token);
@@ -232,7 +232,7 @@ public class WithinGroupCompeteNetworkAdapter implements INetworkAdapter {
 		_getWithinGroupCompeteWalkingInfoReqParam
 				.put(NETWORK_ENGINE.getContext().getString(
 						R.string.getWithinGroupCompeteWalkInfoReqParam_groupId),
-						String.valueOf(groupId));
+						groupId);
 
 		// send get within group compete walking info asynchronous post http
 		// request

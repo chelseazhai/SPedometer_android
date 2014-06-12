@@ -431,8 +431,8 @@ public class WalkInviteModel {
 
 	/**
 	 * @title publishWalkingInfo
-	 * @descriptor publish walking info including walking location and total
-	 *             step
+	 * @descriptor publish walking info including walking location, total step
+	 *             and distance
 	 * @param userId
 	 *            : user id
 	 * @param token
@@ -443,19 +443,23 @@ public class WalkInviteModel {
 	 *            : walking location info
 	 * @param totalStep
 	 *            : walking total step
+	 * @param totalDistance
+	 *            : walking total distance
 	 * @param executant
 	 *            :
 	 * @author Ares
 	 */
 	public void publishWalkingInfo(int userId, String token,
 			final String groupId, final LatLonPoint walkingLocation,
-			final int totalStep, final ICMConnector executant) {
-		// publish user walking info with group id, walking location and total
-		// step
+			final int totalStep, final double totalDistance,
+			final ICMConnector executant) {
+		// publish user walking info with group id, walking location, total step
+		// and distance
 		((WalkInviteNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(WalkInviteNetworkAdapter.class))
 				.publishWalkingInfo(userId, token, groupId, walkingLocation,
-						totalStep, new AsyncHttpRespJSONHandler() {
+						totalStep, totalDistance,
+						new AsyncHttpRespJSONHandler() {
 
 							@Override
 							public void onSuccess(int statusCode,
@@ -484,6 +488,8 @@ public class WalkInviteModel {
 										+ walkingLocation
 										+ ", total step = "
 										+ totalStep
+										+ ", total distance = "
+										+ totalDistance
 										+ ", status code = "
 										+ statusCode
 										+ " and error message = "

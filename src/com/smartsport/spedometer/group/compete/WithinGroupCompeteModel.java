@@ -74,7 +74,7 @@ public class WithinGroupCompeteModel {
 	 */
 	public void inviteWithinGroupCompete(int userId, String token,
 			final List<Integer> inviteesId, GroupInviteInfoBean inviteInfo,
-			ICMConnector executant) {
+			final ICMConnector executant) {
 		// invite more than one of user friends to walk compete with their user
 		// id list and within group walk compete
 		((WithinGroupCompeteNetworkAdapter) NetworkAdapter
@@ -107,13 +107,19 @@ public class WithinGroupCompeteModel {
 											.getContext();
 
 									try {
-										// get and check response group id and
-										// compete start time
+										// get and check response group id,
+										// topic and compete start time
 										// within group compete group id
-										int _withinGroupCompeteGroupId = Integer.parseInt(JSONUtils
+										String _withinGroupCompeteGroupId = JSONUtils
 												.getStringFromJSONObject(
 														respJSONObject,
-														_context.getString(R.string.withinGroupCompeteInviteReqResp_groupId)));
+														_context.getString(R.string.withinGroupCompeteInviteReqResp_groupId));
+
+										// within group compete group topic
+										String _withinGroupCompeteGroupTopic = JSONUtils
+												.getStringFromJSONObject(
+														respJSONObject,
+														_context.getString(R.string.withinGroupCompeteInviteReqResp_groupTopic));
 
 										// within group compete start time
 										long _withinGroupCompeteStartTime = Long.parseLong(JSONUtils
@@ -125,13 +131,21 @@ public class WithinGroupCompeteModel {
 												+ inviteesId
 												+ " to walk compete, the schedule within group compete group id = "
 												+ _withinGroupCompeteGroupId
+												+ ", topic = "
+												+ _withinGroupCompeteGroupTopic
 												+ " and start time = "
 												+ _withinGroupCompeteStartTime);
 
 										// invite more than one of user friends
 										// to walk compete successful
-										//
+										executant.onSuccess(
+												_withinGroupCompeteGroupId,
+												_withinGroupCompeteGroupTopic,
+												_withinGroupCompeteStartTime);
 									} catch (NumberFormatException e) {
+										// get exception message
+										String _exceptionMsg = e.getMessage();
+
 										LOGGER.error("Invite more than one of user friends, their user id = "
 												+ inviteesId
 												+ " to walk compete failed, exception message = "
@@ -139,7 +153,8 @@ public class WithinGroupCompeteModel {
 
 										// invite more than one of user friends
 										// to walk compete failed
-										//
+										// test by ares
+										executant.onFailure(11, _exceptionMsg);
 
 										e.printStackTrace();
 									}
@@ -162,7 +177,7 @@ public class WithinGroupCompeteModel {
 
 								// invite more than one of user friends to walk
 								// compete failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});
@@ -184,7 +199,8 @@ public class WithinGroupCompeteModel {
 	 * @author Ares
 	 */
 	public void respondWithinGroupCompeteInvite(int userId, String token,
-			final int groupId, final boolean isAgreed, ICMConnector executant) {
+			final String groupId, final boolean isAgreed,
+			final ICMConnector executant) {
 		// respond the within group walk compete invite with compete group id
 		// and user decision
 		((WithinGroupCompeteNetworkAdapter) NetworkAdapter
@@ -214,16 +230,61 @@ public class WithinGroupCompeteModel {
 								// check respond the within group walk compete
 								// invite response json object
 								if (null != respJSONObject) {
+									// get context
+									Context _context = SSApplication
+											.getContext();
+
 									// get within group walk compete group
 									// invite info
-									GroupInviteInfoBean _withinGroupWalkCompeteInviteInfo = new GroupInviteInfoBean(
-											JSONUtils
-													.getJSONObjectFromJSONObject(
+									// GroupInviteInfoBean
+									// _withinGroupWalkCompeteInviteInfo = new
+									// GroupInviteInfoBean(
+									// JSONUtils
+									// .getJSONObjectFromJSONObject(
+									// respJSONObject,
+									// _context.getString(R.string.respondWithinGroupCompeteInviteReqResp_groupInfo)));
+
+									// test by ares
+									// define within group compete invite
+									// response group info key
+									String _competeTopicKey = _context
+											.getString(R.string.groupInviteInfo_topic);
+									String _competeStartTimeKey = _context
+											.getString(R.string.respondWithinGroupCompeteInviteReqResp_competeStartTime);
+									String _competeDurationTimeKey = _context
+											.getString(R.string.groupInviteInfo_duration);
+
+									// generate the within group compete group
+									// info
+									JSONObject _withinGroupCompeteGroupInfo = new JSONObject();
+									JSONUtils.putObject2JSONObject(
+											_withinGroupCompeteGroupInfo,
+											_competeTopicKey, JSONUtils
+													.getStringFromJSONObject(
 															respJSONObject,
-															SSApplication
-																	.getContext()
-																	.getString(
-																			R.string.respondWithinGroupCompeteInviteReqResp_groupInfo)));
+															_competeTopicKey));
+									// test by ares
+									JSONUtils
+											.putObject2JSONObject(
+													_withinGroupCompeteGroupInfo,
+													_competeStartTimeKey,
+													(null == JSONUtils
+															.getLongFromJSONObject(
+																	respJSONObject,
+																	_competeStartTimeKey) ? System
+															.currentTimeMillis() / 1000L + 3 * 60
+															: JSONUtils
+																	.getLongFromJSONObject(
+																			respJSONObject,
+																			_competeStartTimeKey)));
+									JSONUtils.putObject2JSONObject(
+											_withinGroupCompeteGroupInfo,
+											_competeDurationTimeKey,
+											JSONUtils.getIntFromJSONObject(
+													respJSONObject,
+													_competeDurationTimeKey));
+									GroupInviteInfoBean _withinGroupWalkCompeteInviteInfo = new GroupInviteInfoBean(
+											_withinGroupCompeteGroupInfo);
 
 									LOGGER.debug("Respond the within group walk compete invite, its group id = "
 											+ groupId
@@ -234,7 +295,8 @@ public class WithinGroupCompeteModel {
 
 									// respond the within group walk compete
 									// invite successful
-									//
+									executant.onSuccess(groupId,
+											_withinGroupWalkCompeteInviteInfo);
 								} else {
 									LOGGER.error("Respond the within group walk compete invite, its group id = "
 											+ groupId
@@ -258,7 +320,7 @@ public class WithinGroupCompeteModel {
 
 								// respond the within group walk compete invite
 								// failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});
@@ -283,7 +345,7 @@ public class WithinGroupCompeteModel {
 	 * @author Ares
 	 */
 	public void publishWithinGroupCompeteWalkingInfo(int userId, String token,
-			final int groupId, final float walkingVelocity,
+			final String groupId, final float walkingVelocity,
 			final int totalDistance, ICMConnector executant) {
 		// publish within group compete user walking info with group id, walking
 		// velocity and total distance
@@ -342,7 +404,7 @@ public class WithinGroupCompeteModel {
 	 * @author Ares
 	 */
 	public void getWithinGroupCompeteWalkingInfo(int userId, String token,
-			final int groupId, ICMConnector executant) {
+			final String groupId, ICMConnector executant) {
 		// get within group compete each member walking info including walking
 		// velocity and total distance with group id
 		((WithinGroupCompeteNetworkAdapter) NetworkAdapter

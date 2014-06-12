@@ -29,13 +29,17 @@
     <string name="walkStart_url" translatable="false">/startmove.action</string>
     <!-- <string name="walkStop_url" translatable="false">/walk/stopMove</string> -->
     <string name="walkStop_url" translatable="false">/stopmove.action</string>
-    <string name="publishWalkInfo_url" translatable="false">/walk/updateLocation</string>
-    <string name="getPartnerWalkInfo_url" translatable="false">/walk/getLocation</string>
+    <!-- <string name="publishWalkInfo_url" translatable="false">/walk/updateLocation</string> -->
+    <string name="publishWalkInfo_url" translatable="false">/updateLocation.action</string>
+    <!-- <string name="getPartnerWalkInfo_url" translatable="false">/walk/getLocation</string> -->
+    <string name="getPartnerWalkInfo_url" translatable="false">/getLocation.action</string>
 
     <!-- compete -->
     <!-- within group compete -->
-    <string name="withinGroupCompeteInvite_url" translatable="false">/compete/groupInvite</string>
-    <string name="respondWithinGroupCompeteInvite_url" translatable="false">/compete/respondGroupInvite</string>
+    <!-- <string name="withinGroupCompeteInvite_url" translatable="false">/compete/groupInvite</string> -->
+    <string name="withinGroupCompeteInvite_url" translatable="false">/groupInvite.action</string>
+    <!-- <string name="respondWithinGroupCompeteInvite_url" translatable="false">/compete/respondGroupInvite</string> -->
+    <string name="respondWithinGroupCompeteInvite_url" translatable="false">/responseGroupInvite.action</string>
     <string name="publishWithinGroupCompeteWalkInfo_url" translatable="false">/compete/updateDistance</string>
     <string name="getWithinGroupCompeteWalkInfo_url" translatable="false">/compete/getDistance</string>
 

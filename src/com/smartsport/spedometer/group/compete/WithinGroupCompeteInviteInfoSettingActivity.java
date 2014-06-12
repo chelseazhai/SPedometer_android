@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.content.Context;
 import android.content.Intent;
@@ -290,7 +292,7 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 		@Override
 		public void onClick(View v) {
 			// get and check within group compete invite topic
-			String _topic = withinGroupCompeteInviteInfoListViewAdapter
+			final String _topic = withinGroupCompeteInviteInfoListViewAdapter
 					.getGroupTopic();
 			if (null == _topic || "".equalsIgnoreCase(_topic)) {
 				LOGGER.error("Within group compete invite topic is null");
@@ -323,16 +325,16 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 			// check the selected invitees and within group compete duration
 			// time
 			if (null != selectedWithinGroupCompeteInvitees) {
-				// define within group compete invite schedule duration time
-				int _competeScheduleDurationTime = 0;
-
 				try {
+					// define within group compete invite schedule duration time
+					final int _competeScheduleDurationTime = Integer
+							.parseInt(_withinGroupCompeteDurationTime);
+
 					// generate within group compete invite info
 					GroupInviteInfoBean _withinGroupCompeteInviteInfo = new GroupInviteInfoBean();
 					_withinGroupCompeteInviteInfo.setTopic(_topic);
 					_withinGroupCompeteInviteInfo
-							.setDuration(_competeScheduleDurationTime = Integer
-									.parseInt(_withinGroupCompeteDurationTime));
+							.setDuration(_competeScheduleDurationTime);
 
 					// send within group compete invite info with the selected
 					// user friends info list to remote server
@@ -342,15 +344,130 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 
 								@Override
 								public void onSuccess(Object... retValue) {
-									// TODO Auto-generated method stub
+									// check return values
+									if (null != retValue
+											&& 2 < retValue.length
+											&& (retValue[0] instanceof String && retValue[1] instanceof String)
+											&& retValue[retValue.length - 1] instanceof Long) {
+										// get and check the within group
+										// compete group topic
+										String _competeGroupTopic = (String) retValue[1];
+										if (null == _competeGroupTopic
+												|| "null"
+														.equalsIgnoreCase(_competeGroupTopic)) {
+											_competeGroupTopic = _topic;
+										}
 
+										// define within group compete walk
+										// extra data map
+										final Map<String, Object> _extraMap = new HashMap<String, Object>();
+
+										// put the within group compete group
+										// id, topic, start and duration time to
+										// extra data map as param
+										_extraMap
+												.put(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_ID,
+														retValue[0]);
+										_extraMap
+												.put(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_TOPIC,
+														_competeGroupTopic);
+										_extraMap
+												.put(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_STARTTIME,
+														Long.valueOf((Long) retValue[retValue.length - 1]
+																* MILLISECONDS_PER_SECOND));
+										_extraMap
+												.put(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_DURATIONTIME,
+														Integer.valueOf(_competeScheduleDurationTime));
+
+										// // go to within group compete walk
+										// // activity with extra data map
+										// popPushActivity(
+										// WithinGroupCompeteWalkActivity.class,
+										// _extraMap);
+
+										// test by ares
+										// get within group compete invite one
+										// of the invitee user id and group id
+										final int _inviteeUserId = selectedWithinGroupCompeteInvitees
+												.get(0).getUserId();
+										final String _competeGroupId = (String) retValue[0];
+										new Timer().schedule(new TimerTask() {
+
+											@Override
+											public void run() {
+												// respond user friend within
+												// group compete walk invite
+												// info with the group id to
+												// remote server
+												withinGroupCompeteModel
+														.respondWithinGroupCompeteInvite(
+																_inviteeUserId,
+																"token",
+																_competeGroupId,
+																true,
+																new ICMConnector() {
+
+																	@Override
+																	public void onSuccess(
+																			Object... retValue) {
+																		// check
+																		// return
+																		// values
+																		for (Object _value : retValue) {
+																			LOGGER.info("onSuccess, value = "
+																					+ _value);
+																		}
+
+																		//
+
+																		// test
+																		// by
+																		// ares
+																		// go to
+																		// within
+																		// group
+																		// compete
+																		// walk
+																		// activity
+																		// with
+																		// extra
+																		// data
+																		// map
+																		popPushActivity(
+																				WithinGroupCompeteWalkActivity.class,
+																				_extraMap);
+																	}
+
+																	@Override
+																	public void onFailure(
+																			int errorCode,
+																			String errorMsg) {
+																		LOGGER.error("Respond user friend within group compete walk invite error, error code = "
+																				+ errorCode
+																				+ " and message = "
+																				+ errorMsg);
+
+																		//
+																	}
+
+																});
+											}
+
+										}, 10 * MILLISECONDS_PER_SECOND);
+									} else {
+										LOGGER.error("Pop the within group compete invite info setting activity and push to within group compete walk activity error");
+									}
 								}
 
 								@Override
 								public void onFailure(int errorCode,
 										String errorMsg) {
-									// TODO Auto-generated method stub
+									LOGGER.error("Invite some user friends to walk compete error, error code = "
+											+ errorCode
+											+ " and message = "
+											+ errorMsg);
 
+									//
 								}
 
 							});
@@ -360,35 +477,6 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 
 					e.printStackTrace();
 				}
-
-				// test by ares
-				// the within group compete group id, topic and start time
-				String _competeGroupId = "12322";
-				String _competeGroupTopic = "走路竞赛吧，少年";
-				long _competeGroupStartTime = System.currentTimeMillis()
-						/ MILLISECONDS_PER_SECOND - 8 * 60;
-
-				// define within group compete walk extra data map
-				Map<String, Object> _extraMap = new HashMap<String, Object>();
-
-				// put the within group compete group id, topic, start and
-				// duration time to extra data map as param
-				_extraMap.put(
-						WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_ID,
-						_competeGroupId);
-				_extraMap
-						.put(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_TOPIC,
-								_competeGroupTopic);
-				_extraMap
-						.put(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_STARTTIME,
-								Long.valueOf(_competeGroupStartTime
-										* MILLISECONDS_PER_SECOND));
-				_extraMap
-						.put(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_DURATIONTIME,
-								Integer.valueOf(_competeScheduleDurationTime));
-
-				// go to within group compete walk activity with extra data map
-//				popPushActivity(WithinGroupCompeteWalkActivity.class, _extraMap);
 			} else {
 				LOGGER.error("Within group compete invite invitees is empty");
 

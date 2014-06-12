@@ -62,11 +62,8 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private final int SECONDS_PER_MINUTE = 60;
 	private final int MINUTES_PER_HOUR = 60;
 
-	// walk invite attendee walk timer
+	// walk invite attendees walk timer
 	private Timer WALK_TIMER = new Timer();
-
-	// locate my location timer task
-	private TimerTask locateMyLocationTimerTask;
 
 	// group info and walk invite model
 	private GroupInfoModel groupInfoModel = GroupInfoModel.getInstance();
@@ -104,8 +101,8 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private ImageView inviteeWalkPathWatchBadgerImgView;
 	private TextView inviteeNicknameTextView;
 
-	// publish self and get walk partner walk location timer task
-	private TimerTask publishAndGetWalkLocationTimerTask;
+	// publish self and get walk partner walk info timer task
+	private TimerTask publishAndGetWalkInfoTimerTask;
 
 	// walk info: walk total distance, total steps count, energy, pace and speed
 	// textView
@@ -145,6 +142,17 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 						@Override
 						public void onSuccess(Object... retValue) {
+							// set autoNavi map location source
+							autoNaviMap
+									.setLocationSource(autoNaviMapLocationSource = new WalkStartPointLocationSource(
+											WalkInviteWalkActivity.this,
+											autoNaviMap));
+
+							// enable get my location and hidden location button
+							autoNaviMap.getUiSettings()
+									.setMyLocationButtonEnabled(false);
+							autoNaviMap.setMyLocationEnabled(true);
+
 							// check return values
 							if (null != retValue
 									&& 0 < retValue.length
@@ -251,27 +259,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 				.strokeColor(
 						getResources().getColor(android.R.color.transparent)));
 
-		// // set its location source after 250 milliseconds
-		// WALK_TIMER.schedule(locateMyLocationTimerTask = new TimerTask() {
-		//
-		// @Override
-		// public void run() {
-		// autoNaviMap
-		// .setLocationSource(autoNaviMapLocationSource = new
-		// WalkStartPointLocationSource(
-		// WalkInviteWalkActivity.this, autoNaviMap));
-		// }
-		//
-		// }, 250);
-		// set its location source
-		autoNaviMap
-				.setLocationSource(autoNaviMapLocationSource = new WalkStartPointLocationSource(
-						this, autoNaviMap));
-
-		// enable get my location, compass and hidden location, zoom controls
-		// button
-		autoNaviMap.getUiSettings().setMyLocationButtonEnabled(false);
-		autoNaviMap.setMyLocationEnabled(true);
+		// enable compass and hidden zoom controls button
 		autoNaviMap.getUiSettings().setCompassEnabled(true);
 		autoNaviMap.getUiSettings().setZoomControlsEnabled(false);
 
@@ -466,17 +454,12 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 			autoNaviMapLocationSource.deactivate();
 		}
 
-		// check and cancel locate my location and publish self, get walk
-		// partner walk location timer task
-		if (null != locateMyLocationTimerTask) {
-			locateMyLocationTimerTask.cancel();
+		// check and cancel publish self and get walk partner walk info timer
+		// task
+		if (null != publishAndGetWalkInfoTimerTask) {
+			publishAndGetWalkInfoTimerTask.cancel();
 
-			locateMyLocationTimerTask = null;
-		}
-		if (null != publishAndGetWalkLocationTimerTask) {
-			publishAndGetWalkLocationTimerTask.cancel();
-
-			publishAndGetWalkLocationTimerTask = null;
+			publishAndGetWalkInfoTimerTask = null;
 		}
 	}
 
@@ -772,7 +755,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 					}
 				}
 			} else {
-				LOGGER.error("");
+				LOGGER.error("Get view = " + v + " tag view error");
 			}
 		}
 	}
@@ -858,11 +841,11 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 										isAttendeeWalkControlled = true;
 
 										// schedule publish self, get walk
-										// partner walk location info
-										// immediately and repeat every period
+										// partner walk info immediately and
+										// repeat every period
 										WALK_TIMER
 												.schedule(
-														publishAndGetWalkLocationTimerTask = new TimerTask() {
+														publishAndGetWalkInfoTimerTask = new TimerTask() {
 
 															@Override
 															public void run() {
@@ -883,27 +866,27 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 																				autoNaviMapLocationSource
 																						.getWalkLatLonPoint(),
 																				100,
+																				565.23,
 																				new ICMConnector() {
 
 																					@Override
 																					public void onSuccess(
 																							Object... retValue) {
-																						// TODO
-																						// Auto-generated
-																						// method
-																						// stub
-
+																						// nothing
+																						// to
+																						// do
 																					}
 
 																					@Override
 																					public void onFailure(
 																							int errorCode,
 																							String errorMsg) {
-																						// TODO
-																						// Auto-generated
-																						// method
-																						// stub
+																						LOGGER.error("Publish self walk info error, error code = "
+																								+ errorCode
+																								+ " and message = "
+																								+ errorMsg);
 
+																						//
 																					}
 
 																				});

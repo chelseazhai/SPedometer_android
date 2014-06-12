@@ -74,8 +74,8 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 							// get, check the within group or groups compete
 							// group id and then get within group compete
 							// attendees walk info
-							Integer _competeGroupId = _extraData
-									.getInt(CompeteAttendeesWalkTrendExtraData.CAWT_COMPETEGROUP_ID);
+							String _competeGroupId = _extraData
+									.getString(CompeteAttendeesWalkTrendExtraData.CAWT_COMPETEGROUP_ID);
 							if (null != _competeGroupId) {
 								withinGroupCompeteModel
 										.getWithinGroupCompeteWalkingInfo(
