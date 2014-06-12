@@ -33,12 +33,39 @@ public class StrangerPatModel {
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(StrangerPatModel.class);
 
+	// singleton instance
+	private static volatile StrangerPatModel _singletonInstance;
+
 	// user nearby stranger list
 	private List<UserInfoPatLocationExtBean> nearbyStrangersInfo;
 
+	/**
+	 * @title StrangerPatModel
+	 * @descriptor stranger pat model private constructor
+	 * @author Ares
+	 */
+	private StrangerPatModel() {
+		super();
+
+		// initialize user nearby strangers info
+		nearbyStrangersInfo = new ArrayList<UserInfoPatLocationExtBean>();
+	}
+
+	// get stranger pat model singleton instance
+	public static StrangerPatModel getInstance() {
+		if (null == _singletonInstance) {
+			synchronized (StrangerPatModel.class) {
+				if (null == _singletonInstance) {
+					_singletonInstance = new StrangerPatModel();
+				}
+			}
+		}
+
+		return _singletonInstance;
+	}
+
 	public List<UserInfoPatLocationExtBean> getNearbyStrangersInfo() {
-		return null == nearbyStrangersInfo ? nearbyStrangersInfo = new ArrayList<UserInfoPatLocationExtBean>()
-				: nearbyStrangersInfo;
+		return nearbyStrangersInfo;
 	}
 
 	/**
@@ -58,7 +85,7 @@ public class StrangerPatModel {
 	 */
 	public void getNearbyStrangers(int userId, String token,
 			UserGender strangerGender, LocationBean location,
-			ICMConnector executant) {
+			final ICMConnector executant) {
 		// get user nearby strangers info with user id, token, location info and
 		// need to get stranger gender
 		((StrangerPatNetworkAdapter) NetworkAdapter.getInstance()
@@ -77,12 +104,8 @@ public class StrangerPatModel {
 								// check get user nearby strangers info response
 								// json array
 								if (null != respJSONArray) {
-									// check user nearby stranger info list
-									if (null == nearbyStrangersInfo) {
-										nearbyStrangersInfo = new ArrayList<UserInfoPatLocationExtBean>();
-									} else {
-										nearbyStrangersInfo.clear();
-									}
+									// clear user nearby stranger info list
+									nearbyStrangersInfo.clear();
 
 									// traversal response json array
 									for (int i = 0; i < respJSONArray.length(); i++) {
@@ -102,7 +125,7 @@ public class StrangerPatModel {
 									}
 
 									// get user nearby all strangers successful
-									//
+									executant.onSuccess(nearbyStrangersInfo);
 								} else {
 									LOGGER.error("Get user nearby strangers info response json array is null");
 								}
@@ -123,7 +146,7 @@ public class StrangerPatModel {
 										+ errorMsg);
 
 								// get user nearby all strangers failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});
@@ -145,7 +168,7 @@ public class StrangerPatModel {
 	 * @author Ares
 	 */
 	public void patStranger(int userId, String token, final int strangerId,
-			LatLonPoint patLocation, ICMConnector executant) {
+			LatLonPoint patLocation, final ICMConnector executant) {
 		// pat nearby stranger with user id, token, pat stranger id and pat
 		// location info
 		((StrangerPatNetworkAdapter) NetworkAdapter.getInstance()
@@ -198,13 +221,18 @@ public class StrangerPatModel {
 												+ "  he/she can see your personal information");
 
 										// pat nearby stranger successful
-										//
+										executant.onSuccess(_respPatCount,
+												_respRequirePatCount);
 									} catch (NumberFormatException e) {
+										// get exception message
+										String _exceptionMsg = e.getMessage();
+
 										LOGGER.error("Get pat nearby stranger response pat count or require pat count failed, exception message = "
-												+ e.getMessage());
+												+ _exceptionMsg);
 
 										// pat nearby stranger failed
-										//
+										// test by ares
+										executant.onFailure(11, _exceptionMsg);
 
 										e.printStackTrace();
 									}
@@ -222,7 +250,7 @@ public class StrangerPatModel {
 										+ errorMsg);
 
 								// pat nearby stranger failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});

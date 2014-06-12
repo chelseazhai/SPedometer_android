@@ -16,4 +16,7 @@
     <string name="toast_withinGroupCompete_inviteInfo_topic_null">好歹给出一个多人组内竞赛提示主题</string>
     <string name="toast_withinGroupCompete_inviteInfo_durationTime_null">选定一个竞赛时长</string>
 
+    <!-- stranger pat activity -->
+    <string name="toast_strangerPatCount_format">成功拍肩一次，您已拍过TA %d 次了</string>
+
 </resources>

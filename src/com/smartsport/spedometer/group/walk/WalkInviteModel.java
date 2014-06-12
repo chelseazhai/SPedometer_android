@@ -449,7 +449,7 @@ public class WalkInviteModel {
 	 */
 	public void publishWalkingInfo(int userId, String token,
 			final String groupId, final LatLonPoint walkingLocation,
-			final int totalStep, ICMConnector executant) {
+			final int totalStep, final ICMConnector executant) {
 		// publish user walking info with group id, walking location and total
 		// step
 		((WalkInviteNetworkAdapter) NetworkAdapter.getInstance()
@@ -461,12 +461,18 @@ public class WalkInviteModel {
 							public void onSuccess(int statusCode,
 									JSONArray respJSONArray) {
 								// nothing to do
+
+								// publish self walk info successful
+								executant.onSuccess((Object) null);
 							}
 
 							@Override
 							public void onSuccess(int statusCode,
 									JSONObject respJSONObject) {
 								// nothing to do
+
+								// publish self walk info successful
+								executant.onSuccess((Object) null);
 							}
 
 							@Override
@@ -484,7 +490,7 @@ public class WalkInviteModel {
 										+ errorMsg);
 
 								// publish user walking info failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});

@@ -17,6 +17,6 @@
     <integer name="config_withinGroupCompeteWalk_publishAndGetAttendees_walkInfo_period">30</integer>
 
     <!-- the limit count of stranger pat -->
-    <integer name="config_limitCount_strangerPat">5</integer>
+    <integer name="config_limitCount_strangerPat">8</integer>
 
 </resources>

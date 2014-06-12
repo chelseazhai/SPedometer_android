@@ -51,7 +51,8 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 			NearbyStrangersActivity.class);
 
 	// stranger pat model
-	private static StrangerPatModel sStrangerPatModel;
+	private static StrangerPatModel sStrangerPatModel = StrangerPatModel
+			.getInstance();
 
 	// nearby strangers gender
 	private static UserGender sStrangerGender;
@@ -60,14 +61,11 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 	private static LocationBean sUserLocation;
 
 	// nearby stranger listView adapter
-	private NearbyStrangerListViewAdapter nearbyStrangerListViewAdapter;
+	private static NearbyStrangerListViewAdapter nearbyStrangerListViewAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// initialize stranger pat model
-		sStrangerPatModel = new StrangerPatModel();
 
 		// load nearby strangers gender and user location info from local
 		// storage
@@ -76,46 +74,31 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 		sUserLocation = new LocationBean(118.769790, 32.066336);
 		//
 
-		// test by ares
-		for (int i = 0; i < 12; i++) {
-			UserInfoPatLocationExtBean _uipl = new UserInfoPatLocationExtBean();
-
-			_uipl.setUserId(10010 + i);
-			_uipl.setAvatarUrl("/avatar/img_123jhsd_sdjhf");
-			_uipl.setNickname("用户" + i);
-			_uipl.setGender(0 == i ? UserGender.GENDER_UNKNOWN
-					: 0 == i % 2 ? UserGender.FEMALE : UserGender.MALE);
-			_uipl.setAge(10 + i);
-			_uipl.setHeight(170.0f + i);
-			_uipl.setWeight(70.0f + i);
-			_uipl.setLocation(new LocationBean(sUserLocation.getLongitude()
-					+ (0 == i ? 10 : i / 100.0), sUserLocation.getLatitude()
-					+ i / 100.0));
-			_uipl.setPatCount(i);
-
-			sStrangerPatModel.getNearbyStrangersInfo().add(_uipl);
-		}
+		// // test by ares
+		// for (int i = 0; i < 12; i++) {
+		// UserInfoPatLocationExtBean _uipl = new UserInfoPatLocationExtBean();
+		//
+		// _uipl.setUserId(10010 + i);
+		// _uipl.setAvatarUrl("/avatar/img_123jhsd_sdjhf");
+		// _uipl.setNickname("用户" + i);
+		// _uipl.setGender(0 == i ? UserGender.GENDER_UNKNOWN
+		// : 0 == i % 2 ? UserGender.FEMALE : UserGender.MALE);
+		// _uipl.setAge(10 + i);
+		// _uipl.setHeight(170.0f + i);
+		// _uipl.setWeight(70.0f + i);
+		// _uipl.setLocation(new LocationBean(sUserLocation.getLongitude()
+		// + (0 == i ? 10 : i / 100.0), sUserLocation.getLatitude()
+		// + i / 100.0));
+		// _uipl.setPatCount(i);
+		//
+		// sStrangerPatModel.getNearbyStrangersInfo().add(_uipl);
+		// }
 
 		// set content view
 		setContentView(R.layout.activity_nearby_strangers);
 
-		// get nearby strangers with user location info from remote server
-		sStrangerPatModel.getNearbyStrangers(123123, "token", sStrangerGender,
-				sUserLocation, new ICMConnector() {
-
-					@Override
-					public void onSuccess(Object... retValue) {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void onFailure(int errorCode, String errorMsg) {
-						// TODO Auto-generated method stub
-
-					}
-
-				});
+		// get user nearby strangers info
+		getNearbyStrangers();
 	}
 
 	@Override
@@ -165,6 +148,42 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 		// set its on item click listener
 		_nearbyStrangerListView
 				.setOnItemClickListener(new NearbyStrangerItemOnClickListener());
+	}
+
+	/**
+	 * @title getNearbyStrangers
+	 * @descriptor get user nearby strangers info
+	 * @author Ares
+	 */
+	private static void getNearbyStrangers() {
+		// get nearby strangers with user location info from remote server
+		sStrangerPatModel.getNearbyStrangers(1002, "token", sStrangerGender,
+				sUserLocation, new ICMConnector() {
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public void onSuccess(Object... retValue) {
+						// check return values
+						if (null != retValue
+								&& 0 < retValue.length
+								&& retValue[retValue.length - 1] instanceof List) {
+							// set user nearby stranger list for patting
+							nearbyStrangerListViewAdapter
+									.setNearbyStrangers((List<UserInfoPatLocationExtBean>) retValue[retValue.length - 1]);
+						} else {
+							LOGGER.error("Update user nearby strangers listView error");
+						}
+					}
+
+					@Override
+					public void onFailure(int errorCode, String errorMsg) {
+						LOGGER.error("Get user nearby strangers info from remote server error, error code = "
+								+ errorCode + " and message = " + errorMsg);
+
+						//
+					}
+
+				});
 	}
 
 	// inner class
@@ -509,26 +528,10 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 					// save user select nearby strangers gender to local storage
 					// test by ares
 					sStrangerGender = gender;
+					//
 
-					// get nearby strangers with user select gender, location
-					// info from remote server
-					sStrangerPatModel.getNearbyStrangers(123123, "token",
-							gender, sUserLocation, new ICMConnector() {
-
-								@Override
-								public void onSuccess(Object... retValue) {
-									// TODO Auto-generated method stub
-
-								}
-
-								@Override
-								public void onFailure(int errorCode,
-										String errorMsg) {
-									// TODO Auto-generated method stub
-
-								}
-
-							});
+					// get user nearby strangers info
+					getNearbyStrangers();
 				}
 
 			}
@@ -567,6 +570,7 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 					// clear user location info from local storage
 					// test by ares
 					sUserLocation = null;
+					//
 				}
 
 			}

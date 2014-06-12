@@ -38,7 +38,7 @@ public class StrangerPatActivity extends SSBaseActivity {
 			StrangerPatActivity.class);
 
 	// stranger pat model
-	private StrangerPatModel strangerPatModel;
+	private StrangerPatModel strangerPatModel = StrangerPatModel.getInstance();
 
 	// the nearby stranger info bean, distance, be pat count and user pat
 	// location
@@ -47,8 +47,14 @@ public class StrangerPatActivity extends SSBaseActivity {
 	private int strangerBePatCount;
 	private LocationBean userPatLocation;
 
+	// stranger pat count textView
+	private TextView strangerPatCountTextView;
+
 	// the nearby stranger be pat flag
 	private boolean hadBeenPatStranger;
+
+	// add the stranger as friend button
+	private Button addStrangerAsFriendBtn;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +72,6 @@ public class StrangerPatActivity extends SSBaseActivity {
 			userPatLocation = (LocationBean) _extraData
 					.getSerializable(StrangerPatExtraData.SP_USER_PATLOCATION);
 		}
-
-		// initialize stranger pat model
-		strangerPatModel = new StrangerPatModel();
 
 		// set content view
 		setContentView(R.layout.activity_stranger_pat);
@@ -125,10 +128,10 @@ public class StrangerPatActivity extends SSBaseActivity {
 				- strangerBePatCount;
 
 		// get the stranger pat count textView
-		TextView _strangerPatCountTextView = (TextView) findViewById(R.id.sp_strangerPatCount_textView);
+		strangerPatCountTextView = (TextView) findViewById(R.id.sp_strangerPatCount_textView);
 
 		// set its text
-		_strangerPatCountTextView.setText(String.format(
+		strangerPatCountTextView.setText(String.format(
 				getString(R.string.patStranger_count_format),
 				strangerBePatCount));
 
@@ -139,19 +142,19 @@ public class StrangerPatActivity extends SSBaseActivity {
 		_patStrangerBtn.setOnClickListener(new PatStrangerBtnOnClickListener());
 
 		// get add the stranger as friend button
-		Button _addAsFriendBtn = (Button) findViewById(R.id.sp_addAsFriend_button);
+		addStrangerAsFriendBtn = (Button) findViewById(R.id.sp_addAsFriend_button);
 
 		// set its on click listener
-		_addAsFriendBtn
+		addStrangerAsFriendBtn
 				.setOnClickListener(new AddStrangerAsFriendBtnOnClickListener());
 
 		// check stranger pat count
 		if (0 >= _getStrangerInfoRemainPatCount) {
 			// show add the stranger as friend button
-			_addAsFriendBtn.setVisibility(View.VISIBLE);
+			addStrangerAsFriendBtn.setVisibility(View.VISIBLE);
 		} else {
 			// update the stranger pat count textView text
-			_strangerPatCountTextView
+			strangerPatCountTextView
 					.setText(String
 							.format(getString(R.string.addStrangerAsFriend_limitPatCount_format),
 									_getStrangerInfoRemainPatCount));
@@ -205,29 +208,70 @@ public class StrangerPatActivity extends SSBaseActivity {
 			// check the pat stranger info and user pat location
 			if (null != strangerInfo && null != userPatLocation) {
 				// pat the nearby stranger
-				strangerPatModel.patStranger(123123, "token",
+				strangerPatModel.patStranger(1002, "token",
 						strangerInfo.getUserId(),
 						userPatLocation.toLatLonPoint(), new ICMConnector() {
 
 							@Override
 							public void onSuccess(Object... retValue) {
-								// TODO Auto-generated method stub
+								// check return values
+								if (null != retValue
+										&& 1 < retValue.length
+										&& (retValue[0] instanceof Integer && retValue[retValue.length - 1] instanceof Integer)) {
+									// mark the stranger you had patted
+									strangerInfo
+											.setPatCount(++strangerBePatCount);
+									hadBeenPatStranger = true;
 
+									// get stranger pat count
+									int _patCount = (Integer) retValue[0];
+
+									// get and check stranger pat remain require
+									// pat count
+									int _remainRequirePatCount = (Integer) retValue[retValue.length - 1]
+											- _patCount;
+									if (0 >= _remainRequirePatCount) {
+										// update the stranger pat count
+										// textView text
+										strangerPatCountTextView.setText(String
+												.format(getString(R.string.patStranger_count_format),
+														_patCount));
+
+										// show add the stranger as friend
+										// button
+										addStrangerAsFriendBtn
+												.setVisibility(View.VISIBLE);
+									} else {
+										// update the stranger pat count
+										// textView text
+										strangerPatCountTextView.setText(String
+												.format(getString(R.string.addStrangerAsFriend_limitPatCount_format),
+														_remainRequirePatCount));
+									}
+
+									// show tip message
+									Toast.makeText(
+											StrangerPatActivity.this,
+											String.format(
+													getString(R.string.toast_strangerPatCount_format),
+													_patCount),
+											Toast.LENGTH_LONG).show();
+								} else {
+									LOGGER.error("Pat stranger error");
+								}
 							}
 
 							@Override
 							public void onFailure(int errorCode, String errorMsg) {
-								// TODO Auto-generated method stub
+								LOGGER.error("Pat nearby stranger error, error code = "
+										+ errorCode
+										+ " and message = "
+										+ errorMsg);
 
+								//
 							}
 
 						});
-
-				// test by ares
-				strangerInfo.setPatCount(++strangerBePatCount);
-				hadBeenPatStranger = true;
-				Toast.makeText(StrangerPatActivity.this, "成功拍肩一次(测试@Ares)",
-						Toast.LENGTH_LONG).show();
 			} else {
 				LOGGER.error("Pat stranger error, the nearby stranger info bean = "
 						+ strangerInfo
@@ -248,11 +292,12 @@ public class StrangerPatActivity extends SSBaseActivity {
 
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
-
 			// test by ares
 			Toast.makeText(StrangerPatActivity.this, "添加好友请求发送成功(测试@Ares)",
 					Toast.LENGTH_LONG).show();
+
+			// TODO Auto-generated method stub
+			//
 		}
 
 	}

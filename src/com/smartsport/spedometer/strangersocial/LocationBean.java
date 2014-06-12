@@ -5,6 +5,8 @@ package com.smartsport.spedometer.strangersocial;
 
 import java.io.Serializable;
 
+import android.location.Location;
+
 import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.utils.SSLogger;
 
@@ -23,9 +25,6 @@ public class LocationBean implements Serializable {
 
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(LocationBean.class);
-
-	// the earth radius
-	private static final double EARTH_RADIUS = 6378.137;
 
 	// longitude and latitude
 	private double longitude;
@@ -103,39 +102,21 @@ public class LocationBean implements Serializable {
 
 		// check another location point
 		if (null != location) {
-			// get two location longitude radius D-value
-			double _lngDValue = getRadius(getLongitude())
-					- getRadius(location.getLongitude());
+			// define and calculate the distance between two latitude, longitude
+			// points
+			float[] _results = new float[] { 0 };
+			Location.distanceBetween(getLatitude(), getLongitude(),
+					location.getLatitude(), location.getLongitude(), _results);
 
-			// get two location latitude radius and D-value
-			double _lat1Radius = getRadius(getLatitude());
-			double _lat2Radius = getRadius(location.getLatitude());
-			double _latDValue = _lat1Radius - _lat2Radius;
-
-			// calculate the distance
-			_distance = Math.round(2
-					* Math.asin(Math.sqrt(Math.pow(Math.sin(_latDValue / 2), 2)
-							+ Math.cos(_lat1Radius) * Math.cos(_lat2Radius)
-							* Math.pow(Math.sin(_lngDValue / 2), 2)))
-					* EARTH_RADIUS * 10000) / 10000;
+			// check the results and set distance
+			if (null != _results && 0 < _results.length) {
+				_distance = _results[0];
+			}
 		} else {
 			LOGGER.error("Get the distance with the two location point error, another location point is null");
 		}
 
 		return _distance;
-	}
-
-	/**
-	 * @title getRadius
-	 * @descriptor get the earth radius with the location point info(longitude
-	 *             or latitude)
-	 * @param locationLngLat
-	 *            : location point longitude or latitude
-	 * @return the location point latitude earth radius
-	 * @author Ares
-	 */
-	private double getRadius(double locationLngLat) {
-		return locationLngLat * Math.PI / 180.0;
 	}
 
 }

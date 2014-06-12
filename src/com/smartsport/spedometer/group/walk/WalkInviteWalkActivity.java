@@ -62,8 +62,10 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private final int SECONDS_PER_MINUTE = 60;
 	private final int MINUTES_PER_HOUR = 60;
 
-	// locate my location timer and timer task
-	private Timer LOCATE_MYLOCATION_TIMER = new Timer();
+	// walk invite attendee walk timer
+	private Timer WALK_TIMER = new Timer();
+
+	// locate my location timer task
 	private TimerTask locateMyLocationTimerTask;
 
 	// group info and walk invite model
@@ -101,6 +103,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private ImageView inviteeAvatarImgView;
 	private ImageView inviteeWalkPathWatchBadgerImgView;
 	private TextView inviteeNicknameTextView;
+
+	// publish self and get walk partner walk location timer task
+	private TimerTask publishAndGetWalkLocationTimerTask;
 
 	// walk info: walk total distance, total steps count, energy, pace and speed
 	// textView
@@ -247,16 +252,14 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 						getResources().getColor(android.R.color.transparent)));
 
 		// // set its location source after 250 milliseconds
-		// LOCATE_MYLOCATION_TIMER.schedule(
-		// locateMyLocationTimerTask = new TimerTask() {
+		// WALK_TIMER.schedule(locateMyLocationTimerTask = new TimerTask() {
 		//
 		// @Override
 		// public void run() {
 		// autoNaviMap
 		// .setLocationSource(autoNaviMapLocationSource = new
 		// WalkStartPointLocationSource(
-		// WalkInviteWalkActivity.this,
-		// autoNaviMap));
+		// WalkInviteWalkActivity.this, autoNaviMap));
 		// }
 		//
 		// }, 250);
@@ -463,11 +466,17 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 			autoNaviMapLocationSource.deactivate();
 		}
 
-		// check and cancel locate my location timer task
+		// check and cancel locate my location and publish self, get walk
+		// partner walk location timer task
 		if (null != locateMyLocationTimerTask) {
 			locateMyLocationTimerTask.cancel();
 
 			locateMyLocationTimerTask = null;
+		}
+		if (null != publishAndGetWalkLocationTimerTask) {
+			publishAndGetWalkLocationTimerTask.cancel();
+
+			publishAndGetWalkLocationTimerTask = null;
 		}
 	}
 
@@ -847,6 +856,65 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 										// mark attendee walk started
 										isAttendeeWalkControlled = true;
+
+										// schedule publish self, get walk
+										// partner walk location info
+										// immediately and repeat every period
+										WALK_TIMER
+												.schedule(
+														publishAndGetWalkLocationTimerTask = new TimerTask() {
+
+															@Override
+															public void run() {
+																LOGGER.error("@@@, walk point = "
+																		+ autoNaviMapLocationSource
+																				.getWalkLatLonPoint()
+																		+ " and speed = "
+																		+ autoNaviMapLocationSource
+																				.getWalkSpeed());
+
+																// publish self
+																// walk info
+																walkInviteModel
+																		.publishWalkingInfo(
+																				1002,
+																				"token",
+																				scheduleWalkInviteGroupId,
+																				autoNaviMapLocationSource
+																						.getWalkLatLonPoint(),
+																				100,
+																				new ICMConnector() {
+
+																					@Override
+																					public void onSuccess(
+																							Object... retValue) {
+																						// TODO
+																						// Auto-generated
+																						// method
+																						// stub
+
+																					}
+
+																					@Override
+																					public void onFailure(
+																							int errorCode,
+																							String errorMsg) {
+																						// TODO
+																						// Auto-generated
+																						// method
+																						// stub
+
+																					}
+
+																				});
+															}
+
+														},
+														0,
+														getResources()
+																.getInteger(
+																		R.integer.config_walkInviteWalk_publishSelfAndGetPartner_walkInfo_period)
+																* MILLISECONDS_PER_SECOND);
 									}
 
 									@Override

@@ -40,10 +40,12 @@
     <string name="getWithinGroupCompeteWalkInfo_url" translatable="false">/compete/getDistance</string>
 
     <!-- stranger social -->
-    <string name="getNearbyStranger_url" translatable="false">/user/getNearUser</string>
+    <!-- <string name="getNearbyStranger_url" translatable="false">/user/getNearUser</string> -->
+    <string name="getNearbyStranger_url" translatable="false">/getNearUser.action</string>
 
     <!-- pat -->
-    <string name="patStranger_url" translatable="false">/pat/patStranger</string>
+    <!-- <string name="patStranger_url" translatable="false">/pat/patStranger</string> -->
+    <string name="patStranger_url" translatable="false">/patStranger.action</string>
     <string name="getPattedStrangers_url" translatable="false">/pat/getPatList</string>
 
 </resources>

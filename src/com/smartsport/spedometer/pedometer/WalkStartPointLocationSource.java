@@ -15,6 +15,7 @@ import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.LocationSource;
 import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.utils.SSLogger;
 
@@ -45,6 +46,11 @@ public class WalkStartPointLocationSource implements LocationSource {
 	// autoNavi map location listener
 	private AutoNaviMapLocationListener autoNaviMapLocationListener;
 
+	// walk point location info, walk speed and total distance
+	private LatLonPoint walkLatLonPoint;
+	private double walkSpeed;
+	private double walkDistance;
+
 	/**
 	 * @title WalkStartPointLocationSource
 	 * @descriptor walk start point location source constructor
@@ -71,6 +77,18 @@ public class WalkStartPointLocationSource implements LocationSource {
 		// save activity context and autoNavi map
 		this.context = context;
 		this.autoNaviMap = autoNaviMap;
+	}
+
+	public LatLonPoint getWalkLatLonPoint() {
+		return walkLatLonPoint;
+	}
+
+	public double getWalkSpeed() {
+		return walkSpeed;
+	}
+
+	public double getWalkDistance() {
+		return walkDistance;
 	}
 
 	@Override
@@ -137,7 +155,14 @@ public class WalkStartPointLocationSource implements LocationSource {
 
 		@Override
 		public void onLocationChanged(AMapLocation autoNaviMapLocation) {
-			LOGGER.info("@@@, autoNaviMapLocation = " + autoNaviMapLocation);
+			LOGGER.info("onLocationChanged, auto navi map location = "
+					+ autoNaviMapLocation);
+
+			// save walk latitude, longitude point and walk speed
+			walkLatLonPoint = new LatLonPoint(
+					autoNaviMapLocation.getLatitude(),
+					autoNaviMapLocation.getLongitude());
+			walkSpeed = autoNaviMapLocation.getSpeed();
 
 			// check autoNavi map location changed listener and autoNavi map
 			// location
@@ -147,8 +172,8 @@ public class WalkStartPointLocationSource implements LocationSource {
 
 				// animate camera
 				autoNaviMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-						new LatLng(autoNaviMapLocation.getLatitude(),
-								autoNaviMapLocation.getLongitude()),
+						new LatLng(walkLatLonPoint.getLatitude(),
+								walkLatLonPoint.getLongitude()),
 						context.getResources().getInteger(
 								R.integer.config_autoNaviMap_zoomLevel)));
 			} else {

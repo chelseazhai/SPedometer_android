@@ -51,6 +51,11 @@ public class StrangerPatNetworkAdapter implements INetworkAdapter {
 					.getString(R.string.getNearbyUserReqParam_gender), String
 					.valueOf(strangerGender.getValue()));
 		}
+		// test by ares
+		else {
+			_getNearbyStrangersReqParam.put(NETWORK_ENGINE.getContext()
+					.getString(R.string.getNearbyUserReqParam_gender), null);
+		}
 
 		// check set user location info and set longitude and latitude to param
 		if (null != location) {
