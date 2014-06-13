@@ -29,7 +29,7 @@ public class NetworkUtils {
 	 * @return user common http request parameter
 	 * @author Ares
 	 */
-	public static Map<String, String> genUserComReqParam(int userId,
+	public static Map<String, String> genUserComReqParam(long userId,
 			String token) {
 		// define user common http request parameter
 		Map<String, String> _reqParam = new HashMap<String, String>();

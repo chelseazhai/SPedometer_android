@@ -47,6 +47,10 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 	private static final SSLogger LOGGER = new SSLogger(
 			UserInfoSettingActivity.class);
 
+	// pedometer login user
+	private UserPedometerExtBean loginUser = (UserPedometerExtBean) UserManager
+			.getInstance().getLoginUser();
+
 	// user info model
 	private UserInfoModel userInfoModel = UserInfoModel.getInstance();
 
@@ -78,30 +82,32 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 		setContentView(R.layout.activity_userinfo_setting);
 
 		// get user info from remote server
-		userInfoModel.getUserInfo(1002, "token", new ICMConnector() {
+		userInfoModel.getUserInfo(loginUser.getUserId(),
+				loginUser.getUserKey(), new ICMConnector() {
 
-			@Override
-			public void onSuccess(Object... retValue) {
-				// check return values
-				if (null != retValue
-						&& 0 < retValue.length
-						&& retValue[retValue.length - 1] instanceof UserInfoBean) {
-					// get the user info object and update its info for setting
-					updateUserInfo((UserInfoBean) retValue[retValue.length - 1]);
-				} else {
-					LOGGER.error("Update user info for setting UI error");
-				}
-			}
+					@Override
+					public void onSuccess(Object... retValue) {
+						// check return values
+						if (null != retValue
+								&& 0 < retValue.length
+								&& retValue[retValue.length - 1] instanceof UserInfoBean) {
+							// get the user info object and update its info for
+							// setting
+							updateUserInfo((UserInfoBean) retValue[retValue.length - 1]);
+						} else {
+							LOGGER.error("Update user info for setting UI error");
+						}
+					}
 
-			@Override
-			public void onFailure(int errorCode, String errorMsg) {
-				LOGGER.error("Get user info from remote server error, error code = "
-						+ errorCode + " and message = " + errorMsg);
+					@Override
+					public void onFailure(int errorCode, String errorMsg) {
+						LOGGER.error("Get user info from remote server error, error code = "
+								+ errorCode + " and message = " + errorMsg);
 
-				//
-			}
+						//
+					}
 
-		});
+				});
 	}
 
 	@Override
@@ -186,17 +192,30 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 	 */
 	private void updateUserInfo(UserInfoBean userInfo) {
 		// update user info for setting listView UI
-		userInfo4SettingListViewAdapter.setData(
-				UserInfoAttr4Setting.USER_GENDER, userInfo.getGender()
-						.getLabel());
-		userInfo4SettingListViewAdapter.setData(UserInfoAttr4Setting.USER_AGE,
-				String.valueOf(userInfo.getAge()));
-		userInfo4SettingListViewAdapter.setData(
-				UserInfoAttr4Setting.USER_HEIGHT,
-				String.valueOf(userInfo.getHeight()));
-		userInfo4SettingListViewAdapter.setData(
-				UserInfoAttr4Setting.USER_WEIGHT,
-				String.valueOf(userInfo.getWeight()));
+		// gender
+		if (null != userInfo.getGender()) {
+			userInfo4SettingListViewAdapter.setData(
+					UserInfoAttr4Setting.USER_GENDER, userInfo.getGender()
+							.getLabel());
+		}
+		// age
+		if (0 <= userInfo.getAge()) {
+			userInfo4SettingListViewAdapter.setData(
+					UserInfoAttr4Setting.USER_AGE,
+					String.valueOf(userInfo.getAge()));
+		}
+		// height
+		if (0 <= userInfo.getHeight()) {
+			userInfo4SettingListViewAdapter.setData(
+					UserInfoAttr4Setting.USER_HEIGHT,
+					String.valueOf(userInfo.getHeight()));
+		}
+		// weight
+		if (0 <= userInfo.getWeight()) {
+			userInfo4SettingListViewAdapter.setData(
+					UserInfoAttr4Setting.USER_WEIGHT,
+					String.valueOf(userInfo.getWeight()));
+		}
 	}
 
 	// inner class
@@ -262,8 +281,8 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 						if (!"".equalsIgnoreCase(_editorValue)) {
 							userInfoModel
 									.updateUserInfo(
-											1002,
-											"token",
+											loginUser.getUserId(),
+											loginUser.getUserKey(),
 											UserInfoAttr4Setting.USER_AGE == _editorAttr
 													&& null != _editorValue ? Integer
 													.parseInt(_editorValue)

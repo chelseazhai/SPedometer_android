@@ -37,7 +37,7 @@ public class StrangerPatNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void getNearbyStrangers(int userId, String token,
+	public void getNearbyStrangers(long userId, String token,
 			UserGender strangerGender, LocationBean location,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
@@ -92,7 +92,7 @@ public class StrangerPatNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void patStranger(int userId, String token, int strangerId,
+	public void patStranger(long userId, String token, long strangerId,
 			LatLonPoint patLocation,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
@@ -137,7 +137,7 @@ public class StrangerPatNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void getPattedStrangers(int userId, String token,
+	public void getPattedStrangers(long userId, String token,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// send get stranger list who patted the user asynchronous post http
 		// request

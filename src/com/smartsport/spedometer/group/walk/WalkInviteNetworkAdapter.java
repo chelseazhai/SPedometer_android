@@ -35,7 +35,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void inviteWalk(int userId, String token, int inviteeId,
+	public void inviteWalk(long userId, String token, long inviteeId,
 			GroupInviteInfoBean inviteInfo,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
@@ -78,7 +78,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void respondWalkInvite(int userId, String token, String tmpGroupId,
+	public void respondWalkInvite(long userId, String token, String tmpGroupId,
 			boolean isAgreed, AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _respondWalkInviteReqParam = NetworkUtils
@@ -116,7 +116,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void startWalking(int userId, String token, String groupId,
+	public void startWalking(long userId, String token, String groupId,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _startWalkingReqParam = NetworkUtils
@@ -146,7 +146,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void stopWalking(int userId, String token, String groupId,
+	public void stopWalking(long userId, String token, String groupId,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _stopWalkingReqParam = NetworkUtils
@@ -183,7 +183,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void publishWalkingInfo(int userId, String token, String groupId,
+	public void publishWalkingInfo(long userId, String token, String groupId,
 			LatLonPoint walkingLocation, int totalStep, double totalDistance,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
@@ -237,8 +237,8 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void getPartnerWalkingInfo(int userId, String token, String groupId,
-			long lastFetchTimestamp,
+	public void getPartnerWalkingInfo(long userId, String token,
+			String groupId, long lastFetchTimestamp,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _getPartnerWalkingInfoReqParam = NetworkUtils

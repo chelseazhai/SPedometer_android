@@ -32,6 +32,8 @@ import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.user.UserInfoBean;
 import com.smartsport.spedometer.user.UserInfoModel;
+import com.smartsport.spedometer.user.UserManager;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -98,46 +100,53 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 		// set content view
 		setContentView(R.layout.activity_withingroupcompete_invitee_select_layout);
 
+		// get pedometer login user
+		UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
+				.getInstance().getLoginUser();
+
 		// get user friend list from remote server
-		userInfoModel.getFriends(1002, "token", new ICMConnector() {
+		userInfoModel.getFriends(_loginUser.getUserId(),
+				_loginUser.getUserKey(), new ICMConnector() {
 
-			@SuppressWarnings("unchecked")
-			@Override
-			public void onSuccess(Object... retValue) {
-				// check return values
-				if (null != retValue && 0 < retValue.length
-						&& retValue[retValue.length - 1] instanceof List) {
-					// get the user friends info and update its listView for
-					// within group compete invitee selecting
-					withinGroupCompeteInviteeListViewAdapter
-							.setFriendsAsGroupInviteInvitees((List<UserInfoBean>) retValue[retValue.length - 1]);
+					@SuppressWarnings("unchecked")
+					@Override
+					public void onSuccess(Object... retValue) {
+						// check return values
+						if (null != retValue
+								&& 0 < retValue.length
+								&& retValue[retValue.length - 1] instanceof List) {
+							// get the user friends info and update its listView
+							// for
+							// within group compete invitee selecting
+							withinGroupCompeteInviteeListViewAdapter
+									.setFriendsAsGroupInviteInvitees((List<UserInfoBean>) retValue[retValue.length - 1]);
 
-					// set the selected within group compete invitees be
-					// selected
-					setSelectedCompeteInviteesBeSelected();
+							// set the selected within group compete invitees be
+							// selected
+							setSelectedCompeteInviteesBeSelected();
 
-					// check the selected invitee list
-					if (null != selectedInviteeList) {
-						// set selected within group compete invitees
-						selectedInviteesHorizontalListViewAdapter
-								.setSelectedInvitees(selectedInviteeList);
-					} else {
-						LOGGER.warning("There is no selected invitees for within group compete invitee selecting");
+							// check the selected invitee list
+							if (null != selectedInviteeList) {
+								// set selected within group compete invitees
+								selectedInviteesHorizontalListViewAdapter
+										.setSelectedInvitees(selectedInviteeList);
+							} else {
+								LOGGER.warning("There is no selected invitees for within group compete invitee selecting");
+							}
+						} else {
+							LOGGER.error("Update user friends for within group compete invitee select UI error");
+						}
 					}
-				} else {
-					LOGGER.error("Update user friends for within group compete invitee select UI error");
-				}
-			}
 
-			@Override
-			public void onFailure(int errorCode, String errorMsg) {
-				LOGGER.error("Get user friends from remote server error, error code = "
-						+ errorCode + " and message = " + errorMsg);
+					@Override
+					public void onFailure(int errorCode, String errorMsg) {
+						LOGGER.error("Get user friends from remote server error, error code = "
+								+ errorCode + " and message = " + errorMsg);
 
-				//
-			}
+						//
+					}
 
-		});
+				});
 	}
 
 	@Override

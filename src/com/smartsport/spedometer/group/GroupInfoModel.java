@@ -75,7 +75,7 @@ public class GroupInfoModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void getUserScheduleGroups(int userId, String token,
+	public void getUserScheduleGroups(long userId, String token,
 			final GroupType groupType, final ICMConnector executant) {
 		// get user all schedule groups with user id, token and schedule group
 		// type
@@ -172,7 +172,7 @@ public class GroupInfoModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void getUserScheduleGroupInfo(int userId, String token,
+	public void getUserScheduleGroupInfo(long userId, String token,
 			final String groupId, final ICMConnector executant) {
 		// get user schedule group info with user id, token and schedule group
 		// id
@@ -238,7 +238,7 @@ public class GroupInfoModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void getUserHistoryGroups(int userId, String token,
+	public void getUserHistoryGroups(long userId, String token,
 			ICMConnector executant) {
 		// get user all history groups with user id and token
 		((GroupInfoNetworkAdapter) NetworkAdapter.getInstance()
@@ -318,7 +318,7 @@ public class GroupInfoModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void getUserHistoryGroupInfo(int userId, String token,
+	public void getUserHistoryGroupInfo(long userId, String token,
 			final String groupId, ICMConnector executant) {
 		// get user history group info with user id, token and history group id
 		((GroupInfoNetworkAdapter) NetworkAdapter.getInstance()

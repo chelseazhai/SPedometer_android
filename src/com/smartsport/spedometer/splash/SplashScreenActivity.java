@@ -7,6 +7,8 @@ import android.widget.ImageView;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.mvc.PedometerActivity;
+import com.smartsport.spedometer.user.UserManager;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -65,6 +67,19 @@ public class SplashScreenActivity extends Activity implements IAppLaunch {
 		// sleep 2 seconds
 		try {
 			Thread.sleep(2 * 1000L);
+
+			// test by ares
+			// generate pedometer login user object
+			UserPedometerExtBean _pedometerLoginUser = new UserPedometerExtBean();
+			_pedometerLoginUser.setLoginName("18001582338");
+			_pedometerLoginUser.setLoginPwd("123123");
+			_pedometerLoginUser.setUserKey("token@ares");
+			_pedometerLoginUser.setUserId(447376200952006L);
+			_pedometerLoginUser
+					.setAvatarUrl("http://www.baidu.com/avatar/user1003");
+
+			// set pedometer login user
+			UserManager.getInstance().setLoginUser(_pedometerLoginUser);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

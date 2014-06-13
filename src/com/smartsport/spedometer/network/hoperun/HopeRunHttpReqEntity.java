@@ -60,7 +60,7 @@ public class HopeRunHttpReqEntity extends HopeRunHttpEntity {
 			Set<String> _reqParamMapKeys = _reqParamMap.keySet();
 			if (_reqParamMapKeys.contains(_userIdParam)) {
 				// set user id
-				setUserId(Integer.parseInt((String) MapUtils.pop(_reqParamMap,
+				setUserId(Long.parseLong((String) MapUtils.pop(_reqParamMap,
 						_userIdParam)));
 			}
 			if (_reqParamMapKeys.contains(_userAccessToken)) {

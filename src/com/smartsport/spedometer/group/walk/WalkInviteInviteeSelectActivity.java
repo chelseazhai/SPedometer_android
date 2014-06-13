@@ -25,6 +25,8 @@ import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.user.UserInfoBean;
 import com.smartsport.spedometer.user.UserInfoModel;
+import com.smartsport.spedometer.user.UserManager;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -68,33 +70,40 @@ public class WalkInviteInviteeSelectActivity extends SSBaseActivity {
 		// set content view
 		setContentView(R.layout.activity_walkinvite_invitee_select_layout);
 
+		// get pedometer login user
+		UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
+				.getInstance().getLoginUser();
+
 		// get user friend list from remote server
-		userInfoModel.getFriends(1002, "token", new ICMConnector() {
+		userInfoModel.getFriends(_loginUser.getUserId(),
+				_loginUser.getUserKey(), new ICMConnector() {
 
-			@SuppressWarnings("unchecked")
-			@Override
-			public void onSuccess(Object... retValue) {
-				// check return values
-				if (null != retValue && 0 < retValue.length
-						&& retValue[retValue.length - 1] instanceof List) {
-					// get the user friends info and update its listView for
-					// walk invite invitee selecting
-					walkInviteInviteeListViewAdapter
-							.setFriendsAsGroupInviteInvitees((List<UserInfoBean>) retValue[retValue.length - 1]);
-				} else {
-					LOGGER.error("Update user friends for walk invite invitee select UI error");
-				}
-			}
+					@SuppressWarnings("unchecked")
+					@Override
+					public void onSuccess(Object... retValue) {
+						// check return values
+						if (null != retValue
+								&& 0 < retValue.length
+								&& retValue[retValue.length - 1] instanceof List) {
+							// get the user friends info and update its listView
+							// for
+							// walk invite invitee selecting
+							walkInviteInviteeListViewAdapter
+									.setFriendsAsGroupInviteInvitees((List<UserInfoBean>) retValue[retValue.length - 1]);
+						} else {
+							LOGGER.error("Update user friends for walk invite invitee select UI error");
+						}
+					}
 
-			@Override
-			public void onFailure(int errorCode, String errorMsg) {
-				LOGGER.error("Get user friends from remote server error, error code = "
-						+ errorCode + " and message = " + errorMsg);
+					@Override
+					public void onFailure(int errorCode, String errorMsg) {
+						LOGGER.error("Get user friends from remote server error, error code = "
+								+ errorCode + " and message = " + errorMsg);
 
-				//
-			}
+						//
+					}
 
-		});
+				});
 	}
 
 	@Override

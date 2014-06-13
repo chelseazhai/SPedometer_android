@@ -40,6 +40,8 @@ import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.pedometer.WalkInfoType;
 import com.smartsport.spedometer.pedometer.WalkStartPointLocationSource;
 import com.smartsport.spedometer.user.UserGender;
+import com.smartsport.spedometer.user.UserManager;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -60,6 +62,10 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 
 	// within group compete attendees walk timer
 	private Timer WALK_TIMER = new Timer();
+
+	// pedometer login user
+	private UserPedometerExtBean loginUser = (UserPedometerExtBean) UserManager
+			.getInstance().getLoginUser();
 
 	// group info and within group compete model
 	private GroupInfoModel groupInfoModel = GroupInfoModel.getInstance();
@@ -124,8 +130,8 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 		// check the within group compete group id and get its info from remote
 		// server
 		if (null != competeGroupId) {
-			groupInfoModel.getUserScheduleGroupInfo(1002, "token",
-					competeGroupId, new ICMConnector() {
+			groupInfoModel.getUserScheduleGroupInfo(loginUser.getUserId(),
+					loginUser.getUserKey(), competeGroupId, new ICMConnector() {
 
 						@Override
 						public void onSuccess(Object... retValue) {

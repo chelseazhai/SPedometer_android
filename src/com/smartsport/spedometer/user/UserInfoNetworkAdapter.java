@@ -29,7 +29,7 @@ public class UserInfoNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void getUserInfo(int userId, String token,
+	public void getUserInfo(long userId, String token,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// send get user info asynchronous post http request
 		NETWORK_ENGINE
@@ -59,7 +59,7 @@ public class UserInfoNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void updateUserInfo(int userId, String token, Integer age,
+	public void updateUserInfo(long userId, String token, Integer age,
 			UserGender gender, Float height, Float weight,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
@@ -110,7 +110,7 @@ public class UserInfoNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void getFriends(int userId, String token,
+	public void getFriends(long userId, String token,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// send get user friend list asynchronous post http request
 		NETWORK_ENGINE.postWithAPI(

@@ -11,6 +11,8 @@ import java.util.Map;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.Gravity;
@@ -36,6 +38,8 @@ import com.smartsport.spedometer.strangersocial.pat.StrangerPatActivity.Stranger
 import com.smartsport.spedometer.strangersocial.pat.StrangerPatModel;
 import com.smartsport.spedometer.strangersocial.pat.UserInfoPatLocationExtBean;
 import com.smartsport.spedometer.user.UserGender;
+import com.smartsport.spedometer.user.UserManager;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -67,12 +71,22 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// get location manager
+		LocationManager _locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
 		// load nearby strangers gender and user location info from local
 		// storage
 		// test by ares
 		sStrangerGender = null;
 		sUserLocation = new LocationBean(118.769790, 32.066336);
 		//
+		// get and check location
+		Location _location = _locationManager
+				.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+		if (null != _location) {
+			sUserLocation = new LocationBean(_location.getLongitude(),
+					_location.getLatitude());
+		}
 
 		// // test by ares
 		// for (int i = 0; i < 12; i++) {
@@ -156,9 +170,14 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 	 * @author Ares
 	 */
 	private static void getNearbyStrangers() {
+		// get pedometer login user
+		UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
+				.getInstance().getLoginUser();
+
 		// get nearby strangers with user location info from remote server
-		sStrangerPatModel.getNearbyStrangers(1002, "token", sStrangerGender,
-				sUserLocation, new ICMConnector() {
+		sStrangerPatModel.getNearbyStrangers(_loginUser.getUserId(),
+				_loginUser.getUserKey(), sStrangerGender, sUserLocation,
+				new ICMConnector() {
 
 					@SuppressWarnings("unchecked")
 					@Override

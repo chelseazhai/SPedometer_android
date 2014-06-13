@@ -23,6 +23,8 @@ import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.strangersocial.LocationBean;
 import com.smartsport.spedometer.strangersocial.NearbyStrangersActivity.NearbyStrangersExtraData;
 import com.smartsport.spedometer.user.UserGender;
+import com.smartsport.spedometer.user.UserManager;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -207,9 +209,13 @@ public class StrangerPatActivity extends SSBaseActivity {
 		public void onClick(View v) {
 			// check the pat stranger info and user pat location
 			if (null != strangerInfo && null != userPatLocation) {
+				// get pedometer login user
+				UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
+						.getInstance().getLoginUser();
+
 				// pat the nearby stranger
-				strangerPatModel.patStranger(1002, "token",
-						strangerInfo.getUserId(),
+				strangerPatModel.patStranger(_loginUser.getUserId(),
+						_loginUser.getUserKey(), strangerInfo.getUserId(),
 						userPatLocation.toLatLonPoint(), new ICMConnector() {
 
 							@Override

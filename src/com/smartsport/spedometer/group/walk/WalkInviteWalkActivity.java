@@ -43,6 +43,8 @@ import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.pedometer.WalkInfoType;
 import com.smartsport.spedometer.pedometer.WalkStartPointLocationSource;
 import com.smartsport.spedometer.user.UserInfoBean;
+import com.smartsport.spedometer.user.UserManager;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -64,6 +66,10 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 	// walk invite attendees walk timer
 	private Timer WALK_TIMER = new Timer();
+
+	// pedometer login user
+	private UserPedometerExtBean loginUser = (UserPedometerExtBean) UserManager
+			.getInstance().getLoginUser();
 
 	// group info and walk invite model
 	private GroupInfoModel groupInfoModel = GroupInfoModel.getInstance();
@@ -137,8 +143,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		// check the schedule walk invite group id and then get its info from
 		// remote server
 		if (null != scheduleWalkInviteGroupId) {
-			groupInfoModel.getUserScheduleGroupInfo(1002, "token",
-					scheduleWalkInviteGroupId, new ICMConnector() {
+			groupInfoModel.getUserScheduleGroupInfo(loginUser.getUserId(),
+					loginUser.getUserKey(), scheduleWalkInviteGroupId,
+					new ICMConnector() {
 
 						@Override
 						public void onSuccess(Object... retValue) {
@@ -169,7 +176,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 										.getMembersInfo()) {
 									// update walk invite inviter avatar and
 									// invitee user info
-									if (1002 == _userInfoMemberStatus
+									if (loginUser.getUserId() == _userInfoMemberStatus
 											.getUserId()) {
 										// inviter
 										// update walk invite inviter avatar
@@ -821,7 +828,8 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 					// check walk invite group id and then set attendee start
 					// walk
 					if (null != scheduleWalkInviteGroupId) {
-						walkInviteModel.startWalking(1002, "token",
+						walkInviteModel.startWalking(loginUser.getUserId(),
+								loginUser.getUserKey(),
 								scheduleWalkInviteGroupId, new ICMConnector() {
 
 									@Override
@@ -860,8 +868,10 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 																// walk info
 																walkInviteModel
 																		.publishWalkingInfo(
-																				1002,
-																				"token",
+																				loginUser
+																						.getUserId(),
+																				loginUser
+																						.getUserKey(),
 																				scheduleWalkInviteGroupId,
 																				autoNaviMapLocationSource
 																						.getWalkLatLonPoint(),
@@ -918,7 +928,8 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 					if (null != scheduleWalkInviteGroupId) {
 						// check walk invite group id and then set attendee stop
 						// walk
-						walkInviteModel.stopWalking(1002, "token",
+						walkInviteModel.stopWalking(loginUser.getUserId(),
+								loginUser.getUserKey(),
 								scheduleWalkInviteGroupId, new ICMConnector() {
 
 									@Override

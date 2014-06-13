@@ -31,7 +31,7 @@ public class GroupInfoNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void getUserScheduleGroups(int userId, String token,
+	public void getUserScheduleGroups(long userId, String token,
 			GroupType groupType,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
@@ -64,7 +64,7 @@ public class GroupInfoNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void getUserScheduleGroupInfo(int userId, String token,
+	public void getUserScheduleGroupInfo(long userId, String token,
 			String groupId, AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _getUserScheduleGroupInfoReqParam = NetworkUtils
@@ -93,7 +93,7 @@ public class GroupInfoNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void getUserHistoryGroups(int userId, String token,
+	public void getUserHistoryGroups(long userId, String token,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// send get user history group list asynchronous post http request
 		NETWORK_ENGINE.postWithAPI(
@@ -116,7 +116,7 @@ public class GroupInfoNetworkAdapter implements INetworkAdapter {
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
-	public void getUserHistoryGroupInfo(int userId, String token,
+	public void getUserHistoryGroupInfo(long userId, String token,
 			String groupId, AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _getUserHistoryGroupInfoReqParam = NetworkUtils

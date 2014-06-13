@@ -84,7 +84,7 @@ public class UserInfoModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void getUserInfo(final int userId, String token,
+	public void getUserInfo(final long userId, String token,
 			final ICMConnector executant) {
 		// get user info with user id and token
 		((UserInfoNetworkAdapter) NetworkAdapter.getInstance()
@@ -146,7 +146,7 @@ public class UserInfoModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void updateUserInfo(final int userId, String token, Integer age,
+	public void updateUserInfo(final long userId, String token, Integer age,
 			UserGender gender, Float height, Float weight,
 			final ICMConnector executant) {
 		// update user info with user id, token and need to update user
@@ -259,7 +259,7 @@ public class UserInfoModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void getFriends(int userId, String token,
+	public void getFriends(long userId, String token,
 			final ICMConnector executant) {
 		// get user all friends with user id and token
 		((UserInfoNetworkAdapter) NetworkAdapter.getInstance()

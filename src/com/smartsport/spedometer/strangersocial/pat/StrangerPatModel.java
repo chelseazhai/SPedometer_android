@@ -83,7 +83,7 @@ public class StrangerPatModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void getNearbyStrangers(int userId, String token,
+	public void getNearbyStrangers(long userId, String token,
 			UserGender strangerGender, LocationBean location,
 			final ICMConnector executant) {
 		// get user nearby strangers info with user id, token, location info and
@@ -167,7 +167,7 @@ public class StrangerPatModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void patStranger(int userId, String token, final int strangerId,
+	public void patStranger(long userId, String token, final long strangerId,
 			LatLonPoint patLocation, final ICMConnector executant) {
 		// pat nearby stranger with user id, token, pat stranger id and pat
 		// location info
@@ -267,7 +267,7 @@ public class StrangerPatModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void getPattedStrangers(int userId, String token,
+	public void getPattedStrangers(long userId, String token,
 			ICMConnector executant) {
 		// get patted strangers with user id and token
 		((StrangerPatNetworkAdapter) NetworkAdapter.getInstance()

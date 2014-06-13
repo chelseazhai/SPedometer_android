@@ -34,7 +34,7 @@ public class UserInfoBean implements Serializable {
 	protected transient Context context;
 
 	// user id, nickname, avatar url, age, gender, height and weight
-	private int userId;
+	private long userId;
 	private String nickname;
 	private String avatarUrl;
 	private int age;
@@ -72,11 +72,11 @@ public class UserInfoBean implements Serializable {
 		parseUserInfo(info);
 	}
 
-	public int getUserId() {
+	public long getUserId() {
 		return userId;
 	}
 
-	public void setUserId(int userId) {
+	public void setUserId(long userId) {
 		this.userId = userId;
 	}
 
@@ -155,8 +155,8 @@ public class UserInfoBean implements Serializable {
 			// check if there is or not user id
 			if (JSONUtils.jsonObjectKeys(info).contains(_userIdKeystring)) {
 				try {
-					userId = Integer.parseInt(JSONUtils
-							.getStringFromJSONObject(info, _userIdKeystring));
+					userId = Long.parseLong(JSONUtils.getStringFromJSONObject(
+							info, _userIdKeystring));
 				} catch (NumberFormatException e) {
 					LOGGER.error("Get user id integer from user info json object = "
 							+ info

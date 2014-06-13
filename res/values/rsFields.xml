@@ -190,6 +190,7 @@
 
     <!-- within group compete walk distance and velocity publish -->
     <string name="publishWithinGroupCompeteWalkInfoReqParam_groupId" translatable="false">groupId</string>
+    <string name="publishWithinGroupCompeteWalkInfoReqParam_walkTotalStep" translatable="false">totalStep</string>
     <string name="publishWithinGroupCompeteWalkInfoReqParam_walkTotalDistance" translatable="false">totalDistance</string>
     <string name="publishWithinGroupCompeteWalkInfoReqParam_walkVelocity" translatable="false">velocity</string>
 

@@ -34,6 +34,8 @@ import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.user.UserInfoBean;
+import com.smartsport.spedometer.user.UserManager;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -262,9 +264,14 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 					_walkInviteInfo.setEndTime(Long.parseLong(_scheduleEndTime)
 							/ MILLISECONDS_PER_SECOND);
 
+					// get pedometer login user
+					UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
+							.getInstance().getLoginUser();
+
 					// send walk invite info with the selected user friend info
 					// to remote server
-					walkInviteModel.inviteWalk(1002, "token",
+					walkInviteModel.inviteWalk(_loginUser.getUserId(),
+							_loginUser.getUserKey(),
 							selectedWalkInviteInvitee.getUserId(),
 							_walkInviteInfo, new ICMConnector() {
 

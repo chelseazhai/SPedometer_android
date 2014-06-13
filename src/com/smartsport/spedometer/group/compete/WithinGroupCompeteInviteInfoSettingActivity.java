@@ -41,6 +41,8 @@ import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.user.UserInfoBean;
+import com.smartsport.spedometer.user.UserManager;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -166,9 +168,9 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 	 * @return the within group compete invitee id list
 	 * @author Ares
 	 */
-	private List<Integer> getWithinGroupCompeteInviteeIds() {
+	private List<Long> getWithinGroupCompeteInviteeIds() {
 		// define within group compete invitee id list
-		List<Integer> _competeInviteesIdList = new ArrayList<Integer>();
+		List<Long> _competeInviteesIdList = new ArrayList<Long>();
 
 		// check selected within group compete invitees bean list
 		if (null != selectedWithinGroupCompeteInvitees) {
@@ -336,10 +338,15 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 					_withinGroupCompeteInviteInfo
 							.setDuration(_competeScheduleDurationTime);
 
+					// get pedometer login user
+					UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
+							.getInstance().getLoginUser();
+
 					// send within group compete invite info with the selected
 					// user friends info list to remote server
-					withinGroupCompeteModel.inviteWithinGroupCompete(1002,
-							"token", getWithinGroupCompeteInviteeIds(),
+					withinGroupCompeteModel.inviteWithinGroupCompete(
+							_loginUser.getUserId(), _loginUser.getUserKey(),
+							getWithinGroupCompeteInviteeIds(),
 							_withinGroupCompeteInviteInfo, new ICMConnector() {
 
 								@Override
@@ -388,7 +395,7 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 										// test by ares
 										// get within group compete invite one
 										// of the invitee user id and group id
-										final int _inviteeUserId = selectedWithinGroupCompeteInvitees
+										final long _inviteeUserId = selectedWithinGroupCompeteInvitees
 												.get(0).getUserId();
 										final String _competeGroupId = (String) retValue[0];
 										new Timer().schedule(new TimerTask() {
@@ -453,7 +460,7 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 																});
 											}
 
-										}, 10 * MILLISECONDS_PER_SECOND);
+										}, 15 * MILLISECONDS_PER_SECOND);
 									} else {
 										LOGGER.error("Pop the within group compete invite info setting activity and push to within group compete walk activity error");
 									}

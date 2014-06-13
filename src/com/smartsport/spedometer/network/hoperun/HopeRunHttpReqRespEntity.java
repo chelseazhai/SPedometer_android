@@ -138,7 +138,7 @@ public class HopeRunHttpReqRespEntity extends HopeRunHttpEntity {
 						.equalsIgnoreCase(_respHeaderKey)) {
 					// user id
 					try {
-						setUserId(Integer.parseInt(_headerStringValue));
+						setUserId(Long.parseLong(_headerStringValue));
 					} catch (NumberFormatException e) {
 						LOGGER.error("Set request response header user id error, exception message = "
 								+ e.getMessage());

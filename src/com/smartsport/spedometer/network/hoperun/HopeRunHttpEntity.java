@@ -29,7 +29,7 @@ public abstract class HopeRunHttpEntity {
 	// header
 	// user id, access token, user type, device id, type, os version,
 	// application id, version, function id
-	private Integer userId;
+	private Long userId;
 	private String accessToken;
 	private String userType;
 	private String deviceId;
@@ -53,11 +53,11 @@ public abstract class HopeRunHttpEntity {
 		body = new HashMap<String, String>();
 	}
 
-	public Integer getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Integer userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 
 		// put user id to hope run http entity header

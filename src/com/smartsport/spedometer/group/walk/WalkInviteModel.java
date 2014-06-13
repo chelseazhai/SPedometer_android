@@ -82,7 +82,7 @@ public class WalkInviteModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void inviteWalk(int userId, String token, final int inviteeId,
+	public void inviteWalk(long userId, String token, final long inviteeId,
 			GroupInviteInfoBean inviteInfo, final ICMConnector executant) {
 		// invite one of user friends to walk together with his user id and walk
 		// invite info
@@ -160,7 +160,7 @@ public class WalkInviteModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void respondWalkInvite(int userId, String token,
+	public void respondWalkInvite(long userId, String token,
 			final String tmpGroupId, final boolean isAgreed,
 			final ICMConnector executant) {
 		// respond the friend walk together invite with temp group id and user
@@ -249,7 +249,7 @@ public class WalkInviteModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void startWalking(int userId, String token, final String groupId,
+	public void startWalking(long userId, String token, final String groupId,
 			final ICMConnector executant) {
 		// start one of your schedule walk group with the group id
 		((WalkInviteNetworkAdapter) NetworkAdapter.getInstance()
@@ -305,7 +305,7 @@ public class WalkInviteModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void stopWalking(int userId, String token, final String groupId,
+	public void stopWalking(long userId, String token, final String groupId,
 			final ICMConnector executant) {
 		// stop one of your walking group with the group id
 		((WalkInviteNetworkAdapter) NetworkAdapter.getInstance()
@@ -449,7 +449,7 @@ public class WalkInviteModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void publishWalkingInfo(int userId, String token,
+	public void publishWalkingInfo(long userId, String token,
 			final String groupId, final LatLonPoint walkingLocation,
 			final int totalStep, final double totalDistance,
 			final ICMConnector executant) {
@@ -518,7 +518,7 @@ public class WalkInviteModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void getPartnerWalkingInfo(int userId, String token,
+	public void getPartnerWalkingInfo(long userId, String token,
 			final String groupId, final long lastFetchTimestamp,
 			ICMConnector executant) {
 		// get the walking group partner walking info including walking location

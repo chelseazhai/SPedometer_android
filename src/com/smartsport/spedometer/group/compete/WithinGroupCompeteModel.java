@@ -72,8 +72,8 @@ public class WithinGroupCompeteModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void inviteWithinGroupCompete(int userId, String token,
-			final List<Integer> inviteesId, GroupInviteInfoBean inviteInfo,
+	public void inviteWithinGroupCompete(long userId, String token,
+			final List<Long> inviteesId, GroupInviteInfoBean inviteInfo,
 			final ICMConnector executant) {
 		// invite more than one of user friends to walk compete with their user
 		// id list and within group walk compete
@@ -198,7 +198,7 @@ public class WithinGroupCompeteModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void respondWithinGroupCompeteInvite(int userId, String token,
+	public void respondWithinGroupCompeteInvite(long userId, String token,
 			final String groupId, final boolean isAgreed,
 			final ICMConnector executant) {
 		// respond the within group walk compete invite with compete group id
@@ -338,22 +338,25 @@ public class WithinGroupCompeteModel {
 	 *            : the walk compete group id
 	 * @param walkingVelocity
 	 *            : walking velocity
+	 * @param totalStep
+	 *            : walking total step
 	 * @param totalDistance
 	 *            : walking total distance
 	 * @param executant
 	 *            :
 	 * @author Ares
 	 */
-	public void publishWithinGroupCompeteWalkingInfo(int userId, String token,
+	public void publishWithinGroupCompeteWalkingInfo(long userId, String token,
 			final String groupId, final float walkingVelocity,
-			final int totalDistance, ICMConnector executant) {
+			final int totalStep, final double totalDistance,
+			ICMConnector executant) {
 		// publish within group compete user walking info with group id, walking
 		// velocity and total distance
 		((WithinGroupCompeteNetworkAdapter) NetworkAdapter
 				.getInstance()
 				.getWorkerNetworkAdapter(WithinGroupCompeteNetworkAdapter.class))
 				.publishWithinGroupCompeteWalkingInfo(userId, token, groupId,
-						walkingVelocity, totalDistance,
+						walkingVelocity, totalStep, totalDistance,
 						new AsyncHttpRespJSONHandler() {
 
 							@Override
@@ -375,11 +378,14 @@ public class WithinGroupCompeteModel {
 										+ groupId
 										+ ", walking velocity = "
 										+ walkingVelocity
-										+ ", total distance = "
+										+ ", total step = "
+										+ totalStep
+										+ ", distance = "
 										+ totalDistance
 										+ ", status code = "
 										+ statusCode
-										+ " and error message = " + errorMsg);
+										+ " and error message = "
+										+ errorMsg);
 
 								// publish within group compete user walking
 								// info failed
@@ -403,7 +409,7 @@ public class WithinGroupCompeteModel {
 	 *            :
 	 * @author Ares
 	 */
-	public void getWithinGroupCompeteWalkingInfo(int userId, String token,
+	public void getWithinGroupCompeteWalkingInfo(long userId, String token,
 			final String groupId, ICMConnector executant) {
 		// get within group compete each member walking info including walking
 		// velocity and total distance with group id

@@ -43,6 +43,8 @@ import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.user.UserInfoBean;
+import com.smartsport.spedometer.user.UserManager;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -97,9 +99,14 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 		// set content view
 		setContentView(R.layout.activity_schedule_walkinvite_groups);
 
+		// get pedometer login user
+		UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
+				.getInstance().getLoginUser();
+
 		// get schedule walk invite group list from remote server
-		groupInfoModel.getUserScheduleGroups(1002, "token",
-				GroupType.WALK_GROUP, new ICMConnector() {
+		groupInfoModel.getUserScheduleGroups(_loginUser.getUserId(),
+				_loginUser.getUserKey(), GroupType.WALK_GROUP,
+				new ICMConnector() {
 
 					@SuppressWarnings("unchecked")
 					@Override
