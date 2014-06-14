@@ -34,7 +34,7 @@
                 android:checked="true"
                 android:gravity="center"
                 android:text="@string/personalPedometer_historyInfo_segment_title"
-                android:textColor="@android:color/white" />
+                android:textColor="@color/historyinfo_segment_title_textcolor" />
 
             <RadioButton
                 android:id="@+id/hi_walkInvite_historyGroup_segment"
@@ -46,7 +46,7 @@
                 android:button="@null"
                 android:gravity="center"
                 android:text="@string/walkInviteGroup_historyInfo_segment_title"
-                android:textColor="@android:color/white" />
+                android:textColor="@color/historyinfo_segment_title_textcolor" />
 
             <RadioButton
                 android:id="@+id/hi_withinGroupCompete_historyGroup_segment"
@@ -58,7 +58,7 @@
                 android:button="@null"
                 android:gravity="center"
                 android:text="@string/withinGroupCompeteGroup_historyInfo_segment_title"
-                android:textColor="@android:color/white" />
+                android:textColor="@color/historyinfo_segment_title_textcolor" />
 
             <RadioButton
                 android:id="@+id/hi_strangerPat_historyPattedStranger_segment"
@@ -70,7 +70,7 @@
                 android:button="@null"
                 android:gravity="center"
                 android:text="@string/strangerPat_historyInfo_segment_title"
-                android:textColor="@android:color/white" />
+                android:textColor="@color/historyinfo_segment_title_textcolor" />
         </RadioGroup>
 
         <View
