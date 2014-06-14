@@ -44,6 +44,12 @@
             android:theme="@style/AppBaseActivityTheme" >
         </activity>
         <activity
+            android:name=".pedometer.PersonalPedometerActivity"
+            android:label="@string/title_activity_personalPedometer"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseActivityTheme" >
+        </activity>
+        <activity
             android:name=".user.UserInfoSettingActivity"
             android:label="@string/title_activity_userinfo_setting"
             android:screenOrientation="portrait"
@@ -126,6 +132,12 @@
         <activity
             android:name=".strangersocial.pat.StrangerPatActivity"
             android:label="@string/title_activity_stranger_pat"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseActivityTheme" >
+        </activity>
+        <activity
+            android:name=".history.HistoryInfoActivity"
+            android:label="@string/title_activity_historyInfo"
             android:screenOrientation="portrait"
             android:theme="@style/AppBaseActivityTheme" >
         </activity>

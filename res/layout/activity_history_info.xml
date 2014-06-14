@@ -1,0 +1,112 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".history.HistoryInfoActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <LinearLayout
+        android:id="@+id/hi_user_historyInfo_segment_linearLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="57dp"
+        android:background="@color/light_light_gray"
+        android:orientation="vertical" >
+
+        <RadioGroup
+            android:id="@+id/hi_user_historyInfo_segment_radioGroup"
+            android:layout_width="fill_parent"
+            android:layout_height="36dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginRight="14dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/historyinfoitem_segment_radiogroup_bg"
+            android:orientation="horizontal"
+            android:padding="1dp" >
+
+            <RadioButton
+                android:id="@+id/hi_personalPedometer_historyInfo_segment"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@drawable/common_segment_multipleleft_item_bg"
+                android:button="@null"
+                android:checked="true"
+                android:gravity="center"
+                android:text="@string/personalPedometer_historyInfo_segment_title"
+                android:textColor="@android:color/white" />
+
+            <RadioButton
+                android:id="@+id/hi_walkInvite_historyGroup_segment"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/common_segment_multiplemiddle_item_bg"
+                android:button="@null"
+                android:gravity="center"
+                android:text="@string/walkInviteGroup_historyInfo_segment_title"
+                android:textColor="@android:color/white" />
+
+            <RadioButton
+                android:id="@+id/hi_withinGroupCompete_historyGroup_segment"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/common_segment_multiplemiddle_item_bg"
+                android:button="@null"
+                android:gravity="center"
+                android:text="@string/withinGroupCompeteGroup_historyInfo_segment_title"
+                android:textColor="@android:color/white" />
+
+            <RadioButton
+                android:id="@+id/hi_strangerPat_historyPattedStranger_segment"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="1dp"
+                android:layout_weight="1"
+                android:background="@drawable/common_segment_multipleright_item_bg"
+                android:button="@null"
+                android:gravity="center"
+                android:text="@string/strangerPat_historyInfo_segment_title"
+                android:textColor="@android:color/white" />
+        </RadioGroup>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_gray" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/hi_user_historyInfo_segment_linearLayout" >
+
+        <ViewStub
+            android:id="@+id/hi_personalPedometer_historyInfo_viewStub"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout="@layout/compete_attendees_walk_totaldistance_layout" />
+
+        <ViewStub
+            android:id="@+id/hi_walkInvite_historyGroup_viewStub"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout="@layout/compete_attendees_walk_speed_layout" />
+
+        <ViewStub
+            android:id="@+id/hi_withinGroupCompete_historyGroup_viewStub"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout="@layout/compete_attendees_walk_speed_layout" />
+
+        <ViewStub
+            android:id="@+id/hi_strangerPat_historyPattedStranger_viewStub"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout="@layout/compete_attendees_walk_speed_layout" />
+    </FrameLayout>
+
+</RelativeLayout>

@@ -10,9 +10,10 @@ import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
 import com.smartsport.spedometer.group.ScheduleWalkInviteGroupsActivity;
 import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteInfoSettingActivity;
+import com.smartsport.spedometer.history.HistoryInfoActivity;
+import com.smartsport.spedometer.pedometer.PersonalPedometerActivity;
 import com.smartsport.spedometer.strangersocial.NearbyStrangersActivity;
 import com.smartsport.spedometer.user.UserInfoSettingActivity;
-import com.smartsport.spedometer.utils.SSLogger;
 
 /**
  * @name PedometerActivity
@@ -22,12 +23,8 @@ import com.smartsport.spedometer.utils.SSLogger;
  */
 public class PedometerActivity extends SSBaseActivity {
 
-	// logger
-	private static final SSLogger LOGGER = new SSLogger(PedometerActivity.class);
-
-	// walk invite, within group compete and nearby strangers button
+	// walk invite and nearby strangers button
 	private Button walkInviteBtn;
-	private Button withinGroupCompeteBtn;
 	private Button nearbyStrangersBtn;
 
 	@Override
@@ -56,6 +53,13 @@ public class PedometerActivity extends SSBaseActivity {
 		setTitleSize(26.0f);
 		setShadow(1.0f, 0.6f, 0.8f, Color.GRAY);
 
+		// get personal pedometer button
+		Button _personalPedometerBtn = (Button) findViewById(R.id.p_personalPedometer_button);
+
+		// set its on click listener
+		_personalPedometerBtn
+				.setOnClickListener(new PersonalPedometerBtnOnClickListener());
+
 		// get walk invite button
 		walkInviteBtn = (Button) findViewById(R.id.pfc_walkInvite_button);
 
@@ -63,10 +67,10 @@ public class PedometerActivity extends SSBaseActivity {
 		walkInviteBtn.setOnClickListener(new WalkInviteBtnOnClickListener());
 
 		// get within group compete invite button
-		withinGroupCompeteBtn = (Button) findViewById(R.id.pfc_withinGroupCompete_button);
+		Button _withinGroupCompeteBtn = (Button) findViewById(R.id.pfc_withinGroupCompete_button);
 
 		// set its on click listener
-		withinGroupCompeteBtn
+		_withinGroupCompeteBtn
 				.setOnClickListener(new WithinGroupCompeteInviteBtnOnClickListener());
 
 		// get nearby stranger button
@@ -75,6 +79,12 @@ public class PedometerActivity extends SSBaseActivity {
 		// set its on click listener
 		nearbyStrangersBtn
 				.setOnClickListener(new GetNearbyStrangersBtnOnClickListener());
+
+		// get history info button
+		Button _historyInfoBtn = (Button) findViewById(R.id.pfc_historyRecord_button);
+
+		// set its on click listener
+		_historyInfoBtn.setOnClickListener(new HistoryInfoBtnOnClickListener());
 	}
 
 	// inner class
@@ -90,6 +100,22 @@ public class PedometerActivity extends SSBaseActivity {
 		public void onClick(View v) {
 			// go to user info setting activity
 			pushActivity(UserInfoSettingActivity.class);
+		}
+
+	}
+
+	/**
+	 * @name PersonalPedometerBtnOnClickListener
+	 * @descriptor personal pedometer button on click listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class PersonalPedometerBtnOnClickListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			// go to personal pedometer activity
+			presentActivity(PersonalPedometerActivity.class);
 		}
 
 	}
@@ -138,6 +164,22 @@ public class PedometerActivity extends SSBaseActivity {
 		public void onClick(View v) {
 			// go to nearby strangers activity
 			pushActivity(NearbyStrangersActivity.class);
+		}
+
+	}
+
+	/**
+	 * @name HistoryInfoBtnOnClickListener
+	 * @descriptor history info button on click listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class HistoryInfoBtnOnClickListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			// go to history info activity
+			pushActivity(HistoryInfoActivity.class);
 		}
 
 	}

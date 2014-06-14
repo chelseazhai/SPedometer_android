@@ -27,9 +27,9 @@
     <string name="nearbyStrangers_button_text">附近的人</string>
     <string name="historyRecord_button_text">历史记录</string>
 
-    <!-- step counter activity -->
-    <string name="title_activity_stepCounter" translatable="false">StepCounterActivity</string>
-    <string name="stepCounter_activity_title">个人计步器</string>
+    <!-- personal pedometer activity -->
+    <string name="title_activity_personalPedometer" translatable="false">PersonalPedometerActivity</string>
+    <string name="personalPedometer_activity_title">我的计步器</string>
     <string name="walkInfo_distance_unit">公里</string>
     <string name="walkInfo_step_unit">步</string>
     <string name="walkInfo_energy_unit">大卡</string>
@@ -198,6 +198,14 @@
     <string name="addStrangerAsFriend_limitPatCount_format">您还需拍他/她 %d 次可查看其个人信息</string>
     <string name="patStranger_button_text">拍肩</string>
     <string name="addAsFriend_button_text">加为好友</string>
+
+    <!-- history info activity -->
+    <string name="title_activity_historyInfo" translatable="false">HistoryInfoActivity</string>
+    <string name="historyInfo_activity_title">我的记录</string>
+    <string name="personalPedometer_historyInfo_segment_title">个人数据</string>
+    <string name="walkInviteGroup_historyInfo_segment_title">约走</string>
+    <string name="withinGroupCompeteGroup_historyInfo_segment_title">组内竞赛</string>
+    <string name="strangerPat_historyInfo_segment_title">拍肩</string>
 
     <!-- others -->
     <string name="title_activity_demo" translatable="false">DemoActivity</string>
