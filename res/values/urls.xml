@@ -3,7 +3,10 @@
 
     <!-- server root url -->
     <!-- <string name="server_rootUrl" translatable="false">http://192.168.0.54:8080/qmjs_FEP/pedometer</string> -->
+    <!-- <string name="server_rootUrl" translatable="false">http://10.20.126.17:8080/qmjs_FEP/pedometer</string> -->
     <string name="server_rootUrl" translatable="false">http://10.20.1.5:8080/qmjs_FEP/pedometer</string>
+    <!-- <string name="server_rootUrl" translatable="false">http://218.104.116.66:9091/qmjs_FEP/pedometer</string> -->
+
 
     <!-- user -->
     <!-- <string name="getUserInfo_url" translatable="false">/user/getUserInfo</string> -->

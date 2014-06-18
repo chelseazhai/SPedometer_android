@@ -14,6 +14,7 @@
     <!-- transparent color -->
     <color name="quarter_black_transparent">#40000000</color>
     <color name="half_black_transparent">#80000000</color>
+    <color name="threequarters_lightgray_transparent">#C0C0C0C0</color>
     <color name="little_white_transparent">#F0FFFFFF</color>
 
 </resources>

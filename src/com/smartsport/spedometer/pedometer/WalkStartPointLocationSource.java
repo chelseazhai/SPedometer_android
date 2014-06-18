@@ -6,6 +6,7 @@ package com.smartsport.spedometer.pedometer;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
@@ -31,11 +32,18 @@ public class WalkStartPointLocationSource implements LocationSource {
 	private final SSLogger LOGGER = new SSLogger(
 			WalkStartPointLocationSource.class);
 
+	// milliseconds per second
+	private static final int MILLISECONDS_PER_SECOND = 1000;
+
 	// activity context
 	private Context context;
 
 	// autoNavi map
 	private AMap autoNaviMap;
+
+	// located flag and locate timeout
+	private boolean isLocated;
+	private long locateTimeout;
 
 	// autoNavi map location changed listener
 	private OnLocationChangedListener locationChangedListener;
@@ -71,12 +79,31 @@ public class WalkStartPointLocationSource implements LocationSource {
 	 *            : autoNavi map
 	 * @author Ares
 	 */
-	public WalkStartPointLocationSource(Context context, AMap autoNaviMap) {
+	public WalkStartPointLocationSource(Context context, AMap autoNaviMap,
+			long locateTimtout) {
 		super();
 
 		// save activity context and autoNavi map
 		this.context = context;
 		this.autoNaviMap = autoNaviMap;
+
+		// save locate timeout
+		this.locateTimeout = locateTimtout;
+	}
+
+	/**
+	 * @title WalkStartPointLocationSource
+	 * @descriptor walk start point location source constructor with activity
+	 *             context and autoNavi map
+	 * @param context
+	 *            : activity context
+	 * @param autoNaviMap
+	 *            : autoNavi map
+	 * @author Ares
+	 */
+	public WalkStartPointLocationSource(Context context, AMap autoNaviMap) {
+		// locate default timeout(8 seconds)
+		this(context, autoNaviMap, 8 * MILLISECONDS_PER_SECOND);
 	}
 
 	public LatLonPoint getWalkLatLonPoint() {
@@ -89,6 +116,34 @@ public class WalkStartPointLocationSource implements LocationSource {
 
 	public double getWalkDistance() {
 		return walkDistance;
+	}
+
+	/**
+	 * @title getGPSStatus
+	 * @descriptor get GPS status
+	 * @return GPS status
+	 * @author Ares
+	 */
+	public void getGPSStatus() {
+		//
+	}
+
+	/**
+	 * @title locateSuccess
+	 * @descriptor locate successful notification
+	 * @author Ares
+	 */
+	protected void locateSuccess() {
+		// nothing to do
+	}
+
+	/**
+	 * @title locateTimeout
+	 * @descriptor locate timeout notification
+	 * @author Ares
+	 */
+	protected void locateTimeout() {
+		// nothing to do
 	}
 
 	@Override
@@ -107,6 +162,19 @@ public class WalkStartPointLocationSource implements LocationSource {
 							2000,
 							10,
 							autoNaviMapLocationListener = new AutoNaviMapLocationListener());
+
+			// set locate timeout, if locate timeout then stop locate
+			new Handler().postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					// check located flag and set locate timeout
+					if (!isLocated) {
+						locateTimeout();
+					}
+				}
+
+			}, locateTimeout);
 		}
 	}
 
@@ -157,6 +225,10 @@ public class WalkStartPointLocationSource implements LocationSource {
 		public void onLocationChanged(AMapLocation autoNaviMapLocation) {
 			LOGGER.info("onLocationChanged, auto navi map location = "
 					+ autoNaviMapLocation);
+
+			// locate successful
+			isLocated = true;
+			locateSuccess();
 
 			// save walk latitude, longitude point and walk speed
 			walkLatLonPoint = new LatLonPoint(

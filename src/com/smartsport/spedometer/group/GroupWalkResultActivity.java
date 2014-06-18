@@ -142,7 +142,7 @@ public class GroupWalkResultActivity extends SSBaseActivity {
 									: "分享多人组内竞赛结果成功", Toast.LENGTH_LONG).show();
 
 			// test by ares
-			// pop walk invite walk result activity
+			// pop walk invite or within group compete walk result activity
 			popActivityWithResult();
 		}
 

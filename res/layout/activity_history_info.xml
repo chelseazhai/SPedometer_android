@@ -88,25 +88,25 @@
             android:id="@+id/hi_personalPedometer_historyInfo_viewStub"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout="@layout/compete_attendees_walk_totaldistance_layout" />
+            android:layout="@layout/personalpedometer_walk_historyinfo_layout" />
 
         <ViewStub
             android:id="@+id/hi_walkInvite_historyGroup_viewStub"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout="@layout/compete_attendees_walk_speed_layout" />
+            android:layout="@layout/walkinvite_historygroup_layout" />
 
         <ViewStub
             android:id="@+id/hi_withinGroupCompete_historyGroup_viewStub"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout="@layout/compete_attendees_walk_speed_layout" />
+            android:layout="@layout/withingroupcompete_historygroup_layout" />
 
         <ViewStub
             android:id="@+id/hi_strangerPat_historyPattedStranger_viewStub"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout="@layout/compete_attendees_walk_speed_layout" />
+            android:layout="@layout/strangerpat_historypattedstranger_layout" />
     </FrameLayout>
 
 </RelativeLayout>

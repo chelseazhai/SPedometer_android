@@ -5,4 +5,256 @@
     tools:context=".pedometer.PersonalPedometerActivity"
     tools:ignore="MergeRootFrame" >
 
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <com.amap.api.maps2d.MapView
+            android:id="@+id/pp_user_walkPath_mapView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+        <RelativeLayout
+            android:id="@+id/pp_user_walkPath_mask_relativeLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/half_black_transparent"
+            android:paddingLeft="28dp"
+            android:paddingRight="28dp"
+            android:paddingTop="96dp" >
+
+            <TextView
+                android:id="@+id/pp_user_walkPath_location_gpsStatus_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:text="@string/walkPath_location_gps_searching"
+                android:textColor="@android:color/holo_orange_dark"
+                android:textSize="28sp" />
+
+            <LinearLayout
+                android:id="@+id/pp_user_walkInfo_sensor_imitate_linearLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/pp_user_walkPath_location_gpsStatus_textView"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/transparent"
+                android:orientation="vertical"
+                android:visibility="gone" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:text="@string/walkInfo_sensor_imitate"
+                    android:textColor="@android:color/white"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:text="@string/walkInfo_sensor_imitate_deviceHoldingPosture"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="68dp"
+        android:layout_marginRight="68dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/personalpedometer_walkpath_location_gpsstatus_bg"
+        android:orientation="horizontal"
+        android:padding="6dp" >
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="7"
+            android:contentDescription="@string/walkPath_gpsStatus_imageView_contentDescription"
+            android:scaleType="centerInside"
+            android:src="@android:drawable/btn_star_big_on" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_weight="4"
+            android:gravity="center_vertical|right"
+            android:text="@string/walkPath_gps_status"
+            android:textColor="@color/gray"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/pp_walkPath_GPSStatus_textView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="7"
+            android:gravity="center"
+            android:textColor="@android:color/holo_green_dark"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/pp_walkInfoAndControl_relativeLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" >
+
+        <Button
+            android:id="@+id/pp_walkInfo_slidingUp_button"
+            android:layout_width="fill_parent"
+            android:layout_height="20dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/img_walkinfo_slidingup_btn_bg"
+            android:enabled="false" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pp_walkInfo_slidingUp_button"
+            android:background="@color/little_white_transparent"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/pp_walkInfo_relativeLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="4dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:visibility="gone" >
+
+                <RelativeLayout
+                    android:id="@+id/pp_totalDistanceAndTime_relativeLayout"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp" >
+
+                    <Chronometer
+                        android:id="@+id/pp_walkDurationTime_chronometer"
+                        android:layout_width="64dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical|right"
+                        android:singleLine="true"
+                        android:textColor="@color/gray"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/pp_walkTotalDistance_textView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:layout_toLeftOf="@id/pp_walkDurationTime_chronometer"
+                        android:singleLine="true"
+                        android:textColor="@android:color/holo_green_dark"
+                        android:textSize="36sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+                <TableRow
+                    android:id="@+id/pp_stepAndEnergy_tableRow"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/pp_totalDistanceAndTime_relativeLayout" >
+
+                    <TextView
+                        android:id="@+id/pp_walkTotalStep_textView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        android:textColor="@color/gray"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/pp_walkEnergy_textView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:singleLine="true"
+                        android:textColor="@color/gray"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+                </TableRow>
+
+                <View
+                    android:id="@+id/pp_walkInfo_tableRow_deviderLine"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/pp_stepAndEnergy_tableRow"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/silver" />
+
+                <TableRow
+                    android:id="@+id/pp_speeds_tableRow"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/pp_walkInfo_tableRow_deviderLine"
+                    android:layout_marginTop="10dp" >
+
+                    <TextView
+                        android:id="@+id/pp_walkPace_textView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:lineSpacingExtra="4dp"
+                        android:lines="2"
+                        android:textColor="@android:color/holo_orange_dark"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/pp_walkSpeed_textView"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:lineSpacingExtra="4dp"
+                        android:lines="2"
+                        android:textColor="@color/gray"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+                </TableRow>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/pp_speeds_tableRow"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/silver" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/pp_walkControl_button"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="14dp"
+                android:background="@drawable/walk_startbutton_bg"
+                android:enabled="false"
+                android:text="@string/walkStart_button_text"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </RelativeLayout>
+
 </FrameLayout>

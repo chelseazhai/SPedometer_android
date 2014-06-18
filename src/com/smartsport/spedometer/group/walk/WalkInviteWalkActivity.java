@@ -954,7 +954,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 													.put(GroupWalkResultExtraData.GWR_GROUP_WALK_STARTTIME,
 															retValue[0]);
 											_extraMap
-													.put(GroupWalkResultExtraData.GWR_GROUP_WALK_STARTTIME,
+													.put(GroupWalkResultExtraData.GWR_GROUP_WALK_STOPTIME,
 															retValue[1]);
 											_extraMap
 													.put(GroupWalkResultExtraData.GWR_GROUP_ATTENDEES_WALKRESULT,

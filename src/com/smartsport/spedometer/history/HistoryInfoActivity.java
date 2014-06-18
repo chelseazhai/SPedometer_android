@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
+import com.smartsport.spedometer.utils.SSLogger;
 
 /**
  * @name HistoryInfoActivity
@@ -16,6 +17,10 @@ import com.smartsport.spedometer.mvc.SSBaseActivity;
  * @version 1.0
  */
 public class HistoryInfoActivity extends SSBaseActivity {
+
+	// logger
+	private static final SSLogger LOGGER = new SSLogger(
+			HistoryInfoActivity.class);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

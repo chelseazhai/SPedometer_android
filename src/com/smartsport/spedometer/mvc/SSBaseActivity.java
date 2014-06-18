@@ -241,6 +241,9 @@ public abstract class SSBaseActivity extends Activity {
 			}
 		} else {
 			LOGGER.warning("Can't set navigation bar left bar button item, left bar button item is null");
+
+			// invisible left bar button item
+			this.leftBarBtnItem.setVisibility(View.INVISIBLE);
 		}
 	}
 
@@ -288,6 +291,9 @@ public abstract class SSBaseActivity extends Activity {
 			}
 		} else {
 			LOGGER.warning("Can't set navigation bar right bar button item, right bar button item is null");
+
+			// invisible right bar button item
+			this.rightBarBtnItem.setVisibility(View.INVISIBLE);
 		}
 	}
 
@@ -528,6 +534,28 @@ public abstract class SSBaseActivity extends Activity {
 	}
 
 	/**
+	 * @title dismissPushActivity
+	 * @descriptor dismiss the activity from navigation activity stack then
+	 *             start another activity with extra data to navigation activity
+	 *             stack
+	 * @param activityCls
+	 *            : target activity class
+	 * @param extraData
+	 *            : start activity extra data
+	 * @author Ares
+	 */
+	public void dismissPushActivity(Class<? extends Activity> activityCls,
+			Map<String, ?> extraData) {
+		// finish the activity
+		finish();
+
+		// start the target activity with extra data to navigation activity
+		// stack
+		presentActivity(activityCls, extraData, null, null, new int[] {
+				R.anim.slide_in_right, R.anim.slide_out_left });
+	}
+
+	/**
 	 * @title popPushActivity
 	 * @descriptor pop the activity from navigation activity stack then start
 	 *             another activity to navigation activity stack
@@ -751,11 +779,13 @@ public abstract class SSBaseActivity extends Activity {
 	 *            : start activity request code
 	 * @param onActivityResult
 	 *            : on activity result interface
+	 * @param enterExitAnimations
+	 *            : target activity enter and this activity exit animation
 	 * @author Ares
 	 */
 	private void presentActivity(Class<? extends Activity> activityCls,
 			Map<String, ?> extraData, Integer requestCode,
-			ISSBaseActivityResult onActivityResult) {
+			ISSBaseActivityResult onActivityResult, int[] enterExitAnimations) {
 		// define the target activity intent
 		Intent _targetIntent = new Intent(this, activityCls);
 
@@ -829,8 +859,21 @@ public abstract class SSBaseActivity extends Activity {
 			startActivityForResult(_targetIntent, requestCode);
 		}
 
+		// define enter and exit animation resource id
+		int _enterAnimResId = R.anim.slide_in_bottom;
+		int _exitAnimResId = R.anim.fade_out;
+
+		// check animation array and update enter and exit animation resource id
+		if (null != enterExitAnimations && 2 == enterExitAnimations.length) {
+			_enterAnimResId = enterExitAnimations[0];
+			_exitAnimResId = enterExitAnimations[1];
+		} else {
+			LOGGER.error("Get the target activity enter and this target exit animation error, the animations = "
+					+ enterExitAnimations);
+		}
+
 		// set present activity animation
-		overridePendingTransition(R.anim.slide_in_bottom, R.anim.fade_out);
+		overridePendingTransition(_enterAnimResId, _exitAnimResId);
 	}
 
 	/**
@@ -844,7 +887,7 @@ public abstract class SSBaseActivity extends Activity {
 	 */
 	public void presentActivity(Class<? extends Activity> activityCls,
 			Map<String, ?> extraData) {
-		presentActivity(activityCls, extraData, null, null);
+		presentActivity(activityCls, extraData, null, null, null);
 	}
 
 	/**
@@ -874,7 +917,8 @@ public abstract class SSBaseActivity extends Activity {
 	public void presentActivityForResult(Class<? extends Activity> activityCls,
 			Map<String, ?> extraData, int requestCode,
 			ISSBaseActivityResult onActivityResult) {
-		presentActivity(activityCls, extraData, requestCode, onActivityResult);
+		presentActivity(activityCls, extraData, requestCode, onActivityResult,
+				null);
 	}
 
 	/**
