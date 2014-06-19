@@ -25,6 +25,7 @@ import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.mvc.ICMConnector;
@@ -278,6 +279,10 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 
 						// check editor user info value and update user info to
 						// remote server
+						if ("".equalsIgnoreCase(_editorValue)
+								&& (UserInfoAttr4Setting.USER_HEIGHT == _editorAttr || UserInfoAttr4Setting.USER_WEIGHT == _editorAttr)) {
+							_editorValue = "0";
+						}
 						if (!"".equalsIgnoreCase(_editorValue)) {
 							userInfoModel
 									.updateUserInfo(
@@ -767,6 +772,61 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 				boolean isChecked) {
 			// check compound button checked
 			if (isChecked) {
+				// get, check user gender, age, height and weight
+				UserInfoBean _userInfo = userInfoModel.getUserInfo();
+				// gender
+				if (null == _userInfo.getGender()) {
+					LOGGER.error("Can't calculate user step because gender not set");
+
+					// show user gender not set toast
+					Toast.makeText(UserInfoSettingActivity.this,
+							R.string.toast_user_gender_notSet,
+							Toast.LENGTH_SHORT).show();
+
+					// uncheck the user step length calculate switch and return
+					buttonView.setChecked(false);
+					return;
+				}
+				// age
+				if (Integer.MIN_VALUE == _userInfo.getAge()) {
+					LOGGER.error("Can't calculate user step because age not set");
+
+					// show user age not set toast
+					Toast.makeText(UserInfoSettingActivity.this,
+							R.string.toast_user_age_notSet, Toast.LENGTH_SHORT)
+							.show();
+
+					// uncheck the user step length calculate switch and return
+					buttonView.setChecked(false);
+					return;
+				}
+				// height
+				if (Float.MIN_VALUE == _userInfo.getHeight()) {
+					LOGGER.error("Can't calculate user step because height not set");
+
+					// show user height not set toast
+					Toast.makeText(UserInfoSettingActivity.this,
+							R.string.toast_user_height_notSet,
+							Toast.LENGTH_SHORT).show();
+
+					// uncheck the user step length calculate switch and return
+					buttonView.setChecked(false);
+					return;
+				}
+				// weight
+				if (Float.MIN_VALUE == _userInfo.getWeight()) {
+					LOGGER.error("Can't calculate user step because weight not set");
+
+					// show user weight not set toast
+					Toast.makeText(UserInfoSettingActivity.this,
+							R.string.toast_user_weight_notSet,
+							Toast.LENGTH_SHORT).show();
+
+					// uncheck the user step length calculate switch and return
+					buttonView.setChecked(false);
+					return;
+				}
+
 				// set user step length relativeLayout unclickable if needed
 				if (userStepLengthRelativeLayout.isClickable()) {
 					userStepLengthRelativeLayout.setClickable(false);

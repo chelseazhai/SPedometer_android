@@ -257,6 +257,83 @@ public class StrangerPatModel {
 	}
 
 	/**
+	 * @title getPatStrangers
+	 * @descriptor get all strangers user patted
+	 * @param userId
+	 *            : user id
+	 * @param token
+	 *            : user token
+	 * @param executant
+	 *            :
+	 * @author Ares
+	 */
+	public void getPatStrangers(long userId, String token,
+			ICMConnector executant) {
+		// get pat strangers with user id and token
+		((StrangerPatNetworkAdapter) NetworkAdapter.getInstance()
+				.getWorkerNetworkAdapter(StrangerPatNetworkAdapter.class))
+				.getPatStrangers(userId, token, new AsyncHttpRespJSONHandler() {
+
+					@Override
+					public void onSuccess(int statusCode,
+							JSONArray respJSONArray) {
+						LOGGER.info("Get user pat strangers successful, status code = "
+								+ statusCode
+								+ " and response json array = "
+								+ respJSONArray);
+
+						// check the user pat strangers info response json array
+						if (null != respJSONArray) {
+							// define the user pat stranger info list
+							List<UserInfoPatLocationExtBean> _userPatStrangersInfo = new ArrayList<UserInfoPatLocationExtBean>();
+
+							// traversal the json array
+							for (int i = 0; i < respJSONArray.length(); i++) {
+								// get and check the user pat stranger info json
+								// object from response json array
+								JSONObject _userPatStrangerInfo = JSONUtils
+										.getJSONObjectFromJSONArray(
+												respJSONArray, i);
+								if (null != _userPatStrangerInfo) {
+									// add the user pat stranger info object to
+									// list
+									_userPatStrangersInfo
+											.add(new UserInfoPatLocationExtBean(
+													_userPatStrangerInfo));
+								}
+							}
+
+							LOGGER.debug("The user pat strangers info list = "
+									+ _userPatStrangersInfo);
+
+							// get the user pat all strangers successful
+							//
+						} else {
+							LOGGER.error("Get the user pat strangers info response json array is null");
+						}
+					}
+
+					@Override
+					public void onSuccess(int statusCode,
+							JSONObject respJSONObject) {
+						// nothing to do
+					}
+
+					@Override
+					public void onFailure(int statusCode, String errorMsg) {
+						LOGGER.info("Get the user pat strangers failed, status code = "
+								+ statusCode
+								+ " and error message = "
+								+ errorMsg);
+
+						// get the user pat all strangers failed
+						//
+					}
+
+				});
+	}
+
+	/**
 	 * @title getPattedStrangers
 	 * @descriptor get all strangers who patted the user
 	 * @param userId
@@ -267,6 +344,7 @@ public class StrangerPatModel {
 	 *            :
 	 * @author Ares
 	 */
+	@Deprecated
 	public void getPattedStrangers(long userId, String token,
 			ICMConnector executant) {
 		// get patted strangers with user id and token

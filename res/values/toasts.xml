@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- user info -->
+    <string name="toast_user_gender_notSet">您还未设置性别，无法自动计算步长</string>
+    <string name="toast_user_age_notSet">您还未设置年龄，无法自动计算步长</string>
+    <string name="toast_user_height_notSet">您还未设置身高，无法自动计算步长</string>
+    <string name="toast_user_weight_notSet">您还未设置体重，无法自动计算步长</string>
+    <string name="toast_user_stepLength_notSet">您还未设置步长</string>
+
     <!-- walk invite info item -->
     <string name="toast_walk_inviteInfo_topic_null">给好友一个约走提示主题</string>
     <string name="toast_walk_inviteInfo_scheduleTime_null">选定一个约走时间</string>

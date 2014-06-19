@@ -221,6 +221,10 @@
     <!-- nearby stranger -->
     <string name="getNearbyStrangerReqResp_patedCount" translatable="false">patCount</string>
 
+    <!-- stranger pat type -->
+    <string name="patStranger_type">0</string>
+    <string name="strangerPat_type">1</string>
+
     <!-- pat stranger -->
     <string name="patStrangerReqParam_pattedStrangerId" translatable="false">strangerId</string>
     <string name="patStrangerReqParam_patLocationLongitude" translatable="false">longitude</string>
@@ -232,6 +236,7 @@
 
 
     <!-- patted stranger list -->
+    <string name="getPattedStrangersReqParam_patType" translatable="false">type</string>
     <string name="getPattedStrangersReqResp_patCount" translatable="false">patCount</string>
     <string name="getPattedStrangersReqResp_patTimestamp" translatable="false">timestamp</string>
     <string name="getPattedStrangersReqResp_patLocationLongitude" translatable="false">longitude</string>

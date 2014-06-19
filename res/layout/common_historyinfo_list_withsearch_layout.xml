@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/hi_common_historyInfo_searchBar"
+        android:layout_width="fill_parent"
+        android:layout_height="54dp"
+        android:background="@color/light_gray"
+        android:paddingBottom="8dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="8dp" >
+
+        <Button
+            android:id="@+id/hi_common_historyInfo_cancelSearch_button"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/cancel_search_button_bg"
+            android:text="@string/common_historyInfo_cancelSearch_button_text"
+            android:textColor="@color/dark_gray"
+            android:textSize="15sp"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/hi_common_historyInfo_search_editText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/hi_common_historyInfo_cancelSearch_button"
+            android:background="@drawable/common_historyinfo_search_edittext_bg"
+            android:hint="@string/common_historyInfo_searchEditText_hint"
+            android:maxLength="20"
+            android:singleLine="true" >
+
+            <requestFocus />
+        </EditText>
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/hi_common_historyInfo_listView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/hi_common_historyInfo_searchBar"
+        android:cacheColorHint="@android:color/transparent"
+        android:fadingEdge="none"
+        android:footerDividersEnabled="true"
+        android:headerDividersEnabled="false"
+        android:listSelector="@android:color/transparent"
+        android:scrollbarStyle="outsideOverlay" >
+    </ListView>
+
+</RelativeLayout>

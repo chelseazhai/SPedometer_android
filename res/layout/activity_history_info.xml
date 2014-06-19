@@ -61,7 +61,7 @@
                 android:textColor="@color/historyinfo_segment_title_textcolor" />
 
             <RadioButton
-                android:id="@+id/hi_strangerPat_historyPattedStranger_segment"
+                android:id="@+id/hi_strangerPat_historyPatStranger_segment"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_marginLeft="1dp"
@@ -88,25 +88,25 @@
             android:id="@+id/hi_personalPedometer_historyInfo_viewStub"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout="@layout/personalpedometer_walk_historyinfo_layout" />
+            android:layout="@layout/common_historyinfo_list_withsearch_layout" />
 
         <ViewStub
             android:id="@+id/hi_walkInvite_historyGroup_viewStub"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout="@layout/walkinvite_historygroup_layout" />
+            android:layout="@layout/common_historyinfo_list_layout" />
 
         <ViewStub
             android:id="@+id/hi_withinGroupCompete_historyGroup_viewStub"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout="@layout/withingroupcompete_historygroup_layout" />
+            android:layout="@layout/common_historyinfo_list_layout" />
 
         <ViewStub
-            android:id="@+id/hi_strangerPat_historyPattedStranger_viewStub"
+            android:id="@+id/hi_strangerPat_historyPatStranger_viewStub"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout="@layout/strangerpat_historypattedstranger_layout" />
+            android:layout="@layout/common_historyinfo_list_layout" />
     </FrameLayout>
 
 </RelativeLayout>

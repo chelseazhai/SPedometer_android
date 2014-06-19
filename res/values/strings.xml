@@ -219,6 +219,10 @@
     <string name="withinGroupCompeteGroup_historyInfo_segment_title">组内竞赛</string>
     <string name="strangerPat_historyInfo_segment_title">拍肩</string>
 
+    <!-- history info list view stub -->
+    <string name="common_historyInfo_searchEditText_hint">搜索</string>
+    <string name="common_historyInfo_cancelSearch_button_text">取消</string>
+
     <!-- others -->
     <string name="title_activity_demo" translatable="false">DemoActivity</string>
 

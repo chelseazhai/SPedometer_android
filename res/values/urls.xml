@@ -54,6 +54,7 @@
     <!-- pat -->
     <!-- <string name="patStranger_url" translatable="false">/pat/patStranger</string> -->
     <string name="patStranger_url" translatable="false">/patStranger.action</string>
-    <string name="getPattedStrangers_url" translatable="false">/pat/getPatList</string>
+    <!-- <string name="getPattedStrangers_url" translatable="false">/pat/getPatList</string> -->
+    <string name="getPattedStrangers_url" translatable="false">/getPatList.action</string>
 
 </resources>
