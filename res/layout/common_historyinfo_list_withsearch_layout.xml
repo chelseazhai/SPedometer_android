@@ -33,12 +33,12 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/hi_common_historyInfo_cancelSearch_button"
             android:background="@drawable/common_historyinfo_search_edittext_bg"
+            android:drawableLeft="@drawable/img_search_edittext_leftsearch"
+            android:focusable="false"
             android:hint="@string/common_historyInfo_searchEditText_hint"
+            android:imeOptions="actionSearch"
             android:maxLength="20"
-            android:singleLine="true" >
-
-            <requestFocus />
-        </EditText>
+            android:singleLine="true" />
     </RelativeLayout>
 
     <ListView

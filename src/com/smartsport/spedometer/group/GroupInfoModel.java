@@ -234,22 +234,27 @@ public class GroupInfoModel {
 	 *            : user id
 	 * @param token
 	 *            : user token
+	 * @param groupType
+	 *            : history group type(walk or compete)
 	 * @param executant
 	 *            :
 	 * @author Ares
 	 */
 	public void getUserHistoryGroups(long userId, String token,
-			ICMConnector executant) {
-		// get user all history groups with user id and token
+			final GroupType groupType, ICMConnector executant) {
+		// get user all history groups with user id, token and history group
+		// type
 		((GroupInfoNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(GroupInfoNetworkAdapter.class))
-				.getUserHistoryGroups(userId, token,
+				.getUserHistoryGroups(userId, token, groupType,
 						new AsyncHttpRespJSONHandler() {
 
 							@Override
 							public void onSuccess(int statusCode,
 									JSONArray respJSONArray) {
-								LOGGER.info("Get user history groups successful, status code = "
+								LOGGER.info("Get user history groups, type = "
+										+ groupType
+										+ " successful, status code = "
 										+ statusCode
 										+ " and response json array = "
 										+ respJSONArray);
@@ -280,7 +285,9 @@ public class GroupInfoModel {
 									// get user all history groups successful
 									//
 								} else {
-									LOGGER.error("Get user history groups response json array is null");
+									LOGGER.error("Get user history groups, type = "
+											+ groupType
+											+ " response json array is null");
 								}
 							}
 
@@ -293,7 +300,9 @@ public class GroupInfoModel {
 							@Override
 							public void onFailure(int statusCode,
 									String errorMsg) {
-								LOGGER.info("Get user all history groups failed, status code = "
+								LOGGER.info("Get user all history groups, type = "
+										+ groupType
+										+ " failed, status code = "
 										+ statusCode
 										+ " and error message = "
 										+ errorMsg);

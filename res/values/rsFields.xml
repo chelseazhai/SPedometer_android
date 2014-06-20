@@ -84,6 +84,7 @@
     <string name="groupWalkResultInfo_totalDistance" translatable="false">totalDistance</string>
 
     <!-- group list -->
+    <string name="getHistoryGroupsReqParam_groupType" translatable="false">groupType</string>
     <string name="getHistoryGroupsReqResp_groupType" translatable="false">groupType</string>
 
     <!-- group info -->

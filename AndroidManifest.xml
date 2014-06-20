@@ -145,7 +145,8 @@
             android:name=".history.HistoryInfoActivity"
             android:label="@string/title_activity_historyInfo"
             android:screenOrientation="portrait"
-            android:theme="@style/AppBaseActivityTheme" >
+            android:theme="@style/AppBaseActivityTheme"
+            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             android:name=".demo.DemoActivity"

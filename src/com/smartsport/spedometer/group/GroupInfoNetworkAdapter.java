@@ -89,18 +89,29 @@ public class GroupInfoNetworkAdapter implements INetworkAdapter {
 	 *            : user id
 	 * @param token
 	 *            : user token
+	 * @param groupType
+	 *            : walk or compete group type
 	 * @param asyncHttpRespJSONHandler
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
 	public void getUserHistoryGroups(long userId, String token,
+			GroupType groupType,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
+		// get user common request param
+		Map<String, String> _getUserHistoryGroupsReqParam = NetworkUtils
+				.genUserComReqParam(userId, token);
+
+		// set user history group type to param
+		_getUserHistoryGroupsReqParam.put(NETWORK_ENGINE.getContext()
+				.getString(R.string.getHistoryGroupsReqParam_groupType), String
+				.valueOf(groupType.getValue()));
+
 		// send get user history group list asynchronous post http request
 		NETWORK_ENGINE.postWithAPI(
 				NETWORK_ENGINE.getContext().getString(
 						R.string.getHistoryGroups_url),
-				NetworkUtils.genUserComReqParam(userId, token),
-				asyncHttpRespJSONHandler);
+				_getUserHistoryGroupsReqParam, asyncHttpRespJSONHandler);
 	}
 
 	/**

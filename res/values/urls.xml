@@ -21,7 +21,8 @@
     <string name="getScheduleGroups_url" translatable="false">/getGroupList.action</string>
     <!-- <string name="getScheduleGroupInfo_url" translatable="false">/group/getGroupInfo</string> -->
     <string name="getScheduleGroupInfo_url" translatable="false">/getGroupInfo.action</string>
-    <string name="getHistoryGroups_url" translatable="false">/group/getHistoryGroupList</string>
+    <!-- <string name="getHistoryGroups_url" translatable="false">/group/getHistoryGroupList</string> -->
+    <string name="getHistoryGroups_url" translatable="false">/getHistoryGroupList.action</string>
     <string name="getHistoryGroupInfo_url" translatable="false">/group/getHistoryGroupInfo</string>
 
     <!-- walk -->
