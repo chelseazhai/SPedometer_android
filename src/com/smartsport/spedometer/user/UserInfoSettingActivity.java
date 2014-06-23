@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
@@ -69,6 +70,9 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 	// user step length textView
 	private TextView userStepLengthTextView;
 
+	// user info setting progress dialog
+	private SSProgressDialog userInfoSettingProgDlg;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -82,12 +86,18 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 		// set content view
 		setContentView(R.layout.activity_userinfo_setting);
 
+		// show get user info progress dialog
+		userInfoSettingProgDlg = SSProgressDialog.show(this, "message");
+
 		// get user info from remote server
 		userInfoModel.getUserInfo(loginUser.getUserId(),
 				loginUser.getUserKey(), new ICMConnector() {
 
 					@Override
 					public void onSuccess(Object... retValue) {
+						// dismiss get user info progress dialog
+						userInfoSettingProgDlg.dismiss();
+
 						// check return values
 						if (null != retValue
 								&& 0 < retValue.length
@@ -104,6 +114,9 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 					public void onFailure(int errorCode, String errorMsg) {
 						LOGGER.error("Get user info from remote server error, error code = "
 								+ errorCode + " and message = " + errorMsg);
+
+						// dismiss get user info progress dialog
+						userInfoSettingProgDlg.dismiss();
 
 						//
 					}

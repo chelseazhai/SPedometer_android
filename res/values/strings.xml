@@ -18,6 +18,9 @@
     <!-- smartsport base activity -->
 
 
+    <!-- smartsport progress dialog -->
+    <string name="sspd_progress_tip">正在处理，请稍候&#8230;</string>
+
     <!-- pedometer activity -->
     <string name="title_activity_pedometer" translatable="false">PedometerActivity</string>
     <string name="pedometer_activity_title">计步器</string>
