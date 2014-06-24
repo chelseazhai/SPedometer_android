@@ -87,7 +87,8 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 		setContentView(R.layout.activity_userinfo_setting);
 
 		// show get user info progress dialog
-		userInfoSettingProgDlg = SSProgressDialog.show(this, "message");
+		userInfoSettingProgDlg = SSProgressDialog.show(this,
+				R.string.procMsg_getUserInfo);
 
 		// get user info from remote server
 		userInfoModel.getUserInfo(loginUser.getUserId(),
@@ -290,13 +291,18 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 						userInfo4SettingListViewAdapter.setData(_editorAttr,
 								_editorValue);
 
-						// check editor user info value and update user info to
-						// remote server
+						// check editor user info value and update its value
 						if ("".equalsIgnoreCase(_editorValue)
 								&& (UserInfoAttr4Setting.USER_HEIGHT == _editorAttr || UserInfoAttr4Setting.USER_WEIGHT == _editorAttr)) {
 							_editorValue = "0";
 						}
 						if (!"".equalsIgnoreCase(_editorValue)) {
+							// show update user info progress dialog
+							userInfoSettingProgDlg = SSProgressDialog.show(
+									UserInfoSettingActivity.this,
+									R.string.procMsg_updateUserInfo);
+
+							// update user info to remote server
 							userInfoModel
 									.updateUserInfo(
 											loginUser.getUserId(),
@@ -340,6 +346,11 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 												@Override
 												public void onSuccess(
 														Object... retValue) {
+													// dismiss update user info
+													// progress dialog
+													userInfoSettingProgDlg
+															.dismiss();
+
 													// check return values
 													if (null != retValue
 															&& 0 < retValue.length
@@ -362,6 +373,11 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 															+ errorCode
 															+ " and message = "
 															+ errorMsg);
+
+													// dismiss update user info
+													// progress dialog
+													userInfoSettingProgDlg
+															.dismiss();
 
 													//
 												}

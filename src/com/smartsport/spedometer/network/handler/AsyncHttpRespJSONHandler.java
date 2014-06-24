@@ -11,6 +11,7 @@ import android.content.Context;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.SSApplication;
+import com.smartsport.spedometer.network.NetworkUtils.NetworkPedometerStatusConstant;
 import com.smartsport.spedometer.utils.JSONUtils;
 import com.smartsport.spedometer.utils.SSLogger;
 
@@ -62,14 +63,14 @@ public abstract class AsyncHttpRespJSONHandler extends
 			} else {
 				// response body unrecognized(not json object or json array)
 				// asynchronous http response json handle failed
-				// test by ares
-				onFailure(0, "unrecognized response body");
+				onFailure(NetworkPedometerStatusConstant.UNRECOGNIZED_RESPBODY,
+						"unrecognized response body");
 			}
 		} else {
 			// response body is null
 			// asynchronous http response json handle failed
-			// test by ares
-			onFailure(0, "null response body");
+			onFailure(NetworkPedometerStatusConstant.NULL_RESPBODY,
+					"null response body");
 		}
 	}
 

@@ -22,8 +22,8 @@ public class SSProgressDialog extends ProgressDialog {
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(SSProgressDialog.class);
 
-	// progress dialog tip textView
-	private TextView tipTextView;
+	// progress dialog tip message
+	private String tipMsg;
 
 	/**
 	 * @title SSProgressDialog
@@ -56,25 +56,32 @@ public class SSProgressDialog extends ProgressDialog {
 
 		// set content view
 		setContentView(R.layout.ss_progress_dialog);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
 
 		// initialize content view
 		// get progress dialog tip textView
-		// tipTextView = (TextView)
-		// getWindow().getDecorView().findViewById(R.id.sspd_progressTip_textView);
-		tipTextView = (TextView) findViewById(R.id.sspd_progressTip_textView);
+		TextView _tipMsgTextView = (TextView) findViewById(R.id.sspd_progressTip_textView);
+
+		// check tip message and set tip textView text
+		if (null != tipMsg) {
+			// update progress dialog tip textView text
+			_tipMsgTextView.setText(tipMsg);
+		} else {
+			LOGGER.error("Set smartsport progress dialog message error, the tip message is null");
+		}
 	}
 
 	@Override
 	public void setMessage(CharSequence message) {
-		tipTextView = (TextView) findViewById(R.id.sspd_progressTip_textView);
-		
-		// check message and set tip
-		if (null != message && null != tipTextView) {
-			// update progress dialog tip textView text
-			tipTextView.setText(message);
-		} else {
-			LOGGER.error("Set smartsport progress dialog message error, tip textView = "
-					+ tipTextView + " and message = " + message);
+		super.setMessage(message);
+
+		// check message and save tip message
+		if (null != message) {
+			tipMsg = message.toString();
 		}
 	}
 
@@ -97,8 +104,10 @@ public class SSProgressDialog extends ProgressDialog {
 	public static SSProgressDialog show(Context context, CharSequence tip,
 			boolean indeterminate, boolean cancelable,
 			OnCancelListener cancelListener) {
-		// new smartsport progress dialog
+		// new smartsport progress dialog using default theme
 		SSProgressDialog _progressDialog = new SSProgressDialog(context);
+		// SSProgressDialog _progressDialog = new SSProgressDialog(context,
+		// R.style.ProgressDialogTheme);
 
 		// set the progress dialog attributes
 		_progressDialog.setMessage(tip);
@@ -159,6 +168,19 @@ public class SSProgressDialog extends ProgressDialog {
 	 */
 	public static SSProgressDialog show(Context context, CharSequence tip) {
 		return show(context, tip, false);
+	}
+
+	/**
+	 * @title show
+	 * @descriptor show smartsport progress dialog with tip
+	 * @param context
+	 *            : context
+	 * @param tipResId
+	 *            : progress tip message string resource id
+	 * @author Ares
+	 */
+	public static SSProgressDialog show(Context context, int tipResId) {
+		return show(context, context.getString(tipResId), false);
 	}
 
 }

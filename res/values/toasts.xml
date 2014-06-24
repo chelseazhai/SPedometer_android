@@ -2,11 +2,13 @@
 <resources>
 
     <!-- user info -->
+    <string name="procMsg_getUserInfo">获取用户信息，请稍候&#8230;</string>
     <string name="toast_user_gender_notSet">您还未设置性别，无法自动计算步长</string>
     <string name="toast_user_age_notSet">您还未设置年龄，无法自动计算步长</string>
     <string name="toast_user_height_notSet">您还未设置身高，无法自动计算步长</string>
     <string name="toast_user_weight_notSet">您还未设置体重，无法自动计算步长</string>
     <string name="toast_user_stepLength_notSet">您还未设置步长</string>
+    <string name="procMsg_updateUserInfo">更新用户信息，请稍候&#8230;</string>
 
     <!-- walk invite info item -->
     <string name="toast_walk_inviteInfo_topic_null">给好友一个约走提示主题</string>

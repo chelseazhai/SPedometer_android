@@ -107,34 +107,30 @@ public class DemoActivity extends Activity {
 										new TextHttpResponseHandler("UTF-8") {
 
 											@Override
-											public void onFailure(
-													String responseBody,
-													Throwable error) {
-												super.onFailure(responseBody,
-														error);
-
-												LOGGER.info("Test http request failed, responseBody = "
-														+ responseBody
-														+ " and error = "
-														+ error);
-
-												//
-											}
-
-											@Override
 											public void onSuccess(
 													int statusCode,
 													Header[] headers,
 													String responseBody) {
-												super.onSuccess(statusCode,
-														headers, responseBody);
-
 												LOGGER.info("Test http request successful, statusCode = "
 														+ statusCode
 														+ ", header = "
 														+ headers
 														+ " and responseBody = "
 														+ responseBody);
+
+												//
+											}
+
+											@Override
+											public void onFailure(
+													int statusCode,
+													Header[] headers,
+													String responseBody,
+													Throwable error) {
+												LOGGER.info("Test http request failed, responseBody = "
+														+ responseBody
+														+ " and error = "
+														+ error);
 
 												//
 											}

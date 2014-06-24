@@ -41,6 +41,13 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <!-- progress dialog theme -->
+    <style name="ProgressDialogTheme" parent="@android:style/Theme.Dialog">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <!-- Style -->
     <style name="ActionSheetAnimationPopupStyle">
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>

@@ -5,11 +5,14 @@ package com.smartsport.spedometer.network;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.http.Header;
 import org.apache.http.ParseException;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
@@ -138,7 +141,7 @@ public class NetworkEngine {
 		StringEntity _jsonStringEntity = new HopeRunHttpReqEntity(parameter)
 				.genReqStringEntity();
 		try {
-			LOGGER.info("!@#$, _jsonStringEntity = "
+			LOGGER.info("Http request string entity = "
 					+ EntityUtils.toString(_jsonStringEntity));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -276,7 +279,7 @@ public class NetworkEngine {
 				LOGGER.warning("Text asynchronous http response string handler is null, not need to throw up");
 			}
 
-			super.onSuccess(statusCode, headers, responseBody);
+			// super.onSuccess(statusCode, headers, responseBody);
 		}
 
 		@Override
@@ -292,6 +295,28 @@ public class NetworkEngine {
 
 			error.printStackTrace();
 
+			// remote background server http request error process
+			if (0 == statusCode) {
+				// check error
+				if (error instanceof ConnectTimeoutException
+						|| error instanceof SocketTimeoutException) {
+					// timeout
+					//
+				} else if (error instanceof UnknownHostException) {
+					// unknown host
+					//
+				}
+			} else {
+				// check http request response status code
+				switch (statusCode / 100) {
+				case 4:
+				case 5:
+					// remote background server http request error
+					//
+					break;
+				}
+			}
+
 			// check asynchronous http response string handler
 			if (null != asyncHttpRespStringHandler) {
 				// asynchronous http response string handle failed
@@ -301,7 +326,7 @@ public class NetworkEngine {
 				LOGGER.warning("Text asynchronous http response string handler is null, not need to throw up");
 			}
 
-			super.onFailure(statusCode, headers, responseBody, error);
+			// super.onFailure(statusCode, headers, responseBody, error);
 		}
 
 	}
