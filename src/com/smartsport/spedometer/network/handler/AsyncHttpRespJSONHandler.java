@@ -8,10 +8,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.SSApplication;
-import com.smartsport.spedometer.network.NetworkUtils.NetworkPedometerStatusConstant;
 import com.smartsport.spedometer.utils.JSONUtils;
 import com.smartsport.spedometer.utils.SSLogger;
 
@@ -33,12 +33,12 @@ public abstract class AsyncHttpRespJSONHandler extends
 		// parse response body
 		Object _responseBodyObject = parseResponseBody(respString);
 
+		// get context
+		Context _context = SSApplication.getContext();
+
 		// check response body
 		if (null != _responseBodyObject) {
 			if (_responseBodyObject instanceof JSONObject) {
-				// get context
-				Context _context = SSApplication.getContext();
-
 				// get response body json object
 				JSONObject _respBodyJSONObject = (JSONObject) _responseBodyObject;
 
@@ -62,14 +62,26 @@ public abstract class AsyncHttpRespJSONHandler extends
 				onSuccess(statusCode, (JSONArray) _responseBodyObject);
 			} else {
 				// response body unrecognized(not json object or json array)
+				// show request response data exception toast
+				Toast.makeText(
+						_context,
+						R.string.nwErrorMsg_remoteServer_responseData_exception,
+						Toast.LENGTH_LONG).show();
+
 				// asynchronous http response json handle failed
-				onFailure(NetworkPedometerStatusConstant.UNRECOGNIZED_RESPBODY,
+				onFailure(
+						NetworkPedometerReqRespStatusConstant.UNRECOGNIZED_RESPBODY,
 						"unrecognized response body");
 			}
 		} else {
 			// response body is null
+			// show request response data exception toast
+			Toast.makeText(_context,
+					R.string.nwErrorMsg_remoteServer_responseData_exception,
+					Toast.LENGTH_LONG).show();
+
 			// asynchronous http response json handle failed
-			onFailure(NetworkPedometerStatusConstant.NULL_RESPBODY,
+			onFailure(NetworkPedometerReqRespStatusConstant.NULL_RESPBODY,
 					"null response body");
 		}
 	}

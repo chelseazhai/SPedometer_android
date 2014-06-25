@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavBarButtonItem;
+import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.strangersocial.LocationBean;
@@ -57,6 +58,9 @@ public class StrangerPatActivity extends SSBaseActivity {
 
 	// add the stranger as friend button
 	private Button addStrangerAsFriendBtn;
+
+	// stranger pat progress dialog
+	private static SSProgressDialog strangerPatProgDlg;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -213,6 +217,11 @@ public class StrangerPatActivity extends SSBaseActivity {
 				UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
 						.getInstance().getLoginUser();
 
+				// show pat nearby stranger progress dialog
+				strangerPatProgDlg = SSProgressDialog.show(
+						StrangerPatActivity.this,
+						R.string.procMsg_patNearbyStranger);
+
 				// pat the nearby stranger
 				strangerPatModel.patStranger(_loginUser.getUserId(),
 						_loginUser.getUserKey(), strangerInfo.getUserId(),
@@ -220,6 +229,9 @@ public class StrangerPatActivity extends SSBaseActivity {
 
 							@Override
 							public void onSuccess(Object... retValue) {
+								// dismiss pat nearby stranger progress dialog
+								strangerPatProgDlg.dismiss();
+
 								// check return values
 								if (null != retValue
 										&& 1 < retValue.length
@@ -274,7 +286,20 @@ public class StrangerPatActivity extends SSBaseActivity {
 										+ " and message = "
 										+ errorMsg);
 
-								//
+								// dismiss pat nearby stranger progress dialog
+								strangerPatProgDlg.dismiss();
+
+								// check error code and process hopeRun business
+								// error
+								if (errorCode < 100) {
+									// show error message toast
+									Toast.makeText(StrangerPatActivity.this,
+											errorMsg, Toast.LENGTH_SHORT)
+											.show();
+
+									// test by ares
+									//
+								}
 							}
 
 						});

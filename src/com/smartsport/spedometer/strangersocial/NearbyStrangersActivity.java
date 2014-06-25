@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.View;
@@ -24,15 +25,16 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSActionSheet;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
+import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.strangersocial.NearbyStrangersActivity.NearbyStrangerListViewAdapter.NearbyStrangerListViewAdapterKey;
-import com.smartsport.spedometer.strangersocial.NearbyStrangersActivity.NearbyStrangersMoreOperationBarBtnItemOnClickListener.NearbyStrangersMoreOperationActionSheet.OperateGridViewAdapter.OperateGridViewAdapterKey;
 import com.smartsport.spedometer.strangersocial.pat.StrangerPatActivity;
 import com.smartsport.spedometer.strangersocial.pat.StrangerPatActivity.StrangerPatExtraData;
 import com.smartsport.spedometer.strangersocial.pat.StrangerPatModel;
@@ -66,6 +68,9 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 
 	// nearby stranger listView adapter
 	private static NearbyStrangerListViewAdapter nearbyStrangerListViewAdapter;
+
+	// nearby strangers progress dialog
+	private static SSProgressDialog nearbyStrangersProgDlg;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +117,7 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 		setContentView(R.layout.activity_nearby_strangers);
 
 		// get user nearby strangers info
-		getNearbyStrangers();
+		getNearbyStrangers(this);
 	}
 
 	@Override
@@ -167,12 +172,18 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 	/**
 	 * @title getNearbyStrangers
 	 * @descriptor get user nearby strangers info
+	 * @param context
+	 *            : context
 	 * @author Ares
 	 */
-	private static void getNearbyStrangers() {
+	private static void getNearbyStrangers(final Context context) {
 		// get pedometer login user
 		UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
 				.getInstance().getLoginUser();
+
+		// show get user nearby strangers progress dialog
+		nearbyStrangersProgDlg = SSProgressDialog.show(context,
+				R.string.procMsg_getUserNearbyStrangers);
 
 		// get nearby strangers with user location info from remote server
 		sStrangerPatModel.getNearbyStrangers(_loginUser.getUserId(),
@@ -182,6 +193,9 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 					@SuppressWarnings("unchecked")
 					@Override
 					public void onSuccess(Object... retValue) {
+						// dismiss get user nearby strangers progress dialog
+						nearbyStrangersProgDlg.dismiss();
+
 						// check return values
 						if (null != retValue
 								&& 0 < retValue.length
@@ -199,7 +213,18 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 						LOGGER.error("Get user nearby strangers info from remote server error, error code = "
 								+ errorCode + " and message = " + errorMsg);
 
-						//
+						// dismiss get user nearby strangers progress dialog
+						nearbyStrangersProgDlg.dismiss();
+
+						// check error code and process hopeRun business error
+						if (errorCode < 100) {
+							// show error message toast
+							Toast.makeText(context, errorMsg,
+									Toast.LENGTH_SHORT).show();
+
+							// test by ares
+							//
+						}
 					}
 
 				});
@@ -287,8 +312,8 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 	 * @author Ares
 	 * @version 1.0
 	 */
-	static class NearbyStrangersMoreOperationBarBtnItemOnClickListener
-			implements OnClickListener {
+	class NearbyStrangersMoreOperationBarBtnItemOnClickListener implements
+			OnClickListener {
 
 		// nearby strangers more operation action sheet
 		private NearbyStrangersMoreOperationActionSheet moreOperationActionSheet;
@@ -297,7 +322,8 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 		public void onClick(View v) {
 			// check the nearby strangers more operation action sheet
 			if (null == moreOperationActionSheet) {
-				moreOperationActionSheet = new NearbyStrangersMoreOperationActionSheet();
+				moreOperationActionSheet = new NearbyStrangersMoreOperationActionSheet(
+						v.getContext());
 			}
 
 			// show nearby strangers more operation action sheet animation
@@ -305,223 +331,222 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 					0, 0);
 		}
 
+	}
+
+	/**
+	 * @name NearbyStrangersMoreOperationActionSheet
+	 * @descriptor nearby strangers more operation action sheet
+	 * @author Ares
+	 * @version 1.0
+	 */
+	static class NearbyStrangersMoreOperationActionSheet extends SSActionSheet {
+
+		// context
+		private static Context _sContext;
+
+		/**
+		 * @title NearbyStrangersMoreOperationActionSheet
+		 * @descriptor nearby strangers more operation action sheet constructor
+		 * @param context
+		 *            : context
+		 * @author Ares
+		 */
+		public NearbyStrangersMoreOperationActionSheet(Context context) {
+			super(R.layout.nearbystrangers_moreoperation_actionsheet_layout);
+
+			// save context
+			_sContext = context;
+		}
+
+		@Override
+		protected void initContentViewUI() {
+			// get operate gridView
+			GridView _operateGridView = (GridView) findViewById(R.id.nss_moreOperationActionSheet_operation_gridView);
+
+			// set its adapter
+			_operateGridView
+					.setAdapter(new OperateGridViewAdapter(
+							_operateGridView.getContext(),
+							new int[] {
+									R.drawable.img_nearbystrangers_gender_maleonly,
+									R.drawable.img_nearbystrangers_gender_femaleonly,
+									R.drawable.img_nearbystrangers_gender_all,
+									R.drawable.img_nearbystrangers_patyou,
+									R.drawable.img_clear_locationinfo,
+									R.array.nearbyStrangerMoreOperation_operate_tips },
+							R.layout.nearbystrangers_moreoperation_actionsheet_operationgridview_item_layout,
+							new String[] {
+									OperateGridViewAdapter.OperateGridViewAdapterKey.MOREOPERATION_OPERATE_ICON_KEY
+											.name(),
+									OperateGridViewAdapter.OperateGridViewAdapterKey.MOREOPERATION_OPERATE_TIP_KEY
+											.name() }, new int[] {
+									R.id.nss_moas_og_operate_icon_imageView,
+									R.id.nss_moas_og_operate_tip_textView }));
+
+			// set its on item click listener
+			_operateGridView
+					.setOnItemClickListener(new OperateGridViewOnItemClickListener());
+
+			// set cancel button on click listener
+			((Button) findViewById(R.id.nss_moreOperationActionSheet_cancel_button))
+					.setOnClickListener(new CancelBtnOnClickListener());
+		}
+
+		@Override
+		protected void clearContentViewUICache() {
+			// nothing to do
+		}
+
 		// inner class
 		/**
-		 * @name NearbyStrangersMoreOperationActionSheet
-		 * @descriptor nearby strangers more operation action sheet
+		 * @name OperateGridViewAdapter
+		 * @descriptor nearby strangers more operation action sheet operate
+		 *             gridView adapter
 		 * @author Ares
 		 * @version 1.0
 		 */
-		static class NearbyStrangersMoreOperationActionSheet extends
-				SSActionSheet {
+		static class OperateGridViewAdapter extends SimpleAdapter {
+
+			// logger
+			private static final SSLogger LOGGER = new SSLogger(
+					OperateGridViewAdapter.class);
+
+			// nearby stranger more operation action sheet operate gridView
+			// adapter data list
+			private static List<Map<String, Object>> _sDataList;
+
+			// nearby stranger more operation action sheet operate action map
+			private final SparseArray<OnClickListener> OPERATEACTION_MAP = new SparseArray<View.OnClickListener>();
 
 			/**
-			 * @title NearbyStrangersMoreOperationActionSheet
-			 * @descriptor nearby strangers more operation action sheet
-			 *             constructor
+			 * @title OperateGridViewAdapter
+			 * @descriptor nearby stranger more operation action sheet operate
+			 *             gridView adapter constructor with context, operate
+			 *             resource id list, content view resource, content view
+			 *             subview data key, and content view subview id
+			 * @param context
+			 *            : context
+			 * @param operateResIds
+			 *            : operate icon resource id list and tip array id
+			 * @param resource
+			 *            : resource id
+			 * @param dataKeys
+			 *            : content view subview data key array
+			 * @param ids
+			 *            : content view subview id array
+			 */
+			public OperateGridViewAdapter(Context context, int[] operateResIds,
+					int resource, String[] dataKeys, int[] ids) {
+				super(context,
+						_sDataList = new ArrayList<Map<String, Object>>(),
+						resource, dataKeys, ids);
+
+				// check the operate resource id array
+				if (null != operateResIds && 2 <= operateResIds.length) {
+					// get and check operate tip array
+					String[] _operateTips = context.getResources()
+							.getStringArray(
+									operateResIds[operateResIds.length - 1]);
+					if (null != _operateTips
+							&& operateResIds.length - 1 == _operateTips.length) {
+						// define get nearby strangers with gender operate
+						// action and operate action
+						GetNearbyStrangersWithGenderOperate _getNearbyStrangersWithGenderOperateAction = new GetNearbyStrangersWithGenderOperate();
+						OnClickListener _operateAction = _getNearbyStrangersWithGenderOperateAction;
+
+						for (int i = 0; i < _operateTips.length; i++) {
+							// define more operation action sheet operate
+							// gridView adapter data
+							Map<String, Object> _data = new HashMap<String, Object>();
+
+							// set data attributes
+							_data.put(
+									OperateGridViewAdapterKey.MOREOPERATION_OPERATE_ICON_KEY
+											.name(), operateResIds[i]);
+							_data.put(
+									OperateGridViewAdapterKey.MOREOPERATION_OPERATE_TIP_KEY
+											.name(), _operateTips[i]);
+
+							// add data to list
+							_sDataList.add(_data);
+
+							// set nearby stranger more operation action sheet
+							// operate action
+							switch (i) {
+							case 0:
+							case 1:
+							case 2:
+								// get nearby strangers with user select gender
+								_operateAction = _getNearbyStrangersWithGenderOperateAction;
+								break;
+
+							case 3:
+								// get pat you nearby all strangers
+								_operateAction = new GetPatYouNearbyStrangersOperate();
+								break;
+
+							case 4:
+								// clear user location info and exit
+								_operateAction = new ClearUserLocationInfoOperate();
+								break;
+							}
+
+							// put operate action to operate action map
+							OPERATEACTION_MAP.put(i, _operateAction);
+						}
+
+						// notify data set changed
+						notifyDataSetChanged();
+					} else {
+						LOGGER.error("Initialize nearby strangers operation action sheet operate gridView adapter error, operate resource id array = "
+								+ operateResIds
+								+ " not matched, operate icon array count = "
+								+ (operateResIds.length - 1)
+								+ " and operate tip array count = "
+								+ _operateTips.length);
+					}
+				} else {
+					LOGGER.error("Initialize nearby strangers operation action sheet operate gridView adapter error, operate resouce id array = "
+							+ operateResIds + " count less");
+				}
+			}
+
+			/**
+			 * @title getOperateAction
+			 * @descriptor get nearby strangers more operation operate action
+			 *             with position
+			 * @param position
+			 *            : position of the item whose data we want within the
+			 *            adapter's data set
+			 * @return more operation operate action
 			 * @author Ares
 			 */
-			public NearbyStrangersMoreOperationActionSheet() {
-				super(R.layout.nearbystrangers_moreoperation_actionsheet_layout);
-			}
+			public OnClickListener getOperateAction(int position) {
+				// get the operate action with position
+				OnClickListener _operateAction = OPERATEACTION_MAP
+						.get(position);
 
-			@Override
-			protected void initContentViewUI() {
-				// get operate gridView
-				GridView _operateGridView = (GridView) findViewById(R.id.nss_moreOperationActionSheet_operation_gridView);
+				// check the position and set get nearby strangers gender
+				if (getCount() - 2 > position) {
+					((GetNearbyStrangersWithGenderOperate) _operateAction)
+							.setGender(UserGender.values()[position]);
+				}
 
-				// set its adapter
-				_operateGridView
-						.setAdapter(new OperateGridViewAdapter(
-								_operateGridView.getContext(),
-								new int[] {
-										R.drawable.img_nearbystrangers_gender_maleonly,
-										R.drawable.img_nearbystrangers_gender_femaleonly,
-										R.drawable.img_nearbystrangers_gender_all,
-										R.drawable.img_nearbystrangers_patyou,
-										R.drawable.img_clear_locationinfo,
-										R.array.nearbyStrangerMoreOperation_operate_tips },
-								R.layout.nearbystrangers_moreoperation_actionsheet_operationgridview_item_layout,
-								new String[] {
-										OperateGridViewAdapterKey.MOREOPERATION_OPERATE_ICON_KEY
-												.name(),
-										OperateGridViewAdapterKey.MOREOPERATION_OPERATE_TIP_KEY
-												.name() },
-								new int[] {
-										R.id.nss_moas_og_operate_icon_imageView,
-										R.id.nss_moas_og_operate_tip_textView }));
-
-				// set its on item click listener
-				_operateGridView
-						.setOnItemClickListener(new OperateGridViewOnItemClickListener());
-
-				// set cancel button on click listener
-				((Button) findViewById(R.id.nss_moreOperationActionSheet_cancel_button))
-						.setOnClickListener(new CancelBtnOnClickListener());
-			}
-
-			@Override
-			protected void clearContentViewUICache() {
-				// nothing to do
+				return _operateAction;
 			}
 
 			// inner class
 			/**
-			 * @name OperateGridViewAdapter
+			 * @name OperateGridViewAdapterKey
 			 * @descriptor nearby strangers more operation action sheet operate
-			 *             gridView adapter
+			 *             gridView adapter key enumeration
 			 * @author Ares
 			 * @version 1.0
 			 */
-			static class OperateGridViewAdapter extends SimpleAdapter {
+			public enum OperateGridViewAdapterKey {
 
-				// logger
-				private static final SSLogger LOGGER = new SSLogger(
-						OperateGridViewAdapter.class);
-
-				// nearby stranger more operation action sheet operate gridView
-				// adapter data list
-				private static List<Map<String, Object>> _sDataList;
-
-				// nearby stranger more operation action sheet operate action
-				// map
-				private final SparseArray<OnClickListener> OPERATEACTION_MAP = new SparseArray<View.OnClickListener>();
-
-				/**
-				 * @title OperateGridViewAdapter
-				 * @descriptor nearby stranger more operation action sheet
-				 *             operate gridView adapter constructor with
-				 *             context, operate resource id list, content view
-				 *             resource, content view subview data key, and
-				 *             content view subview id
-				 * @param context
-				 *            : context
-				 * @param operateResIds
-				 *            : operate icon resource id list and tip array id
-				 * @param resource
-				 *            : resource id
-				 * @param dataKeys
-				 *            : content view subview data key array
-				 * @param ids
-				 *            : content view subview id array
-				 */
-				public OperateGridViewAdapter(Context context,
-						int[] operateResIds, int resource, String[] dataKeys,
-						int[] ids) {
-					super(context,
-							_sDataList = new ArrayList<Map<String, Object>>(),
-							resource, dataKeys, ids);
-
-					// check the operate resource id array
-					if (null != operateResIds && 2 <= operateResIds.length) {
-						// get and check operate tip array
-						String[] _operateTips = context
-								.getResources()
-								.getStringArray(
-										operateResIds[operateResIds.length - 1]);
-						if (null != _operateTips
-								&& operateResIds.length - 1 == _operateTips.length) {
-							// define get nearby strangers with gender operate
-							// action and operate action
-							GetNearbyStrangersWithGenderOperate _getNearbyStrangersWithGenderOperateAction = new GetNearbyStrangersWithGenderOperate();
-							OnClickListener _operateAction = _getNearbyStrangersWithGenderOperateAction;
-
-							for (int i = 0; i < _operateTips.length; i++) {
-								// define more operation action sheet operate
-								// gridView adapter data
-								Map<String, Object> _data = new HashMap<String, Object>();
-
-								// set data attributes
-								_data.put(
-										OperateGridViewAdapterKey.MOREOPERATION_OPERATE_ICON_KEY
-												.name(), operateResIds[i]);
-								_data.put(
-										OperateGridViewAdapterKey.MOREOPERATION_OPERATE_TIP_KEY
-												.name(), _operateTips[i]);
-
-								// add data to list
-								_sDataList.add(_data);
-
-								// set nearby stranger more operation action
-								// sheet operate action
-								switch (i) {
-								case 0:
-								case 1:
-								case 2:
-									// get nearby strangers with user select
-									// gender
-									_operateAction = _getNearbyStrangersWithGenderOperateAction;
-									break;
-
-								case 3:
-									// get pat you nearby all strangers
-									_operateAction = new GetPatYouNearbyStrangersOperate();
-									break;
-
-								case 4:
-									// clear user location info and exit
-									_operateAction = new ClearUserLocationInfoOperate();
-									break;
-								}
-
-								// put operate action to operate action map
-								OPERATEACTION_MAP.put(i, _operateAction);
-							}
-
-							// notify data set changed
-							notifyDataSetChanged();
-						} else {
-							LOGGER.error("Initialize nearby strangers operation action sheet operate gridView adapter error, operate resource id array = "
-									+ operateResIds
-									+ " not matched, operate icon array count = "
-									+ (operateResIds.length - 1)
-									+ " and operate tip array count = "
-									+ _operateTips.length);
-						}
-					} else {
-						LOGGER.error("Initialize nearby strangers operation action sheet operate gridView adapter error, operate resouce id array = "
-								+ operateResIds + " count less");
-					}
-				}
-
-				/**
-				 * @title getOperateAction
-				 * @descriptor get nearby strangers more operation operate
-				 *             action with position
-				 * @param position
-				 *            : position of the item whose data we want within
-				 *            the adapter's data set
-				 * @return more operation operate action
-				 * @author Ares
-				 */
-				public OnClickListener getOperateAction(int position) {
-					// get the operate action with position
-					OnClickListener _operateAction = OPERATEACTION_MAP
-							.get(position);
-
-					// check the position and set get nearby strangers gender
-					if (getCount() - 2 > position) {
-						((GetNearbyStrangersWithGenderOperate) _operateAction)
-								.setGender(UserGender.values()[position]);
-					}
-
-					return _operateAction;
-				}
-
-				// inner class
-				/**
-				 * @name OperateGridViewAdapterKey
-				 * @descriptor nearby strangers more operation action sheet
-				 *             operate gridView adapter key enumeration
-				 * @author Ares
-				 * @version 1.0
-				 */
-				public enum OperateGridViewAdapterKey {
-
-					// more operation action sheet operate icon and tip key
-					MOREOPERATION_OPERATE_ICON_KEY, MOREOPERATION_OPERATE_TIP_KEY;
-
-				}
+				// more operation action sheet operate icon and tip key
+				MOREOPERATION_OPERATE_ICON_KEY, MOREOPERATION_OPERATE_TIP_KEY;
 
 			}
 
@@ -532,7 +557,7 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 			 * @author Ares
 			 * @version 1.0
 			 */
-			static class GetNearbyStrangersWithGenderOperate implements
+			class GetNearbyStrangersWithGenderOperate implements
 					OnClickListener {
 
 				// nearby strangers gender
@@ -550,7 +575,7 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 					//
 
 					// get user nearby strangers info
-					getNearbyStrangers();
+					getNearbyStrangers(_sContext);
 				}
 
 			}
@@ -562,8 +587,7 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 			 * @author Ares
 			 * @version 1.0
 			 */
-			static class GetPatYouNearbyStrangersOperate implements
-					OnClickListener {
+			class GetPatYouNearbyStrangersOperate implements OnClickListener {
 
 				@Override
 				public void onClick(View v) {
@@ -581,8 +605,7 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 			 * @author Ares
 			 * @version 1.0
 			 */
-			static class ClearUserLocationInfoOperate implements
-					OnClickListener {
+			class ClearUserLocationInfoOperate implements OnClickListener {
 
 				@Override
 				public void onClick(View v) {
@@ -594,45 +617,51 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 
 			}
 
-			/**
-			 * @name OperateGridViewOnItemClickListener
-			 * @descriptor nearby strangers more operation action sheet operate
-			 *             gridView on item click listener
-			 * @author Ares
-			 * @version 1.0
-			 */
-			class OperateGridViewOnItemClickListener implements
-					OnItemClickListener {
+		}
 
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view,
-						int position, long id) {
-					// dismiss more operation action sheet animation
-					dismissAnimation();
+		/**
+		 * @name OperateGridViewOnItemClickListener
+		 * @descriptor nearby strangers more operation action sheet operate
+		 *             gridView on item click listener
+		 * @author Ares
+		 * @version 1.0
+		 */
+		class OperateGridViewOnItemClickListener implements OnItemClickListener {
 
-					// nearby strangers more operation action sheet operate
-					// performed
-					((OperateGridViewAdapter) parent.getAdapter())
-							.getOperateAction(position).onClick(view);
-				}
+			@Override
+			public void onItemClick(final AdapterView<?> parent,
+					final View view, final int position, long id) {
+				// dismiss more operation action sheet animation
+				dismissAnimation();
 
+				// nearby strangers more operation action sheet operate
+				// performed using an new handle
+				new Handler().postDelayed(new Runnable() {
+
+					@Override
+					public void run() {
+						((OperateGridViewAdapter) parent.getAdapter())
+								.getOperateAction(position).onClick(view);
+					}
+
+				}, getDismissDuration(true));
 			}
 
-			/**
-			 * @name CancelBtnOnClickListener
-			 * @descriptor nearby strangers more operation action sheet cancel
-			 *             button on click listener
-			 * @author Ares
-			 * @version 1.0
-			 */
-			class CancelBtnOnClickListener implements OnClickListener {
+		}
 
-				@Override
-				public void onClick(View v) {
-					// dismiss more operation action sheet animation
-					dismissAnimation();
-				}
+		/**
+		 * @name CancelBtnOnClickListener
+		 * @descriptor nearby strangers more operation action sheet cancel
+		 *             button on click listener
+		 * @author Ares
+		 * @version 1.0
+		 */
+		class CancelBtnOnClickListener implements OnClickListener {
 
+			@Override
+			public void onClick(View v) {
+				// dismiss more operation action sheet animation
+				dismissAnimation();
 			}
 
 		}

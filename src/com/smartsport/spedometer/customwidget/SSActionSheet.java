@@ -221,6 +221,27 @@ public abstract class SSActionSheet extends PopupWindow {
 	}
 
 	/**
+	 * @title getDismissDuration
+	 * @descriptor get dismiss the action sheet duration time with using
+	 *             animation flag
+	 * @param usingAnimation
+	 *            : dismiss the action sheet using animation or not
+	 * @return dismiss the action sheet duration time
+	 * @author Ares
+	 */
+	public long getDismissDuration(boolean usingAnimation) {
+		long _duration = 0L;
+
+		// check using animation flag
+		if (usingAnimation) {
+			_duration = AnimationUtils.loadAnimation(parentView.getContext(),
+					R.anim.actionsheet_slide_out_bottom).getDuration();
+		}
+
+		return _duration;
+	}
+
+	/**
 	 * @title initContentViewUI
 	 * @descriptor initialize action sheet content view UI
 	 * @author Ares

@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
 import com.smartsport.spedometer.customwidget.SSHorizontalListView;
+import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.group.GroupInviteInviteeListViewAdapter;
 import com.smartsport.spedometer.group.GroupInviteInviteeListViewAdapter.GroupInviteInviteeListViewAdapterKey;
 import com.smartsport.spedometer.group.GroupType;
@@ -69,6 +70,9 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 	// within group compete invitee select confirm button
 	private Button inviteeSelectConfirmBtn;
 
+	// within group compete invitee progress dialog
+	private SSProgressDialog withinGroupCompeteInviteeProgDlg;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -104,6 +108,10 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 		UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
 				.getInstance().getLoginUser();
 
+		// show get user friend progress dialog
+		withinGroupCompeteInviteeProgDlg = SSProgressDialog.show(this,
+				R.string.procMsg_getUserFriends);
+
 		// get user friend list from remote server
 		userInfoModel.getFriends(_loginUser.getUserId(),
 				_loginUser.getUserKey(), new ICMConnector() {
@@ -111,13 +119,15 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 					@SuppressWarnings("unchecked")
 					@Override
 					public void onSuccess(Object... retValue) {
+						// dismiss get user friends progress dialog
+						withinGroupCompeteInviteeProgDlg.dismiss();
+
 						// check return values
 						if (null != retValue
 								&& 0 < retValue.length
 								&& retValue[retValue.length - 1] instanceof List) {
 							// get the user friends info and update its listView
-							// for
-							// within group compete invitee selecting
+							// for within group compete invitee selecting
 							withinGroupCompeteInviteeListViewAdapter
 									.setFriendsAsGroupInviteInvitees((List<UserInfoBean>) retValue[retValue.length - 1]);
 
@@ -143,7 +153,19 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 						LOGGER.error("Get user friends from remote server error, error code = "
 								+ errorCode + " and message = " + errorMsg);
 
-						//
+						// dismiss get user friends progress dialog
+						withinGroupCompeteInviteeProgDlg.dismiss();
+
+						// check error code and process hopeRun business error
+						if (errorCode < 100) {
+							// show error message toast
+							Toast.makeText(
+									WithinGroupCompeteInviteeSelectActivity.this,
+									errorMsg, Toast.LENGTH_SHORT).show();
+
+							// test by ares
+							//
+						}
 					}
 
 				});

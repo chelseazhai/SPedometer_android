@@ -33,4 +33,23 @@ public interface IAsyncHttpRespHandler {
 	 */
 	public void onFailure(int statusCode, String errorMsg);
 
+	// inner class
+	/**
+	 * @name NetworkPedometerReqRespStatusConstant
+	 * @descriptor network pedometer request response status constant
+	 * @author Ares
+	 * @version 1.0
+	 */
+	public static class NetworkPedometerReqRespStatusConstant {
+
+		// request timeout and unknown host
+		public static final int REQUEST_TIMEOUT = 900;
+		public static final int REQUEST_UNKNOWNHOST = 901;
+
+		// response body unrecognized and null
+		public static final int UNRECOGNIZED_RESPBODY = 910;
+		public static final int NULL_RESPBODY = 911;
+
+	}
+
 }

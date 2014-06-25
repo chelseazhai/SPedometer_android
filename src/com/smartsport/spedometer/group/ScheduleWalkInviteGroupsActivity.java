@@ -28,10 +28,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
+import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.customwidget.SSSimpleAdapterViewBinder;
 import com.smartsport.spedometer.group.ScheduleWalkInviteGroupsActivity.ScheduleWalkInviteGroupListViewAdapter.ScheduleWalkInviteGroupListViewAdapterKey;
 import com.smartsport.spedometer.group.walk.WalkInviteInfoSettingActivity;
@@ -68,6 +70,9 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 	// schedule walk invite group listView adapter
 	private ScheduleWalkInviteGroupListViewAdapter scheduleWalkInviteGroupListViewAdapter;
 
+	// schedule walk invite group progress dialog
+	private SSProgressDialog scheduleWalkInviteGroupProgDlg;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -103,6 +108,10 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 		UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
 				.getInstance().getLoginUser();
 
+		// show get schedule walk invite groups progress dialog
+		scheduleWalkInviteGroupProgDlg = SSProgressDialog.show(this,
+				R.string.procMsg_getScheduleWalkInviteGroups);
+
 		// get schedule walk invite group list from remote server
 		groupInfoModel.getUserScheduleGroups(_loginUser.getUserId(),
 				_loginUser.getUserKey(), GroupType.WALK_GROUP,
@@ -111,6 +120,10 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 					@SuppressWarnings("unchecked")
 					@Override
 					public void onSuccess(Object... retValue) {
+						// dismiss get schedule walk invite groups progress
+						// dialog
+						scheduleWalkInviteGroupProgDlg.dismiss();
+
 						// check return values
 						if (null != retValue && 1 < retValue.length) {
 							// get and check group type, the update walk invite
@@ -136,7 +149,20 @@ public class ScheduleWalkInviteGroupsActivity extends SSBaseActivity {
 						LOGGER.error("Get schedule walk invite groups from remote server error, error code = "
 								+ errorCode + " and message = " + errorMsg);
 
-						//
+						// dismiss get schedule walk invite groups progress
+						// dialog
+						scheduleWalkInviteGroupProgDlg.dismiss();
+
+						// check error code and process hopeRun business error
+						if (errorCode < 100) {
+							// show error message toast
+							Toast.makeText(
+									ScheduleWalkInviteGroupsActivity.this,
+									errorMsg, Toast.LENGTH_SHORT).show();
+
+							// test by ares
+							//
+						}
 					}
 
 				});

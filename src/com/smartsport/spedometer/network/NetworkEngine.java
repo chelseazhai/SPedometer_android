@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
@@ -27,6 +28,7 @@ import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespFileHandler;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespStringHandler;
+import com.smartsport.spedometer.network.handler.IAsyncHttpRespHandler.NetworkPedometerReqRespStatusConstant;
 import com.smartsport.spedometer.network.hoperun.HopeRunHttpReqEntity;
 import com.smartsport.spedometer.network.hoperun.HopeRunHttpReqRespEntity;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -301,10 +303,22 @@ public class NetworkEngine {
 				if (error instanceof ConnectTimeoutException
 						|| error instanceof SocketTimeoutException) {
 					// timeout
-					//
+					// reset timeout status code
+					statusCode = NetworkPedometerReqRespStatusConstant.REQUEST_TIMEOUT;
+
+					// show request timeout toast
+					Toast.makeText(context,
+							R.string.nwErrorMsg_request_timeout,
+							Toast.LENGTH_LONG).show();
 				} else if (error instanceof UnknownHostException) {
 					// unknown host
-					//
+					// reset unknown host status code
+					statusCode = NetworkPedometerReqRespStatusConstant.REQUEST_UNKNOWNHOST;
+
+					// show unknown host toast
+					Toast.makeText(context,
+							R.string.nwErrorMsg_remoteServer_unavailable,
+							Toast.LENGTH_LONG).show();
 				}
 			} else {
 				// check http request response status code
@@ -312,7 +326,13 @@ public class NetworkEngine {
 				case 4:
 				case 5:
 					// remote background server http request error
-					//
+					LOGGER.error("Http request error, response status code = "
+							+ statusCode);
+
+					// show request error toast
+					Toast.makeText(context,
+							R.string.nwErrorMsg_remoteServer_exception,
+							Toast.LENGTH_LONG).show();
 					break;
 				}
 			}

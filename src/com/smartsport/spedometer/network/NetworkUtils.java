@@ -47,19 +47,4 @@ public class NetworkUtils {
 		return _reqParam;
 	}
 
-	// inner class
-	/**
-	 * @name NetworkPedometerStatusConstant
-	 * @descriptor network status pedometer constant
-	 * @author Ares
-	 * @version 1.0
-	 */
-	public static class NetworkPedometerStatusConstant {
-
-		// response body unrecognized and null
-		public static final int UNRECOGNIZED_RESPBODY = 900;
-		public static final int NULL_RESPBODY = 901;
-
-	}
-
 }

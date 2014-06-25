@@ -119,7 +119,15 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 						// dismiss get user info progress dialog
 						userInfoSettingProgDlg.dismiss();
 
-						//
+						// check error code and process hopeRun business error
+						if (errorCode < 100) {
+							// show error message toast
+							Toast.makeText(UserInfoSettingActivity.this,
+									errorMsg, Toast.LENGTH_SHORT).show();
+
+							// test by ares
+							//
+						}
 					}
 
 				});

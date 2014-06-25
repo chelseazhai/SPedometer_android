@@ -14,9 +14,11 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
+import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.group.GroupInviteInviteeListViewAdapter;
 import com.smartsport.spedometer.group.GroupInviteInviteeListViewAdapter.GroupInviteInviteeListViewAdapterKey;
 import com.smartsport.spedometer.group.GroupType;
@@ -47,6 +49,9 @@ public class WalkInviteInviteeSelectActivity extends SSBaseActivity {
 	// walk invite invitee listView adapter
 	private GroupInviteInviteeListViewAdapter walkInviteInviteeListViewAdapter;
 
+	// walk invite invitee progress dialog
+	private SSProgressDialog walkInviteInviteeProgDlg;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -74,6 +79,10 @@ public class WalkInviteInviteeSelectActivity extends SSBaseActivity {
 		UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
 				.getInstance().getLoginUser();
 
+		// show get user friend progress dialog
+		walkInviteInviteeProgDlg = SSProgressDialog.show(this,
+				R.string.procMsg_getUserFriends);
+
 		// get user friend list from remote server
 		userInfoModel.getFriends(_loginUser.getUserId(),
 				_loginUser.getUserKey(), new ICMConnector() {
@@ -81,13 +90,15 @@ public class WalkInviteInviteeSelectActivity extends SSBaseActivity {
 					@SuppressWarnings("unchecked")
 					@Override
 					public void onSuccess(Object... retValue) {
+						// dismiss get user friends progress dialog
+						walkInviteInviteeProgDlg.dismiss();
+
 						// check return values
 						if (null != retValue
 								&& 0 < retValue.length
 								&& retValue[retValue.length - 1] instanceof List) {
 							// get the user friends info and update its listView
-							// for
-							// walk invite invitee selecting
+							// for walk invite invitee selecting
 							walkInviteInviteeListViewAdapter
 									.setFriendsAsGroupInviteInvitees((List<UserInfoBean>) retValue[retValue.length - 1]);
 						} else {
@@ -100,7 +111,19 @@ public class WalkInviteInviteeSelectActivity extends SSBaseActivity {
 						LOGGER.error("Get user friends from remote server error, error code = "
 								+ errorCode + " and message = " + errorMsg);
 
-						//
+						// dismiss get user friends progress dialog
+						walkInviteInviteeProgDlg.dismiss();
+
+						// check error code and process hopeRun business error
+						if (errorCode < 100) {
+							// show error message toast
+							Toast.makeText(
+									WalkInviteInviteeSelectActivity.this,
+									errorMsg, Toast.LENGTH_SHORT).show();
+
+							// test by ares
+							//
+						}
 					}
 
 				});
