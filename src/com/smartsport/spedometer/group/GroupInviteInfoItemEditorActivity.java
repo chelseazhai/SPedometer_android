@@ -52,7 +52,7 @@ public class GroupInviteInfoItemEditorActivity extends SSBaseActivity {
 	private InputMethodManager inputMethodManager;
 
 	// show soft input timer and timer task
-	private Timer SHOW_SOFTINPUT_TIMER = new Timer();
+	private final Timer SHOW_SOFTINPUT_TIMER = new Timer();
 	private TimerTask showSoftInputTimerTask;
 
 	// calendar

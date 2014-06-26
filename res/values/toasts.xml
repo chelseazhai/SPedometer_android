@@ -22,13 +22,22 @@
     <!-- walk invite group -->
     <string name="procMsg_getScheduleWalkInviteGroups">获取约走组，请稍候&#8230;</string>
 
+    <!-- walk invite invite info setting activity -->
+    <string name="procMsg_walkInvite">发送约走信息，请稍候&#8230;</string>
+
     <!-- walk invite info item -->
     <string name="toast_walk_inviteInfo_topic_null">给好友一个约走提示主题</string>
     <string name="toast_walk_inviteInfo_scheduleTime_null">选定一个约走时间</string>
     <string name="toast_walk_inviteInfo_scheduleTime_invalid">约走时间异常</string>
 
+    <!-- walk invite walk -->
+    <string name="procMsg_getWalkInviteGroupInfo">获取约走组信息，请稍候&#8230;</string>
+    <string name="procMsg_walkInviteGroup_startWalk">开始约走，请稍候&#8230;</string>
+    <string name="procMsg_walkInviteGroup_stopWalk">结束约走，请稍候&#8230;</string>
+
     <!-- within group compete invite info setting activity -->
     <string name="toast_withinGroupCompete_inviteInvitees_empty">邀请好友一起走走比赛</string>
+    <string name="procMsg_withinGroupCompeteInvite">发送竞赛信息，请稍候&#8230;</string>
 
     <!-- within group compete invite select activity -->
     <string name="toast_withinGroupCompete_inviteeSelect_selectedInvitees_isMax">不可以再邀请更多的人来参加多人组内竞赛</string>
@@ -36,6 +45,9 @@
     <!-- within group compete invite info item -->
     <string name="toast_withinGroupCompete_inviteInfo_topic_null">好歹给出一个多人组内竞赛提示主题</string>
     <string name="toast_withinGroupCompete_inviteInfo_durationTime_null">选定一个竞赛时长</string>
+
+    <!-- within group compete walk -->
+    <string name="procMsg_getWithinGroupCompeteGroupInfo">获取竞赛组信息，请稍候&#8230;</string>
 
     <!-- nearby strangers -->
     <string name="procMsg_getUserNearbyStrangers">获取附近的人，请稍候&#8230;</string>

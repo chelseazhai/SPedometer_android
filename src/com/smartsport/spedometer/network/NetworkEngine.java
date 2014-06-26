@@ -11,8 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.http.Header;
+import org.apache.http.HttpStatus;
 import org.apache.http.ParseException;
 import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
@@ -276,6 +278,10 @@ public class NetworkEngine {
 							+ e.getMessage());
 
 					e.printStackTrace();
+
+					// response body unrecognized(not json object)
+					asyncHttpRespStringHandler.onFailure(
+							HttpStatus.SC_INTERNAL_SERVER_ERROR, responseBody);
 				}
 			} else {
 				LOGGER.warning("Text asynchronous http response string handler is null, not need to throw up");
@@ -310,12 +316,13 @@ public class NetworkEngine {
 					Toast.makeText(context,
 							R.string.nwErrorMsg_request_timeout,
 							Toast.LENGTH_LONG).show();
-				} else if (error instanceof UnknownHostException) {
-					// unknown host
-					// reset unknown host status code
-					statusCode = NetworkPedometerReqRespStatusConstant.REQUEST_UNKNOWNHOST;
+				} else if (error instanceof UnknownHostException
+						|| error instanceof HttpHostConnectException) {
+					// host exception
+					// reset host exception status code
+					statusCode = NetworkPedometerReqRespStatusConstant.REQUEST_HOSTEXCEPTION;
 
-					// show unknown host toast
+					// show host exception toast
 					Toast.makeText(context,
 							R.string.nwErrorMsg_remoteServer_unavailable,
 							Toast.LENGTH_LONG).show();

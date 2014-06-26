@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
+import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.customwidget.SSSimpleAdapterViewBinder;
 import com.smartsport.spedometer.group.GroupInviteInfoAttr4Setting;
 import com.smartsport.spedometer.group.GroupInviteInfoBean;
@@ -72,6 +74,9 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 
 	// within group compete invite info listView adapter
 	private GroupInviteInfoListViewAdapter withinGroupCompeteInviteInfoListViewAdapter;
+
+	// within group compete invite progress dialog
+	private SSProgressDialog withinGroupCompeteInviteProgDlg;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -342,6 +347,11 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 					UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
 							.getInstance().getLoginUser();
 
+					// show within group compete invite progress dialog
+					withinGroupCompeteInviteProgDlg = SSProgressDialog.show(
+							WithinGroupCompeteInviteInfoSettingActivity.this,
+							R.string.procMsg_withinGroupCompeteInvite);
+
 					// send within group compete invite info with the selected
 					// user friends info list to remote server
 					withinGroupCompeteModel.inviteWithinGroupCompete(
@@ -351,6 +361,10 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 
 								@Override
 								public void onSuccess(Object... retValue) {
+									// dismiss within group compete invite
+									// progress dialog
+									withinGroupCompeteInviteProgDlg.dismiss();
+
 									// check return values
 									if (null != retValue
 											&& 2 < retValue.length
@@ -398,66 +412,79 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 										final long _inviteeUserId = selectedWithinGroupCompeteInvitees
 												.get(0).getUserId();
 										final String _competeGroupId = (String) retValue[0];
+										final Handler _competeInviteRespondHandle = new Handler();
 										new Timer().schedule(new TimerTask() {
 
 											@Override
 											public void run() {
-												// respond user friend within
-												// group compete walk invite
-												// info with the group id to
-												// remote server
-												withinGroupCompeteModel
-														.respondWithinGroupCompeteInvite(
-																_inviteeUserId,
-																"token",
-																_competeGroupId,
-																true,
-																new ICMConnector() {
+												_competeInviteRespondHandle
+														.post(new Runnable() {
 
-																	@Override
-																	public void onSuccess(
-																			Object... retValue) {
-																		// check
-																		// return
-																		// values
-																		for (Object _value : retValue) {
-																			LOGGER.info("onSuccess, value = "
-																					+ _value);
-																		}
+															@Override
+															public void run() {
+																// respond user
+																// friend within
+																// group compete
+																// walk invite
+																// info with the
+																// group id to
+																// remote server
+																withinGroupCompeteModel
+																		.respondWithinGroupCompeteInvite(
+																				_inviteeUserId,
+																				"token",
+																				_competeGroupId,
+																				true,
+																				new ICMConnector() {
 
-																		//
+																					@Override
+																					public void onSuccess(
+																							Object... retValue) {
+																						// check
+																						// return
+																						// values
+																						for (Object _value : retValue) {
+																							LOGGER.info("onSuccess, value = "
+																									+ _value);
+																						}
 
-																		// test
-																		// by
-																		// ares
-																		// go to
-																		// within
-																		// group
-																		// compete
-																		// walk
-																		// activity
-																		// with
-																		// extra
-																		// data
-																		// map
-																		popPushActivity(
-																				WithinGroupCompeteWalkActivity.class,
-																				_extraMap);
-																	}
+																						//
 
-																	@Override
-																	public void onFailure(
-																			int errorCode,
-																			String errorMsg) {
-																		LOGGER.error("Respond user friend within group compete walk invite error, error code = "
-																				+ errorCode
-																				+ " and message = "
-																				+ errorMsg);
+																						// test
+																						// by
+																						// ares
+																						// go
+																						// to
+																						// within
+																						// group
+																						// compete
+																						// walk
+																						// activity
+																						// with
+																						// extra
+																						// data
+																						// map
+																						popPushActivity(
+																								WithinGroupCompeteWalkActivity.class,
+																								_extraMap);
+																					}
 
-																		//
-																	}
+																					@Override
+																					public void onFailure(
+																							int errorCode,
+																							String errorMsg) {
+																						LOGGER.error("Respond user friend within group compete walk invite error, error code = "
+																								+ errorCode
+																								+ " and message = "
+																								+ errorMsg);
 
-																});
+																						//
+																					}
+
+																				});
+															}
+
+														});
 											}
 
 										}, 15 * MILLISECONDS_PER_SECOND);
@@ -474,7 +501,22 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 											+ " and message = "
 											+ errorMsg);
 
-									//
+									// dismiss within group compete invite
+									// progress dialog
+									withinGroupCompeteInviteProgDlg.dismiss();
+
+									// check error code and process hopeRun
+									// business error
+									if (errorCode < 100) {
+										// show error message toast
+										Toast.makeText(
+												WithinGroupCompeteInviteInfoSettingActivity.this,
+												errorMsg, Toast.LENGTH_SHORT)
+												.show();
+
+										// test by ares
+										//
+									}
 								}
 
 							});

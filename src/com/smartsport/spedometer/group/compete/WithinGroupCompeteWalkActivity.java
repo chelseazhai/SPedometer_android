@@ -24,12 +24,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.group.GroupInfoModel;
 import com.smartsport.spedometer.group.compete.CompeteAttendeesWalkTrendActivity.CompeteAttendeesWalkTrendExtraData;
 import com.smartsport.spedometer.group.info.ScheduleGroupInfoBean;
@@ -61,7 +63,7 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 	private final int SECONDS_PER_MINUTE = 60;
 
 	// within group compete attendees walk timer
-	private Timer WALK_TIMER = new Timer();
+	private final Timer WALK_TIMER = new Timer();
 
 	// pedometer login user
 	private UserPedometerExtBean loginUser = (UserPedometerExtBean) UserManager
@@ -105,6 +107,9 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 	// walk info: attendees walk trend imageView
 	private ImageView attendeesWalkTrendImgView;
 
+	// within group compete walk progress dialog
+	private SSProgressDialog withinGroupCompeteWalkProgDlg;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(withinGroupCompeteInviterWalkSavedInstanceState = savedInstanceState);
@@ -130,11 +135,19 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 		// check the within group compete group id and get its info from remote
 		// server
 		if (null != competeGroupId) {
+			// show get schedule within group compete group info progress dialog
+			withinGroupCompeteWalkProgDlg = SSProgressDialog.show(this,
+					R.string.procMsg_getWithinGroupCompeteGroupInfo);
+
 			groupInfoModel.getUserScheduleGroupInfo(loginUser.getUserId(),
 					loginUser.getUserKey(), competeGroupId, new ICMConnector() {
 
 						@Override
 						public void onSuccess(Object... retValue) {
+							// dismiss get schedule within group compete group
+							// info progress dialog
+							withinGroupCompeteWalkProgDlg.dismiss();
+
 							// set autoNavi map location source
 							autoNaviMap
 									.setLocationSource(autoNaviMapLocationSource = new WalkStartPointLocationSource(
@@ -182,7 +195,21 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 							LOGGER.error("Get within group compete group info from remote server error, error code = "
 									+ errorCode + " and message = " + errorMsg);
 
-							//
+							// dismiss get schedule within group compete group
+							// info progress dialog
+							withinGroupCompeteWalkProgDlg.dismiss();
+
+							// check error code and process hopeRun business
+							// error
+							if (errorCode < 100) {
+								// show error message toast
+								Toast.makeText(
+										WithinGroupCompeteWalkActivity.this,
+										errorMsg, Toast.LENGTH_SHORT).show();
+
+								// test by ares
+								//
+							}
 						}
 
 					});

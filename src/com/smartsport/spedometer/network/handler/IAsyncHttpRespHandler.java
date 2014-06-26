@@ -42,9 +42,9 @@ public interface IAsyncHttpRespHandler {
 	 */
 	public static class NetworkPedometerReqRespStatusConstant {
 
-		// request timeout and unknown host
+		// request timeout and host exception
 		public static final int REQUEST_TIMEOUT = 900;
-		public static final int REQUEST_UNKNOWNHOST = 901;
+		public static final int REQUEST_HOSTEXCEPTION = 901;
 
 		// response body unrecognized and null
 		public static final int UNRECOGNIZED_RESPBODY = 910;

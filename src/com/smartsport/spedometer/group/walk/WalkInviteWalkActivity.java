@@ -12,6 +12,7 @@ import java.util.TimerTask;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -24,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.MapView;
@@ -31,6 +33,7 @@ import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavBarButtonItem;
+import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.group.GroupInfoModel;
 import com.smartsport.spedometer.group.GroupType;
 import com.smartsport.spedometer.group.GroupWalkResultActivity;
@@ -64,8 +67,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private final int SECONDS_PER_MINUTE = 60;
 	private final int MINUTES_PER_HOUR = 60;
 
-	// walk invite attendees walk timer
-	private Timer WALK_TIMER = new Timer();
+	// walk invite attendees walk timer and walk info handle
+	private final Timer WALK_TIMER = new Timer();
+	private final Handler WALKINFO_HANDLER = new Handler();
 
 	// pedometer login user
 	private UserPedometerExtBean loginUser = (UserPedometerExtBean) UserManager
@@ -118,6 +122,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	// attendee walk control flag
 	private boolean isAttendeeWalkControlled;
 
+	// walk invite walk progress dialog
+	private SSProgressDialog walkInviteWalkProgDlg;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(walkInviteWalkSavedInstanceState = savedInstanceState);
@@ -143,12 +150,20 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		// check the schedule walk invite group id and then get its info from
 		// remote server
 		if (null != scheduleWalkInviteGroupId) {
+			// show get schedule walk invite group info progress dialog
+			walkInviteWalkProgDlg = SSProgressDialog.show(this,
+					R.string.procMsg_getWalkInviteGroupInfo);
+
 			groupInfoModel.getUserScheduleGroupInfo(loginUser.getUserId(),
 					loginUser.getUserKey(), scheduleWalkInviteGroupId,
 					new ICMConnector() {
 
 						@Override
 						public void onSuccess(Object... retValue) {
+							// dismiss get schedule walk invite group info
+							// progress dialog
+							walkInviteWalkProgDlg.dismiss();
+
 							// set autoNavi map location source
 							autoNaviMap
 									.setLocationSource(autoNaviMapLocationSource = new WalkStartPointLocationSource(
@@ -224,7 +239,20 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 							LOGGER.error("Get walk invite group info from remote server error, error code = "
 									+ errorCode + " and message = " + errorMsg);
 
-							//
+							// dismiss get schedule walk invite group info
+							// progress dialog
+							walkInviteWalkProgDlg.dismiss();
+
+							// check error code and process hopeRun business
+							// error
+							if (errorCode < 100) {
+								// show error message toast
+								Toast.makeText(WalkInviteWalkActivity.this,
+										errorMsg, Toast.LENGTH_SHORT).show();
+
+								// test by ares
+								//
+							}
 						}
 
 					});
@@ -828,12 +856,21 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 					// check walk invite group id and then set attendee start
 					// walk
 					if (null != scheduleWalkInviteGroupId) {
+						// show walk invite group start walk progress dialog
+						walkInviteWalkProgDlg = SSProgressDialog.show(
+								WalkInviteWalkActivity.this,
+								R.string.procMsg_walkInviteGroup_startWalk);
+
 						walkInviteModel.startWalking(loginUser.getUserId(),
 								loginUser.getUserKey(),
 								scheduleWalkInviteGroupId, new ICMConnector() {
 
 									@Override
 									public void onSuccess(Object... retValue) {
+										// dismiss walk invite group start walk
+										// progress dialog
+										walkInviteWalkProgDlg.dismiss();
+
 										// set walk attendee(inviter and
 										// invitee) avatar imageView on click
 										// listener
@@ -864,42 +901,52 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 																		+ autoNaviMapLocationSource
 																				.getWalkSpeed());
 
-																// publish self
-																// walk info
-																walkInviteModel
-																		.publishWalkingInfo(
-																				loginUser
-																						.getUserId(),
-																				loginUser
-																						.getUserKey(),
-																				scheduleWalkInviteGroupId,
-																				autoNaviMapLocationSource
-																						.getWalkLatLonPoint(),
-																				100,
-																				565.23,
-																				new ICMConnector() {
+																WALKINFO_HANDLER
+																		.post(new Runnable() {
 
-																					@Override
-																					public void onSuccess(
-																							Object... retValue) {
-																						// nothing
-																						// to
-																						// do
-																					}
+																			@Override
+																			public void run() {
+																				// publish
+																				// self
+																				// walk
+																				// info
+																				walkInviteModel
+																						.publishWalkingInfo(
+																								loginUser
+																										.getUserId(),
+																								loginUser
+																										.getUserKey(),
+																								scheduleWalkInviteGroupId,
+																								autoNaviMapLocationSource
+																										.getWalkLatLonPoint(),
+																								100,
+																								565.23,
+																								new ICMConnector() {
 
-																					@Override
-																					public void onFailure(
-																							int errorCode,
-																							String errorMsg) {
-																						LOGGER.error("Publish self walk info error, error code = "
-																								+ errorCode
-																								+ " and message = "
-																								+ errorMsg);
+																									@Override
+																									public void onSuccess(
+																											Object... retValue) {
+																										// nothing
+																										// to
+																										// do
+																									}
 
-																						//
-																					}
+																									@Override
+																									public void onFailure(
+																											int errorCode,
+																											String errorMsg) {
+																										LOGGER.error("Publish self walk info error, error code = "
+																												+ errorCode
+																												+ " and message = "
+																												+ errorMsg);
 
-																				});
+																										//
+																									}
+
+																								});
+																			}
+
+																		});
 															}
 
 														},
@@ -918,22 +965,46 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 												+ " and message = "
 												+ errorMsg);
 
-										//
+										// dismiss walk invite group start walk
+										// progress dialog
+										walkInviteWalkProgDlg.dismiss();
+
+										// check error code and process hopeRun
+										// business error
+										if (errorCode < 100) {
+											// show error message toast
+											Toast.makeText(
+													WalkInviteWalkActivity.this,
+													errorMsg,
+													Toast.LENGTH_SHORT).show();
+
+											// test by ares
+											//
+										}
 									}
 
 								});
 					}
 				} else if (getString(R.string.walkStop_button_text)
 						.equalsIgnoreCase(_walkControlBtnText.toString())) {
+					// check walk invite group id and then set attendee stop
+					// walk
 					if (null != scheduleWalkInviteGroupId) {
-						// check walk invite group id and then set attendee stop
-						// walk
+						// show walk invite group stop walk progress dialog
+						walkInviteWalkProgDlg = SSProgressDialog.show(
+								WalkInviteWalkActivity.this,
+								R.string.procMsg_walkInviteGroup_stopWalk);
+
 						walkInviteModel.stopWalking(loginUser.getUserId(),
 								loginUser.getUserKey(),
 								scheduleWalkInviteGroupId, new ICMConnector() {
 
 									@Override
 									public void onSuccess(Object... retValue) {
+										// dismiss walk invite group stop walk
+										// progress dialog
+										walkInviteWalkProgDlg.dismiss();
+
 										// check return values
 										if (null != retValue
 												&& 2 < retValue.length
@@ -978,7 +1049,22 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 												+ " and message = "
 												+ errorMsg);
 
-										//
+										// dismiss walk invite group stop walk
+										// progress dialog
+										walkInviteWalkProgDlg.dismiss();
+
+										// check error code and process hopeRun
+										// business error
+										if (errorCode < 100) {
+											// show error message toast
+											Toast.makeText(
+													WalkInviteWalkActivity.this,
+													errorMsg,
+													Toast.LENGTH_SHORT).show();
+
+											// test by ares
+											//
+										}
 									}
 
 								});

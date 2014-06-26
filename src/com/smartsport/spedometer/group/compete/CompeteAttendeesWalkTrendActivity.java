@@ -35,7 +35,7 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 	private final int MILLISECONDS_PER_SECOND = 1000;
 
 	// get within group or groups compete walk info timer and timer task
-	private Timer GET_COMPETEWALKINFO_TIMER = new Timer();
+	private final Timer GET_COMPETEWALKINFO_TIMER = new Timer();
 	private TimerTask getCompeteWalkInfoTimerTask;
 
 	// within group or groups compete model
