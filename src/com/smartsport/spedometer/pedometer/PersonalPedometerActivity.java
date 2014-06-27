@@ -67,6 +67,11 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 	// walk duration time chronometer
 	private Chronometer walkDurationTimeChronometer;
 
+	// walk info: walk total distance, total steps count and energy
+	private double walkDistance;
+	private int walkStepsCount;
+	private float walkEnergy;
+
 	// walk info: walk total distance, total steps count, energy, pace and speed
 	// textView
 	private TextView walkDistanceTextView, walkStepsCountTextView,
@@ -484,10 +489,23 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 					walkDurationTimeChronometer.setBase(SystemClock
 							.elapsedRealtime());
 					walkDurationTimeChronometer.start();
+
+					// set user personal pedometer walk path point location
+					// changed listener
+					autoNaviMapLocationSource
+							.setWalkPathPointLocationChangedListener(new PersonalWalkPathPointLocationChangedListener());
+
+					// start mark user personal walk path
+					autoNaviMapLocationSource.startMarkWalkPath();
 				} else if (getString(R.string.walkStop_button_text)
 						.equalsIgnoreCase(_walkControlBtnText.toString())) {
 					// stop walk duration time chronometer
 					walkDurationTimeChronometer.stop();
+
+					// stop mark user personal walk path
+					autoNaviMapLocationSource.stopMarkWalkPath();
+
+					//
 
 					// define walk invite walk extra data map
 					Map<String, Object> _extraMap = new HashMap<String, Object>();
@@ -516,6 +534,57 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 					dismissPushActivity(PersonalWalkResultActivity.class,
 							_extraMap);
 				}
+			}
+		}
+
+		// inner class
+		/**
+		 * @name PersonalWalkPathPointLocationChangedListener
+		 * @descriptor user personal pedometer walk path point location changed
+		 *             listener
+		 * @author Ares
+		 * @version 1.0
+		 */
+		class PersonalWalkPathPointLocationChangedListener implements
+				IWalkPathPointLocationChangedListener {
+
+			@Override
+			public void onLocationChanged(LatLonPoint walkPathPoint,
+					double walkSpeed, double walkDistance) {
+				LOGGER.info("User personal walk path point = " + walkPathPoint
+						+ ", walk speed = " + walkSpeed
+						+ " and walk distance = " + walkDistance);
+
+				// increase walk total distance and total steps count
+				PersonalPedometerActivity.this.walkDistance += walkDistance;
+				PersonalPedometerActivity.this.walkStepsCount += walkDistance * 1000 / 0.62;
+
+				// update energy
+				PersonalPedometerActivity.this.walkEnergy = 123.5f;
+
+				// update user personal walk info(walk total distance, total
+				// steps count, energy, pace and speed) textView text
+				updateWalkInfoTextViewText(
+						WalkInfoType.WALKINFO_WALKDISTANCE,
+						String.format(
+								getString(R.string.walkInfo_distance_value_format),
+								PersonalPedometerActivity.this.walkDistance));
+				updateWalkInfoTextViewText(
+						WalkInfoType.WALKINFO_WALKSTEPS,
+						String.valueOf(PersonalPedometerActivity.this.walkStepsCount));
+				updateWalkInfoTextViewText(
+						WalkInfoType.WALKINFO_WALKENERGY,
+						String.format(
+								getString(R.string.walkInfo_energy_value_format),
+								PersonalPedometerActivity.this.walkEnergy));
+				updateWalkInfoTextViewText(WalkInfoType.WALKINFO_WALKPACE, "0");
+				updateWalkInfoTextViewText(
+						WalkInfoType.WALKINFO_WALKSPEED,
+						String.format(
+								getString(R.string.walkInfo_speed_value_format),
+								walkSpeed));
+
+				//
 			}
 		}
 

@@ -41,12 +41,15 @@
     <string name="walkInfo_sensor_imitate_deviceHoldingPosture">请注意设备手持姿势</string>
     <string name="walkInfo_walkDurationTime_format" formatted="false" translatable="false">%02d\'%02d\"</string>
     <string name="walkInfo_distance_unit">公里</string>
+    <string name="walkInfo_distance_value_format">%.2f</string>
     <string name="walkInfo_step_unit">步</string>
     <string name="walkInfo_energy_unit">大卡</string>
+    <string name="walkInfo_energy_value_format">%.1f</string>
     <string name="walkInfo_pace_label">配速\n</string>
     <string name="walkInfo_pace_unit">/公里</string>
     <string name="walkInfo_speed_label">速度\n</string>
     <string name="walkInfo_speed_unit">公里/小时</string>
+    <string name="walkInfo_speed_value_format">%.2f</string>
     <string name="walkStart_button_text">开始</string>
     <string name="walkStop_button_text">结束</string>
 

@@ -868,8 +868,9 @@ public abstract class SSBaseActivity extends Activity {
 			_enterAnimResId = enterExitAnimations[0];
 			_exitAnimResId = enterExitAnimations[1];
 		} else {
-			LOGGER.error("Get the target activity enter and this target exit animation error, the animations = "
-					+ enterExitAnimations);
+			LOGGER.warning("Get the target activity enter and this target exit animation error, the animations = "
+					+ enterExitAnimations
+					+ " and then using the default animation");
 		}
 
 		// set present activity animation
