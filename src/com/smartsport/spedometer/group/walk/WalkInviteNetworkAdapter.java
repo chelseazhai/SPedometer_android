@@ -245,7 +245,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 				.genUserComReqParam(userId, token);
 
 		// set user walking group id and last fetched walk partner walking info
-		// to param
+		// timestamp to param
 		_getPartnerWalkingInfoReqParam.put(NETWORK_ENGINE.getContext()
 				.getString(R.string.getPartnerWalkInfoReqParam_groupId),
 				groupId);

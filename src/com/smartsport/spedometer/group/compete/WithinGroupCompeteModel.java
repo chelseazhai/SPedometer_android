@@ -3,6 +3,7 @@
  */
 package com.smartsport.spedometer.group.compete;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -13,6 +14,8 @@ import android.content.Context;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.group.GroupInviteInfoBean;
+import com.smartsport.spedometer.group.info.member.MemberWalkVelocityBean;
+import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.network.NetworkAdapter;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespJSONHandler;
@@ -405,19 +408,23 @@ public class WithinGroupCompeteModel {
 	 *            : user token
 	 * @param groupId
 	 *            : the walk compete group id
+	 * @param lastFetchTimestamp
+	 *            : last fetched compete group attendees walking info timestamp
 	 * @param executant
 	 *            :
 	 * @author Ares
 	 */
 	public void getWithinGroupCompeteWalkingInfo(long userId, String token,
-			final String groupId, ICMConnector executant) {
+			final String groupId, final long lastFetchTimestamp,
+			final ICMConnector executant) {
 		// get within group compete each member walking info including walking
-		// velocity and total distance with group id
+		// velocities, total distance and total step with group id and last
+		// fetch timestamp
 		((WithinGroupCompeteNetworkAdapter) NetworkAdapter
 				.getInstance()
 				.getWorkerNetworkAdapter(WithinGroupCompeteNetworkAdapter.class))
 				.getWithinGroupCompeteWalkingInfo(userId, token, groupId,
-						new AsyncHttpRespJSONHandler() {
+						lastFetchTimestamp, new AsyncHttpRespJSONHandler() {
 
 							@Override
 							public void onSuccess(int statusCode,
@@ -428,8 +435,120 @@ public class WithinGroupCompeteModel {
 							@Override
 							public void onSuccess(int statusCode,
 									JSONObject respJSONObject) {
-								// TODO Auto-generated method stub
+								LOGGER.info("Get within group compete each member walking info successful, status code = "
+										+ statusCode
+										+ " and response json object = "
+										+ respJSONObject);
 
+								// check get within group compete user walking
+								// info response json object
+								if (null != respJSONObject) {
+									// get context
+									Context _context = SSApplication
+											.getContext();
+
+									// define within group compete user walking
+									// info latest timestamp and attendees temp
+									// walking info list
+									long _competeGroupAttendeesWalkingInfoLatestTimestamp = 0;
+									List<UserInfoGroupResultBean> _competeGroupAttendeesTmpWalkingInfoList = new ArrayList<UserInfoGroupResultBean>();
+
+									try {
+										// get and check response within group
+										// compete group attendees walking info
+										// latest timestamp
+										// within group compete group attendees
+										// walking info
+										// latest timestamp
+										_competeGroupAttendeesWalkingInfoLatestTimestamp = Long.parseLong(JSONUtils
+												.getStringFromJSONObject(
+														respJSONObject,
+														_context.getString(R.string.getWithinGroupCompeteWalkInfoReqResp_latestTimestamp)));
+									} catch (NumberFormatException e) {
+										LOGGER.error("Get within group compete each member walking info, group id = "
+												+ groupId
+												+ ", last fetch timestamp = "
+												+ lastFetchTimestamp
+												+ " failed, exception message = "
+												+ e.getMessage());
+
+										// get the within group compete group
+										// attendees walking info failed
+										//
+
+										e.printStackTrace();
+									}
+
+									// get and check response within group
+									// compete group attendees walking info json
+									// array
+									JSONArray _competeGroupAttendeesWalkingInfoJSONArray = JSONUtils.getJSONArrayFromJSONObject(
+											respJSONObject,
+											_context.getString(R.string.getWithinGroupCompeteWalkInfoReqResp_walkersWalkInfo));
+									if (null != _competeGroupAttendeesTmpWalkingInfoList) {
+										for (int i = 0; i < _competeGroupAttendeesWalkingInfoJSONArray
+												.length(); i++) {
+											// get and check within group
+											// compete group attendee walking
+											// info json object
+											JSONObject _attendeeWalkingInfo = JSONUtils
+													.getJSONObjectFromJSONArray(
+															_competeGroupAttendeesWalkingInfoJSONArray,
+															i);
+											if (null != _attendeeWalkingInfo) {
+												// generate attendee temp
+												// walking info
+												UserInfoGroupResultBean _attendeeTmpWalkingInfo = new UserInfoGroupResultBean(
+														_attendeeWalkingInfo);
+
+												// get and check attendee walk
+												// velocity list json array
+												JSONArray _attendeeWalkVelocityArray = JSONUtils
+														.getJSONArrayFromJSONObject(
+																JSONUtils
+																		.getJSONObjectFromJSONObject(
+																				_attendeeWalkingInfo,
+																				_context.getString(R.string.getWithinGroupCompeteWalkInfoReqResp_walkerWalkInfo)),
+																_context.getString(R.string.getWithinGroupCompeteWalkInfoReqResp_walkVelocity));
+												if (null != _attendeeWalkVelocityArray) {
+													for (int j = 0; j < _attendeeWalkVelocityArray
+															.length(); j++) {
+														// add attendee walk
+														// velocity to attendee
+														// temp walking info
+														_attendeeTmpWalkingInfo
+																.getResult()
+																.addWalkVelocity(
+																		new MemberWalkVelocityBean(
+																				JSONUtils
+																						.getJSONObjectFromJSONArray(
+																								_attendeeWalkVelocityArray,
+																								j)));
+													}
+												}
+
+												// add it to list
+												_competeGroupAttendeesTmpWalkingInfoList
+														.add(_attendeeTmpWalkingInfo);
+											}
+										}
+									}
+
+									LOGGER.debug("Get within group compete each member walking info, group id = "
+											+ groupId
+											+ ", last fetch timestamp = "
+											+ lastFetchTimestamp
+											+ ", the attendees walking info latest timestamp = "
+											+ _competeGroupAttendeesWalkingInfoLatestTimestamp
+											+ " and attendees temp walking info list = "
+											+ _competeGroupAttendeesTmpWalkingInfoList);
+
+									// get within group compete user walking
+									// info successful
+									//
+								} else {
+									LOGGER.error("Get within group compete each member walking info response json object is null");
+								}
 							}
 
 							@Override
@@ -444,7 +563,7 @@ public class WithinGroupCompeteModel {
 
 								// get within group compete user walking info
 								// failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});

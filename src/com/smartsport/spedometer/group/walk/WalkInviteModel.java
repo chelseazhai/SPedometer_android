@@ -21,6 +21,7 @@ import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.network.NetworkAdapter;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespJSONHandler;
+import com.smartsport.spedometer.strangersocial.LocationBean;
 import com.smartsport.spedometer.utils.JSONUtils;
 import com.smartsport.spedometer.utils.SSLogger;
 
@@ -520,9 +521,10 @@ public class WalkInviteModel {
 	 */
 	public void getPartnerWalkingInfo(long userId, String token,
 			final String groupId, final long lastFetchTimestamp,
-			ICMConnector executant) {
-		// get the walking group partner walking info including walking location
-		// and total step with group id and last fetch timestamp
+			final ICMConnector executant) {
+		// get the walking group partner walking info including walking
+		// locations total distance and total step with group id and last fetch
+		// timestamp
 		((WalkInviteNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(WalkInviteNetworkAdapter.class))
 				.getPartnerWalkingInfo(userId, token, groupId,
@@ -550,16 +552,17 @@ public class WalkInviteModel {
 											.getContext();
 
 									// define walking group partner walking info
-									// latest timestamp, total step and location
-									// list
+									// latest timestamp, total distance, total
+									// step and location list
 									long _walkingGroupPartnerWalkingInfoLatestTimestamp = 0;
-									int _walkingGroupPartnerWalkingToalStep = 0;
+									double _walkingGroupPartnerWalkingTotalDistance = 0.0;
+									int _walkingGroupPartnerWalkingTotalStep = 0;
 									List<LatLonPoint> _walkingGroupPartnerWalkingLocationList = new ArrayList<LatLonPoint>();
 
 									try {
 										// get and check response walking group
 										// partner walking info latest timestamp
-										// and total step
+										// and total distance and total step
 										// walking group partner walking info
 										// latest timestamp
 										_walkingGroupPartnerWalkingInfoLatestTimestamp = Long.parseLong(JSONUtils
@@ -574,8 +577,15 @@ public class WalkInviteModel {
 														_walkingGroupPartnerWalkingInfoLatestTimestamp);
 
 										// walking group partner walking total
+										// distance
+										_walkingGroupPartnerWalkingTotalDistance = Double.parseDouble(JSONUtils
+												.getStringFromJSONObject(
+														respJSONObject,
+														_context.getString(R.string.getPartnerWalkInfoReqResp_walkTotalDistance)));
+
+										// walking group partner walking total
 										// step
-										_walkingGroupPartnerWalkingToalStep = Integer.parseInt(JSONUtils
+										_walkingGroupPartnerWalkingTotalStep = Integer.parseInt(JSONUtils
 												.getStringFromJSONObject(
 														respJSONObject,
 														_context.getString(R.string.getPartnerWalkInfoReqResp_walkTotalStep)));
@@ -614,8 +624,9 @@ public class WalkInviteModel {
 												// latitude and longitude point
 												// and add to list
 												_walkingGroupPartnerWalkingLocationList
-														.add(new LatLonPoint(
-																0.0, 0.0));
+														.add(new LocationBean(
+																_partnerWalkingLocation)
+																.toLatLonPoint());
 											}
 										}
 									}
@@ -626,8 +637,10 @@ public class WalkInviteModel {
 											+ lastFetchTimestamp
 											+ ", the partner walking info latest timestamp = "
 											+ _walkingGroupPartnerWalkingInfoLatestTimestamp
+											+ ", total distance = "
+											+ _walkingGroupPartnerWalkingTotalDistance
 											+ ", total step = "
-											+ _walkingGroupPartnerWalkingToalStep
+											+ _walkingGroupPartnerWalkingTotalStep
 											+ " and location list = "
 											+ _walkingGroupPartnerWalkingLocationList);
 
@@ -652,7 +665,7 @@ public class WalkInviteModel {
 
 								// get the walking group partner walking info
 								// failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});

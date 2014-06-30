@@ -149,6 +149,7 @@
     <string name="getPartnerWalkInfoReqParam_lastFetchTimestamp" translatable="false">latestTimestamp</string>
     <string name="getPartnerWalkInfoReqResp_latestTimestamp" translatable="false">currentTimestamp</string>
     <string name="getPartnerWalkInfoReqResp_walkTotalStep" translatable="false">totalStep</string>
+    <string name="getPartnerWalkInfoReqResp_walkTotalDistance" translatable="false">totalDistance</string>
     <string name="getPartnerWalkInfoReqResp_walkPath" translatable="false">locationList</string>
 
     <!-- walk controlled notify -->
@@ -201,8 +202,10 @@
     <string name="getWithinGroupCompeteWalkInfoReqResp_latestTimestamp" translatable="false">currentTimestamp</string>
     <string name="getWithinGroupCompeteWalkInfoReqResp_walkersWalkInfo" translatable="false">result</string>
     <string name="getWithinGroupCompeteWalkInfoReqResp_walkerId" translatable="false">userId</string>
-    <string name="getWithinGroupCompeteWalkInfoReqResp_walkerNickname" translatable="false">nickname</string>
+    <!-- <string name="getWithinGroupCompeteWalkInfoReqResp_walkerNickname" translatable="false">nickname</string> -->
+    <string name="getWithinGroupCompeteWalkInfoReqResp_walkerNickname" translatable="false">nickName</string>
     <string name="getWithinGroupCompeteWalkInfoReqResp_walkerWalkInfo" translatable="false">info</string>
+    <string name="getWithinGroupCompeteWalkInfoReqResp_walkTotalStep" translatable="false">totalStep</string>
     <string name="getWithinGroupCompeteWalkInfoReqResp_walkTotalDistance" translatable="false">totalDistance</string>
     <string name="getWithinGroupCompeteWalkInfoReqResp_walkVelocity" translatable="false">velocityList</string>
     <string name="getWithinGroupCompeteWalkInfoReqResp_velocity" translatable="false">velocity</string>

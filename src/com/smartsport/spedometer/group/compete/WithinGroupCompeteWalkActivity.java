@@ -251,8 +251,9 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 				.strokeColor(
 						getResources().getColor(android.R.color.transparent)));
 
-		// enable compass and hidden zoom controls button
+		// enable compass, scale controls and disable zoom controls
 		autoNaviMap.getUiSettings().setCompassEnabled(true);
+		autoNaviMap.getUiSettings().setScaleControlsEnabled(true);
 		autoNaviMap.getUiSettings().setZoomControlsEnabled(false);
 
 		// get walk remain time textView

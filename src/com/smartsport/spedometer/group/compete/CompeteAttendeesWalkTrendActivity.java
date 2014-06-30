@@ -8,6 +8,7 @@ import java.util.TimerTask;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.RadioGroup;
@@ -16,6 +17,8 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
+import com.smartsport.spedometer.user.UserManager;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -34,8 +37,11 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 	// milliseconds per second
 	private final int MILLISECONDS_PER_SECOND = 1000;
 
-	// get within group or groups compete walk info timer and timer task
+	// get within group or groups compete walk info timer and handler
 	private final Timer GET_COMPETEWALKINFO_TIMER = new Timer();
+	private final Handler GET_COMPETEWALKINFO_HANDLER = new Handler();
+
+	// get within group or groups compete walk info timer task
 	private TimerTask getCompeteWalkInfoTimerTask;
 
 	// within group or groups compete model
@@ -71,37 +77,51 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 					public void run() {
 						// check the extra data again
 						if (null != _extraData) {
-							// get, check the within group or groups compete
-							// group id and then get within group compete
-							// attendees walk info
-							String _competeGroupId = _extraData
-									.getString(CompeteAttendeesWalkTrendExtraData.CAWT_COMPETEGROUP_ID);
-							if (null != _competeGroupId) {
-								withinGroupCompeteModel
-										.getWithinGroupCompeteWalkingInfo(
-												123123, "token",
-												_competeGroupId,
-												new ICMConnector() {
+							GET_COMPETEWALKINFO_HANDLER.post(new Runnable() {
 
-													@Override
-													public void onSuccess(
-															Object... retValue) {
-														// TODO Auto-generated
-														// method stub
+								@Override
+								public void run() {
+									// get, check the within group or groups
+									// compete group id and then get within
+									// group compete attendees walk info
+									String _competeGroupId = _extraData
+											.getString(CompeteAttendeesWalkTrendExtraData.CAWT_COMPETEGROUP_ID);
+									if (null != _competeGroupId) {
+										// get pedometer login user
+										UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
+												.getInstance().getLoginUser();
 
-													}
+										withinGroupCompeteModel
+												.getWithinGroupCompeteWalkingInfo(
+														_loginUser.getUserId(),
+														_loginUser.getUserKey(),
+														_competeGroupId, 0L,
+														new ICMConnector() {
 
-													@Override
-													public void onFailure(
-															int errorCode,
-															String errorMsg) {
-														// TODO Auto-generated
-														// method stub
+															@Override
+															public void onSuccess(
+																	Object... retValue) {
+																// TODO
+																// Auto-generated
+																// method stub
 
-													}
+															}
 
-												});
-							}
+															@Override
+															public void onFailure(
+																	int errorCode,
+																	String errorMsg) {
+																// TODO
+																// Auto-generated
+																// method stub
+
+															}
+
+														});
+									}
+								}
+
+							});
 						}
 					}
 

@@ -3,6 +3,7 @@
  */
 package com.smartsport.spedometer.group.walk;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.MyLocationStyle;
+import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavBarButtonItem;
 import com.smartsport.spedometer.customwidget.SSProgressDialog;
@@ -43,9 +45,11 @@ import com.smartsport.spedometer.group.info.member.MemberStatus;
 import com.smartsport.spedometer.group.info.member.UserInfoMemberStatusBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
+import com.smartsport.spedometer.pedometer.IWalkPathPointLocationChangedListener;
 import com.smartsport.spedometer.pedometer.WalkInfoType;
 import com.smartsport.spedometer.pedometer.WalkStartPointLocationSource;
 import com.smartsport.spedometer.user.UserInfoBean;
+import com.smartsport.spedometer.user.UserInfoModel;
 import com.smartsport.spedometer.user.UserManager;
 import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -67,7 +71,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private final int SECONDS_PER_MINUTE = 60;
 	private final int MINUTES_PER_HOUR = 60;
 
-	// walk invite attendees walk timer and walk info handle
+	// walk invite attendees walk timer and walk info handler
 	private final Timer WALK_TIMER = new Timer();
 	private final Handler WALKINFO_HANDLER = new Handler();
 
@@ -114,6 +118,11 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	// publish self and get walk partner walk info timer task
 	private TimerTask publishAndGetWalkInfoTimerTask;
 
+	// walk info: walk total distance, total steps count and energy
+	private double walkDistance;
+	private int walkStepsCount;
+	private float walkEnergy;
+
 	// walk info: walk total distance, total steps count, energy, pace and speed
 	// textView
 	private TextView walkDistanceTextView, walkStepsCountTextView,
@@ -124,6 +133,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 	// walk invite walk progress dialog
 	private SSProgressDialog walkInviteWalkProgDlg;
+
+	// walk invite inviter walk path point list
+	private List<LatLonPoint> walkPathPoints;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +155,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 			scheduleWalkInviteGroupEndTime = _extraData
 					.getLong(WalkInviteWalkExtraData.WIW_WALKINVITEGROUP_SCHEDULEENDTIME);
 		}
+
+		// initialize walk invite inviter walk path point list
+		walkPathPoints = new ArrayList<LatLonPoint>();
 
 		// set content view
 		setContentView(R.layout.activity_walkinvite_walk);
@@ -294,8 +309,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 				.strokeColor(
 						getResources().getColor(android.R.color.transparent)));
 
-		// enable compass and hidden zoom controls button
+		// enable compass, scale controls and disable zoom controls
 		autoNaviMap.getUiSettings().setCompassEnabled(true);
+		autoNaviMap.getUiSettings().setScaleControlsEnabled(true);
 		autoNaviMap.getUiSettings().setZoomControlsEnabled(false);
 
 		// get walk invite inviter avatar imageView
@@ -885,6 +901,16 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 										// mark attendee walk started
 										isAttendeeWalkControlled = true;
 
+										// set walk invite inviter walk path
+										// point location changed listener
+										autoNaviMapLocationSource
+												.setWalkPathPointLocationChangedListener(new WalkInviteInviterWalkPathPointLocationChangedListener());
+
+										// start mark walk invite inviter walk
+										// path
+										autoNaviMapLocationSource
+												.startMarkWalkPath();
+
 										// schedule publish self, get walk
 										// partner walk info immediately and
 										// repeat every period
@@ -919,8 +945,8 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 																								scheduleWalkInviteGroupId,
 																								autoNaviMapLocationSource
 																										.getWalkLatLonPoint(),
-																								100,
-																								565.23,
+																								walkStepsCount,
+																								walkDistance,
 																								new ICMConnector() {
 
 																									@Override
@@ -1010,6 +1036,10 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 												&& 2 < retValue.length
 												&& (retValue[0] instanceof Long && retValue[1] instanceof Long)
 												&& retValue[retValue.length - 1] instanceof List) {
+											// stop mark user personal walk path
+											autoNaviMapLocationSource
+													.stopMarkWalkPath();
+
 											// define walk invite walk extra
 											// data map
 											Map<String, Object> _extraMap = new HashMap<String, Object>();
@@ -1070,6 +1100,73 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 								});
 					}
 				}
+			}
+		}
+
+		// inner class
+		/**
+		 * @name WalkInviteInviterWalkPathPointLocationChangedListener
+		 * @descriptor walk invite inviter walk path point location changed
+		 *             listener
+		 * @author Ares
+		 * @version 1.0
+		 */
+		class WalkInviteInviterWalkPathPointLocationChangedListener implements
+				IWalkPathPointLocationChangedListener {
+
+			// centimeters per meter
+			private final int CENTIMETERS_PER_METER = 100;
+
+			// energy calculate coefficient
+			private final float ENERGY_CALCCOEFFICIENT = 1.036f;
+
+			@Override
+			public void onLocationChanged(LatLonPoint walkPathPoint,
+					double walkSpeed, double walkDistance) {
+				// add walk path point to it
+				walkPathPoints.add(walkPathPoint);
+
+				// get local storage user step length
+				// test by ares
+				Float _userStepLength = Float.parseFloat("62.0");
+
+				// increase walk total distance and total steps count
+				WalkInviteWalkActivity.this.walkDistance += walkDistance;
+				WalkInviteWalkActivity.this.walkStepsCount += walkDistance
+						* WalkStartPointLocationSource.METERS_PER_KILOMETER
+						/ (_userStepLength / CENTIMETERS_PER_METER);
+
+				// get user info
+				UserInfoBean _userInfo = UserInfoModel.getInstance()
+						.getUserInfo();
+
+				// update energy
+				// test by ares
+				// PersonalPedometerActivity.this.walkEnergy = 123.5f;
+				WalkInviteWalkActivity.this.walkEnergy = (float) (_userInfo
+						.getWeight() * WalkInviteWalkActivity.this.walkDistance * ENERGY_CALCCOEFFICIENT);
+
+				// update walk invite inviter walk info(walk total distance,
+				// total steps count, energy, pace and speed) textView text
+				updateWalkInfoTextViewText(
+						WalkInfoType.WALKINFO_WALKDISTANCE,
+						String.format(
+								getString(R.string.walkInfo_distance_value_format),
+								WalkInviteWalkActivity.this.walkDistance));
+				updateWalkInfoTextViewText(
+						WalkInfoType.WALKINFO_WALKSTEPS,
+						String.valueOf(WalkInviteWalkActivity.this.walkStepsCount));
+				updateWalkInfoTextViewText(
+						WalkInfoType.WALKINFO_WALKENERGY,
+						String.format(
+								getString(R.string.walkInfo_energy_value_format),
+								WalkInviteWalkActivity.this.walkEnergy));
+				updateWalkInfoTextViewText(WalkInfoType.WALKINFO_WALKPACE, "0");
+				updateWalkInfoTextViewText(
+						WalkInfoType.WALKINFO_WALKSPEED,
+						String.format(
+								getString(R.string.walkInfo_speed_value_format),
+								walkSpeed));
 			}
 		}
 

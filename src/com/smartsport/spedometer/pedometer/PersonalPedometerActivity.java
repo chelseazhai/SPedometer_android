@@ -5,10 +5,14 @@ package com.smartsport.spedometer.pedometer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -31,6 +35,8 @@ import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
 import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.pedometer.PersonalWalkResultActivity.PersonalWalkResultExtraData;
+import com.smartsport.spedometer.user.UserInfoBean;
+import com.smartsport.spedometer.user.UserInfoModel;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -48,12 +54,22 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 	// milliseconds per second
 	private final int MILLISECONDS_PER_SECOND = 1000;
 
+	// user personal pedometer walk timer and walk info handler
+	private final Timer WALK_TIMER = new Timer();
+	private final Handler WALKINFO_HANDLER = new Handler();
+
 	// user walk saved instance state
 	private Bundle userWalkSavedInstanceState;
 
 	// user walk path mapView and autoNavi map
 	private MapView userWalkPathMapView;
 	private AMap autoNaviMap;
+
+	// locate user personal pedometer walk start point timer task
+	private TimerTask locateUserWalkStartPointTimerTask;
+
+	// user walk info record type
+	private WalkInfoRecordType userWalkInfoRecordType;
 
 	// autoNavi location source
 	private WalkStartPointLocationSource autoNaviMapLocationSource;
@@ -80,9 +96,15 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 	// walk control button
 	private Button walkControlBtn;
 
+	// walk path point list
+	private List<LatLonPoint> walkPathPoints;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(userWalkSavedInstanceState = savedInstanceState);
+
+		// initialize walk path point list
+		walkPathPoints = new ArrayList<LatLonPoint>();
 
 		// set content view
 		setContentView(R.layout.activity_personal_pedometer);
@@ -140,6 +162,9 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 
 					@Override
 					protected void locateSuccess() {
+						// update user walk info record type
+						userWalkInfoRecordType = WalkInfoRecordType.WALKINFO_RECORD_GPS;
+
 						// show user walk path mask view if needed
 						if (View.VISIBLE == userWalkPathMaskView
 								.getVisibility()) {
@@ -159,6 +184,9 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 
 					@Override
 					protected void locateTimeout() {
+						// update user walk info record type
+						userWalkInfoRecordType = WalkInfoRecordType.WALKINFO_RECORD_DEVICEMOTIONSENSOR;
+
 						// hide user walk path mask view if needed
 						if (View.VISIBLE != userWalkPathMaskView
 								.getVisibility()) {
@@ -179,12 +207,31 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 
 				});
 
-		// enable get my location, compass and hidden location, zoom controls
-		// button
-		autoNaviMap.getUiSettings().setMyLocationButtonEnabled(false);
+		// enable compass, scale controls and disable zoom controls
 		autoNaviMap.getUiSettings().setCompassEnabled(true);
-		autoNaviMap.setMyLocationEnabled(true);
+		autoNaviMap.getUiSettings().setScaleControlsEnabled(true);
 		autoNaviMap.getUiSettings().setZoomControlsEnabled(false);
+
+		// locate user personal pedometer walk start point
+		WALK_TIMER.schedule(
+				locateUserWalkStartPointTimerTask = new TimerTask() {
+
+					@Override
+					public void run() {
+						// enable get my location and hidden location button
+						WALKINFO_HANDLER.post(new Runnable() {
+
+							@Override
+							public void run() {
+								autoNaviMap.getUiSettings()
+										.setMyLocationButtonEnabled(false);
+								autoNaviMap.setMyLocationEnabled(true);
+							}
+
+						});
+					}
+
+				}, 0);
 
 		// get walk info sliding up button
 		walkInfoSlidingUpBtn = (Button) findViewById(R.id.pp_walkInfo_slidingUp_button);
@@ -268,6 +315,14 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 		// check autoNavi location source and then deactivate
 		if (null != autoNaviMapLocationSource) {
 			autoNaviMapLocationSource.deactivate();
+		}
+
+		// check and cancel locate user personal pedometer walk start point
+		// timer task
+		if (null != locateUserWalkStartPointTimerTask) {
+			locateUserWalkStartPointTimerTask.cancel();
+
+			locateUserWalkStartPointTimerTask = null;
 		}
 	}
 
@@ -369,6 +424,19 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 	}
 
 	// inner class
+	/**
+	 * @name WalkInfoRecordType
+	 * @descriptor user personal pedometer walk info record type enumeration
+	 * @author Ares
+	 * @version 1.0
+	 */
+	enum WalkInfoRecordType {
+
+		// GPS and device motion sensor
+		WALKINFO_RECORD_GPS, WALKINFO_RECORD_DEVICEMOTIONSENSOR;
+
+	}
+
 	/**
 	 * @name CancelWalkBarBtnItemOnClickListener
 	 * @descriptor cancel walk bar button item on click listener
@@ -490,22 +558,38 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 							.elapsedRealtime());
 					walkDurationTimeChronometer.start();
 
-					// set user personal pedometer walk path point location
-					// changed listener
-					autoNaviMapLocationSource
-							.setWalkPathPointLocationChangedListener(new PersonalWalkPathPointLocationChangedListener());
+					// check user walk info record type
+					switch (userWalkInfoRecordType) {
+					case WALKINFO_RECORD_GPS:
+						// set user personal pedometer walk path point location
+						// changed listener
+						autoNaviMapLocationSource
+								.setWalkPathPointLocationChangedListener(new PersonalWalkPathPointLocationChangedListener());
 
-					// start mark user personal walk path
-					autoNaviMapLocationSource.startMarkWalkPath();
+						// start mark user personal walk path
+						autoNaviMapLocationSource.startMarkWalkPath();
+						break;
+
+					case WALKINFO_RECORD_DEVICEMOTIONSENSOR:
+						//
+						break;
+					}
 				} else if (getString(R.string.walkStop_button_text)
 						.equalsIgnoreCase(_walkControlBtnText.toString())) {
 					// stop walk duration time chronometer
 					walkDurationTimeChronometer.stop();
 
-					// stop mark user personal walk path
-					autoNaviMapLocationSource.stopMarkWalkPath();
+					// check user walk info record type
+					switch (userWalkInfoRecordType) {
+					case WALKINFO_RECORD_GPS:
+						// stop mark user personal walk path
+						autoNaviMapLocationSource.stopMarkWalkPath();
+						break;
 
-					//
+					case WALKINFO_RECORD_DEVICEMOTIONSENSOR:
+						//
+						break;
+					}
 
 					// define walk invite walk extra data map
 					Map<String, Object> _extraMap = new HashMap<String, Object>();
@@ -521,10 +605,10 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 											+ (SystemClock.elapsedRealtime() - walkDurationTimeChronometer
 													.getBase())
 											/ MILLISECONDS_PER_SECOND);
-					// test by ares
 					_extraMap
 							.put(PersonalWalkResultExtraData.PWR_USER_WALKPATH_LOCATIONPOINTS,
-									new ArrayList<LatLonPoint>());
+									walkPathPoints);
+					// test by ares
 					_extraMap.put(
 							PersonalWalkResultExtraData.PWR_USER_WALKRESULT,
 							new UserInfoGroupResultBean());
@@ -548,19 +632,38 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 		class PersonalWalkPathPointLocationChangedListener implements
 				IWalkPathPointLocationChangedListener {
 
+			// centimeters per meter
+			private final int CENTIMETERS_PER_METER = 100;
+
+			// energy calculate coefficient
+			private final float ENERGY_CALCCOEFFICIENT = 1.036f;
+
 			@Override
 			public void onLocationChanged(LatLonPoint walkPathPoint,
 					double walkSpeed, double walkDistance) {
-				LOGGER.info("User personal walk path point = " + walkPathPoint
-						+ ", walk speed = " + walkSpeed
-						+ " and walk distance = " + walkDistance);
+				// add walk path point to it
+				walkPathPoints.add(walkPathPoint);
+
+				// get local storage user step length
+				// test by ares
+				Float _userStepLength = Float.parseFloat("62.0");
 
 				// increase walk total distance and total steps count
 				PersonalPedometerActivity.this.walkDistance += walkDistance;
-				PersonalPedometerActivity.this.walkStepsCount += walkDistance * 1000 / 0.62;
+				PersonalPedometerActivity.this.walkStepsCount += walkDistance
+						* WalkStartPointLocationSource.METERS_PER_KILOMETER
+						/ (_userStepLength / CENTIMETERS_PER_METER);
+
+				// get user info
+				UserInfoBean _userInfo = UserInfoModel.getInstance()
+						.getUserInfo();
 
 				// update energy
-				PersonalPedometerActivity.this.walkEnergy = 123.5f;
+				// test by ares
+				// PersonalPedometerActivity.this.walkEnergy = 123.5f;
+				PersonalPedometerActivity.this.walkEnergy = (float) (_userInfo
+						.getWeight()
+						* PersonalPedometerActivity.this.walkDistance * ENERGY_CALCCOEFFICIENT);
 
 				// update user personal walk info(walk total distance, total
 				// steps count, energy, pace and speed) textView text
@@ -583,8 +686,6 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 						String.format(
 								getString(R.string.walkInfo_speed_value_format),
 								walkSpeed));
-
-				//
 			}
 		}
 

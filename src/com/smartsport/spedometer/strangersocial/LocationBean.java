@@ -5,9 +5,15 @@ package com.smartsport.spedometer.strangersocial;
 
 import java.io.Serializable;
 
+import org.json.JSONObject;
+
+import android.content.Context;
 import android.location.Location;
 
 import com.amap.api.services.core.LatLonPoint;
+import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.SSApplication;
+import com.smartsport.spedometer.utils.JSONUtils;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -54,6 +60,55 @@ public class LocationBean implements Serializable {
 		// save location info:longitude and latitude
 		this.longitude = longitude;
 		this.latitude = latitude;
+	}
+
+	/**
+	 * @title LocationBean
+	 * @descriptor location bean constructor with json object
+	 * @param info
+	 *            : user walk path location json object
+	 * @author Ares
+	 */
+	public LocationBean(JSONObject info) {
+		this();
+
+		// parse user walk path location info
+		// check parsed user walk path location json object
+		if (null != info) {
+			// get context
+			Context _context = SSApplication.getContext();
+
+			// get user walk path location longitude and latitude value
+			try {
+				double _walkPathLocationLongitude = Double
+						.parseDouble(JSONUtils.getStringFromJSONObject(
+								info,
+								_context.getString(R.string.walkLocationInfo_longitude)));
+				double _walkPathLocationLatitude = Double
+						.parseDouble(JSONUtils.getStringFromJSONObject(
+								info,
+								_context.getString(R.string.walkLocationInfo_latitude)));
+
+				LOGGER.debug("Parse user walk path location json object successful, user walk path location longitude = "
+						+ _walkPathLocationLongitude
+						+ " and latitude = "
+						+ _walkPathLocationLatitude);
+
+				// save location info:longitude and latitude
+				longitude = _walkPathLocationLongitude;
+				latitude = _walkPathLocationLatitude;
+			} catch (NumberFormatException e) {
+				LOGGER.error("Parse user walk path location json object error, exception message = "
+						+ e.getMessage());
+
+				e.printStackTrace();
+
+				// clear location info, using invalid value
+				longitude = latitude = Double.MIN_VALUE;
+			}
+		} else {
+			LOGGER.error("Parse user walk path location json object error, the info with longitude and latitude is null");
+		}
 	}
 
 	public double getLongitude() {

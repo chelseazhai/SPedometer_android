@@ -74,31 +74,35 @@ public class UserInfoGroupResultBean extends UserInfoBean {
 		// parse user group status of walk or compete group info
 		// check parsed user info group status extension json object
 		if (null != info) {
-			// result = new GroupResultInfoBean(
-			// JSONUtils.getJSONObjectFromJSONObject(
-			// info,
-			// context.getString(R.string.getHistoryGroupInfoResp_walkResultInfo)));
+			// get and check walk invite or within group compete group walk
+			// result info
+			JSONObject _walkResultInfo = JSONUtils
+					.getJSONObjectFromJSONObject(
+							info,
+							context.getString(R.string.getHistoryGroupInfoResp_walkResultInfo));
+			if (null == _walkResultInfo) {
+				// initialize walk invite or within group compete group walk
+				// result info
+				_walkResultInfo = new JSONObject();
 
-			// test by ares
-			// define walk invite or within group compete group walk result info
-			JSONObject _walkResultInfo = new JSONObject();
+				// define walk result info total step and distance key
+				String _walkResultInfoTotalStep = context
+						.getString(R.string.groupWalkResultInfo_totalStep);
+				String _walkResultInfoTotalDistance = context
+						.getString(R.string.groupWalkResultInfo_totalDistance);
 
-			// define walk result info total step and distance key
-			String _walkResultInfoTotalStep = context
-					.getString(R.string.groupWalkResultInfo_totalStep);
-			String _walkResultInfoTotalDistance = context
-					.getString(R.string.groupWalkResultInfo_totalDistance);
+				// set walk result info to it
+				JSONUtils.putObject2JSONObject(_walkResultInfo,
+						_walkResultInfoTotalStep, JSONUtils
+								.getStringFromJSONObject(info,
+										_walkResultInfoTotalStep));
+				JSONUtils.putObject2JSONObject(_walkResultInfo,
+						_walkResultInfoTotalDistance, JSONUtils
+								.getStringFromJSONObject(info,
+										_walkResultInfoTotalDistance));
+			}
 
-			// set walk result info to it
-			JSONUtils.putObject2JSONObject(_walkResultInfo,
-					_walkResultInfoTotalStep, JSONUtils
-							.getStringFromJSONObject(info,
-									_walkResultInfoTotalStep));
-			JSONUtils.putObject2JSONObject(_walkResultInfo,
-					_walkResultInfoTotalDistance, JSONUtils
-							.getStringFromJSONObject(info,
-									_walkResultInfoTotalDistance));
-
+			// set walk invite or within group compete group walk result
 			result = new GroupResultInfoBean(_walkResultInfo);
 		} else {
 			LOGGER.error("Parse user info group status extension json object error, the info with group status is null");

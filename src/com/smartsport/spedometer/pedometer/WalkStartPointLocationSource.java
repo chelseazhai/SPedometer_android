@@ -39,6 +39,9 @@ public class WalkStartPointLocationSource implements LocationSource {
 	// milliseconds per second
 	private static final int MILLISECONDS_PER_SECOND = 1000;
 
+	// meters per kilometer
+	public static final int METERS_PER_KILOMETER = 1000;
+
 	// walk start and stop point location marker options
 	private final MarkerOptions WALK_STARTPOINTLOCATION_MARKER_OPTIONS = new MarkerOptions()
 			.icon(BitmapDescriptorFactory
@@ -262,8 +265,8 @@ public class WalkStartPointLocationSource implements LocationSource {
 		// clear autoNavi map location changed listener
 		locationChangedListener = null;
 
-		// check autoNavi map location manager proxy and clear
-		if (null != locationManagerProxy) {
+		// check autoNavi map location listener, manager proxy and clear
+		if (null != locationManagerProxy && null != autoNaviMapLocationListener) {
 			locationManagerProxy.removeUpdates(autoNaviMapLocationListener);
 			locationManagerProxy.destory();
 		}
@@ -305,9 +308,6 @@ public class WalkStartPointLocationSource implements LocationSource {
 	 * @version 1.0
 	 */
 	class AutoNaviMapLocationListener implements AMapLocationListener {
-
-		// meters per kilometer
-		private final int METERS_PER_KILOMETER = 1000;
 
 		// meters per second to kilometers per hour scale
 		private final float METERS_PER_SECOND2KILOMETERS_PER_HOUR_SCALE = 3.6f;

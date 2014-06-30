@@ -227,21 +227,31 @@ public class WithinGroupCompeteNetworkAdapter implements INetworkAdapter {
 	 *            : user token
 	 * @param groupId
 	 *            : the compete walking group id
+	 * @param lastFetchTimestamp
+	 *            : last fetched compete group attendees walking info timestamp
 	 * @param asyncHttpRespJSONHandler
 	 *            : asynchronous http response json handler
 	 * @author Ares
 	 */
 	public void getWithinGroupCompeteWalkingInfo(long userId, String token,
-			String groupId, AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
+			String groupId, long lastFetchTimestamp,
+			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _getWithinGroupCompeteWalkingInfoReqParam = NetworkUtils
 				.genUserComReqParam(userId, token);
 
-		// set user within group compete walking group id to param
+		// set user within group compete walking group id and last fetched
+		// compete attendees walking info timestamp to param
 		_getWithinGroupCompeteWalkingInfoReqParam
 				.put(NETWORK_ENGINE.getContext().getString(
 						R.string.getWithinGroupCompeteWalkInfoReqParam_groupId),
 						groupId);
+		_getWithinGroupCompeteWalkingInfoReqParam
+				.put(NETWORK_ENGINE
+						.getContext()
+						.getString(
+								R.string.getWithinGroupCompeteWalkInfoReqParam_lastFetchTimestamp),
+						String.valueOf(lastFetchTimestamp));
 
 		// send get within group compete walking info asynchronous post http
 		// request
