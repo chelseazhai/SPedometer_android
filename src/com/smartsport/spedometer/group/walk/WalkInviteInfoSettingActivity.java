@@ -5,8 +5,6 @@ package com.smartsport.spedometer.group.walk;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -301,72 +299,62 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 										final String _walkInviteTmpGroupId = (String) retValue[retValue.length - 1];
 										LOGGER.info("Walk invite temp group id = "
 												+ _walkInviteTmpGroupId);
-										final Handler _walkInviteRespondHandle = new Handler();
-										new Timer().schedule(new TimerTask() {
+										new Handler().postDelayed(
+												new Runnable() {
 
-											@Override
-											public void run() {
-												_walkInviteRespondHandle
-														.post(new Runnable() {
+													@Override
+													public void run() {
+														// respond user friend
+														// walk invite info with
+														// the temp group id to
+														// remote server
+														walkInviteModel
+																.respondWalkInvite(
+																		selectedWalkInviteInvitee
+																				.getUserId(),
+																		"token",
+																		_walkInviteTmpGroupId,
+																		true,
+																		new ICMConnector() {
 
-															@Override
-															public void run() {
-																// respond user
-																// friend walk
-																// invite info
-																// with the temp
-																// group id to
-																// remote server
-																walkInviteModel
-																		.respondWalkInvite(
-																				selectedWalkInviteInvitee
-																						.getUserId(),
-																				"token",
-																				_walkInviteTmpGroupId,
-																				true,
-																				new ICMConnector() {
+																			@Override
+																			public void onSuccess(
+																					Object... retValue) {
+																				// check
+																				// return
+																				// values
+																				for (Object _value : retValue) {
+																					LOGGER.info("onSuccess, value = "
+																							+ _value);
+																				}
 
-																					@Override
-																					public void onSuccess(
-																							Object... retValue) {
-																						// check
-																						// return
-																						// values
-																						for (Object _value : retValue) {
-																							LOGGER.info("onSuccess, value = "
-																									+ _value);
-																						}
+																				//
 
-																						//
+																				// test
+																				// by
+																				// ares
+																				// pop
+																				// the
+																				// activity
+																				popActivityWithResult();
+																			}
 
-																						// test
-																						// by
-																						// ares
-																						// pop
-																						// the
-																						// activity
-																						popActivityWithResult();
-																					}
+																			@Override
+																			public void onFailure(
+																					int errorCode,
+																					String errorMsg) {
+																				LOGGER.error("Respond user friend walk invite error, error code = "
+																						+ errorCode
+																						+ " and message = "
+																						+ errorMsg);
 
-																					@Override
-																					public void onFailure(
-																							int errorCode,
-																							String errorMsg) {
-																						LOGGER.error("Respond user friend walk invite error, error code = "
-																								+ errorCode
-																								+ " and message = "
-																								+ errorMsg);
+																				//
+																			}
 
-																						//
-																					}
+																		});
+													}
 
-																				});
-															}
-
-														});
-											}
-
-										}, 10 * MILLISECONDS_PER_SECOND);
+												}, 10 * MILLISECONDS_PER_SECOND);
 									} else {
 										LOGGER.error("Pop the walk invite info setting activity error");
 									}

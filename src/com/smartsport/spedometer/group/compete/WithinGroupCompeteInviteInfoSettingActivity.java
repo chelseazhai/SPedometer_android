@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.content.Context;
 import android.content.Intent;
@@ -412,82 +410,72 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 										final long _inviteeUserId = selectedWithinGroupCompeteInvitees
 												.get(0).getUserId();
 										final String _competeGroupId = (String) retValue[0];
-										final Handler _competeInviteRespondHandle = new Handler();
-										new Timer().schedule(new TimerTask() {
+										new Handler().postDelayed(
+												new Runnable() {
 
-											@Override
-											public void run() {
-												_competeInviteRespondHandle
-														.post(new Runnable() {
+													@Override
+													public void run() {
+														// respond user friend
+														// within group compete
+														// walk invite info with
+														// the group id to
+														// remote server
+														withinGroupCompeteModel
+																.respondWithinGroupCompeteInvite(
+																		_inviteeUserId,
+																		"token",
+																		_competeGroupId,
+																		true,
+																		new ICMConnector() {
 
-															@Override
-															public void run() {
-																// respond user
-																// friend within
-																// group compete
-																// walk invite
-																// info with the
-																// group id to
-																// remote server
-																withinGroupCompeteModel
-																		.respondWithinGroupCompeteInvite(
-																				_inviteeUserId,
-																				"token",
-																				_competeGroupId,
-																				true,
-																				new ICMConnector() {
+																			@Override
+																			public void onSuccess(
+																					Object... retValue) {
+																				// check
+																				// return
+																				// values
+																				for (Object _value : retValue) {
+																					LOGGER.info("onSuccess, value = "
+																							+ _value);
+																				}
 
-																					@Override
-																					public void onSuccess(
-																							Object... retValue) {
-																						// check
-																						// return
-																						// values
-																						for (Object _value : retValue) {
-																							LOGGER.info("onSuccess, value = "
-																									+ _value);
-																						}
+																				//
 
-																						//
+																				// test
+																				// by
+																				// ares
+																				// go
+																				// to
+																				// within
+																				// group
+																				// compete
+																				// walk
+																				// activity
+																				// with
+																				// extra
+																				// data
+																				// map
+																				popPushActivity(
+																						WithinGroupCompeteWalkActivity.class,
+																						_extraMap);
+																			}
 
-																						// test
-																						// by
-																						// ares
-																						// go
-																						// to
-																						// within
-																						// group
-																						// compete
-																						// walk
-																						// activity
-																						// with
-																						// extra
-																						// data
-																						// map
-																						popPushActivity(
-																								WithinGroupCompeteWalkActivity.class,
-																								_extraMap);
-																					}
+																			@Override
+																			public void onFailure(
+																					int errorCode,
+																					String errorMsg) {
+																				LOGGER.error("Respond user friend within group compete walk invite error, error code = "
+																						+ errorCode
+																						+ " and message = "
+																						+ errorMsg);
 
-																					@Override
-																					public void onFailure(
-																							int errorCode,
-																							String errorMsg) {
-																						LOGGER.error("Respond user friend within group compete walk invite error, error code = "
-																								+ errorCode
-																								+ " and message = "
-																								+ errorMsg);
+																				//
+																			}
 
-																						//
-																					}
+																		});
+													}
 
-																				});
-															}
-
-														});
-											}
-
-										}, 15 * MILLISECONDS_PER_SECOND);
+												}, 5 * MILLISECONDS_PER_SECOND);
 									} else {
 										LOGGER.error("Pop the within group compete invite info setting activity and push to within group compete walk activity error");
 									}

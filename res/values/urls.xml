@@ -45,7 +45,8 @@
     <string name="withinGroupCompeteInvite_url" translatable="false">/groupInvite.action</string>
     <!-- <string name="respondWithinGroupCompeteInvite_url" translatable="false">/compete/respondGroupInvite</string> -->
     <string name="respondWithinGroupCompeteInvite_url" translatable="false">/responseGroupInvite.action</string>
-    <string name="publishWithinGroupCompeteWalkInfo_url" translatable="false">/compete/updateDistance</string>
+    <!-- <string name="publishWithinGroupCompeteWalkInfo_url" translatable="false">/compete/updateDistance</string> -->
+    <string name="publishWithinGroupCompeteWalkInfo_url" translatable="false">/updateDistance.action</string>
     <!-- <string name="getWithinGroupCompeteWalkInfo_url" translatable="false">/compete/getDistance</string> -->
     <string name="getWithinGroupCompeteWalkInfo_url" translatable="false">/getDistance.action</string>
 

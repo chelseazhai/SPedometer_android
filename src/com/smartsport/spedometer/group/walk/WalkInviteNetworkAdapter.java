@@ -190,7 +190,7 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 		Map<String, String> _publishWalkingInfoReqParam = NetworkUtils
 				.genUserComReqParam(userId, token);
 
-		// set user walking group id, total step and distance to param
+		// set user walking group id, total step and total distance to param
 		_publishWalkingInfoReqParam.put(
 				NETWORK_ENGINE.getContext().getString(
 						R.string.publishWalkInfoReqParam_groupId), groupId);

@@ -12,6 +12,7 @@ import java.util.TimerTask;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -62,8 +63,9 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 	private final int MILLISECONDS_PER_SECOND = 1000;
 	private final int SECONDS_PER_MINUTE = 60;
 
-	// within group compete attendees walk timer
+	// within group compete attendees walk timer and walk info handler
 	private final Timer WALK_TIMER = new Timer();
+	private final Handler WALKINFO_HANDLER = new Handler();
 
 	// pedometer login user
 	private UserPedometerExtBean loginUser = (UserPedometerExtBean) UserManager
@@ -96,8 +98,8 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 	// walk remain time textView
 	private TextView walkRemainTimeTextView;
 
-	// publish self and get walk partner walk info timer task
-	private TimerTask publishAndGetWalkInfoTimerTask;
+	// publish self walk info timer task
+	private TimerTask publishSelfWalkInfoTimerTask;
 
 	// walk info: walk total distance, total steps count, energy, pace and speed
 	// textView
@@ -163,30 +165,61 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 							if (null != retValue
 									&& 0 < retValue.length
 									&& retValue[retValue.length - 1] instanceof ScheduleGroupInfoBean) {
+								// get the schedule group info
+								ScheduleGroupInfoBean _scheduleGroupInfo = (ScheduleGroupInfoBean) retValue[retValue.length - 1];
+
+								LOGGER.info("The schedule within group compete group info = "
+										+ _scheduleGroupInfo);
+
+								// // traversal within group compete attendees
+								// user info with member status
+								// for (UserInfoBean _userInfoMemberStatus :
+								// _scheduleGroupInfo
+								// .getMembersInfo()) {
+								// // update walk invite inviter avatar and
+								// // invitee user info
+								// if (loginUser.getUserId() ==
+								// _userInfoMemberStatus
+								// .getUserId()) {
+								// // inviter
+								// // update walk invite inviter avatar
+								// inviterAvatarImgView.setImageURI(Uri
+								// .parse(_userInfoMemberStatus
+								// .getAvatarUrl()));
+								// } else {
+								// // invitee
+								// inviteeUserInfoWithMemberStatus =
+								// (UserInfoMemberStatusBean)
+								// _userInfoMemberStatus;
 								//
+								// // update walk invite invitee user info
+								// // UI
+								// updateWalkInviteInviteeUserInfo();
+								// }
+								// }
+
+								// test by ares
+								inviteesUserInfoWithMemberStatusList = new ArrayList<UserInfoMemberStatusBean>();
+								for (int i = 0; i < 3; i++) {
+									UserInfoMemberStatusBean _inviteeUserInfoWithMemberStatus = new UserInfoMemberStatusBean();
+									_inviteeUserInfoWithMemberStatus
+											.setUserId(12332 + i);
+									_inviteeUserInfoWithMemberStatus
+											.setAvatarUrl("/img/jshd123" + i);
+									_inviteeUserInfoWithMemberStatus
+											.setNickname("小慧动" + i);
+									_inviteeUserInfoWithMemberStatus
+											.setGender(0 == i % 2 ? UserGender.MALE
+													: UserGender.FEMALE);
+									_inviteeUserInfoWithMemberStatus
+											.setMemberStatus(0 == i % 2 ? MemberStatus.MEM_ONLINE
+													: MemberStatus.MEM_OFFLINE);
+
+									inviteesUserInfoWithMemberStatusList
+											.add(_inviteeUserInfoWithMemberStatus);
+								}
 							} else {
 								LOGGER.error("Update within group compete walk invitee user info UI error");
-							}
-
-							// test by ares
-							inviteesUserInfoWithMemberStatusList = new ArrayList<UserInfoMemberStatusBean>();
-							for (int i = 0; i < 3; i++) {
-								UserInfoMemberStatusBean _inviteeUserInfoWithMemberStatus = new UserInfoMemberStatusBean();
-								_inviteeUserInfoWithMemberStatus
-										.setUserId(12332 + i);
-								_inviteeUserInfoWithMemberStatus
-										.setAvatarUrl("/img/jshd123" + i);
-								_inviteeUserInfoWithMemberStatus
-										.setNickname("小慧动" + i);
-								_inviteeUserInfoWithMemberStatus
-										.setGender(0 == i % 2 ? UserGender.MALE
-												: UserGender.FEMALE);
-								_inviteeUserInfoWithMemberStatus
-										.setMemberStatus(0 == i % 2 ? MemberStatus.MEM_ONLINE
-												: MemberStatus.MEM_OFFLINE);
-
-								inviteesUserInfoWithMemberStatusList
-										.add(_inviteeUserInfoWithMemberStatus);
 							}
 						}
 
@@ -302,6 +335,76 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 											/ SECONDS_PER_MINUTE,
 									_walkStartRemainTimeSeconds
 											% SECONDS_PER_MINUTE));
+
+			// test by ares
+			new Handler().postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+
+					// schedule publish self walk info immediately and repeat
+					// every period
+					WALK_TIMER.schedule(
+							publishSelfWalkInfoTimerTask = new TimerTask() {
+
+								@Override
+								public void run() {
+									// TODO Auto-generated method stub
+
+									WALKINFO_HANDLER.post(new Runnable() {
+
+										@Override
+										public void run() {
+											//
+
+											// publish self walk info
+											withinGroupCompeteModel
+													.publishWithinGroupCompeteWalkingInfo(
+															loginUser
+																	.getUserId(),
+															loginUser
+																	.getUserKey(),
+															competeGroupId,
+															0.0f, 0, 0.00,
+															new ICMConnector() {
+
+																@Override
+																public void onSuccess(
+																		Object... retValue) {
+																	// TODO
+																	// Auto-generated
+																	// method
+																	// stub
+
+																}
+
+																@Override
+																public void onFailure(
+																		int errorCode,
+																		String errorMsg) {
+																	// TODO
+																	// Auto-generated
+																	// method
+																	// stub
+
+																}
+
+															});
+										}
+
+									});
+								}
+
+							},
+							0,
+							getResources()
+									.getInteger(
+											R.integer.config_withinGroupCompeteWalk_publishAndGetAttendees_walkInfo_period)
+									* MILLISECONDS_PER_SECOND);
+				}
+
+			}, _walkStartRemainTime);
 		} else {
 			// walking
 			// set attendee walk flag
@@ -403,12 +506,11 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 			autoNaviMapLocationSource.deactivate();
 		}
 
-		// check and cancel publish self and get walk partner walk info timer
-		// task
-		if (null != publishAndGetWalkInfoTimerTask) {
-			publishAndGetWalkInfoTimerTask.cancel();
+		// check and cancel publish self walk info timer task
+		if (null != publishSelfWalkInfoTimerTask) {
+			publishSelfWalkInfoTimerTask.cancel();
 
-			publishAndGetWalkInfoTimerTask = null;
+			publishSelfWalkInfoTimerTask = null;
 		}
 	}
 

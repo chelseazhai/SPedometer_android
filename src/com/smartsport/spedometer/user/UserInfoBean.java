@@ -195,10 +195,17 @@ public class UserInfoBean implements Serializable {
 
 			try {
 				// height
-				height = Float
-						.parseFloat(JSONUtils.getStringFromJSONObject(
-								info,
-								context.getString(R.string.userInfoReqResp_userHeight)));
+				// get and check height value
+				String _heightValue = JSONUtils.getStringFromJSONObject(info,
+						context.getString(R.string.userInfoReqResp_userHeight));
+				if (null != _heightValue) {
+					height = Float.parseFloat(_heightValue);
+				} else {
+					// throw parse user height exception
+					throw new NumberFormatException(
+							"Parse user height error, height value = "
+									+ _heightValue);
+				}
 			} catch (NumberFormatException e) {
 				LOGGER.error("Get user height float from user json info object = "
 						+ info
@@ -210,10 +217,17 @@ public class UserInfoBean implements Serializable {
 
 			try {
 				// weight
-				weight = Float
-						.parseFloat(JSONUtils.getStringFromJSONObject(
-								info,
-								context.getString(R.string.userInfoReqResp_userWeight)));
+				// get and check weight value
+				String _weightValue = JSONUtils.getStringFromJSONObject(info,
+						context.getString(R.string.userInfoReqResp_userWeight));
+				if (null != _weightValue) {
+					weight = Float.parseFloat(_weightValue);
+				} else {
+					// throw parse user weight exception
+					throw new NumberFormatException(
+							"Parse user weight error, weight value = "
+									+ _weightValue);
+				}
 			} catch (NumberFormatException e) {
 				LOGGER.error("Get user weight float from user json info object = "
 						+ info

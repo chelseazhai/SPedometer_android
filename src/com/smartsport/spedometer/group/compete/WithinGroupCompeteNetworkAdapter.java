@@ -181,8 +181,8 @@ public class WithinGroupCompeteNetworkAdapter implements INetworkAdapter {
 		Map<String, String> _publishWithinGroupCompeteWalkingInfoReqParam = NetworkUtils
 				.genUserComReqParam(userId, token);
 
-		// set user within group compete walking group id, velocity and total
-		// distance to param
+		// set user within group compete walking group id, velocity, total step
+		// and total distance to param
 		_publishWithinGroupCompeteWalkingInfoReqParam
 				.put(NETWORK_ENGINE
 						.getContext()

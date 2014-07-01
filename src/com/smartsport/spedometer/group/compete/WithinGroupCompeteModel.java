@@ -352,9 +352,9 @@ public class WithinGroupCompeteModel {
 	public void publishWithinGroupCompeteWalkingInfo(long userId, String token,
 			final String groupId, final float walkingVelocity,
 			final int totalStep, final double totalDistance,
-			ICMConnector executant) {
+			final ICMConnector executant) {
 		// publish within group compete user walking info with group id, walking
-		// velocity and total distance
+		// velocity, total step and total distance
 		((WithinGroupCompeteNetworkAdapter) NetworkAdapter
 				.getInstance()
 				.getWorkerNetworkAdapter(WithinGroupCompeteNetworkAdapter.class))
@@ -366,12 +366,18 @@ public class WithinGroupCompeteModel {
 							public void onSuccess(int statusCode,
 									JSONArray respJSONArray) {
 								// nothing to do
+
+								// publish self walk info successful
+								executant.onSuccess((Object) null);
 							}
 
 							@Override
 							public void onSuccess(int statusCode,
 									JSONObject respJSONObject) {
 								// nothing to do
+
+								// publish self walk info successful
+								executant.onSuccess((Object) null);
 							}
 
 							@Override
@@ -392,7 +398,7 @@ public class WithinGroupCompeteModel {
 
 								// publish within group compete user walking
 								// info failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});

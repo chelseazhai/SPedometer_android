@@ -35,6 +35,9 @@ import com.amap.api.maps2d.model.MyLocationStyle;
 import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavBarButtonItem;
+import com.smartsport.spedometer.customwidget.SSCountDownTimer;
+import com.smartsport.spedometer.customwidget.SSCountDownTimer.OnFinishListener;
+import com.smartsport.spedometer.customwidget.SSCountDownTimer.OnTickListener;
 import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.group.GroupInfoModel;
 import com.smartsport.spedometer.group.GroupType;
@@ -128,6 +131,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private TextView walkDistanceTextView, walkStepsCountTextView,
 			walkEnergyTextView, walkPaceTextView, walkSpeedTextView;
 
+	// walk control button
+	private Button walkControlBtn;
+
 	// attendee walk control flag
 	private boolean isAttendeeWalkControlled;
 
@@ -197,7 +203,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 								// get the schedule group info
 								ScheduleGroupInfoBean _scheduleGroupInfo = (ScheduleGroupInfoBean) retValue[retValue.length - 1];
 
-								LOGGER.info("The schedule group info = "
+								LOGGER.info("The schedule walk invite group info = "
 										+ _scheduleGroupInfo);
 
 								// traversal walk invite attendees user info
@@ -364,6 +370,22 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 			// text
 			walkStartRemainOrWalkDurationTimeTextView
 					.setText(formatWalkStartRemainTime(_walkStartRemainTime));
+
+			// generate walk start remain time count down timer
+			SSCountDownTimer _walkStartRemainTimeCountDownTimer = new SSCountDownTimer(
+					_walkStartRemainTime, SECONDS_PER_MINUTE
+							* MILLISECONDS_PER_SECOND);
+
+			// set its on tick listener
+			_walkStartRemainTimeCountDownTimer
+					.setOnTickListener(new WalkStartRemainTimeCountDownTimerOnTickListener());
+
+			// set its on finish listener
+			_walkStartRemainTimeCountDownTimer
+					.setOnFinishListener(new WalkStartRemainTimeCountDownTimerOnFinishListener());
+
+			// start walk start remain time count down timer
+			_walkStartRemainTimeCountDownTimer.start();
 		} else {
 			// ready for walking
 			// get attendee walk flag from local storage
@@ -446,26 +468,25 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 				_isWalking ? "2.25" : "0.00");
 
 		// get walk control button
-		Button _walkControlBtn = (Button) findViewById(R.id.wiw_walkControl_button);
+		walkControlBtn = (Button) findViewById(R.id.wiw_walkControl_button);
 
 		// check attendee walk flag and update walk control button text and
 		// background
 		if (_isWalking) {
-			_walkControlBtn.setText(R.string.walkStop_button_text);
-			_walkControlBtn
-					.setBackgroundResource(R.drawable.walk_stopbutton_bg);
+			walkControlBtn.setText(R.string.walkStop_button_text);
+			walkControlBtn.setBackgroundResource(R.drawable.walk_stopbutton_bg);
 		}
 
 		// set its text as the tag
-		_walkControlBtn.setTag(_walkControlBtn.getText());
+		walkControlBtn.setTag(walkControlBtn.getText());
 
 		// set its on click listener
-		_walkControlBtn.setOnClickListener(new WalkControlBtnOnClickListener());
+		walkControlBtn.setOnClickListener(new WalkControlBtnOnClickListener());
 
 		// check walk invite walk start remain time and show walk control button
 		if (null != _walkStartRemainTime && 0 > _walkStartRemainTime) {
 			// show walk control button
-			_walkControlBtn.setVisibility(View.VISIBLE);
+			walkControlBtn.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -812,6 +833,58 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	}
 
 	/**
+	 * @name OnTickListener
+	 * @descriptor walk start remain time count down timer on tick listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class WalkStartRemainTimeCountDownTimerOnTickListener implements
+			OnTickListener {
+
+		@Override
+		public void onTick(long remainMillis) {
+			// update walk invite walk start remain or walk duration time
+			// textView text
+			walkStartRemainOrWalkDurationTimeTextView
+					.setText(formatWalkStartRemainTime(remainMillis));
+
+			LOGGER.error("@@@, error");
+		}
+
+	}
+
+	/**
+	 * @name WalkStartRemainTimeCountDownTimerOnFinishListener
+	 * @descriptor walk start remain time count down timer on finish listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class WalkStartRemainTimeCountDownTimerOnFinishListener implements
+			OnFinishListener {
+
+		@Override
+		public void onFinish() {
+			// generate holo green light foreground color span
+			ForegroundColorSpan _holoGreenLightForegroundColorSpan = new ForegroundColorSpan(
+					getResources().getColor(android.R.color.holo_green_light));
+
+			// clear attendee walk duration time
+			SpannableString _walkDurationTime = new SpannableString("0'0\"");
+			_walkDurationTime.setSpan(_holoGreenLightForegroundColorSpan, 0,
+					_walkDurationTime.length(),
+					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+			// set walk invite walk duration time textView text
+			walkStartRemainOrWalkDurationTimeTextView
+					.setText(_walkDurationTime);
+
+			// show walk control button
+			walkControlBtn.setVisibility(View.VISIBLE);
+		}
+
+	}
+
+	/**
 	 * @name WalkInfoSlidingUpBtnOnClickListener
 	 * @descriptor walk info sliding up button on click listener
 	 * @author Ares
@@ -891,6 +964,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 										// invitee) avatar imageView on click
 										// listener
 										setWalkAttendeeAvatarImgViewOnClickListener();
+
+										//
+										//
 
 										// update walk control button text,
 										// background resource and tag

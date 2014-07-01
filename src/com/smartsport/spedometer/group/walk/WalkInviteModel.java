@@ -455,7 +455,7 @@ public class WalkInviteModel {
 			final int totalStep, final double totalDistance,
 			final ICMConnector executant) {
 		// publish user walking info with group id, walking location, total step
-		// and distance
+		// and total distance
 		((WalkInviteNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(WalkInviteNetworkAdapter.class))
 				.publishWalkingInfo(userId, token, groupId, walkingLocation,
