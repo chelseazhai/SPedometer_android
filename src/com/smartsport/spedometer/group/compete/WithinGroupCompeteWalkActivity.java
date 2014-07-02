@@ -7,12 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -31,18 +28,29 @@ import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.MyLocationStyle;
+import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.customwidget.SSCountDownTimer;
+import com.smartsport.spedometer.customwidget.SSCountDownTimer.OnFinishListener;
+import com.smartsport.spedometer.customwidget.SSCountDownTimer.OnTickListener;
 import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.group.GroupInfoModel;
+import com.smartsport.spedometer.group.GroupType;
+import com.smartsport.spedometer.group.GroupWalkResultActivity;
+import com.smartsport.spedometer.group.GroupWalkResultActivity.GroupWalkResultExtraData;
 import com.smartsport.spedometer.group.compete.CompeteAttendeesWalkTrendActivity.CompeteAttendeesWalkTrendExtraData;
 import com.smartsport.spedometer.group.info.ScheduleGroupInfoBean;
 import com.smartsport.spedometer.group.info.member.MemberStatus;
 import com.smartsport.spedometer.group.info.member.UserInfoMemberStatusBean;
+import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
+import com.smartsport.spedometer.pedometer.IWalkPathPointLocationChangedListener;
 import com.smartsport.spedometer.pedometer.WalkInfoType;
 import com.smartsport.spedometer.pedometer.WalkStartPointLocationSource;
 import com.smartsport.spedometer.user.UserGender;
+import com.smartsport.spedometer.user.UserInfoBean;
+import com.smartsport.spedometer.user.UserInfoModel;
 import com.smartsport.spedometer.user.UserManager;
 import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -62,10 +70,6 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 	// milliseconds per second and seconds per minute
 	private final int MILLISECONDS_PER_SECOND = 1000;
 	private final int SECONDS_PER_MINUTE = 60;
-
-	// within group compete attendees walk timer and walk info handler
-	private final Timer WALK_TIMER = new Timer();
-	private final Handler WALKINFO_HANDLER = new Handler();
 
 	// pedometer login user
 	private UserPedometerExtBean loginUser = (UserPedometerExtBean) UserManager
@@ -95,11 +99,16 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 	// invitees user info with status list in the within group compete group
 	private List<UserInfoMemberStatusBean> inviteesUserInfoWithMemberStatusList;
 
-	// walk remain time textView
+	// walk start and stop remain time textView
 	private TextView walkRemainTimeTextView;
 
-	// publish self walk info timer task
-	private TimerTask publishSelfWalkInfoTimerTask;
+	// walk start and stop remain time count down timer
+	private SSCountDownTimer walkRemainTimeCountDownTimer;
+
+	// walk info: walk total distance, total steps count and speed
+	private double walkDistance;
+	private int walkStepsCount;
+	private float walkSpeed;
 
 	// walk info: walk total distance, total steps count, energy, pace and speed
 	// textView
@@ -111,6 +120,9 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 
 	// within group compete walk progress dialog
 	private SSProgressDialog withinGroupCompeteWalkProgDlg;
+
+	// within group compete inviter walk path point list
+	private List<LatLonPoint> walkPathPoints;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +142,9 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 			competeGroupDurationTime = _extraData
 					.getInt(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_DURATIONTIME);
 		}
+
+		// initialize within group compete inviter walk path point list
+		walkPathPoints = new ArrayList<LatLonPoint>();
 
 		// set content view
 		setContentView(R.layout.activity_withingroupcompete_walk);
@@ -289,7 +304,7 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 		autoNaviMap.getUiSettings().setScaleControlsEnabled(true);
 		autoNaviMap.getUiSettings().setZoomControlsEnabled(false);
 
-		// get walk remain time textView
+		// get walk start and stop remain time textView
 		walkRemainTimeTextView = (TextView) findViewById(R.id.wigcw_walk_remainTime_textView);
 
 		// define compete attendee walk flag
@@ -336,75 +351,20 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 									_walkStartRemainTimeSeconds
 											% SECONDS_PER_MINUTE));
 
-			// test by ares
-			new Handler().postDelayed(new Runnable() {
+			// generate walk start remain time count down timer
+			walkRemainTimeCountDownTimer = new SSCountDownTimer(
+					_walkStartRemainTime);
 
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
+			// set its on tick listener
+			walkRemainTimeCountDownTimer
+					.setOnTickListener(new WalkStartRemainTimeCountDownTimerOnTickListener());
 
-					// schedule publish self walk info immediately and repeat
-					// every period
-					WALK_TIMER.schedule(
-							publishSelfWalkInfoTimerTask = new TimerTask() {
+			// set its on finish listener
+			walkRemainTimeCountDownTimer
+					.setOnFinishListener(new WalkStartRemainTimeCountDownTimerOnFinishListener());
 
-								@Override
-								public void run() {
-									// TODO Auto-generated method stub
-
-									WALKINFO_HANDLER.post(new Runnable() {
-
-										@Override
-										public void run() {
-											//
-
-											// publish self walk info
-											withinGroupCompeteModel
-													.publishWithinGroupCompeteWalkingInfo(
-															loginUser
-																	.getUserId(),
-															loginUser
-																	.getUserKey(),
-															competeGroupId,
-															0.0f, 0, 0.00,
-															new ICMConnector() {
-
-																@Override
-																public void onSuccess(
-																		Object... retValue) {
-																	// TODO
-																	// Auto-generated
-																	// method
-																	// stub
-
-																}
-
-																@Override
-																public void onFailure(
-																		int errorCode,
-																		String errorMsg) {
-																	// TODO
-																	// Auto-generated
-																	// method
-																	// stub
-
-																}
-
-															});
-										}
-
-									});
-								}
-
-							},
-							0,
-							getResources()
-									.getInteger(
-											R.integer.config_withinGroupCompeteWalk_publishAndGetAttendees_walkInfo_period)
-									* MILLISECONDS_PER_SECOND);
-				}
-
-			}, _walkStartRemainTime);
+			// start walk start remain time count down timer
+			walkRemainTimeCountDownTimer.start();
 		} else {
 			// walking
 			// set attendee walk flag
@@ -506,11 +466,11 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 			autoNaviMapLocationSource.deactivate();
 		}
 
-		// check and cancel publish self walk info timer task
-		if (null != publishSelfWalkInfoTimerTask) {
-			publishSelfWalkInfoTimerTask.cancel();
+		// check and cancel walk start, stop remain time count down timer
+		if (null != walkRemainTimeCountDownTimer) {
+			walkRemainTimeCountDownTimer.cancel();
 
-			publishSelfWalkInfoTimerTask = null;
+			walkRemainTimeCountDownTimer = null;
 		}
 	}
 
@@ -665,6 +625,276 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 		public static final String WIGCW_COMPETEGROUP_TOPIC = "withinGroupCompeteWalk_competeGroup_topic";
 		public static final String WIGCW_COMPETEGROUP_STARTTIME = "withinGroupCompeteWalk_competeGroup_startTime";
 		public static final String WIGCW_COMPETEGROUP_DURATIONTIME = "withinGroupCompeteWalk_competeGroup_durationTime";
+
+	}
+
+	/**
+	 * @name WalkStartRemainTimeCountDownTimerOnTickListener
+	 * @descriptor walk start remain time count down timer on tick listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class WalkStartRemainTimeCountDownTimerOnTickListener implements
+			OnTickListener {
+
+		@Override
+		public void onTick(long remainMillis) {
+			// get walk start remain time(seconds)
+			long _walkStartRemainTimeSeconds = remainMillis
+					/ MILLISECONDS_PER_SECOND;
+
+			// update within group compete group walk start remain time textView
+			// text
+			walkRemainTimeTextView
+					.setText(String
+							.format(getString(R.string.withinGroupCompeteGroup_startReaminTime_format),
+									_walkStartRemainTimeSeconds
+											/ SECONDS_PER_MINUTE,
+									_walkStartRemainTimeSeconds
+											% SECONDS_PER_MINUTE));
+		}
+
+	}
+
+	/**
+	 * @name WalkStartRemainTimeCountDownTimerOnFinishListener
+	 * @descriptor walk start remain time count down timer on finish listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class WalkStartRemainTimeCountDownTimerOnFinishListener implements
+			OnFinishListener {
+
+		public void onFinish() {
+			// generate walk stop remain time count down timer on tick listener
+			WalkStopRemainTimeCountDownTimerOnTickListener _walkStopRemainTimeCountDownTimerOnTickListener = new WalkStopRemainTimeCountDownTimerOnTickListener();
+
+			// generate walk stop remain time count down timer
+			walkRemainTimeCountDownTimer = new SSCountDownTimer(
+					competeGroupDurationTime * SECONDS_PER_MINUTE
+							* MILLISECONDS_PER_SECOND);
+
+			// set its on tick listener
+			walkRemainTimeCountDownTimer
+					.setOnTickListener(_walkStopRemainTimeCountDownTimerOnTickListener);
+
+			// set its on finish listener
+			walkRemainTimeCountDownTimer
+					.setOnFinishListener(new WalkStopRemainTimeCountDownTimerOnFinishListener(
+							_walkStopRemainTimeCountDownTimerOnTickListener));
+
+			// start walk stop remain time count down timer and tick immediately
+			walkRemainTimeCountDownTimer.start();
+			_walkStopRemainTimeCountDownTimerOnTickListener
+					.onTick(walkRemainTimeCountDownTimer.getRemainTime());
+
+			// set within group compete inviter walk path point location changed
+			// listener
+			autoNaviMapLocationSource
+					.setWalkPathPointLocationChangedListener(new CompeteInviterWalkPathPointLocationChangedListener());
+
+			// start mark within group compete inviter walk path
+			autoNaviMapLocationSource.startMarkWalkPath();
+		}
+
+		// inner class
+		/**
+		 * @name CompeteInviterWalkPathPointLocationChangedListener
+		 * @descriptor within group compete inviter walk path point location
+		 *             changed listener
+		 * @author Ares
+		 * @version 1.0
+		 */
+		class CompeteInviterWalkPathPointLocationChangedListener implements
+				IWalkPathPointLocationChangedListener {
+
+			// centimeters per meter
+			private final int CENTIMETERS_PER_METER = 100;
+
+			// energy calculate coefficient
+			private final float ENERGY_CALCCOEFFICIENT = 1.036f;
+
+			// walk energy
+			private float walkEnergy;
+
+			@Override
+			public void onLocationChanged(LatLonPoint walkPathPoint,
+					double walkSpeed, double walkDistance) {
+				// add walk path point to it
+				walkPathPoints.add(walkPathPoint);
+
+				// get local storage user step length
+				// test by ares
+				Float _userStepLength = Float.parseFloat("62.0");
+
+				// increase walk total distance and total steps count
+				WithinGroupCompeteWalkActivity.this.walkDistance += walkDistance;
+				WithinGroupCompeteWalkActivity.this.walkStepsCount += walkDistance
+						* WalkStartPointLocationSource.METERS_PER_KILOMETER
+						/ (_userStepLength / CENTIMETERS_PER_METER);
+
+				// get user info
+				UserInfoBean _userInfo = UserInfoModel.getInstance()
+						.getUserInfo();
+
+				// update energy
+				// test by ares
+				// walkEnergy = 123.5f;
+				walkEnergy = (float) (_userInfo.getWeight()
+						* WithinGroupCompeteWalkActivity.this.walkDistance * ENERGY_CALCCOEFFICIENT);
+
+				// update within group compete inviter walk info(walk total
+				// distance, total steps count, energy, pace and speed) textView
+				// text
+				updateWalkInfoTextViewText(
+						WalkInfoType.WALKINFO_WALKDISTANCE,
+						String.format(
+								getString(R.string.walkInfo_distance_value_format),
+								WithinGroupCompeteWalkActivity.this.walkDistance));
+				updateWalkInfoTextViewText(
+						WalkInfoType.WALKINFO_WALKSTEPS,
+						String.valueOf(WithinGroupCompeteWalkActivity.this.walkStepsCount));
+				updateWalkInfoTextViewText(
+						WalkInfoType.WALKINFO_WALKENERGY,
+						String.format(
+								getString(R.string.walkInfo_energy_value_format),
+								walkEnergy));
+				updateWalkInfoTextViewText(WalkInfoType.WALKINFO_WALKPACE, "0");
+				updateWalkInfoTextViewText(
+						WalkInfoType.WALKINFO_WALKSPEED,
+						String.format(
+								getString(R.string.walkInfo_speed_value_format),
+								WithinGroupCompeteWalkActivity.this.walkSpeed = (float) walkSpeed));
+			}
+		}
+
+	}
+
+	/**
+	 * @name WalkStopRemainTimeCountDownTimerOnTickListener
+	 * @descriptor walk stop remain time count down timer on tick listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class WalkStopRemainTimeCountDownTimerOnTickListener implements
+			OnTickListener {
+
+		// holo green light foreground color span
+		private final ForegroundColorSpan HOLOGREENLIGHT_FOREGROUNDCOLOR_SPAN = new ForegroundColorSpan(
+				getResources().getColor(android.R.color.holo_green_light));
+
+		// publish self walk info period
+		private final int PUBLISH_SELFWALKINFO_PERIOD = getResources()
+				.getInteger(
+						R.integer.config_withinGroupCompeteWalk_publishAndGetAttendees_walkInfo_period);
+
+		@Override
+		public void onTick(long remainMillis) {
+			// get walk stop remain time(seconds)
+			long _walkStopRemainTimeSeconds = remainMillis
+					/ MILLISECONDS_PER_SECOND;
+
+			// generate within group compete group walk stop remain time
+			SpannableString _walkStopRemainTime = new SpannableString(
+					String.format(
+							getString(R.string.withinGroupCompeteGroup_stopReaminTime_format),
+							_walkStopRemainTimeSeconds / SECONDS_PER_MINUTE,
+							_walkStopRemainTimeSeconds % SECONDS_PER_MINUTE));
+			_walkStopRemainTime.setSpan(HOLOGREENLIGHT_FOREGROUNDCOLOR_SPAN, 0,
+					_walkStopRemainTime.length(),
+					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+			// update within group compete group walk stop remain time textView
+			// text
+			walkRemainTimeTextView.setText(_walkStopRemainTime);
+
+			// schedule publish self walk info immediately and repeat every
+			// period
+			if (0 == _walkStopRemainTimeSeconds % PUBLISH_SELFWALKINFO_PERIOD) {
+				// publish self walk info
+				withinGroupCompeteModel.publishWithinGroupCompeteWalkingInfo(
+						loginUser.getUserId(), loginUser.getUserKey(),
+						competeGroupId, walkSpeed, walkStepsCount,
+						walkDistance, new ICMConnector() {
+
+							@Override
+							public void onSuccess(Object... retValue) {
+								// nothing to do
+							}
+
+							@Override
+							public void onFailure(int errorCode, String errorMsg) {
+								LOGGER.error("Publish self walk info error, error code = "
+										+ errorCode
+										+ " and message = "
+										+ errorMsg);
+
+								//
+							}
+
+						});
+			}
+		}
+
+	}
+
+	/**
+	 * @name WalkStopRemainTimeCountDownTimerOnFinishListener
+	 * @descriptor walk stop remain time count down timer on finish listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class WalkStopRemainTimeCountDownTimerOnFinishListener implements
+			OnFinishListener {
+
+		// walk stop remain time count down timer on tick listener
+		private WalkStopRemainTimeCountDownTimerOnTickListener walkStopRemainTimeCountDownTimerOnTickListener;
+
+		/**
+		 * @title WalkStopRemainTimeCountDownTimerOnFinishListener
+		 * @descriptor walk stop remain time count down timer on finish listener
+		 *             constructor with its on tick listener
+		 * @param walkStopRemainTimeCountDownTimerOnTickListener
+		 *            : walk stop remain time count down timer on tick listener
+		 * @author Ares
+		 */
+		public WalkStopRemainTimeCountDownTimerOnFinishListener(
+				WalkStopRemainTimeCountDownTimerOnTickListener walkStopRemainTimeCountDownTimerOnTickListener) {
+			super();
+
+			// save walk stop remain time count down timer on tick listener
+			this.walkStopRemainTimeCountDownTimerOnTickListener = walkStopRemainTimeCountDownTimerOnTickListener;
+		}
+
+		@Override
+		public void onFinish() {
+			// clear compete walk remain time
+			walkStopRemainTimeCountDownTimerOnTickListener.onTick(0);
+
+			// stop mark user personal walk path
+			autoNaviMapLocationSource.stopMarkWalkPath();
+
+			// define within group compete walk extra data map
+			Map<String, Object> _extraMap = new HashMap<String, Object>();
+
+			// put within group compete group type, walk start, stop time and
+			// attendees walk result to extra data map as param
+			_extraMap.put(GroupWalkResultExtraData.GWR_GROUP_TYPE,
+					GroupType.COMPETE_GROUP);
+			_extraMap.put(GroupWalkResultExtraData.GWR_GROUP_WALK_STARTTIME,
+					competeGroupStartTime);
+			_extraMap.put(GroupWalkResultExtraData.GWR_GROUP_WALK_STOPTIME,
+					competeGroupStartTime + competeGroupDurationTime
+							* SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND);
+			// test by ares
+			_extraMap.put(
+					GroupWalkResultExtraData.GWR_GROUP_ATTENDEES_WALKRESULT,
+					new ArrayList<UserInfoGroupResultBean>());
+
+			// go to within group compete walk result activity with extra data
+			// map
+			popPushActivityForResult(GroupWalkResultActivity.class, _extraMap);
+		}
 
 	}
 

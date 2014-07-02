@@ -7,13 +7,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.SystemClock;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -23,6 +21,8 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Chronometer;
+import android.widget.Chronometer.OnChronometerTickListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -74,10 +74,6 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private final int SECONDS_PER_MINUTE = 60;
 	private final int MINUTES_PER_HOUR = 60;
 
-	// walk invite attendees walk timer and walk info handler
-	private final Timer WALK_TIMER = new Timer();
-	private final Handler WALKINFO_HANDLER = new Handler();
-
 	// pedometer login user
 	private UserPedometerExtBean loginUser = (UserPedometerExtBean) UserManager
 			.getInstance().getLoginUser();
@@ -112,19 +108,21 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	// walk invite start remain or walk duration time textView
 	private TextView walkStartRemainOrWalkDurationTimeTextView;
 
+	// walk start remain time count down timer
+	private SSCountDownTimer walkStartRemainTimeCountDownTimer;
+
+	// walk duration time chronometer
+	private Chronometer walkDurationTimeChronometer;
+
 	// walk invite invitee avatar imageView, walk path watch badger imageView
 	// and nickname textView
 	private ImageView inviteeAvatarImgView;
 	private ImageView inviteeWalkPathWatchBadgerImgView;
 	private TextView inviteeNicknameTextView;
 
-	// publish self and get walk partner walk info timer task
-	private TimerTask publishAndGetWalkInfoTimerTask;
-
-	// walk info: walk total distance, total steps count and energy
+	// walk info: walk total distance and total steps count
 	private double walkDistance;
 	private int walkStepsCount;
-	private float walkEnergy;
 
 	// walk info: walk total distance, total steps count, energy, pace and speed
 	// textView
@@ -334,6 +332,13 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		// get walk invite walk start remain or walk duration time textView
 		walkStartRemainOrWalkDurationTimeTextView = (TextView) findViewById(R.id.wiw_walkStartRemainTime_or_walkDurationTime_textView);
 
+		// get walk duration time chronometer
+		walkDurationTimeChronometer = (Chronometer) findViewById(R.id.wiw_walkDurationTime_chronometer);
+
+		// set its on chronometer tick listener
+		walkDurationTimeChronometer
+				.setOnChronometerTickListener(new WalkDurationTimeChronometerOnChronometerTickListener());
+
 		// define attendee walk flag
 		boolean _isWalking = false;
 
@@ -372,20 +377,22 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 					.setText(formatWalkStartRemainTime(_walkStartRemainTime));
 
 			// generate walk start remain time count down timer
-			SSCountDownTimer _walkStartRemainTimeCountDownTimer = new SSCountDownTimer(
-					_walkStartRemainTime, SECONDS_PER_MINUTE
-							* MILLISECONDS_PER_SECOND);
+			// walkStartRemainTimeCountDownTimer = new SSCountDownTimer(
+			// _walkStartRemainTime, SECONDS_PER_MINUTE
+			// * MILLISECONDS_PER_SECOND);
+			walkStartRemainTimeCountDownTimer = new SSCountDownTimer(
+					_walkStartRemainTime);
 
 			// set its on tick listener
-			_walkStartRemainTimeCountDownTimer
+			walkStartRemainTimeCountDownTimer
 					.setOnTickListener(new WalkStartRemainTimeCountDownTimerOnTickListener());
 
 			// set its on finish listener
-			_walkStartRemainTimeCountDownTimer
+			walkStartRemainTimeCountDownTimer
 					.setOnFinishListener(new WalkStartRemainTimeCountDownTimerOnFinishListener());
 
 			// start walk start remain time count down timer
-			_walkStartRemainTimeCountDownTimer.start();
+			walkStartRemainTimeCountDownTimer.start();
 		} else {
 			// ready for walking
 			// get attendee walk flag from local storage
@@ -398,8 +405,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 			// get attendee walk duration time from local storage
 			// test by ares
-			SpannableString _walkDurationTime = new SpannableString(
-					_isWalking ? "13'30\"" : "0'0\"");
+			SpannableString _walkDurationTime = new SpannableString("13'30\"");
 			_walkDurationTime.setSpan(_holoGreenLightForegroundColorSpan, 0,
 					_walkDurationTime.length(),
 					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -526,12 +532,16 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 			autoNaviMapLocationSource.deactivate();
 		}
 
-		// check and cancel publish self and get walk partner walk info timer
-		// task
-		if (null != publishAndGetWalkInfoTimerTask) {
-			publishAndGetWalkInfoTimerTask.cancel();
+		// check and cancel walk start remain time count down timer
+		if (null != walkStartRemainTimeCountDownTimer) {
+			walkStartRemainTimeCountDownTimer.cancel();
 
-			publishAndGetWalkInfoTimerTask = null;
+			walkStartRemainTimeCountDownTimer = null;
+		}
+
+		// check and stop walk duration time chronometer
+		if (null != walkDurationTimeChronometer) {
+			walkDurationTimeChronometer.stop();
 		}
 	}
 
@@ -833,7 +843,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	}
 
 	/**
-	 * @name OnTickListener
+	 * @name WalkStartRemainTimeCountDownTimerOnTickListener
 	 * @descriptor walk start remain time count down timer on tick listener
 	 * @author Ares
 	 * @version 1.0
@@ -847,8 +857,6 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 			// textView text
 			walkStartRemainOrWalkDurationTimeTextView
 					.setText(formatWalkStartRemainTime(remainMillis));
-
-			LOGGER.error("@@@, error");
 		}
 
 	}
@@ -869,7 +877,10 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 					getResources().getColor(android.R.color.holo_green_light));
 
 			// clear attendee walk duration time
-			SpannableString _walkDurationTime = new SpannableString("0'0\"");
+			SpannableString _walkDurationTime = new SpannableString(
+					String.format(
+							getString(R.string.walkInfo_walkDurationTime_format),
+							0, 0));
 			_walkDurationTime.setSpan(_holoGreenLightForegroundColorSpan, 0,
 					_walkDurationTime.length(),
 					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -880,6 +891,74 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 			// show walk control button
 			walkControlBtn.setVisibility(View.VISIBLE);
+		}
+
+	}
+
+	/**
+	 * @name WalkDurationTimeChronometerOnChronometerTickListener
+	 * @descriptor walk duration time chronometer on chronometer tick listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class WalkDurationTimeChronometerOnChronometerTickListener implements
+			OnChronometerTickListener {
+
+		// holo green light foreground color span
+		private final ForegroundColorSpan HOLOGREENLIGHT_FOREGROUNDCOLOR_SPAN = new ForegroundColorSpan(
+				getResources().getColor(android.R.color.holo_green_light));
+
+		// publish self walk info period
+		private final int PUBLISH_SELFWALKINFO_PERIOD = getResources()
+				.getInteger(
+						R.integer.config_walkInviteWalk_publishSelfAndGetPartner_walkInfo_period);
+
+		@Override
+		public void onChronometerTick(Chronometer chronometer) {
+			// get chronometer run duration time(seconds)
+			long _chronometerRunDurationTime = (SystemClock.elapsedRealtime() - chronometer
+					.getBase()) / MILLISECONDS_PER_SECOND;
+
+			// generate walk invite walk duration time
+			SpannableString _walkDurationTime = new SpannableString(
+					String.format(
+							getString(R.string.walkInfo_walkDurationTime_format),
+							_chronometerRunDurationTime / SECONDS_PER_MINUTE,
+							_chronometerRunDurationTime % SECONDS_PER_MINUTE));
+			_walkDurationTime.setSpan(HOLOGREENLIGHT_FOREGROUNDCOLOR_SPAN, 0,
+					_walkDurationTime.length(),
+					Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+			// update walk invite inviter walk duration time chronometer text
+			walkStartRemainOrWalkDurationTimeTextView
+					.setText(_walkDurationTime);
+
+			// schedule publish self, get walk partner walk info immediately and
+			// repeat every period
+			if (0 == _chronometerRunDurationTime % PUBLISH_SELFWALKINFO_PERIOD) {
+				// publish self walk info
+				walkInviteModel.publishWalkingInfo(loginUser.getUserId(),
+						loginUser.getUserKey(), scheduleWalkInviteGroupId,
+						autoNaviMapLocationSource.getWalkLatLonPoint(),
+						walkStepsCount, walkDistance, new ICMConnector() {
+
+							@Override
+							public void onSuccess(Object... retValue) {
+								// nothing to do
+							}
+
+							@Override
+							public void onFailure(int errorCode, String errorMsg) {
+								LOGGER.error("Publish self walk info error, error code = "
+										+ errorCode
+										+ " and message = "
+										+ errorMsg);
+
+								//
+							}
+
+						});
+			}
 		}
 
 	}
@@ -965,8 +1044,12 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 										// listener
 										setWalkAttendeeAvatarImgViewOnClickListener();
 
-										//
-										//
+										// set walk duration time chronometer
+										// base and start it
+										walkDurationTimeChronometer
+												.setBase(SystemClock
+														.elapsedRealtime());
+										walkDurationTimeChronometer.start();
 
 										// update walk control button text,
 										// background resource and tag
@@ -986,77 +1069,6 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 										// path
 										autoNaviMapLocationSource
 												.startMarkWalkPath();
-
-										// schedule publish self, get walk
-										// partner walk info immediately and
-										// repeat every period
-										WALK_TIMER
-												.schedule(
-														publishAndGetWalkInfoTimerTask = new TimerTask() {
-
-															@Override
-															public void run() {
-																LOGGER.error("@@@, walk point = "
-																		+ autoNaviMapLocationSource
-																				.getWalkLatLonPoint()
-																		+ " and speed = "
-																		+ autoNaviMapLocationSource
-																				.getWalkSpeed());
-
-																WALKINFO_HANDLER
-																		.post(new Runnable() {
-
-																			@Override
-																			public void run() {
-																				// publish
-																				// self
-																				// walk
-																				// info
-																				walkInviteModel
-																						.publishWalkingInfo(
-																								loginUser
-																										.getUserId(),
-																								loginUser
-																										.getUserKey(),
-																								scheduleWalkInviteGroupId,
-																								autoNaviMapLocationSource
-																										.getWalkLatLonPoint(),
-																								walkStepsCount,
-																								walkDistance,
-																								new ICMConnector() {
-
-																									@Override
-																									public void onSuccess(
-																											Object... retValue) {
-																										// nothing
-																										// to
-																										// do
-																									}
-
-																									@Override
-																									public void onFailure(
-																											int errorCode,
-																											String errorMsg) {
-																										LOGGER.error("Publish self walk info error, error code = "
-																												+ errorCode
-																												+ " and message = "
-																												+ errorMsg);
-
-																										//
-																									}
-
-																								});
-																			}
-
-																		});
-															}
-
-														},
-														0,
-														getResources()
-																.getInteger(
-																		R.integer.config_walkInviteWalk_publishSelfAndGetPartner_walkInfo_period)
-																* MILLISECONDS_PER_SECOND);
 									}
 
 									@Override
@@ -1112,6 +1124,10 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 												&& 2 < retValue.length
 												&& (retValue[0] instanceof Long && retValue[1] instanceof Long)
 												&& retValue[retValue.length - 1] instanceof List) {
+											// stop walk duration time
+											// chronometer
+											walkDurationTimeChronometer.stop();
+
 											// stop mark user personal walk path
 											autoNaviMapLocationSource
 													.stopMarkWalkPath();
@@ -1196,6 +1212,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 			// energy calculate coefficient
 			private final float ENERGY_CALCCOEFFICIENT = 1.036f;
 
+			// walk energy
+			private float walkEnergy;
+
 			@Override
 			public void onLocationChanged(LatLonPoint walkPathPoint,
 					double walkSpeed, double walkDistance) {
@@ -1218,9 +1237,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 				// update energy
 				// test by ares
-				// PersonalPedometerActivity.this.walkEnergy = 123.5f;
-				WalkInviteWalkActivity.this.walkEnergy = (float) (_userInfo
-						.getWeight() * WalkInviteWalkActivity.this.walkDistance * ENERGY_CALCCOEFFICIENT);
+				// walkEnergy = 123.5f;
+				walkEnergy = (float) (_userInfo.getWeight()
+						* WalkInviteWalkActivity.this.walkDistance * ENERGY_CALCCOEFFICIENT);
 
 				// update walk invite inviter walk info(walk total distance,
 				// total steps count, energy, pace and speed) textView text
@@ -1236,7 +1255,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 						WalkInfoType.WALKINFO_WALKENERGY,
 						String.format(
 								getString(R.string.walkInfo_energy_value_format),
-								WalkInviteWalkActivity.this.walkEnergy));
+								walkEnergy));
 				updateWalkInfoTextViewText(WalkInfoType.WALKINFO_WALKPACE, "0");
 				updateWalkInfoTextViewText(
 						WalkInfoType.WALKINFO_WALKSPEED,

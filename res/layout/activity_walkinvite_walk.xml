@@ -100,6 +100,12 @@
                 android:singleLine="true"
                 android:textColor="@color/light_gray"
                 android:textSize="18sp" />
+
+            <Chronometer
+                android:id="@+id/wiw_walkDurationTime_chronometer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
         </RelativeLayout>
 
         <RelativeLayout

@@ -338,8 +338,8 @@ public class WalkStartPointLocationSource implements LocationSource {
 
 		@Override
 		public void onLocationChanged(AMapLocation autoNaviMapLocation) {
-			LOGGER.info("onLocationChanged, auto navi map location = "
-					+ autoNaviMapLocation);
+			// LOGGER.info("onLocationChanged, auto navi map location = "
+			// + autoNaviMapLocation);
 
 			// locate successful
 			isLocated = true;

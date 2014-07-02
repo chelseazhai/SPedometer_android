@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -54,19 +52,12 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 	// milliseconds per second
 	private final int MILLISECONDS_PER_SECOND = 1000;
 
-	// user personal pedometer walk timer and walk info handler
-	private final Timer WALK_TIMER = new Timer();
-	private final Handler WALKINFO_HANDLER = new Handler();
-
 	// user walk saved instance state
 	private Bundle userWalkSavedInstanceState;
 
 	// user walk path mapView and autoNavi map
 	private MapView userWalkPathMapView;
 	private AMap autoNaviMap;
-
-	// locate user personal pedometer walk start point timer task
-	private TimerTask locateUserWalkStartPointTimerTask;
 
 	// user walk info record type
 	private WalkInfoRecordType userWalkInfoRecordType;
@@ -82,11 +73,6 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 
 	// walk duration time chronometer
 	private Chronometer walkDurationTimeChronometer;
-
-	// walk info: walk total distance, total steps count and energy
-	private double walkDistance;
-	private int walkStepsCount;
-	private float walkEnergy;
 
 	// walk info: walk total distance, total steps count, energy, pace and speed
 	// textView
@@ -213,25 +199,16 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 		autoNaviMap.getUiSettings().setZoomControlsEnabled(false);
 
 		// locate user personal pedometer walk start point
-		WALK_TIMER.schedule(
-				locateUserWalkStartPointTimerTask = new TimerTask() {
+		new Handler().post(new Runnable() {
 
-					@Override
-					public void run() {
-						// enable get my location and hidden location button
-						WALKINFO_HANDLER.post(new Runnable() {
+			@Override
+			public void run() {
+				// enable get my location and hidden location button
+				autoNaviMap.getUiSettings().setMyLocationButtonEnabled(false);
+				autoNaviMap.setMyLocationEnabled(true);
+			}
 
-							@Override
-							public void run() {
-								autoNaviMap.getUiSettings()
-										.setMyLocationButtonEnabled(false);
-								autoNaviMap.setMyLocationEnabled(true);
-							}
-
-						});
-					}
-
-				}, 0);
+		});
 
 		// get walk info sliding up button
 		walkInfoSlidingUpBtn = (Button) findViewById(R.id.pp_walkInfo_slidingUp_button);
@@ -317,12 +294,9 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 			autoNaviMapLocationSource.deactivate();
 		}
 
-		// check and cancel locate user personal pedometer walk start point
-		// timer task
-		if (null != locateUserWalkStartPointTimerTask) {
-			locateUserWalkStartPointTimerTask.cancel();
-
-			locateUserWalkStartPointTimerTask = null;
+		// check and stop walk duration time chronometer
+		if (null != walkDurationTimeChronometer) {
+			walkDurationTimeChronometer.stop();
 		}
 	}
 
@@ -490,8 +464,7 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 
 	/**
 	 * @name WalkDurationTimeChronometerOnChronometerTickListener
-	 * @descriptor walk walk duration time chronometer on chronometer tick
-	 *             listener
+	 * @descriptor walk duration time chronometer on chronometer tick listener
 	 * @author Ares
 	 * @version 1.0
 	 */
@@ -638,6 +611,11 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 			// energy calculate coefficient
 			private final float ENERGY_CALCCOEFFICIENT = 1.036f;
 
+			// walk info: walk total distance, total steps count and energy
+			private double walkDistance;
+			private int walkStepsCount;
+			private float walkEnergy;
+
 			@Override
 			public void onLocationChanged(LatLonPoint walkPathPoint,
 					double walkSpeed, double walkDistance) {
@@ -649,8 +627,8 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 				Float _userStepLength = Float.parseFloat("62.0");
 
 				// increase walk total distance and total steps count
-				PersonalPedometerActivity.this.walkDistance += walkDistance;
-				PersonalPedometerActivity.this.walkStepsCount += walkDistance
+				this.walkDistance += walkDistance;
+				walkStepsCount += walkDistance
 						* WalkStartPointLocationSource.METERS_PER_KILOMETER
 						/ (_userStepLength / CENTIMETERS_PER_METER);
 
@@ -660,10 +638,8 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 
 				// update energy
 				// test by ares
-				// PersonalPedometerActivity.this.walkEnergy = 123.5f;
-				PersonalPedometerActivity.this.walkEnergy = (float) (_userInfo
-						.getWeight()
-						* PersonalPedometerActivity.this.walkDistance * ENERGY_CALCCOEFFICIENT);
+				// walkEnergy = 123.5f;
+				walkEnergy = (float) (_userInfo.getWeight() * this.walkDistance * ENERGY_CALCCOEFFICIENT);
 
 				// update user personal walk info(walk total distance, total
 				// steps count, energy, pace and speed) textView text
@@ -671,15 +647,14 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 						WalkInfoType.WALKINFO_WALKDISTANCE,
 						String.format(
 								getString(R.string.walkInfo_distance_value_format),
-								PersonalPedometerActivity.this.walkDistance));
-				updateWalkInfoTextViewText(
-						WalkInfoType.WALKINFO_WALKSTEPS,
-						String.valueOf(PersonalPedometerActivity.this.walkStepsCount));
+								this.walkDistance));
+				updateWalkInfoTextViewText(WalkInfoType.WALKINFO_WALKSTEPS,
+						String.valueOf(walkStepsCount));
 				updateWalkInfoTextViewText(
 						WalkInfoType.WALKINFO_WALKENERGY,
 						String.format(
 								getString(R.string.walkInfo_energy_value_format),
-								PersonalPedometerActivity.this.walkEnergy));
+								walkEnergy));
 				updateWalkInfoTextViewText(WalkInfoType.WALKINFO_WALKPACE, "0");
 				updateWalkInfoTextViewText(
 						WalkInfoType.WALKINFO_WALKSPEED,
