@@ -10,6 +10,7 @@ import java.util.Map;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -139,6 +140,9 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 					.getString(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_TOPIC);
 			competeGroupStartTime = _extraData
 					.getLong(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_STARTTIME);
+			// test by ares
+			competeGroupStartTime -= 4 * SECONDS_PER_MINUTE
+					* MILLISECONDS_PER_SECOND;
 			competeGroupDurationTime = _extraData
 					.getInt(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_DURATIONTIME);
 		}
@@ -351,17 +355,21 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 									_walkStartRemainTimeSeconds
 											% SECONDS_PER_MINUTE));
 
+			// generate walk start remain time count down timer on tick listener
+			WalkStartRemainTimeCountDownTimerOnTickListener _walkStartRemainTimeCountDownTimerOnTickListener = new WalkStartRemainTimeCountDownTimerOnTickListener();
+
 			// generate walk start remain time count down timer
 			walkRemainTimeCountDownTimer = new SSCountDownTimer(
 					_walkStartRemainTime);
 
 			// set its on tick listener
 			walkRemainTimeCountDownTimer
-					.setOnTickListener(new WalkStartRemainTimeCountDownTimerOnTickListener());
+					.setOnTickListener(_walkStartRemainTimeCountDownTimerOnTickListener);
 
 			// set its on finish listener
 			walkRemainTimeCountDownTimer
-					.setOnFinishListener(new WalkStartRemainTimeCountDownTimerOnFinishListener());
+					.setOnFinishListener(new WalkStartRemainTimeCountDownTimerOnFinishListener(
+							_walkStartRemainTimeCountDownTimerOnTickListener));
 
 			// start walk start remain time count down timer
 			walkRemainTimeCountDownTimer.start();
@@ -412,6 +420,9 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 
 		// get attendees walk trend imageView
 		attendeesWalkTrendImgView = (ImageView) findViewById(R.id.wigcw_attendeesWalkTrend_imageView);
+
+		// disable it default
+		attendeesWalkTrendImgView.setEnabled(false);
 
 		// set its on click listener
 		attendeesWalkTrendImgView
@@ -665,36 +676,83 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 	class WalkStartRemainTimeCountDownTimerOnFinishListener implements
 			OnFinishListener {
 
+		// walk start remain time count down timer on tick listener
+		private WalkStartRemainTimeCountDownTimerOnTickListener walkStartRemainTimeCountDownTimerOnTickListener;
+
+		/**
+		 * @title WalkStartRemainTimeCountDownTimerOnFinishListener
+		 * @descriptor walk start remain time count down timer on finish
+		 *             listener constructor with its on tick listener
+		 * @param walkStartRemainTimeCountDownTimerOnTickListener
+		 *            : walk start remain time count down timer on tick listener
+		 * @author Ares
+		 */
+		public WalkStartRemainTimeCountDownTimerOnFinishListener(
+				WalkStartRemainTimeCountDownTimerOnTickListener walkStartRemainTimeCountDownTimerOnTickListener) {
+			super();
+
+			// save walk start remain time count down timer on tick listener
+			this.walkStartRemainTimeCountDownTimerOnTickListener = walkStartRemainTimeCountDownTimerOnTickListener;
+		}
+
 		public void onFinish() {
+			// clear compete walk remain time
+			walkStartRemainTimeCountDownTimerOnTickListener.onTick(0);
+
 			// generate walk stop remain time count down timer on tick listener
-			WalkStopRemainTimeCountDownTimerOnTickListener _walkStopRemainTimeCountDownTimerOnTickListener = new WalkStopRemainTimeCountDownTimerOnTickListener();
+			final WalkStopRemainTimeCountDownTimerOnTickListener _walkStopRemainTimeCountDownTimerOnTickListener = new WalkStopRemainTimeCountDownTimerOnTickListener();
 
-			// generate walk stop remain time count down timer
-			walkRemainTimeCountDownTimer = new SSCountDownTimer(
-					competeGroupDurationTime * SECONDS_PER_MINUTE
-							* MILLISECONDS_PER_SECOND);
+			// tick walk stop remain time count down timer delay one second
+			new Handler().postDelayed(new Runnable() {
 
-			// set its on tick listener
-			walkRemainTimeCountDownTimer
-					.setOnTickListener(_walkStopRemainTimeCountDownTimerOnTickListener);
+				@Override
+				public void run() {
+					// get walk duration time
+					long _walkDurationTime = competeGroupDurationTime
+							* SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND;
 
-			// set its on finish listener
-			walkRemainTimeCountDownTimer
-					.setOnFinishListener(new WalkStopRemainTimeCountDownTimerOnFinishListener(
-							_walkStopRemainTimeCountDownTimerOnTickListener));
+					// tick walk stop remain time count down timer
+					_walkStopRemainTimeCountDownTimerOnTickListener
+							.onTick(_walkDurationTime);
 
-			// start walk stop remain time count down timer and tick immediately
-			walkRemainTimeCountDownTimer.start();
-			_walkStopRemainTimeCountDownTimerOnTickListener
-					.onTick(walkRemainTimeCountDownTimer.getRemainTime());
+					// generate walk stop remain time count down timer
+					walkRemainTimeCountDownTimer = new SSCountDownTimer(
+							_walkDurationTime);
 
-			// set within group compete inviter walk path point location changed
-			// listener
-			autoNaviMapLocationSource
-					.setWalkPathPointLocationChangedListener(new CompeteInviterWalkPathPointLocationChangedListener());
+					// set its on tick listener
+					walkRemainTimeCountDownTimer
+							.setOnTickListener(_walkStopRemainTimeCountDownTimerOnTickListener);
 
-			// start mark within group compete inviter walk path
-			autoNaviMapLocationSource.startMarkWalkPath();
+					// set its on finish listener
+					walkRemainTimeCountDownTimer
+							.setOnFinishListener(new WalkStopRemainTimeCountDownTimerOnFinishListener(
+									_walkStopRemainTimeCountDownTimerOnTickListener));
+
+					// start walk stop remain time count down timer delay one
+					// second
+					new Handler().postDelayed(new Runnable() {
+
+						@Override
+						public void run() {
+							// start walk stop remain time count down timer
+							walkRemainTimeCountDownTimer.start();
+						}
+
+					}, MILLISECONDS_PER_SECOND);
+
+					// set within group compete inviter walk path point location
+					// changed listener
+					autoNaviMapLocationSource
+							.setWalkPathPointLocationChangedListener(new CompeteInviterWalkPathPointLocationChangedListener());
+
+					// start mark within group compete inviter walk path
+					autoNaviMapLocationSource.startMarkWalkPath();
+
+					// enable it default
+					attendeesWalkTrendImgView.setEnabled(true);
+				}
+
+			}, MILLISECONDS_PER_SECOND);
 		}
 
 		// inner class
@@ -893,7 +951,7 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 
 			// go to within group compete walk result activity with extra data
 			// map
-			popPushActivityForResult(GroupWalkResultActivity.class, _extraMap);
+			popPushActivity(GroupWalkResultActivity.class, _extraMap);
 		}
 
 	}

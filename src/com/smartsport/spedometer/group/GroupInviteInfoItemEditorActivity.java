@@ -559,6 +559,11 @@ public class GroupInviteInfoItemEditorActivity extends SSBaseActivity {
 							.put(WithinGroupCompeteInviteInfoSettingExtraData.WIGCIIS_EI_VALUE,
 									String.valueOf(withinGroupCompeteDurationTimeNumberPicker
 											.getValue()));
+					// test by ares
+					_extraMap
+							.put(WithinGroupCompeteInviteInfoSettingExtraData.WIGCIIS_EI_VALUE,
+									String.valueOf(withinGroupCompeteDurationTimeNumberPicker
+											.getValue() - 2));
 					break;
 				}
 

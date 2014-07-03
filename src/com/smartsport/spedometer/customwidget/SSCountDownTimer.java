@@ -56,7 +56,7 @@ public class SSCountDownTimer extends CountDownTimer {
 	 * @author Ares
 	 */
 	public SSCountDownTimer(long millisInFuture) {
-		super(millisInFuture, MILLISECONDS_PER_SECOND);
+		this(millisInFuture, MILLISECONDS_PER_SECOND);
 	}
 
 	public long getRemainTime() {

@@ -146,6 +146,7 @@
 
     <!-- get walk partner walk path and step -->
     <string name="getPartnerWalkInfoReqParam_groupId" translatable="false">groupId</string>
+    <string name="getPartnerWalkInfoReqParam_partnerId" translatable="false">friendId</string>
     <string name="getPartnerWalkInfoReqParam_lastFetchTimestamp" translatable="false">latestTimestamp</string>
     <string name="getPartnerWalkInfoReqResp_latestTimestamp" translatable="false">currentTimestamp</string>
     <string name="getPartnerWalkInfoReqResp_walkTotalStep" translatable="false">totalStep</string>

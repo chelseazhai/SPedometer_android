@@ -231,6 +231,8 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 	 *            : user token
 	 * @param groupId
 	 *            : the walking group id
+	 * @param partnerId
+	 *            : walk partner user id
 	 * @param lastFetchTimestamp
 	 *            : last fetched walk partner walking info timestamp
 	 * @param asyncHttpRespJSONHandler
@@ -238,17 +240,20 @@ public class WalkInviteNetworkAdapter implements INetworkAdapter {
 	 * @author Ares
 	 */
 	public void getPartnerWalkingInfo(long userId, String token,
-			String groupId, long lastFetchTimestamp,
+			String groupId, long partnerId, long lastFetchTimestamp,
 			AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
 		// get user common request param
 		Map<String, String> _getPartnerWalkingInfoReqParam = NetworkUtils
 				.genUserComReqParam(userId, token);
 
-		// set user walking group id and last fetched walk partner walking info
-		// timestamp to param
+		// set user walking group id, partner user id and last fetched walk
+		// partner walking info timestamp to param
 		_getPartnerWalkingInfoReqParam.put(NETWORK_ENGINE.getContext()
 				.getString(R.string.getPartnerWalkInfoReqParam_groupId),
 				groupId);
+		_getPartnerWalkingInfoReqParam.put(NETWORK_ENGINE.getContext()
+				.getString(R.string.getPartnerWalkInfoReqParam_partnerId),
+				String.valueOf(partnerId));
 		_getPartnerWalkingInfoReqParam
 				.put(NETWORK_ENGINE.getContext().getString(
 						R.string.getPartnerWalkInfoReqParam_lastFetchTimestamp),

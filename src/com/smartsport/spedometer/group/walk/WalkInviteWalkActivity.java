@@ -7,10 +7,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -74,6 +77,10 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private final int SECONDS_PER_MINUTE = 60;
 	private final int MINUTES_PER_HOUR = 60;
 
+	// walk invite invitee walk timer and walk info handle
+	private final Timer WALK_TIMER = new Timer();
+	private final Handler WALKINFO_HANDLER = new Handler();
+
 	// pedometer login user
 	private UserPedometerExtBean loginUser = (UserPedometerExtBean) UserManager
 			.getInstance().getLoginUser();
@@ -119,6 +126,9 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	private ImageView inviteeAvatarImgView;
 	private ImageView inviteeWalkPathWatchBadgerImgView;
 	private TextView inviteeNicknameTextView;
+
+	// get walk partner walk info timer task
+	private TimerTask getWalkPartnerWalkInfoTimerTask;
 
 	// walk info: walk total distance and total steps count
 	private double walkDistance;
@@ -543,6 +553,13 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		if (null != walkDurationTimeChronometer) {
 			walkDurationTimeChronometer.stop();
 		}
+
+		// check and cancel get walk partner walk info timer task
+		if (null != getWalkPartnerWalkInfoTimerTask) {
+			getWalkPartnerWalkInfoTimerTask.cancel();
+
+			getWalkPartnerWalkInfoTimerTask = null;
+		}
 	}
 
 	@Override
@@ -835,6 +852,84 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 						// hide the other walk attendee walk path watch badger
 						((View) _tagViewTag).setVisibility(View.GONE);
 					}
+
+					// check the clicked view and show walk invite attendee walk
+					// path
+					if (inviterAvatarImgView == v) {
+						// watch self walk path
+						// check and cancel get walk partner walk info timer
+						// task
+						if (null != getWalkPartnerWalkInfoTimerTask) {
+							getWalkPartnerWalkInfoTimerTask.cancel();
+						}
+
+						//
+					} else if (inviteeAvatarImgView == v) {
+						// watch walk partner walk path
+						// schedule get walk partner walk info immediately and
+						// repeat every period
+						WALK_TIMER
+								.schedule(
+										null == getWalkPartnerWalkInfoTimerTask ? getWalkPartnerWalkInfoTimerTask = new TimerTask() {
+
+											@Override
+											public void run() {
+												WALKINFO_HANDLER
+														.post(new Runnable() {
+
+															@Override
+															public void run() {
+																// get walk
+																// partner walk
+																// info
+																walkInviteModel
+																		.getPartnerWalkingInfo(
+																				loginUser
+																						.getUserId(),
+																				loginUser
+																						.getUserKey(),
+																				scheduleWalkInviteGroupId,
+																				inviteeUserInfoWithMemberStatus
+																						.getUserId(),
+																				0L,
+																				new ICMConnector() {
+
+																					@Override
+																					public void onSuccess(
+																							Object... retValue) {
+																						// TODO
+																						// Auto-generated
+																						// method
+																						// stub
+
+																					}
+
+																					@Override
+																					public void onFailure(
+																							int errorCode,
+																							String errorMsg) {
+																						LOGGER.error("Get walk partner walk info error, error code = "
+																								+ errorCode
+																								+ " and message = "
+																								+ errorMsg);
+
+																						//
+																					}
+
+																				});
+															}
+
+														});
+											}
+
+										}
+												: getWalkPartnerWalkInfoTimerTask,
+										0,
+										getResources()
+												.getInteger(
+														R.integer.config_walkInviteWalk_publishSelfAndGetPartner_walkInfo_period)
+												* MILLISECONDS_PER_SECOND);
+					}
 				}
 			} else {
 				LOGGER.error("Get view = " + v + " tag view error");
@@ -933,8 +1028,8 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 			walkStartRemainOrWalkDurationTimeTextView
 					.setText(_walkDurationTime);
 
-			// schedule publish self, get walk partner walk info immediately and
-			// repeat every period
+			// schedule publish self walk info immediately and repeat every
+			// period
 			if (0 == _chronometerRunDurationTime % PUBLISH_SELFWALKINFO_PERIOD) {
 				// publish self walk info
 				walkInviteModel.publishWalkingInfo(loginUser.getUserId(),

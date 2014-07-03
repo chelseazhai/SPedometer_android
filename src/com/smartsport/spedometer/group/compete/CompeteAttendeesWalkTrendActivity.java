@@ -111,10 +111,12 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 															public void onFailure(
 																	int errorCode,
 																	String errorMsg) {
-																// TODO
-																// Auto-generated
-																// method stub
+																LOGGER.error("Get within group compete attendees walk info error, error code = "
+																		+ errorCode
+																		+ " and message = "
+																		+ errorMsg);
 
+																//
 															}
 
 														});

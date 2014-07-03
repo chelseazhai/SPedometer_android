@@ -513,6 +513,8 @@ public class WalkInviteModel {
 	 *            : user token
 	 * @param groupId
 	 *            : the walking group id
+	 * @param partnerId
+	 *            : walk partner user id
 	 * @param lastFetchTimestamp
 	 *            : last fetched walk partner walking info timestamp
 	 * @param executant
@@ -520,14 +522,14 @@ public class WalkInviteModel {
 	 * @author Ares
 	 */
 	public void getPartnerWalkingInfo(long userId, String token,
-			final String groupId, final long lastFetchTimestamp,
-			final ICMConnector executant) {
+			final String groupId, final long partnerId,
+			final long lastFetchTimestamp, final ICMConnector executant) {
 		// get the walking group partner walking info including walking
 		// locations total distance and total step with group id and last fetch
 		// timestamp
 		((WalkInviteNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(WalkInviteNetworkAdapter.class))
-				.getPartnerWalkingInfo(userId, token, groupId,
+				.getPartnerWalkingInfo(userId, token, groupId, partnerId,
 						lastFetchTimestamp, new AsyncHttpRespJSONHandler() {
 
 							@Override
@@ -590,7 +592,9 @@ public class WalkInviteModel {
 														respJSONObject,
 														_context.getString(R.string.getPartnerWalkInfoReqResp_walkTotalStep)));
 									} catch (NumberFormatException e) {
-										LOGGER.error("Get walking group partner walking info, group id = "
+										LOGGER.error("Get walking group partner, user id = "
+												+ partnerId
+												+ " walking info, group id = "
 												+ groupId
 												+ ", last fetch timestamp = "
 												+ lastFetchTimestamp
@@ -631,7 +635,9 @@ public class WalkInviteModel {
 										}
 									}
 
-									LOGGER.debug("Get walking group partner walking info, group id = "
+									LOGGER.debug("Get walking group partner, user id = "
+											+ partnerId
+											+ " walking info, group id = "
 											+ groupId
 											+ ", last fetch timestamp = "
 											+ lastFetchTimestamp
@@ -655,7 +661,9 @@ public class WalkInviteModel {
 							@Override
 							public void onFailure(int statusCode,
 									String errorMsg) {
-								LOGGER.info("Get the walking group partner walking info failed, group id = "
+								LOGGER.info("Get the walking group partner, user id = "
+										+ partnerId
+										+ " walking info failed, group id = "
 										+ groupId
 										+ ", last fetch timestamp = "
 										+ lastFetchTimestamp
