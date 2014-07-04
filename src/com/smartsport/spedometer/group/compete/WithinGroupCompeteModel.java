@@ -480,7 +480,10 @@ public class WithinGroupCompeteModel {
 
 										// get the within group compete group
 										// attendees walking info failed
-										//
+										executant
+												.onFailure(
+														NetworkPedometerReqRespStatusConstant.UNRECOGNIZED_RESPBODY,
+														e.getMessage());
 
 										e.printStackTrace();
 									}
@@ -551,7 +554,10 @@ public class WithinGroupCompeteModel {
 
 									// get within group compete user walking
 									// info successful
-									//
+									executant
+											.onSuccess(
+													_competeGroupAttendeesWalkingInfoLatestTimestamp,
+													_competeGroupAttendeesTmpWalkingInfoList);
 								} else {
 									LOGGER.error("Get within group compete each member walking info response json object is null");
 								}

@@ -36,7 +36,7 @@ public class GroupResultInfoBean implements Serializable {
 			GroupResultInfoBean.class);
 
 	// walk total distance and step
-	private int distance;
+	private double distance;
 	private int steps;
 
 	// walk path locations
@@ -77,8 +77,8 @@ public class GroupResultInfoBean implements Serializable {
 			// set walk or compete group result info attributes
 			try {
 				// total distance
-				distance = Integer
-						.parseInt(JSONUtils.getStringFromJSONObject(
+				distance = Double
+						.parseDouble(JSONUtils.getStringFromJSONObject(
 								info,
 								_context.getString(R.string.groupWalkResultInfo_totalDistance)));
 			} catch (NumberFormatException e) {
@@ -109,11 +109,11 @@ public class GroupResultInfoBean implements Serializable {
 		}
 	}
 
-	public int getDistance() {
+	public double getDistance() {
 		return distance;
 	}
 
-	public void setDistance(int distance) {
+	public void setDistance(double distance) {
 		this.distance = distance;
 	}
 

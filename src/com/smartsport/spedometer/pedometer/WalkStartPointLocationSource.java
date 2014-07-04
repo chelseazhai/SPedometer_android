@@ -3,6 +3,8 @@
  */
 package com.smartsport.spedometer.pedometer;
 
+import java.util.List;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
@@ -19,6 +21,7 @@ import com.amap.api.maps2d.LocationSource;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.MarkerOptions;
+import com.amap.api.maps2d.model.Polyline;
 import com.amap.api.maps2d.model.PolylineOptions;
 import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
@@ -69,6 +72,9 @@ public class WalkStartPointLocationSource implements LocationSource {
 	// autoNavi map location listener
 	private AutoNaviMapLocationListener autoNaviMapLocationListener;
 
+	// follow location flag
+	private boolean isFollowLocation;
+
 	// walk point location info, walk speed and total distance
 	private LatLonPoint walkLatLonPoint;
 	private double walkSpeed;
@@ -77,8 +83,9 @@ public class WalkStartPointLocationSource implements LocationSource {
 	// walk path point location changed listener
 	private IWalkPathPointLocationChangedListener walkPathPointLocationChangedListener;
 
-	// walk path polyline options
+	// walk path polyline and its options
 	private PolylineOptions walkPathPolylineOptions;
+	private Polyline walkPathPolyline;
 
 	/**
 	 * @title WalkStartPointLocationSource
@@ -110,6 +117,9 @@ public class WalkStartPointLocationSource implements LocationSource {
 
 		// save locate timeout
 		this.locateTimeout = locateTimtout;
+
+		// set need to follow location
+		isFollowLocation = true;
 	}
 
 	/**
@@ -125,6 +135,14 @@ public class WalkStartPointLocationSource implements LocationSource {
 	public WalkStartPointLocationSource(Context context, AMap autoNaviMap) {
 		// locate default timeout(8 seconds)
 		this(context, autoNaviMap, 8 * MILLISECONDS_PER_SECOND);
+	}
+
+	public boolean isFollowLocation() {
+		return isFollowLocation;
+	}
+
+	public void needFollowLocation(boolean isFollowLocation) {
+		this.isFollowLocation = isFollowLocation;
 	}
 
 	public LatLonPoint getWalkLatLonPoint() {
@@ -178,8 +196,10 @@ public class WalkStartPointLocationSource implements LocationSource {
 			autoNaviMap.addMarker(WALK_STARTPOINTLOCATION_MARKER_OPTIONS)
 					.setPosition(_walkStartPoint);
 
-			// generate walk path polyline options
-			walkPathPolylineOptions = genWalkPathPolylineOptions(_walkStartPoint);
+			// generate walk path polyline options then set its width, color and
+			// add start point
+			walkPathPolylineOptions = new PolylineOptions().width(6.0f)
+					.color(Color.GREEN).add(_walkStartPoint);
 		} else {
 			LOGGER.warning("AutoNavi map not located user location, so can't mark user walk start point");
 		}
@@ -273,33 +293,6 @@ public class WalkStartPointLocationSource implements LocationSource {
 		locationManagerProxy = null;
 	}
 
-	/**
-	 * @title genWalkPathPolylineOptions
-	 * @descriptor generate walk path polyline options
-	 * @param walkPathPoint
-	 *            : walk path point
-	 * @return walk path polyline options
-	 * @author Ares
-	 */
-	private PolylineOptions genWalkPathPolylineOptions(LatLng walkPathPoint) {
-		PolylineOptions _walkPathPolylineOptions = null;
-
-		// check walk path point
-		if (null != walkPathPoint) {
-			// new walk path polyline options
-			_walkPathPolylineOptions = new PolylineOptions();
-
-			// set its width and color
-			_walkPathPolylineOptions.width(6.0f);
-			_walkPathPolylineOptions.color(Color.GREEN);
-
-			// add walk path location point
-			_walkPathPolylineOptions.add(walkPathPoint);
-		}
-
-		return _walkPathPolylineOptions;
-	}
-
 	// inner class
 	/**
 	 * @name AutoNaviMapLocationListener
@@ -372,26 +365,31 @@ public class WalkStartPointLocationSource implements LocationSource {
 				}
 			}
 
-			// update last walk location point
-			lastWalkLatLonPoint = walkLatLonPoint;
-
 			// check autoNavi map location changed listener and autoNavi map
 			// location
 			if (null != locationChangedListener && null != autoNaviMapLocation) {
 				// show location
 				locationChangedListener.onLocationChanged(autoNaviMapLocation);
 
-				// animate camera
-				autoNaviMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-						new LatLng(walkLatLonPoint.getLatitude(),
-								walkLatLonPoint.getLongitude()),
-						context.getResources().getInteger(
-								R.integer.config_autoNaviMap_zoomLevel)));
+				// check last walk location point, is follow location flag and
+				// then animate camera
+				if (null == lastWalkLatLonPoint || isFollowLocation) {
+					autoNaviMap
+							.animateCamera(CameraUpdateFactory.newLatLngZoom(
+									new LatLng(walkLatLonPoint.getLatitude(),
+											walkLatLonPoint.getLongitude()),
+									context.getResources()
+											.getInteger(
+													R.integer.config_autoNaviMap_zoomLevel)));
+				}
 			} else {
 				LOGGER.error("AutoNavi mapView location error, location changed listener = "
 						+ locationChangedListener
 						+ " and autoNavi map location = " + autoNaviMapLocation);
 			}
+
+			// update last walk location point
+			lastWalkLatLonPoint = walkLatLonPoint;
 
 			// check walk path point location changed listener then update walk
 			// path point location, walk speed and distance
@@ -407,14 +405,23 @@ public class WalkStartPointLocationSource implements LocationSource {
 						walkLatLonPoint.getLatitude(),
 						walkLatLonPoint.getLongitude());
 
-				// add user walk current location point then add walk path
-				// location polyline to autoNavi map and invalidate
-				walkPathPolylineOptions.add(_walkCurrentLocationPoint);
-				autoNaviMap.addPolyline(walkPathPolylineOptions);
-				autoNaviMap.postInvalidate();
+				// check walk path polyline
+				if (null != walkPathPolyline) {
+					// get walk path polyline points and add the current
+					// location point to it
+					List<LatLng> _walkPathPoints = walkPathPolyline.getPoints();
+					_walkPathPoints.add(_walkCurrentLocationPoint);
 
-				// reset walk path polyline options
-				walkPathPolylineOptions = genWalkPathPolylineOptions(_walkCurrentLocationPoint);
+					// update walk path polyline points
+					walkPathPolyline.setPoints(_walkPathPoints);
+				} else {
+					// add user walk current location point then add walk path
+					// location polyline to autoNavi map and invalidate
+					walkPathPolylineOptions.add(_walkCurrentLocationPoint);
+					walkPathPolyline = autoNaviMap
+							.addPolyline(walkPathPolylineOptions);
+					autoNaviMap.postInvalidate();
+				}
 			}
 		}
 

@@ -32,9 +32,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.maps2d.AMap;
+import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
+import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.maps2d.model.Marker;
+import com.amap.api.maps2d.model.MarkerOptions;
 import com.amap.api.maps2d.model.MyLocationStyle;
+import com.amap.api.maps2d.model.Polyline;
+import com.amap.api.maps2d.model.PolylineOptions;
 import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavBarButtonItem;
@@ -49,6 +55,7 @@ import com.smartsport.spedometer.group.GroupWalkResultActivity.GroupWalkResultEx
 import com.smartsport.spedometer.group.info.ScheduleGroupInfoBean;
 import com.smartsport.spedometer.group.info.member.MemberStatus;
 import com.smartsport.spedometer.group.info.member.UserInfoMemberStatusBean;
+import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.pedometer.IWalkPathPointLocationChangedListener;
@@ -80,6 +87,15 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	// walk invite invitee walk timer and walk info handle
 	private final Timer WALK_TIMER = new Timer();
 	private final Handler WALKINFO_HANDLER = new Handler();
+
+	// walk partner walk start point and location marker options
+	private final MarkerOptions PARTNER_WALK_STARTPOINTLOCATION_MARKER_OPTIONS = new MarkerOptions()
+			.icon(BitmapDescriptorFactory
+					.fromResource(R.drawable.img_walkpartner_startpoint_marker_icon));
+	private final MarkerOptions PARTNER_WALKLOCATION_MARKER_OPTIONS = new MarkerOptions()
+			.icon(BitmapDescriptorFactory
+					.fromResource(R.drawable.img_walkpartner_location_marker_icon))
+			.anchor(0.5f, 0.5f);
 
 	// pedometer login user
 	private UserPedometerExtBean loginUser = (UserPedometerExtBean) UserManager
@@ -150,6 +166,12 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 
 	// walk invite inviter walk path point list
 	private List<LatLonPoint> walkPathPoints;
+
+	// walk partner walk start point location marker, walk path polyline and
+	// location marker
+	private Marker partnerWalkStartPointLocationMarker;
+	private Polyline partnerWalkPathPolyline;
+	private Marker partnerWalkLocationMarker;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -863,7 +885,19 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 							getWalkPartnerWalkInfoTimerTask.cancel();
 						}
 
-						//
+						// need to follow walk location and follow immediately
+						autoNaviMapLocationSource.needFollowLocation(true);
+
+						// check and clear walk partner walk path
+						if (null != partnerWalkStartPointLocationMarker) {
+							partnerWalkStartPointLocationMarker.remove();
+						}
+						if (null != partnerWalkPathPolyline) {
+							partnerWalkPathPolyline.remove();
+						}
+						if (null != partnerWalkLocationMarker) {
+							partnerWalkLocationMarker.remove();
+						}
 					} else if (inviteeAvatarImgView == v) {
 						// watch walk partner walk path
 						// schedule get walk partner walk info immediately and
@@ -871,6 +905,14 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 						WALK_TIMER
 								.schedule(
 										null == getWalkPartnerWalkInfoTimerTask ? getWalkPartnerWalkInfoTimerTask = new TimerTask() {
+
+											// last fetch walk partner walking
+											// info timestamp
+											private long lastFetchPartnerWalkingInfoTimestamp = 0L;
+
+											// walk partner walk path location
+											// list
+											private final List<LatLonPoint> PARTNER_WALKPATHLOCATIONS = new ArrayList<LatLonPoint>();
 
 											@Override
 											public void run() {
@@ -891,17 +933,226 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 																				scheduleWalkInviteGroupId,
 																				inviteeUserInfoWithMemberStatus
 																						.getUserId(),
-																				0L,
+																				lastFetchPartnerWalkingInfoTimestamp,
 																				new ICMConnector() {
 
 																					@Override
 																					public void onSuccess(
 																							Object... retValue) {
-																						// TODO
-																						// Auto-generated
-																						// method
-																						// stub
+																						// check
+																						// return
+																						// values
+																						if (null != retValue
+																								&& 1 < retValue.length
+																								&& retValue[0] instanceof Long
+																								&& retValue[retValue.length - 1] instanceof UserInfoGroupResultBean) {
+																							// update
+																							// last
+																							// fetch
+																							// walk
+																							// partner
+																							// walking
+																							// info
+																							// timestamp
+																							lastFetchPartnerWalkingInfoTimestamp = (Long) retValue[0];
 
+																							// add
+																							// walk
+																							// partner
+																							// temp
+																							// walking
+																							// location
+																							// list
+																							PARTNER_WALKPATHLOCATIONS
+																									.addAll(((UserInfoGroupResultBean) retValue[retValue.length - 1])
+																											.getResult()
+																											.getWalkPathLocationList());
+
+																							LOGGER.info("@@, walk invite: last fetch timestamp = "
+																									+ lastFetchPartnerWalkingInfoTimestamp
+																									+ ", walk path location list = "
+																									+ PARTNER_WALKPATHLOCATIONS
+																									+ " and temp walking result = "
+																									+ retValue[retValue.length - 1]);
+
+																							// not
+																							// need
+																							// to
+																							// follow
+																							// location
+																							autoNaviMapLocationSource
+																									.needFollowLocation(false);
+
+																							// check
+																							// walk
+																							// partner
+																							// walk
+																							// start
+																							// point
+																							// location
+																							// marker
+																							// and
+																							// walk
+																							// path
+																							// locations
+																							if (null == partnerWalkStartPointLocationMarker
+																									&& !PARTNER_WALKPATHLOCATIONS
+																											.isEmpty()) {
+																								// add
+																								// walk
+																								// partner
+																								// walk
+																								// start
+																								// point
+																								// location
+																								// marker
+																								// to
+																								// autoNavi
+																								// map
+																								partnerWalkStartPointLocationMarker = autoNaviMap
+																										.addMarker(PARTNER_WALK_STARTPOINTLOCATION_MARKER_OPTIONS);
+
+																								// set
+																								// its
+																								// position
+																								partnerWalkStartPointLocationMarker
+																										.setPosition(new LatLng(
+																												PARTNER_WALKPATHLOCATIONS
+																														.get(0)
+																														.getLatitude(),
+																												PARTNER_WALKPATHLOCATIONS
+																														.get(0)
+																														.getLongitude()));
+																							}
+
+																							// get
+																							// and
+																							// check
+																							// walk
+																							// partner
+																							// walk
+																							// path
+																							// locations
+																							// size
+																							int _partnerWalkPathPointSize = PARTNER_WALKPATHLOCATIONS
+																									.size();
+																							if (1 < _partnerWalkPathPointSize) {
+																								// get
+																								// walk
+																								// partner
+																								// walk
+																								// location
+																								// point
+																								LatLng _partnerWalkLocationPoint = new LatLng(
+																										PARTNER_WALKPATHLOCATIONS
+																												.get(_partnerWalkPathPointSize)
+																												.getLatitude(),
+																										PARTNER_WALKPATHLOCATIONS
+																												.get(_partnerWalkPathPointSize)
+																												.getLongitude());
+
+																								// check
+																								// walk
+																								// partner
+																								// walk
+																								// path
+																								// location
+																								// polyline
+																								if (null == partnerWalkPathPolyline) {
+																									// define
+																									// walk
+																									// partner
+																									// walk
+																									// path
+																									// polyline
+																									// options
+																									// with
+																									// width
+																									// and
+																									// color
+																									partnerWalkPathPolyline = autoNaviMap
+																											.addPolyline(new PolylineOptions()
+																													.width(6.0f)
+																													.color(Color.BLUE));
+																								} else {
+																									// generate
+																									// walk
+																									// partner
+																									// walk
+																									// path
+																									// polyline
+																									// points
+																									// and
+																									// update
+																									// it
+																									List<LatLng> _partnerWalkPathLocations = new ArrayList<LatLng>();
+																									for (LatLonPoint _partnerWalkPathLocationPoint : PARTNER_WALKPATHLOCATIONS) {
+																										_partnerWalkPathLocations
+																												.add(new LatLng(
+																														_partnerWalkPathLocationPoint
+																																.getLatitude(),
+																														_partnerWalkPathLocationPoint
+																																.getLongitude()));
+																									}
+																									partnerWalkPathPolyline
+																											.setPoints(_partnerWalkPathLocations);
+																								}
+
+																								// invalidate
+																								// autoNavi
+																								// map
+																								autoNaviMap
+																										.postInvalidate();
+
+																								// animate
+																								// and
+																								// zoom
+																								// autoNavi
+																								// map
+																								// to
+																								// walk
+																								// partner
+																								// walk
+																								// position
+																								// point
+																								autoNaviMap
+																										.animateCamera(CameraUpdateFactory
+																												.newLatLngZoom(
+																														_partnerWalkLocationPoint,
+																														getResources()
+																																.getInteger(
+																																		R.integer.config_autoNaviMap_zoomLevel)));
+
+																								// check
+																								// walk
+																								// partner
+																								// walk
+																								// location
+																								// marker
+																								// and
+																								// add
+																								// his
+																								// walk
+																								// location
+																								// marker
+																								if (null == partnerWalkLocationMarker) {
+																									partnerWalkLocationMarker = autoNaviMap
+																											.addMarker(PARTNER_WALKLOCATION_MARKER_OPTIONS);
+																								}
+
+																								// set
+																								// walk
+																								// partner
+																								// walk
+																								// location
+																								// marker
+																								// position
+																								partnerWalkLocationMarker
+																										.setPosition(_partnerWalkLocationPoint);
+																							}
+																						} else {
+																							LOGGER.error("Get walk invite group walk partner walking info error");
+																						}
 																					}
 
 																					@Override

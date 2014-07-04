@@ -3,6 +3,7 @@
  */
 package com.smartsport.spedometer.group.compete;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -101,10 +102,21 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 															@Override
 															public void onSuccess(
 																	Object... retValue) {
-																// TODO
-																// Auto-generated
-																// method stub
+																// check return
+																// values
+																if (null != retValue
+																		&& 1 < retValue.length
+																		&& retValue[0] instanceof Long
+																		&& retValue[retValue.length - 1] instanceof List) {
+																	LOGGER.info("@@, within group compete: timestamp = "
+																			+ retValue[0]
+																			+ " and attendees temp walking result list = "
+																			+ retValue[retValue.length - 1]);
 
+																	//
+																} else {
+																	LOGGER.error("Get walk invite group walk partner walking info error");
+																}
 															}
 
 															@Override

@@ -17,6 +17,7 @@ import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.group.GroupInviteInfoBean;
+import com.smartsport.spedometer.group.info.result.GroupResultInfoBean;
 import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.network.NetworkAdapter;
@@ -554,17 +555,21 @@ public class WalkInviteModel {
 											.getContext();
 
 									// define walking group partner walking info
-									// latest timestamp, total distance, total
-									// step and location list
+									// latest timestamp and temp walking info
 									long _walkingGroupPartnerWalkingInfoLatestTimestamp = 0;
-									double _walkingGroupPartnerWalkingTotalDistance = 0.0;
-									int _walkingGroupPartnerWalkingTotalStep = 0;
-									List<LatLonPoint> _walkingGroupPartnerWalkingLocationList = new ArrayList<LatLonPoint>();
+									UserInfoGroupResultBean _walkingGroupPartnerTmpWalkingInfo = new UserInfoGroupResultBean();
+									_walkingGroupPartnerTmpWalkingInfo
+											.setUserId(partnerId);
+
+									// define walking group partner temp walking
+									// result
+									GroupResultInfoBean _tmpWalkingResult = new GroupResultInfoBean();
 
 									try {
 										// get and check response walking group
-										// partner walking info latest timestamp
-										// and total distance and total step
+										// partner walking info latest
+										// timestamp, total distance and total
+										// step
 										// walking group partner walking info
 										// latest timestamp
 										_walkingGroupPartnerWalkingInfoLatestTimestamp = Long.parseLong(JSONUtils
@@ -578,19 +583,21 @@ public class WalkInviteModel {
 												.put(groupId,
 														_walkingGroupPartnerWalkingInfoLatestTimestamp);
 
-										// walking group partner walking total
-										// distance
-										_walkingGroupPartnerWalkingTotalDistance = Double.parseDouble(JSONUtils
+										// get walking group partner walking
+										// total distance and add it to tmp
+										// walking result
+										_tmpWalkingResult.setDistance(Double.parseDouble(JSONUtils
 												.getStringFromJSONObject(
 														respJSONObject,
-														_context.getString(R.string.getPartnerWalkInfoReqResp_walkTotalDistance)));
+														_context.getString(R.string.getPartnerWalkInfoReqResp_walkTotalDistance))));
 
-										// walking group partner walking total
-										// step
-										_walkingGroupPartnerWalkingTotalStep = Integer.parseInt(JSONUtils
+										// get walking group partner walking
+										// total step and add it to tmp walking
+										// result
+										_tmpWalkingResult.setSteps(Integer.parseInt(JSONUtils
 												.getStringFromJSONObject(
 														respJSONObject,
-														_context.getString(R.string.getPartnerWalkInfoReqResp_walkTotalStep)));
+														_context.getString(R.string.getPartnerWalkInfoReqResp_walkTotalStep))));
 									} catch (NumberFormatException e) {
 										LOGGER.error("Get walking group partner, user id = "
 												+ partnerId
@@ -603,7 +610,10 @@ public class WalkInviteModel {
 
 										// get the walking group partner walking
 										// info failed
-										//
+										executant
+												.onFailure(
+														NetworkPedometerReqRespStatusConstant.UNRECOGNIZED_RESPBODY,
+														e.getMessage());
 
 										e.printStackTrace();
 									}
@@ -613,27 +623,29 @@ public class WalkInviteModel {
 									JSONArray _walkingGroupPartnerWalkingLocationJSONArray = JSONUtils.getJSONArrayFromJSONObject(
 											respJSONObject,
 											_context.getString(R.string.getPartnerWalkInfoReqResp_walkPath));
-									if (null != _walkingGroupPartnerWalkingLocationList) {
-										for (int i = 0; i < _walkingGroupPartnerWalkingLocationJSONArray
-												.length(); i++) {
-											// get and check walking group
-											// partner walking location json
-											// object
-											JSONObject _partnerWalkingLocation = JSONUtils
-													.getJSONObjectFromJSONArray(
-															_walkingGroupPartnerWalkingLocationJSONArray,
-															i);
-											if (null != _partnerWalkingLocation) {
-												// generate walking location
-												// latitude and longitude point
-												// and add to list
-												_walkingGroupPartnerWalkingLocationList
-														.add(new LocationBean(
-																_partnerWalkingLocation)
-																.toLatLonPoint());
-											}
+									for (int i = 0; i < _walkingGroupPartnerWalkingLocationJSONArray
+											.length(); i++) {
+										// get and check walking group partner
+										// walking location json object
+										JSONObject _partnerWalkingLocation = JSONUtils
+												.getJSONObjectFromJSONArray(
+														_walkingGroupPartnerWalkingLocationJSONArray,
+														i);
+										if (null != _partnerWalkingLocation) {
+											// generate walking location
+											// latitude and longitude point and
+											// add to list
+											_tmpWalkingResult
+													.addWalkPathLocation(new LocationBean(
+															_partnerWalkingLocation)
+															.toLatLonPoint());
 										}
 									}
+
+									// add walk invite group walk partner tmp
+									// walking result to his walk info
+									_walkingGroupPartnerTmpWalkingInfo
+											.setResult(_tmpWalkingResult);
 
 									LOGGER.debug("Get walking group partner, user id = "
 											+ partnerId
@@ -643,16 +655,15 @@ public class WalkInviteModel {
 											+ lastFetchTimestamp
 											+ ", the partner walking info latest timestamp = "
 											+ _walkingGroupPartnerWalkingInfoLatestTimestamp
-											+ ", total distance = "
-											+ _walkingGroupPartnerWalkingTotalDistance
-											+ ", total step = "
-											+ _walkingGroupPartnerWalkingTotalStep
-											+ " and location list = "
-											+ _walkingGroupPartnerWalkingLocationList);
+											+ " and his temp walking info = "
+											+ _walkingGroupPartnerTmpWalkingInfo);
 
 									// get walking group partner walking info
 									// successful
-									//
+									executant
+											.onSuccess(
+													_walkingGroupPartnerWalkingInfoLatestTimestamp,
+													_walkingGroupPartnerTmpWalkingInfo);
 								} else {
 									LOGGER.error("Get walking group partner walking info response json object is null");
 								}
