@@ -30,6 +30,17 @@
     <string name="comReqResp_errorCode" translatable="false">errorCode</string>
     <string name="comReqResp_errorMsg" translatable="false">errorMsg</string>
 
+    <!-- upload file -->
+    <string name="uploadFileReqResp_foreignKeyId" translatable="false">fkid</string>
+    <string name="uploadFileReqResp_imgFileType" translatable="false">pictype</string>
+    <string name="uploadFileReqResp_momentImgFile" translatable="false">7</string>
+    <string name="uploadFileReqResp_moduleName" translatable="false">modulename</string>
+    <string name="uploadFileReqResp_momentModuleName" translatable="false">circle</string>
+    <string name="uploadFileReqResp_imgFileUploadType" translatable="false">uploadtype</string>
+    <string name="uploadFileReqResp_newAddedImgFile" translatable="false">0</string>
+    <string name="uploadFileReqResp_uploadFile" translatable="false">file</string>
+    <string name="uploadFileReqResp_uploadFileName" translatable="false">imageFileName</string>
+
     <!-- user -->
     <!-- gender -->
     <string name="userGender_male" translatable="false">m</string>

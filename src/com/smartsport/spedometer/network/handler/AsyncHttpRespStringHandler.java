@@ -3,6 +3,8 @@
  */
 package com.smartsport.spedometer.network.handler;
 
+import java.io.UnsupportedEncodingException;
+
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -20,8 +22,18 @@ public abstract class AsyncHttpRespStringHandler implements
 
 	@Override
 	public void onSuccess(int statusCode, byte[] responseBody) {
-		LOGGER.debug("Asynchronous http response string handler handle successful, status code = "
+		LOGGER.info("Asynchronous http response string handler handle successful, status code = "
 				+ statusCode + " and response body = " + responseBody);
+
+		// on success with response string parse with utf-8 charset encoding
+		try {
+			onSuccess(statusCode, new String(responseBody, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			LOGGER.error("Generate http request response string body error, exception message = "
+					+ e.getMessage());
+
+			e.printStackTrace();
+		}
 	}
 
 	/**

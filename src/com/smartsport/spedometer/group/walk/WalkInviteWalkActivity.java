@@ -91,7 +91,8 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	// walk partner walk start point and location marker options
 	private final MarkerOptions PARTNER_WALK_STARTPOINTLOCATION_MARKER_OPTIONS = new MarkerOptions()
 			.icon(BitmapDescriptorFactory
-					.fromResource(R.drawable.img_walkpartner_startpoint_marker_icon));
+					.fromResource(R.drawable.img_walkpartner_startpoint_marker_icon))
+			.anchor(0.5f, 1.0f);
 	private final MarkerOptions PARTNER_WALKLOCATION_MARKER_OPTIONS = new MarkerOptions()
 			.icon(BitmapDescriptorFactory
 					.fromResource(R.drawable.img_walkpartner_location_marker_icon))
@@ -886,6 +887,22 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 						}
 
 						// need to follow walk location and follow immediately
+						// get user location point
+						LatLonPoint _userLocationPoint = walkPathPoints
+								.get(walkPathPoints.size() - 1);
+
+						// animate autoNavi map to user location point
+						autoNaviMap
+								.animateCamera(CameraUpdateFactory.newLatLngZoom(
+										new LatLng(_userLocationPoint
+												.getLatitude(),
+												_userLocationPoint
+														.getLongitude()),
+										getResources()
+												.getInteger(
+														R.integer.config_autoNaviMap_zoomLevel)));
+
+						// follow user walk location
 						autoNaviMapLocationSource.needFollowLocation(true);
 
 						// check and clear walk partner walk path

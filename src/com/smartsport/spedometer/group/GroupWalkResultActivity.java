@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -18,7 +19,10 @@ import com.smartsport.spedometer.customwidget.SSBNavBarButtonItem;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
 import com.smartsport.spedometer.group.ScheduleWalkInviteGroupsActivity.WalkInviteInviteeSelectOrWalkControlExtraData;
 import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
+import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
+import com.smartsport.spedometer.user.UserManager;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -33,6 +37,9 @@ public class GroupWalkResultActivity extends SSBaseActivity {
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(
 			GroupWalkResultActivity.class);
+
+	// group info model
+	private GroupInfoModel groupInfoModel = GroupInfoModel.getInstance();
 
 	// group type(walk or within group compete), walk start, stop time and
 	// attendees walk result
@@ -140,6 +147,30 @@ public class GroupWalkResultActivity extends SSBaseActivity {
 					null == groupType ? "分享失败"
 							: GroupType.WALK_GROUP == groupType ? "分享约走结果成功"
 									: "分享多人组内竞赛结果成功", Toast.LENGTH_LONG).show();
+
+			// get pedometer login user
+			UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
+					.getInstance().getLoginUser();
+
+			// test by ares
+			groupInfoModel.shareGroupResult2Moments(_loginUser.getUserId(),
+					_loginUser.getUserKey(), BitmapFactory.decodeResource(
+							getResources(), R.drawable.ic_launcher), "", null,
+					new ICMConnector() {
+
+						@Override
+						public void onSuccess(Object... retValue) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void onFailure(int errorCode, String errorMsg) {
+							// TODO Auto-generated method stub
+
+						}
+
+					});
 
 			// test by ares
 			// pop walk invite or within group compete walk result activity

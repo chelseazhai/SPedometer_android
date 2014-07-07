@@ -11,6 +11,8 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.graphics.Bitmap;
+
 import com.smartsport.spedometer.group.info.HistoryGroupInfoBean;
 import com.smartsport.spedometer.group.info.ScheduleGroupInfoBean;
 import com.smartsport.spedometer.mvc.ICMConnector;
@@ -221,6 +223,67 @@ public class GroupInfoModel {
 										+ errorMsg);
 
 								// get user schedule group info failed
+								executant.onFailure(statusCode, errorMsg);
+							}
+
+						});
+	}
+
+	/**
+	 * @title shareGroupResult2Moments
+	 * @descriptor get user all history groups from remote server
+	 * @param userId
+	 *            : user id
+	 * @param token
+	 *            : user token
+	 * @param resultImg
+	 *            : walk invite or within group compete walk result image
+	 * @param description
+	 *            : walk result image description message
+	 * @param specialRemains
+	 *            : share the walk result image special remain friends
+	 * @param executant
+	 *            :
+	 * @author Ares
+	 */
+	public void shareGroupResult2Moments(long userId, String token,
+			Bitmap resultImg, final String description,
+			final List<Long> specialRemains, final ICMConnector executant) {
+		// share walk invite or within group compete walk result with user id,
+		// token, result image bitmap, description and special remain friends
+		((GroupInfoNetworkAdapter) NetworkAdapter.getInstance()
+				.getWorkerNetworkAdapter(GroupInfoNetworkAdapter.class))
+				.shareGroupResult2Moments(userId, token, resultImg,
+						description, specialRemains,
+						new AsyncHttpRespJSONHandler() {
+
+							@Override
+							public void onSuccess(int statusCode,
+									JSONArray respJSONArray) {
+								// nothing to do
+							}
+
+							@Override
+							public void onSuccess(int statusCode,
+									JSONObject respJSONObject) {
+								// TODO Auto-generated method stub
+
+							}
+
+							@Override
+							public void onFailure(int statusCode,
+									String errorMsg) {
+								LOGGER.info("Share walk invite or within group compete walk result failed, share description = "
+										+ description
+										+ ", special remain friends = "
+										+ specialRemains
+										+ ", status code = "
+										+ statusCode
+										+ " and error message = "
+										+ errorMsg);
+
+								// share walk invite or within group compete
+								// walk result failed
 								executant.onFailure(statusCode, errorMsg);
 							}
 

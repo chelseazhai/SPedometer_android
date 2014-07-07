@@ -2,11 +2,24 @@
 <resources>
 
     <!-- server root url -->
-    <!-- <string name="server_rootUrl" translatable="false">http://192.168.0.54:8080/qmjs_FEP/pedometer</string> -->
-    <!-- <string name="server_rootUrl" translatable="false">http://10.20.126.17:8080/qmjs_FEP/pedometer</string> -->
-    <string name="server_rootUrl" translatable="false">http://10.20.1.5:8080/qmjs_FEP/pedometer</string>
-    <!-- <string name="server_rootUrl" translatable="false">http://218.104.116.66:9091/qmjs_FEP/pedometer</string> -->
+    <!-- <string name="server_rootUrl" translatable="false">http://192.168.0.54:8080/qmjs_FEP</string> -->
+    <!-- <string name="server_rootUrl" translatable="false">http://10.20.126.17:8080/qmjs_FEP</string> -->
+    <string name="server_rootUrl" translatable="false">http://10.20.1.5:8080/qmjs_FEP</string>
+    <!-- <string name="server_rootUrl" translatable="false">http://218.104.116.66:9091/qmjs_FEP</string> -->
 
+
+    <!-- common -->
+    <!-- common module name -->
+    <!-- <string name="commonModule" translatable="false">/common</string> -->
+    <string name="commonModule" translatable="false">/commons</string>
+
+    <!-- file upload -->
+    <!-- <string name="uploadFile_url" translatable="false">/fileUpload</string> -->
+    <string name="uploadFile_url" translatable="false">/upload.action</string>
+
+    <!-- pedometer -->
+    <!-- pedometer module name -->
+    <string name="pedometerModule" translatable="false">/pedometer</string>
 
     <!-- user -->
     <!-- <string name="getUserInfo_url" translatable="false">/user/getUserInfo</string> -->
@@ -59,5 +72,13 @@
     <string name="patStranger_url" translatable="false">/patStranger.action</string>
     <!-- <string name="getPattedStrangers_url" translatable="false">/pat/getPatList</string> -->
     <string name="getPattedStrangers_url" translatable="false">/getPatList.action</string>
+
+    <!-- moments -->
+    <!-- moments module name -->
+    <string name="momentsModule" translatable="false">/circle</string>
+
+    <!-- new moment -->
+    <!-- <string name="newMoment_url" translatable="false">/newMoment</string> -->
+    <string name="newMoment_url" translatable="false">/createCircle.action</string>
 
 </resources>

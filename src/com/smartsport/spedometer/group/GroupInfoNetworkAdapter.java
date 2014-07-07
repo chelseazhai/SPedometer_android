@@ -3,12 +3,25 @@
  */
 package com.smartsport.spedometer.group;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import android.graphics.Bitmap;
+import android.os.Handler;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.network.INetworkAdapter;
 import com.smartsport.spedometer.network.NetworkUtils;
+import com.smartsport.spedometer.network.handler.AsyncHttpRespFileHandler;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespJSONHandler;
+import com.smartsport.spedometer.network.handler.IAsyncHttpRespHandler.NetworkPedometerReqRespStatusConstant;
+import com.smartsport.spedometer.utils.SSLogger;
 
 /**
  * @name GroupInfoNetworkAdapter
@@ -17,6 +30,10 @@ import com.smartsport.spedometer.network.handler.AsyncHttpRespJSONHandler;
  * @version 1.0
  */
 public class GroupInfoNetworkAdapter implements INetworkAdapter {
+
+	// logger
+	private static final SSLogger LOGGER = new SSLogger(
+			GroupInfoNetworkAdapter.class);
 
 	/**
 	 * @title getUserScheduleGroups
@@ -80,6 +97,157 @@ public class GroupInfoNetworkAdapter implements INetworkAdapter {
 				NETWORK_ENGINE.getContext().getString(
 						R.string.getScheduleGroupInfo_url),
 				_getUserScheduleGroupInfoReqParam, asyncHttpRespJSONHandler);
+	}
+
+	/**
+	 * @title shareGroupResult2Moments
+	 * @descriptor get user all history groups from remote server
+	 * @param userId
+	 *            : user id
+	 * @param token
+	 *            : user token
+	 * @param resultImg
+	 *            : walk invite or within group compete walk result image
+	 * @param description
+	 *            : walk result image description message
+	 * @param specialRemains
+	 *            : share the walk result image special remain friends
+	 * @param asyncHttpRespJSONHandler
+	 *            : asynchronous http response json handler
+	 * @author Ares
+	 */
+	public void shareGroupResult2Moments(final long userId, final String token,
+			Bitmap resultImg, String description, List<Long> specialRemains,
+			final AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
+		// step 1: upload the walk invite or within group compete walk result
+		// image
+		// check result image
+		if (null != resultImg) {
+			// define upload the walk result image handle
+			final Handler _uploadResultImgHandle = new Handler();
+
+			// upload the walk invite or within group compete walk result image
+			// generate the walk result image foreign key
+			final String _resultImgForeignKey = String.valueOf(System
+					.currentTimeMillis());
+
+			// upload the walk result image to server
+			// get user common request param
+			// Map<String, String> _uploadResultImgReqParam = NetworkUtils
+			// .genUserComReqParam(userId, token);
+			Map<String, String> _uploadResultImgReqParam = new HashMap<String, String>();
+			_uploadResultImgReqParam.put("userid", String.valueOf(userId));
+
+			// set result image foreign key, image type, module name, upload
+			// type and file name to param
+			_uploadResultImgReqParam.put(
+					NETWORK_ENGINE.getContext().getString(
+							R.string.uploadFileReqResp_foreignKeyId),
+					_resultImgForeignKey);
+			_uploadResultImgReqParam.put(
+					NETWORK_ENGINE.getContext().getString(
+							R.string.uploadFileReqResp_imgFileType),
+					NETWORK_ENGINE.getContext().getString(
+							R.string.uploadFileReqResp_momentImgFile));
+			_uploadResultImgReqParam.put(
+					NETWORK_ENGINE.getContext().getString(
+							R.string.uploadFileReqResp_moduleName),
+					NETWORK_ENGINE.getContext().getString(
+							R.string.uploadFileReqResp_momentModuleName));
+			_uploadResultImgReqParam.put(
+					NETWORK_ENGINE.getContext().getString(
+							R.string.uploadFileReqResp_imgFileUploadType),
+					NETWORK_ENGINE.getContext().getString(
+							R.string.uploadFileReqResp_newAddedImgFile));
+			_uploadResultImgReqParam.put(
+					NETWORK_ENGINE.getContext().getString(
+							R.string.uploadFileReqResp_uploadFileName),
+					"walk result, test@ares");
+
+			// test by ares
+			File _uploadFile = new File("");
+			try {
+				InputStream ins = NETWORK_ENGINE.getContext().getAssets().open("testImg.png");
+				
+				try {
+					   OutputStream os = new FileOutputStream(_uploadFile);
+					   int bytesRead = 0;
+					   byte[] buffer = new byte[8192];
+					   while ((bytesRead = ins.read(buffer, 0, 8192)) != -1) {
+					    os.write(buffer, 0, bytesRead);
+					   }
+					   os.close();
+					   ins.close();
+					  } catch (Exception e) {
+					   e.printStackTrace();
+					  }
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// send upload the walk result image asynchronous post http request
+			NETWORK_ENGINE.postWithAPI(
+					NETWORK_ENGINE.getContext().getString(
+							R.string.uploadFile_url), _uploadResultImgReqParam,
+					_uploadFile, new AsyncHttpRespFileHandler() {
+
+						@Override
+						public void onSuccess(int statusCode) {
+							// step 2 : generate user moments and publish it
+							// share the walk result image to user moments and
+							// publish it
+							// get user common request param
+							final Map<String, String> _shareWalkResultImgReqParam = NetworkUtils
+									.genUserComReqParam(userId, token);
+
+							//
+
+							// send share the walk result image to user moments
+							// asynchronous post http request
+							_uploadResultImgHandle.post(new Runnable() {
+
+								@Override
+								public void run() {
+									LOGGER.error("okokok, @ares");
+
+									// NETWORK_ENGINE
+									// .postWithAPI(
+									// NETWORK_ENGINE
+									// .getContext()
+									// .getString(
+									// R.string.momentsModule),
+									// NETWORK_ENGINE
+									// .getContext()
+									// .getString(
+									// R.string.newMoment_url),
+									// _shareWalkResultImgReqParam,
+									// asyncHttpRespJSONHandler);
+								}
+
+							});
+						}
+
+						@Override
+						public void onFailure(int statusCode, String errorMsg) {
+							// check asynchronous http response json handler
+							if (null != asyncHttpRespJSONHandler) {
+								asyncHttpRespJSONHandler.onFailure(statusCode,
+										errorMsg);
+							}
+						}
+
+					});
+		} else {
+			LOGGER.error("The walk invite or within group compete walk result image is null, not need to upload");
+
+			// check asynchronous http response json handler
+			if (null != asyncHttpRespJSONHandler) {
+				asyncHttpRespJSONHandler.onFailure(
+						NetworkPedometerReqRespStatusConstant.NULL_RESPBODY,
+						"Upload file is null");
+			}
+		}
 	}
 
 	/**
