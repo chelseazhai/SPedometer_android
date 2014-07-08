@@ -665,7 +665,7 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 								.name(), Boolean.valueOf(false));
 				_inviteeData
 						.put(OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_ICON_KEY
-								.name(), R.drawable.img_default_middle_avatar);
+								.name(), _competeInvitee.getAvatarUrl());
 				_inviteeData
 						.put(OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_TIP_KEY
 								.name(), _competeInvitee.getNickname());

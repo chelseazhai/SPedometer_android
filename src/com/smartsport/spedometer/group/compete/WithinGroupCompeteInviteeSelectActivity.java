@@ -24,6 +24,7 @@ import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
 import com.smartsport.spedometer.customwidget.SSHorizontalListView;
 import com.smartsport.spedometer.customwidget.SSProgressDialog;
+import com.smartsport.spedometer.customwidget.SSSimpleAdapterViewBinder;
 import com.smartsport.spedometer.group.GroupInviteInviteeListViewAdapter;
 import com.smartsport.spedometer.group.GroupInviteInviteeListViewAdapter.GroupInviteInviteeListViewAdapterKey;
 import com.smartsport.spedometer.group.GroupType;
@@ -439,6 +440,9 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 			super(context, _sDataList = new ArrayList<Map<String, Object>>(),
 					resource, dataKeys, ids);
 
+			// set view binder
+			setViewBinder(new SSSimpleAdapterViewBinder());
+
 			// check the selected invitee list
 			if (null != selectedInvitees) {
 				// set selected within group compete invitees
@@ -468,7 +472,7 @@ public class WithinGroupCompeteInviteeSelectActivity extends SSBaseActivity {
 				// set data attributes
 				_data.put(
 						SelectedInviteesHorizontalListViewAdapterKey.SELECTEDINVITEE_AVATAR_KEY
-								.name(), R.drawable.img_default_avatar);
+								.name(), _selectedInvitee.getAvatarUrl());
 
 				// add data to list
 				_sDataList.add(_data);

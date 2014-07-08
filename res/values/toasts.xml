@@ -19,6 +19,9 @@
     <!-- group invitees -->
     <string name="procMsg_getUserFriends">获取好友，请稍候&#8230;</string>
 
+    <!-- group walk result share -->
+    <string name="procMsg_shareGroupWalkResult">分享结果，请稍候&#8230;</string>
+
     <!-- walk invite group -->
     <string name="procMsg_getScheduleWalkInviteGroups">获取约走组，请稍候&#8230;</string>
 

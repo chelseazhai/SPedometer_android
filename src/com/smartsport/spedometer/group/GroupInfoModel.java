@@ -231,7 +231,7 @@ public class GroupInfoModel {
 
 	/**
 	 * @title shareGroupResult2Moments
-	 * @descriptor get user all history groups from remote server
+	 * @descriptor share walk invite or within group compete walk result
 	 * @param userId
 	 *            : user id
 	 * @param token
@@ -239,35 +239,44 @@ public class GroupInfoModel {
 	 * @param resultImg
 	 *            : walk invite or within group compete walk result image
 	 * @param description
-	 *            : walk result image description message
-	 * @param specialRemains
-	 *            : share the walk result image special remain friends
+	 *            : walk result share description message
+	 * @param label
+	 *            : walk result share label
+	 * @param specialReminds
+	 *            : share the walk result image special remind friends
 	 * @param executant
 	 *            :
 	 * @author Ares
 	 */
 	public void shareGroupResult2Moments(long userId, String token,
-			Bitmap resultImg, final String description,
-			final List<Long> specialRemains, final ICMConnector executant) {
+			Bitmap resultImg, final String description, final String label,
+			final List<Long> specialReminds, final ICMConnector executant) {
 		// share walk invite or within group compete walk result with user id,
-		// token, result image bitmap, description and special remain friends
+		// token, result image bitmap, description and special remind friends
 		((GroupInfoNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(GroupInfoNetworkAdapter.class))
 				.shareGroupResult2Moments(userId, token, resultImg,
-						description, specialRemains,
+						description, label, specialReminds,
 						new AsyncHttpRespJSONHandler() {
 
 							@Override
 							public void onSuccess(int statusCode,
 									JSONArray respJSONArray) {
 								// nothing to do
+
+								// share walk invite or within group compete
+								// walk result successful
+								executant.onSuccess((Object) null);
 							}
 
 							@Override
 							public void onSuccess(int statusCode,
 									JSONObject respJSONObject) {
-								// TODO Auto-generated method stub
+								// nothing to do
 
+								// share walk invite or within group compete
+								// walk result successful
+								executant.onSuccess((Object) null);
 							}
 
 							@Override
@@ -275,8 +284,10 @@ public class GroupInfoModel {
 									String errorMsg) {
 								LOGGER.info("Share walk invite or within group compete walk result failed, share description = "
 										+ description
-										+ ", special remain friends = "
-										+ specialRemains
+										+ ", label = "
+										+ label
+										+ ", special remind friends = "
+										+ specialReminds
 										+ ", status code = "
 										+ statusCode
 										+ " and error message = "

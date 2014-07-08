@@ -5,9 +5,12 @@ package com.smartsport.spedometer.customwidget;
 
 import android.text.Spannable;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.TextView;
 
+import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -39,6 +42,26 @@ public class SSSimpleAdapterViewBinder implements ViewBinder {
 
 			// update return flag
 			_ret = true;
+		}
+		// imageView
+		else if (view instanceof ImageView) {
+			// check data type
+			if (data instanceof String
+					&& ((String) data).startsWith(SSApplication.getContext()
+							.getString(R.string.fileServer_rootUrl))) {
+				LOGGER.info("Overwrite imageView data view binder");
+
+				// set imageView image
+				// test by ares
+				((ImageView) view)
+						.setImageResource(R.drawable.img_test_walkresult);
+
+				// update return flag
+				_ret = true;
+			} else {
+				LOGGER.warning("ImageView set image warning, image data = "
+						+ data);
+			}
 		}
 
 		return _ret;

@@ -35,7 +35,7 @@ public class HopeRunHttpReqEntity extends HopeRunHttpEntity {
 	 *            : hope run http request parameter map
 	 * @author Ares
 	 */
-	public HopeRunHttpReqEntity(Map<String, String> reqParam) {
+	public HopeRunHttpReqEntity(Map<String, ?> reqParam) {
 		super();
 
 		// set body

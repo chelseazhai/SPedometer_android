@@ -142,7 +142,7 @@ public class NetworkEngine {
 	 * @author Ares
 	 */
 	public void postWithAPI(String module, String api,
-			Map<String, String> parameter,
+			Map<String, ?> parameter,
 			AsyncHttpRespStringHandler asyncHttpRespStringHandler) {
 		LOGGER.debug("Send asynchronous post http request, module name = "
 				+ module + " , api relative url = " + api + ", parameter = "
@@ -192,7 +192,7 @@ public class NetworkEngine {
 	 *            : asynchronous http response string handler
 	 * @author Ares
 	 */
-	public void postWithAPI(String api, Map<String, String> parameter,
+	public void postWithAPI(String api, Map<String, ?> parameter,
 			AsyncHttpRespStringHandler asyncHttpRespStringHandler) {
 		postWithAPI(context.getString(R.string.pedometerModule), api,
 				parameter, asyncHttpRespStringHandler);
@@ -221,10 +221,14 @@ public class NetworkEngine {
 		// generate request parameters with parameter
 		RequestParams _reqParams = new RequestParams(parameter);
 
-		// put file to request parameters
 		try {
-			_reqParams
-					.put("file", file, RequestParams.APPLICATION_OCTET_STREAM);
+			// put file to request parameters
+			// test by ares
+			_reqParams.put("image", file,
+					RequestParams.APPLICATION_OCTET_STREAM);
+
+			LOGGER.info("File upload asynchronous post http request parameters = "
+					+ _reqParams);
 
 			// post file upload asynchronous http request
 			asyncHttpClient

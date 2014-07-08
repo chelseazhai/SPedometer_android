@@ -9,7 +9,11 @@ import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.smartsport.spedometer.network.hoperun.HopeRunHttpReqRespEntity;
+import android.content.Context;
+
+import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.SSApplication;
+import com.smartsport.spedometer.utils.JSONUtils;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -33,22 +37,31 @@ public abstract class AsyncHttpRespFileHandler implements IAsyncHttpRespHandler 
 		String _reqRespStringBody = null;
 
 		try {
+			// get context
+			Context _context = SSApplication.getContext();
+
 			// get request response string body parsed with utf-8 charset
 			// encoding
 			_reqRespStringBody = new String(responseBody, "UTF-8");
 
-			// get hope run http request response entity
-			HopeRunHttpReqRespEntity _hopeRunHttpReqRespEntity = new HopeRunHttpReqRespEntity(
-					statusCode, new JSONObject(_reqRespStringBody));
+			// get response body json object
+			JSONObject _respBodyJSONObject = new JSONObject(_reqRespStringBody);
 
-			// get and check status code
-			Integer _statusCode = _hopeRunHttpReqRespEntity.getStatusCode();
-			if (statusCode == _statusCode) {
-				// on success
-				onSuccess(statusCode);
+			// response body contains user define error
+			if (JSONUtils.jsonObjectKeys(_respBodyJSONObject).contains(
+					_context.getString(R.string.comReqResp_errorCode))) {
+				// asynchronous http response json handle failed
+				onFailure(
+						JSONUtils.getIntFromJSONObject(
+								_respBodyJSONObject,
+								_context.getString(R.string.comReqResp_errorCode)),
+						JSONUtils
+								.getStringFromJSONObject(
+										_respBodyJSONObject,
+										_context.getString(R.string.comReqResp_errorMsg)));
 			} else {
-				// on failed
-				onFailure(_statusCode, _hopeRunHttpReqRespEntity.getStatusMsg());
+				// asynchronous http response json handle successful
+				onSuccess(statusCode);
 			}
 		} catch (UnsupportedEncodingException e) {
 			LOGGER.error("Generate http request response string body error, exception message = "

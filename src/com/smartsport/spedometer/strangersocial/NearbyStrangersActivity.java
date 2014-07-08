@@ -31,6 +31,7 @@ import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSActionSheet;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
 import com.smartsport.spedometer.customwidget.SSProgressDialog;
+import com.smartsport.spedometer.customwidget.SSSimpleAdapterViewBinder;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
@@ -711,6 +712,9 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 
 			// save context
 			this.context = context;
+
+			// set view binder
+			setViewBinder(new SSSimpleAdapterViewBinder());
 
 			// set nearby stranger list
 			setNearbyStrangers(nearbyStrangers);
