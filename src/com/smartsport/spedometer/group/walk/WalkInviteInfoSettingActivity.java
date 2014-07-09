@@ -53,6 +53,10 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 	// milliseconds per second
 	private final int MILLISECONDS_PER_SECOND = 1000;
 
+	// pedometer login user
+	private UserPedometerExtBean loginUser = (UserPedometerExtBean) UserManager
+			.getInstance().getLoginUser();
+
 	// walk invite model
 	private WalkInviteModel walkInviteModel = WalkInviteModel.getInstance();
 
@@ -101,7 +105,7 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 
 		// set walk invite inviter avatar imageView image
 		((ImageView) findViewById(R.id.wiis_inviterAvatar_imageView))
-				.setImageURI(null);
+				.setImageURI(Uri.parse(loginUser.getAvatarUrl()));
 
 		// check the selected walk invite invitee then set walk invite invitee
 		// avatar imageView image and nickname textView text
@@ -267,10 +271,6 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 					_walkInviteInfo.setEndTime(Long.parseLong(_scheduleEndTime)
 							/ MILLISECONDS_PER_SECOND);
 
-					// get pedometer login user
-					UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
-							.getInstance().getLoginUser();
-
 					// show walk invite progress dialog
 					walkInviteProgDlg = SSProgressDialog.show(
 							WalkInviteInfoSettingActivity.this,
@@ -278,8 +278,8 @@ public class WalkInviteInfoSettingActivity extends SSBaseActivity {
 
 					// send walk invite info with the selected user friend info
 					// to remote server
-					walkInviteModel.inviteWalk(_loginUser.getUserId(),
-							_loginUser.getUserKey(),
+					walkInviteModel.inviteWalk(loginUser.getUserId(),
+							loginUser.getUserKey(),
 							selectedWalkInviteInvitee.getUserId(),
 							_walkInviteInfo, new ICMConnector() {
 

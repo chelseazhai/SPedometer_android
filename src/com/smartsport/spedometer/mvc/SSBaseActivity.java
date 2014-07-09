@@ -1138,6 +1138,19 @@ public abstract class SSBaseActivity extends Activity {
 		}
 	}
 
+	@Override
+	public void onBackPressed() {
+		// check back bar button item
+		if (null != backBarBtnItem) {
+			// perform back bar button item on click
+			onBackBarButtonItemClick(backBarBtnItem);
+		} else {
+			LOGGER.warning("Not push activity");
+
+			super.onBackPressed();
+		}
+	}
+
 	/**
 	 * @title initContentViewUI
 	 * @descriptor initialize activity content view UI

@@ -3,6 +3,7 @@
  */
 package com.smartsport.spedometer.customwidget;
 
+import android.net.Uri;
 import android.text.Spannable;
 import android.view.View;
 import android.widget.ImageView;
@@ -51,10 +52,8 @@ public class SSSimpleAdapterViewBinder implements ViewBinder {
 							.getString(R.string.fileServer_rootUrl))) {
 				LOGGER.info("Overwrite imageView data view binder");
 
-				// set imageView image
-				// test by ares
-				((ImageView) view)
-						.setImageResource(R.drawable.img_test_walkresult);
+				// set imageView image uri
+				((ImageView) view).setImageURI(Uri.parse((String) data));
 
 				// update return flag
 				_ret = true;

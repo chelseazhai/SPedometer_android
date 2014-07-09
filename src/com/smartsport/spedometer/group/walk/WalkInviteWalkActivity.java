@@ -355,7 +355,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		inviterAvatarImgView = (ImageView) findViewById(R.id.wiw_inviterAvatar_imageView);
 
 		// set its image
-		inviterAvatarImgView.setImageURI(null);
+		inviterAvatarImgView.setImageURI(Uri.parse(loginUser.getAvatarUrl()));
 
 		// get walk path watch badger imageView and set it as walk invite
 		// inviter avatar imageView tag

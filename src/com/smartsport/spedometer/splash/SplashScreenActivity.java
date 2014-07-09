@@ -76,7 +76,7 @@ public class SplashScreenActivity extends Activity implements IAppLaunch {
 			_pedometerLoginUser.setUserKey("token@ares");
 			_pedometerLoginUser.setUserId(447376200952006L);
 			_pedometerLoginUser
-					.setAvatarUrl("http://www.baidu.com/avatar/user1003");
+					.setAvatarUrl("http://218.104.116.66:8095/qmjsMSS/loadpic.jsp?path=/qmjs_files/person/447376200952006/31b8da0.jpg");
 
 			// set pedometer login user
 			UserManager.getInstance().setLoginUser(_pedometerLoginUser);

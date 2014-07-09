@@ -31,6 +31,7 @@ import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.customwidget.SSBNavBarButtonItem;
 import com.smartsport.spedometer.customwidget.SSCountDownTimer;
 import com.smartsport.spedometer.customwidget.SSCountDownTimer.OnFinishListener;
 import com.smartsport.spedometer.customwidget.SSCountDownTimer.OnTickListener;
@@ -483,6 +484,13 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 
 			walkRemainTimeCountDownTimer = null;
 		}
+	}
+
+	@Override
+	protected void onBackBarButtonItemClick(SSBNavBarButtonItem backBarBtnItem) {
+		LOGGER.debug("Alert user leave for a moment or misoperation");
+
+		//
 	}
 
 	/**

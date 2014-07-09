@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true" >
 
-                <ImageView
+                <com.smartsport.spedometer.customwidget.SSImageView
                     android:id="@+id/wiw_inviterAvatar_imageView"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
@@ -119,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true" >
 
-                <ImageView
+                <com.smartsport.spedometer.customwidget.SSImageView
                     android:id="@+id/wiw_inviteeAvatar_imageView"
                     android:layout_width="60dp"
                     android:layout_height="60dp"

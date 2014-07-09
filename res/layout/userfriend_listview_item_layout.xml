@@ -17,7 +17,7 @@
         android:src="@drawable/img_withingroupcompete_invitee_unselected"
         android:visibility="gone" />
 
-    <ImageView
+    <com.smartsport.spedometer.customwidget.SSImageView
         android:id="@+id/userfriend_item_friendAvatar_imageView"
         android:layout_width="36dp"
         android:layout_height="36dp"

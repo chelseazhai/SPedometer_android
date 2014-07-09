@@ -60,6 +60,10 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 	// milliseconds per second
 	private final int MILLISECONDS_PER_SECOND = 1000;
 
+	// pedometer login user
+	private static UserPedometerExtBean loginUser = (UserPedometerExtBean) UserManager
+			.getInstance().getLoginUser();
+
 	// within group compete model
 	private WithinGroupCompeteModel withinGroupCompeteModel = WithinGroupCompeteModel
 			.getInstance();
@@ -341,10 +345,6 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 					_withinGroupCompeteInviteInfo
 							.setDuration(_competeScheduleDurationTime);
 
-					// get pedometer login user
-					UserPedometerExtBean _loginUser = (UserPedometerExtBean) UserManager
-							.getInstance().getLoginUser();
-
 					// show within group compete invite progress dialog
 					withinGroupCompeteInviteProgDlg = SSProgressDialog.show(
 							WithinGroupCompeteInviteInfoSettingActivity.this,
@@ -353,7 +353,7 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 					// send within group compete invite info with the selected
 					// user friends info list to remote server
 					withinGroupCompeteModel.inviteWithinGroupCompete(
-							_loginUser.getUserId(), _loginUser.getUserKey(),
+							loginUser.getUserId(), loginUser.getUserKey(),
 							getWithinGroupCompeteInviteeIds(),
 							_withinGroupCompeteInviteInfo, new ICMConnector() {
 
@@ -585,7 +585,7 @@ public class WithinGroupCompeteInviteInfoSettingActivity extends SSBaseActivity 
 							.name(), Boolean.valueOf(false));
 			_inviterData
 					.put(OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_ICON_KEY
-							.name(), null);
+							.name(), loginUser.getAvatarUrl());
 			_inviterData
 					.put(OperateGridViewAdapterKey.ATTENDEEOPERATION_OPERATE_TIP_KEY
 							.name(),
