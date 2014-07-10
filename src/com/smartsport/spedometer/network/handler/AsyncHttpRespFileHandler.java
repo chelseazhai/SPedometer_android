@@ -50,7 +50,7 @@ public abstract class AsyncHttpRespFileHandler implements IAsyncHttpRespHandler 
 			// response body contains user define error
 			if (JSONUtils.jsonObjectKeys(_respBodyJSONObject).contains(
 					_context.getString(R.string.comReqResp_errorCode))) {
-				// asynchronous http response json handle failed
+				// asynchronous http response file handle failed
 				onFailure(
 						JSONUtils.getIntFromJSONObject(
 								_respBodyJSONObject,
@@ -60,7 +60,7 @@ public abstract class AsyncHttpRespFileHandler implements IAsyncHttpRespHandler 
 										_respBodyJSONObject,
 										_context.getString(R.string.comReqResp_errorMsg)));
 			} else {
-				// asynchronous http response json handle successful
+				// asynchronous http response file handle successful
 				onSuccess(statusCode);
 			}
 		} catch (UnsupportedEncodingException e) {

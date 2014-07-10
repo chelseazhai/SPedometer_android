@@ -172,9 +172,9 @@ public class GroupInfoNetworkAdapter implements INetworkAdapter {
 					_uploadWalkResultImgFileName);
 			_uploadResultImgReqParam.put(
 					NETWORK_ENGINE.getContext().getString(
-							R.string.uploadFileReqParam_uploadFile),
+							R.string.uploadFileReqParam_uploadFileMR),
 					NETWORK_ENGINE.getContext().getString(
-							R.string.uploadFileReqParam_singleMR));
+							R.string.uploadFileReqParam_multipleMR));
 
 			// create temp upload walk result image file
 			File _tmpUploadWalkResultImgFile = new File(NETWORK_ENGINE

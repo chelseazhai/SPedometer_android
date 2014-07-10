@@ -41,7 +41,7 @@
     <string name="uploadFileReqParam_uploadFile" translatable="false">image</string>
     <string name="uploadFileReqParam_uploadFileName" translatable="false">imageFileName</string>
     <string name="uploadFileReqParam_uploadFileMR" translatable="false">picgrade</string>
-    <string name="uploadFileReqParam_singleMR" translatable="false">1</string>
+    <string name="uploadFileReqParam_multipleMR" translatable="false">2</string>
 
     <!-- user -->
     <!-- gender -->

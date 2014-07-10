@@ -24,10 +24,12 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.BinaryHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.SSApplication;
+import com.smartsport.spedometer.network.handler.AsyncHttpRespBinaryHandler;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespFileHandler;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespStringHandler;
 import com.smartsport.spedometer.network.handler.IAsyncHttpRespHandler;
@@ -124,6 +126,124 @@ public class NetworkEngine {
 		asyncHttpClient.get(genHttpRequestUrl(module, api), new RequestParams(
 				parameter), new TextAsyncHttpRespStringHandler(
 				asyncHttpRespStringHandler));
+	}
+
+	/**
+	 * @title getWithAPI
+	 * @descriptor send asynchronous get http request with api relative url and
+	 *             parameter, then handle with response json handler
+	 * @param api
+	 *            : api relative url
+	 * @param parameter
+	 *            : asynchronous get http request parameter
+	 * @param asyncHttpRespStringHandler
+	 *            : asynchronous http response string handler
+	 * @author Ares
+	 */
+	public void getWithAPI(String api, Map<String, String> parameter,
+			AsyncHttpRespStringHandler asyncHttpRespStringHandler) {
+		getWithAPI(context.getString(R.string.pedometerModule), api, parameter,
+				asyncHttpRespStringHandler);
+	}
+
+	/**
+	 * @title getWithAPI
+	 * @descriptor send asynchronous get file http request with file url and
+	 *             allowed response content types
+	 * @param fileUrl
+	 *            : file url
+	 * @param allowedContentTypes
+	 *            : allowed get file request response content types
+	 * @param asyncHttpRespBinaryHandler
+	 *            : asynchronous http response binary handler
+	 * @author Ares
+	 */
+	public void getWithAPI(String fileUrl, String[] allowedContentTypes,
+			final AsyncHttpRespBinaryHandler asyncHttpRespBinaryHandler) {
+		LOGGER.debug("Send asynchronous get file http request, file url = "
+				+ fileUrl + " and response binary handler = "
+				+ asyncHttpRespBinaryHandler);
+
+		// get asynchronous http request
+		asyncHttpClient.get(fileUrl, new BinaryHttpResponseHandler(
+				allowedContentTypes) {
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers,
+					byte[] responseBody) {
+				LOGGER.debug("Binary asynchronous http response binary handler handle successful, status code = "
+						+ statusCode
+						+ ", headers = "
+						+ headers
+						+ " and response body = " + responseBody);
+
+				// check asynchronous http response handler
+				if (null != asyncHttpRespBinaryHandler) {
+					// check headers
+					if (null != headers) {
+						for (Header header : headers) {
+							// get header name and then only check response
+							// headers content type
+							if (AsyncHttpClient.HEADER_CONTENT_TYPE
+									.equalsIgnoreCase(header.getName())) {
+								// set response content type
+								asyncHttpRespBinaryHandler
+										.setContentType(header.getValue());
+
+								// break immediately
+								break;
+							}
+						}
+					}
+
+					// asynchronous http response handle successful
+					asyncHttpRespBinaryHandler.onSuccess(statusCode,
+							responseBody);
+				} else {
+					LOGGER.warning("Binary asynchronous http response handler is null, not need to throw up");
+				}
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers,
+					byte[] responseBody, Throwable error) {
+				LOGGER.debug("Binary asynchronous http response binary handler handle failed, status code = "
+						+ statusCode
+						+ ", headers = "
+						+ headers
+						+ ", response body = "
+						+ responseBody
+						+ " and error message = " + error.getMessage());
+
+				error.printStackTrace();
+
+				// check asynchronous http response handler
+				if (null != asyncHttpRespBinaryHandler) {
+					// asynchronous http response handle failed
+					asyncHttpRespBinaryHandler.onFailure(statusCode,
+							error.getMessage());
+				} else {
+					LOGGER.warning("Binary asynchronous http response handler is null, not need to throw up");
+				}
+			}
+
+		});
+	}
+
+	/**
+	 * @title getWithAPI
+	 * @descriptor send asynchronous get file http request with file url and
+	 *             allowed response content types
+	 * @param fileUrl
+	 *            : file url
+	 * @param asyncHttpRespBinaryHandler
+	 *            : asynchronous http response binary handler
+	 * @author Ares
+	 */
+	public void getWithAPI(String fileUrl,
+			AsyncHttpRespBinaryHandler asyncHttpRespBinaryHandler) {
+		// set allowed content types default value: ".*"
+		getWithAPI(fileUrl, new String[] { ".*" }, asyncHttpRespBinaryHandler);
 	}
 
 	/**

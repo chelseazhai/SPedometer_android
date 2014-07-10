@@ -22,6 +22,7 @@
                 android:layout_centerVertical="true"
                 android:background="@drawable/user_large_avatar_imageview_bg"
                 android:contentDescription="@string/strangerAvatar_imageView_contentDescription"
+                android:padding="1dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/img_default_large_avatar" />
 
