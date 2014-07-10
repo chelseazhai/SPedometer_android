@@ -326,10 +326,16 @@ public class SSImageView extends ImageView {
 
 				@Override
 				protected int sizeOf(String key, SoftReference<Bitmap> value) {
-					// get cache bitmap and re-calculate its size
-					Bitmap _bitmap = value.get();
+					int _size = super.sizeOf(key, value);
 
-					return _bitmap.getRowBytes() * _bitmap.getHeight();
+					// get and check cache bitmap
+					Bitmap _bitmap = value.get();
+					if (null != _bitmap) {
+						// re-calculate its size
+						_size = _bitmap.getRowBytes() * _bitmap.getHeight();
+					}
+
+					return _size;
 				}
 
 			};
