@@ -425,8 +425,9 @@ public class SSImageView extends ImageView {
 													imageView
 															.setImageBitmap(imgBitmap);
 												} else {
-													LOGGER.error("@@, image view = "
-															+ imageView);
+													LOGGER.warning("Set image view = "
+															+ imageView
+															+ " image error");
 
 													//
 												}

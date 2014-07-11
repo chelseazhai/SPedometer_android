@@ -38,7 +38,6 @@ import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MarkerOptions;
-import com.amap.api.maps2d.model.MyLocationStyle;
 import com.amap.api.maps2d.model.Polyline;
 import com.amap.api.maps2d.model.PolylineOptions;
 import com.amap.api.services.core.LatLonPoint;
@@ -60,6 +59,7 @@ import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.pedometer.IWalkPathPointLocationChangedListener;
 import com.smartsport.spedometer.pedometer.WalkInfoType;
+import com.smartsport.spedometer.pedometer.WalkMyLocationStyle;
 import com.smartsport.spedometer.pedometer.WalkStartPointLocationSource;
 import com.smartsport.spedometer.user.UserInfoBean;
 import com.smartsport.spedometer.user.UserInfoModel;
@@ -91,8 +91,7 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 	// walk partner walk start point and location marker options
 	private final MarkerOptions PARTNER_WALK_STARTPOINTLOCATION_MARKER_OPTIONS = new MarkerOptions()
 			.icon(BitmapDescriptorFactory
-					.fromResource(R.drawable.img_walkpartner_startpoint_marker_icon))
-			.anchor(0.5f, 1.0f);
+					.fromResource(R.drawable.img_walkpartner_startpoint_marker_icon));
 	private final MarkerOptions PARTNER_WALKLOCATION_MARKER_OPTIONS = new MarkerOptions()
 			.icon(BitmapDescriptorFactory
 					.fromResource(R.drawable.img_walkpartner_location_marker_icon))
@@ -335,16 +334,8 @@ public class WalkInviteWalkActivity extends SSBaseActivity {
 		autoNaviMap = attendeeWalkPathMapView.getMap();
 
 		// set its my location style
-		autoNaviMap.setMyLocationStyle(new MyLocationStyle()
-				.myLocationIcon(
-						BitmapDescriptorFactory
-								.fromResource(R.drawable.img_poi_mylocation))
-				.radiusFillColor(
-						getResources().getColor(
-								R.color.quarter_black_transparent))
-				.strokeWidth(10)
-				.strokeColor(
-						getResources().getColor(android.R.color.transparent)));
+		autoNaviMap
+				.setMyLocationStyle(WalkMyLocationStyle.WALK_MYLOCATION_STYLE);
 
 		// enable compass, scale controls and disable zoom controls
 		autoNaviMap.getUiSettings().setCompassEnabled(true);

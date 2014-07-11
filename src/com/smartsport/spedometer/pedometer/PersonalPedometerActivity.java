@@ -25,8 +25,6 @@ import android.widget.TextView;
 
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.MapView;
-import com.amap.api.maps2d.model.BitmapDescriptorFactory;
-import com.amap.api.maps2d.model.MyLocationStyle;
 import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
@@ -124,16 +122,8 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 		autoNaviMap = userWalkPathMapView.getMap();
 
 		// set its my location style
-		autoNaviMap.setMyLocationStyle(new MyLocationStyle()
-				.myLocationIcon(
-						BitmapDescriptorFactory
-								.fromResource(R.drawable.img_poi_mylocation))
-				.radiusFillColor(
-						getResources().getColor(
-								R.color.quarter_black_transparent))
-				.strokeWidth(10)
-				.strokeColor(
-						getResources().getColor(android.R.color.transparent)));
+		autoNaviMap
+				.setMyLocationStyle(WalkMyLocationStyle.WALK_MYLOCATION_STYLE);
 
 		// set autoNavi map location source
 		autoNaviMap

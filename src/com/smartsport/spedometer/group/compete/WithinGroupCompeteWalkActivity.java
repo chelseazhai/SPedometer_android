@@ -27,8 +27,6 @@ import android.widget.Toast;
 
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.MapView;
-import com.amap.api.maps2d.model.BitmapDescriptorFactory;
-import com.amap.api.maps2d.model.MyLocationStyle;
 import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavBarButtonItem;
@@ -49,6 +47,7 @@ import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.pedometer.IWalkPathPointLocationChangedListener;
 import com.smartsport.spedometer.pedometer.WalkInfoType;
+import com.smartsport.spedometer.pedometer.WalkMyLocationStyle;
 import com.smartsport.spedometer.pedometer.WalkStartPointLocationSource;
 import com.smartsport.spedometer.user.UserGender;
 import com.smartsport.spedometer.user.UserInfoBean;
@@ -293,16 +292,8 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 		autoNaviMap = inviterWalkPathMapView.getMap();
 
 		// set its my location style
-		autoNaviMap.setMyLocationStyle(new MyLocationStyle()
-				.myLocationIcon(
-						BitmapDescriptorFactory
-								.fromResource(R.drawable.img_poi_mylocation))
-				.radiusFillColor(
-						getResources().getColor(
-								R.color.quarter_black_transparent))
-				.strokeWidth(10)
-				.strokeColor(
-						getResources().getColor(android.R.color.transparent)));
+		autoNaviMap
+				.setMyLocationStyle(WalkMyLocationStyle.WALK_MYLOCATION_STYLE);
 
 		// enable compass, scale controls and disable zoom controls
 		autoNaviMap.getUiSettings().setCompassEnabled(true);

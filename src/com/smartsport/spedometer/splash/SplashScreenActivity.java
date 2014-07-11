@@ -72,11 +72,11 @@ public class SplashScreenActivity extends Activity implements IAppLaunch {
 			// generate pedometer login user object
 			UserPedometerExtBean _pedometerLoginUser = new UserPedometerExtBean();
 			_pedometerLoginUser.setLoginName("18001582338");
-			_pedometerLoginUser.setLoginPwd("123123");
+			_pedometerLoginUser.setLoginPwd("123");
 			_pedometerLoginUser.setUserKey("token@ares");
-			_pedometerLoginUser.setUserId(447376200952006L);
+			_pedometerLoginUser.setUserId(1745891595710907L);
 			_pedometerLoginUser
-					.setAvatarUrl("http://218.104.116.66:8095/qmjsMSS/loadpic.jsp?path=/qmjs_files/person/447376200952006/31b8da0.jpg");
+					.setAvatarUrl("http://218.104.116.66:8095/qmjsMSS/loadpic.jsp?path=/qmjs_files/person/1745891595710907/ebeb705.jpg");
 
 			// set pedometer login user
 			UserManager.getInstance().setLoginUser(_pedometerLoginUser);

@@ -4,19 +4,16 @@
 package com.smartsport.spedometer.group;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.localstorage.AppInterPriFileHelper;
 import com.smartsport.spedometer.network.INetworkAdapter;
 import com.smartsport.spedometer.network.NetworkUtils;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespFileHandler;
@@ -142,6 +139,7 @@ public class GroupInfoNetworkAdapter implements INetworkAdapter {
 			// get user common request param
 			// Map<String, String> _uploadResultImgReqParam = NetworkUtils
 			// .genUserComReqParam(userId, token);
+			// test by ares
 			Map<String, String> _uploadResultImgReqParam = new HashMap<String, String>();
 			_uploadResultImgReqParam.put("userid", String.valueOf(userId));
 
@@ -176,149 +174,147 @@ public class GroupInfoNetworkAdapter implements INetworkAdapter {
 					NETWORK_ENGINE.getContext().getString(
 							R.string.uploadFileReqParam_multipleMR));
 
-			// create temp upload walk result image file
-			File _tmpUploadWalkResultImgFile = new File(NETWORK_ENGINE
-					.getContext().getDir(String.valueOf(userId),
-							Context.MODE_PRIVATE), _uploadWalkResultImgFileName);
+			// write walk result image bitmap to local storage, check it and
+			// then upload the temp local storage file
+			File _tmpUploadWalkResultImgFile = AppInterPriFileHelper
+					.getInstance().write2File(resultImg,
+							String.valueOf(userId),
+							_uploadWalkResultImgFileName);
+			if (null != _tmpUploadWalkResultImgFile) {
+				LOGGER.info("Walk result image local storage file path = "
+						+ _tmpUploadWalkResultImgFile.getAbsolutePath()
+						+ " and length = "
+						+ _tmpUploadWalkResultImgFile.length());
 
-			// define temp upload walk result image file output stream
-			FileOutputStream _fops = null;
+				// send upload the walk result image asynchronous post http
+				// request
+				NETWORK_ENGINE.postWithAPI(NETWORK_ENGINE.getContext()
+						.getString(R.string.uploadFile_url),
+						_uploadResultImgReqParam, _tmpUploadWalkResultImgFile,
+						new AsyncHttpRespFileHandler() {
 
-			try {
-				// open file output stream
-				_fops = new FileOutputStream(_tmpUploadWalkResultImgFile);
+							@Override
+							public void onSuccess(int statusCode) {
+								// delete temp upload walk result image file
+								//
 
-				// compress the walk result image bitmap to temp file
-				resultImg.compress(Bitmap.CompressFormat.PNG, 100, _fops);
-			} catch (FileNotFoundException e) {
-				LOGGER.error("");
+								// step 2 : generate user moments and publish it
+								// share the walk result image to user moments
+								// and publish it
+								// get user common request param
+								final Map<String, Object> _shareWalkResultImgReqParam = new HashMap<String, Object>(
+										NetworkUtils.genUserComReqParam(userId,
+												token));
 
-				e.printStackTrace();
-			} finally {
-				// close the opened file output stream
-				try {
-					_fops.close();
-				} catch (IOException e) {
-					LOGGER.error("");
+								// set result image primary key, description,
+								// label, delete picture list, is public flag,
+								// public group list, special remind friends and
+								// is synchronous show flag to param
+								_shareWalkResultImgReqParam
+										.put(NETWORK_ENGINE
+												.getContext()
+												.getString(
+														R.string.newMomentReqParam_primaryKey),
+												_resultImgKey);
+								_shareWalkResultImgReqParam
+										.put(NETWORK_ENGINE
+												.getContext()
+												.getString(
+														R.string.newMomentReqParam_description),
+												description);
+								_shareWalkResultImgReqParam
+										.put(NETWORK_ENGINE
+												.getContext()
+												.getString(
+														R.string.newMomentReqParam_label),
+												label);
+								_shareWalkResultImgReqParam
+										.put(NETWORK_ENGINE
+												.getContext()
+												.getString(
+														R.string.newMomentReqParam_deletePicIds),
+												new ArrayList<String>());
+								_shareWalkResultImgReqParam
+										.put(NETWORK_ENGINE
+												.getContext()
+												.getString(
+														R.string.newMomentReqParam_isPublic),
+												NETWORK_ENGINE
+														.getContext()
+														.getString(
+																R.string.newMomentReqParam_momentPublic));
+								_shareWalkResultImgReqParam
+										.put(NETWORK_ENGINE
+												.getContext()
+												.getString(
+														R.string.newMomentReqParam_publicGroups),
+												new ArrayList<String>());
+								_shareWalkResultImgReqParam
+										.put(NETWORK_ENGINE
+												.getContext()
+												.getString(
+														R.string.newMomentReqParam_specialRemindFriends),
+												specialReminds);
+								_shareWalkResultImgReqParam
+										.put(NETWORK_ENGINE
+												.getContext()
+												.getString(
+														R.string.newMomentReqParam_isSyncShow),
+												NETWORK_ENGINE
+														.getContext()
+														.getString(
+																R.string.newMomentReqParam_syncShow));
 
-					e.printStackTrace();
+								// send share the walk result image to user
+								// moments asynchronous post http request
+								_uploadResultImgHandle.post(new Runnable() {
+
+									@Override
+									public void run() {
+										NETWORK_ENGINE
+												.postWithAPI(
+														NETWORK_ENGINE
+																.getContext()
+																.getString(
+																		R.string.momentsModule),
+														NETWORK_ENGINE
+																.getContext()
+																.getString(
+																		R.string.newMoment_url),
+														_shareWalkResultImgReqParam,
+														asyncHttpRespJSONHandler);
+									}
+
+								});
+							}
+
+							@Override
+							public void onFailure(int statusCode,
+									String errorMsg) {
+								LOGGER.info("Upload walk result image file failed, status code = "
+										+ statusCode
+										+ " and error message = "
+										+ errorMsg);
+
+								// check asynchronous http response json handler
+								if (null != asyncHttpRespJSONHandler) {
+									asyncHttpRespJSONHandler.onFailure(
+											statusCode, errorMsg);
+								}
+							}
+
+						});
+			} else {
+				LOGGER.error("Write walk result image bitmap = " + resultImg
+						+ " to local storage error");
+
+				// check asynchronous http response json handler
+				if (null != asyncHttpRespJSONHandler) {
+					asyncHttpRespJSONHandler
+							.onFailure(999,
+									"Write walk result image bitmap to local storage error");
 				}
 			}
-
-			LOGGER.info("File path = "
-					+ _tmpUploadWalkResultImgFile.getAbsolutePath()
-					+ " and length = " + _tmpUploadWalkResultImgFile.length());
-
-			// send upload the walk result image asynchronous post http request
-			NETWORK_ENGINE.postWithAPI(
-					NETWORK_ENGINE.getContext().getString(
-							R.string.uploadFile_url), _uploadResultImgReqParam,
-					_tmpUploadWalkResultImgFile,
-					new AsyncHttpRespFileHandler() {
-
-						@Override
-						public void onSuccess(int statusCode) {
-							// delete temp upload walk result image file
-							//
-
-							// step 2 : generate user moments and publish it
-							// share the walk result image to user moments and
-							// publish it
-							// get user common request param
-							final Map<String, Object> _shareWalkResultImgReqParam = new HashMap<String, Object>(
-									NetworkUtils.genUserComReqParam(userId,
-											token));
-
-							// set result image primary key, description, label,
-							// delete picture list, is public flag, public group
-							// list, special remind friends and is synchronous
-							// show flag to param
-							_shareWalkResultImgReqParam
-									.put(NETWORK_ENGINE
-											.getContext()
-											.getString(
-													R.string.newMomentReqParam_primaryKey),
-											_resultImgKey);
-							_shareWalkResultImgReqParam
-									.put(NETWORK_ENGINE
-											.getContext()
-											.getString(
-													R.string.newMomentReqParam_description),
-											description);
-							_shareWalkResultImgReqParam.put(
-									NETWORK_ENGINE.getContext().getString(
-											R.string.newMomentReqParam_label),
-									label);
-							_shareWalkResultImgReqParam
-									.put(NETWORK_ENGINE
-											.getContext()
-											.getString(
-													R.string.newMomentReqParam_deletePicIds),
-											new ArrayList<String>());
-							_shareWalkResultImgReqParam
-									.put(NETWORK_ENGINE
-											.getContext()
-											.getString(
-													R.string.newMomentReqParam_isPublic),
-											NETWORK_ENGINE
-													.getContext()
-													.getString(
-															R.string.newMomentReqParam_momentPublic));
-							_shareWalkResultImgReqParam
-									.put(NETWORK_ENGINE
-											.getContext()
-											.getString(
-													R.string.newMomentReqParam_publicGroups),
-											new ArrayList<String>());
-							_shareWalkResultImgReqParam
-									.put(NETWORK_ENGINE
-											.getContext()
-											.getString(
-													R.string.newMomentReqParam_specialRemindFriends),
-											specialReminds);
-							_shareWalkResultImgReqParam
-									.put(NETWORK_ENGINE
-											.getContext()
-											.getString(
-													R.string.newMomentReqParam_isSyncShow),
-											NETWORK_ENGINE
-													.getContext()
-													.getString(
-															R.string.newMomentReqParam_syncShow));
-
-							// send share the walk result image to user moments
-							// asynchronous post http request
-							_uploadResultImgHandle.post(new Runnable() {
-
-								@Override
-								public void run() {
-									NETWORK_ENGINE
-											.postWithAPI(
-													NETWORK_ENGINE
-															.getContext()
-															.getString(
-																	R.string.momentsModule),
-													NETWORK_ENGINE
-															.getContext()
-															.getString(
-																	R.string.newMoment_url),
-													_shareWalkResultImgReqParam,
-													asyncHttpRespJSONHandler);
-								}
-
-							});
-						}
-
-						@Override
-						public void onFailure(int statusCode, String errorMsg) {
-							// check asynchronous http response json handler
-							if (null != asyncHttpRespJSONHandler) {
-								asyncHttpRespJSONHandler.onFailure(statusCode,
-										errorMsg);
-							}
-						}
-
-					});
 		} else {
 			LOGGER.error("The walk invite or within group compete walk result image is null, not need to upload");
 

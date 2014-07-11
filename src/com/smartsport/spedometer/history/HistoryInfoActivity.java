@@ -201,8 +201,11 @@ public class HistoryInfoActivity extends SSBaseActivity {
 				walkInviteHistoryGroupView = ((ViewStub) findViewById(R.id.hi_walkInvite_historyGroup_viewStub))
 						.inflate();
 
-				//
+				// get walk invite history group list view
+				ListView _walkInviteHistoryGroupListView= (ListView) walkInviteHistoryGroupView.findViewById(R.id.hi_common_historyInfo_listView);
 
+				//
+				
 				// get walk invite history groups
 				groupInfoModel.getUserHistoryGroups(loginUser.getUserId(),
 						loginUser.getUserKey(), GroupType.WALK_GROUP,
