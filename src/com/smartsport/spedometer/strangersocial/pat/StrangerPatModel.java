@@ -268,7 +268,7 @@ public class StrangerPatModel {
 	 * @author Ares
 	 */
 	public void getPatStrangers(long userId, String token,
-			ICMConnector executant) {
+			final ICMConnector executant) {
 		// get pat strangers with user id and token
 		((StrangerPatNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(StrangerPatNetworkAdapter.class))
@@ -307,7 +307,7 @@ public class StrangerPatModel {
 									+ _userPatStrangersInfo);
 
 							// get the user pat all strangers successful
-							//
+							executant.onSuccess(_userPatStrangersInfo);
 						} else {
 							LOGGER.error("Get the user pat strangers info response json array is null");
 						}
@@ -327,7 +327,7 @@ public class StrangerPatModel {
 								+ errorMsg);
 
 						// get the user pat all strangers failed
-						//
+						executant.onFailure(statusCode, errorMsg);
 					}
 
 				});
