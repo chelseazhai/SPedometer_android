@@ -5,6 +5,7 @@ package com.smartsport.spedometer.customwidget;
 
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -28,6 +29,7 @@ import android.util.AttributeSet;
 import android.util.LruCache;
 import android.widget.ImageView;
 
+import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.network.NetworkEngine;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespBinaryHandler;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -178,16 +180,41 @@ public class SSImageView extends ImageView {
 			String _imgUriScheme = uri.getScheme();
 			LOGGER.info("ImageView set image with uri, its scheme = "
 					+ _imgUriScheme);
-			if (HTTPURI_SCHEME.equalsIgnoreCase(_imgUriScheme)
-					|| HTTPSURI_SCHEME.equalsIgnoreCase(_imgUriScheme)) {
-				// // test by ares
-				// this.setImageResource(R.drawable.img_test_walkresult);
+			if (null != _imgUriScheme) {
+				if (HTTPURI_SCHEME.equalsIgnoreCase(_imgUriScheme)
+						|| HTTPSURI_SCHEME.equalsIgnoreCase(_imgUriScheme)) {
+					// get authority and path segments
+					String _authority = uri.getAuthority();
+					List<String> _pathSegments = uri.getPathSegments();
 
-				// image view load image
-				AsyncImageLoader.getInstance().loadImg(this, uri.toString());
+					// check file server url
+					if (null != _authority
+							&& null != _pathSegments
+							&& 0 < _pathSegments.size()
+							&& getContext().getString(
+									R.string.fileServer_rootUrl).startsWith(
+									_imgUriScheme + "://" + _authority + "/"
+											+ _pathSegments.get(0))) {
+						LOGGER.info("Image file uri start with "
+								+ _imgUriScheme + "://" + _authority + "/"
+								+ _pathSegments.get(0));
+
+						// image view load image
+						AsyncImageLoader.getInstance().loadImg(this,
+								uri.toString());
+					} else {
+						LOGGER.warning("Not file server image uri = " + uri
+								+ " , use super method:(void)setImageURI(Uri)");
+
+						super.setImageURI(uri);
+					}
+				} else {
+					LOGGER.info("Not http image uri = " + uri
+							+ " , use super method:(void)setImageURI(Uri)");
+
+					super.setImageURI(uri);
+				}
 			} else {
-				LOGGER.info("Not http image uri, use super method:(void)setImageURI(Uri)");
-
 				super.setImageURI(uri);
 			}
 		} else {
@@ -404,7 +431,7 @@ public class SSImageView extends ImageView {
 											public void onSuccess(
 													int statusCode,
 													final Bitmap imgBitmap) {
-												LOGGER.info("Doload image from remote server with url = "
+												LOGGER.info("Download image from remote server with url = "
 														+ imageUrl
 														+ " successful, status code = "
 														+ statusCode
@@ -437,7 +464,7 @@ public class SSImageView extends ImageView {
 											public void onFailure(
 													int statusCode,
 													String errorMsg) {
-												LOGGER.info("Doload image from remote server with url = "
+												LOGGER.info("Download image from remote server with url = "
 														+ imageUrl
 														+ " failed, status code = "
 														+ statusCode

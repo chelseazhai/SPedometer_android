@@ -3,6 +3,11 @@
  */
 package com.smartsport.spedometer.history;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -18,6 +23,8 @@ import android.view.View.OnTouchListener;
 import android.view.ViewStub;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -28,8 +35,13 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.group.GroupBean;
 import com.smartsport.spedometer.group.GroupInfoModel;
 import com.smartsport.spedometer.group.GroupType;
+import com.smartsport.spedometer.history.walk.group.HistoryGroupListViewAdapter;
+import com.smartsport.spedometer.history.walk.group.HistoryGroupListViewAdapter.HistoryGroupListViewAdapterKey;
+import com.smartsport.spedometer.history.walk.group.HistoryGroupWalkInfoActivity;
+import com.smartsport.spedometer.history.walk.group.HistoryGroupWalkInfoActivity.HistoryGroupWalkInfoExtraData;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.strangersocial.pat.StrangerPatModel;
@@ -76,12 +88,59 @@ public class HistoryInfoActivity extends SSBaseActivity {
 	private Button personalPedometerWalkInfoSearchCancelBtn;
 	private ListView personalPedometerWalkInfoListView;
 
+	// walk invite and within group compete history group list
+	private List<GroupBean> walkInviteHistoryGroupList;
+	private List<GroupBean> withinGroupCompeteHistoryGroupList;
+
+	// history group listView adapter
+	private HistoryGroupListViewAdapter historyGroupListViewAdapter;
+
+	// history group listView on item click listener
+	private HistoryGroupOnItemClickListener historyGroupOnItemClickListener;
+
+	// stranger pat info(patted list and listView adapter)
+	//
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		// get input method manager
 		inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+		// initialize walk invite, within group compete history group list and
+		// their listView adapter
+		walkInviteHistoryGroupList = new ArrayList<GroupBean>();
+		withinGroupCompeteHistoryGroupList = new ArrayList<GroupBean>();
+		historyGroupListViewAdapter = new HistoryGroupListViewAdapter(
+				this,
+				null,
+				R.layout.historygroup_listview_item_layout,
+				new String[] {
+						HistoryGroupListViewAdapterKey.HISTORYGROUP_TOPIC_KEY
+								.name(),
+						HistoryGroupListViewAdapterKey.HISTORYGROUP_WALKSTARTTIME_KEY
+								.name(),
+						HistoryGroupListViewAdapterKey.HISTORYGROUP_DURATIONTIME_LABEL_KEY
+								.name(),
+						HistoryGroupListViewAdapterKey.HISTORYGROUP_DURATIONTIME_KEY
+								.name(),
+						HistoryGroupListViewAdapterKey.HISTORYGROUP_ATTENDEESNUMRELATIVELAYOUT_KEY
+								.name(),
+						HistoryGroupListViewAdapterKey.HISTORYGROUP_ATTENDEESNUM_KEY
+								.name() }, new int[] {
+						R.id.hgi_groupTopic_textView,
+						R.id.hgi_groupWalkStartTime_textView,
+						R.id.hgi_groupDurationTime_label_textView,
+						R.id.hgi_groupDurationTime_textView,
+						R.id.hgi_groupAttendeesNum_relativeLayout,
+						R.id.hgi_groupAttendeesNum_textView });
+
+		// initialize history group listView on item click listener
+		historyGroupOnItemClickListener = new HistoryGroupOnItemClickListener();
+
+		// initialize patted stranger list
+		//
 
 		// set content view
 		setContentView(R.layout.activity_history_info);
@@ -202,30 +261,77 @@ public class HistoryInfoActivity extends SSBaseActivity {
 						.inflate();
 
 				// get walk invite history group list view
-				ListView _walkInviteHistoryGroupListView= (ListView) walkInviteHistoryGroupView.findViewById(R.id.hi_common_historyInfo_listView);
+				ListView _walkInviteHistoryGroupListView = (ListView) walkInviteHistoryGroupView
+						.findViewById(R.id.hi_common_historyInfo_listView);
 
-				//
-				
+				// set its adapter
+				_walkInviteHistoryGroupListView
+						.setAdapter(historyGroupListViewAdapter);
+
+				// set its on item click listener
+				_walkInviteHistoryGroupListView
+						.setOnItemClickListener(historyGroupOnItemClickListener);
+
 				// get walk invite history groups
 				groupInfoModel.getUserHistoryGroups(loginUser.getUserId(),
 						loginUser.getUserKey(), GroupType.WALK_GROUP,
 						new ICMConnector() {
 
+							@SuppressWarnings("unchecked")
 							@Override
 							public void onSuccess(Object... retValue) {
-								// TODO Auto-generated method stub
+								// // dismiss get walk invite history groups
+								// progress dialog
+								// scheduleWalkInviteGroupProgDlg.dismiss();
 
+								// check return values
+								if (null != retValue && 0 < retValue.length) {
+									// get and check the update walk invite
+									// history group list
+									if (retValue[retValue.length - 1] instanceof List) {
+										// reset walk invite history group list
+										walkInviteHistoryGroupList.clear();
+										walkInviteHistoryGroupList
+												.addAll((List<GroupBean>) retValue[retValue.length - 1]);
+										historyGroupListViewAdapter
+												.setHistoryGroups(walkInviteHistoryGroupList);
+									}
+								} else {
+									LOGGER.error("Update walk invite history groups UI error");
+								}
 							}
 
 							@Override
 							public void onFailure(int errorCode, String errorMsg) {
-								// TODO Auto-generated method stub
+								LOGGER.error("Get walk invite history groups from remote server error, error code = "
+										+ errorCode
+										+ " and message = "
+										+ errorMsg);
 
+								// // dismiss get walk invite history groups
+								// progress dialog
+								// scheduleWalkInviteGroupProgDlg.dismiss();
+
+								// check error code and process hopeRun business
+								// error
+								if (errorCode < 100) {
+									// show error message toast
+									Toast.makeText(HistoryInfoActivity.this,
+											errorMsg, Toast.LENGTH_SHORT)
+											.show();
+
+									// test by ares
+									//
+								}
 							}
 
 						});
 			} else {
 				walkInviteHistoryGroupView.setVisibility(View.VISIBLE);
+
+				// set walk invite history group list
+				historyGroupListViewAdapter
+						.setHistoryGroups(walkInviteHistoryGroupList);
 			}
 
 			// hide visible history info view and if needed
@@ -243,28 +349,80 @@ public class HistoryInfoActivity extends SSBaseActivity {
 				withinGroupCompeteHistoryGroupView = ((ViewStub) findViewById(R.id.hi_withinGroupCompete_historyGroup_viewStub))
 						.inflate();
 
-				//
+				// get within group compete history group list view
+				ListView _withinGroupCompeteHistoryGroupListView = (ListView) withinGroupCompeteHistoryGroupView
+						.findViewById(R.id.hi_common_historyInfo_listView);
+
+				// set its adapter
+				_withinGroupCompeteHistoryGroupListView
+						.setAdapter(historyGroupListViewAdapter);
+
+				// set its on item click listener
+				_withinGroupCompeteHistoryGroupListView
+						.setOnItemClickListener(historyGroupOnItemClickListener);
 
 				// get within group compete history groups
 				groupInfoModel.getUserHistoryGroups(loginUser.getUserId(),
 						loginUser.getUserKey(), GroupType.COMPETE_GROUP,
 						new ICMConnector() {
 
+							@SuppressWarnings("unchecked")
 							@Override
 							public void onSuccess(Object... retValue) {
-								// TODO Auto-generated method stub
+								// // dismiss get within group compete history
+								// groups progress dialog
+								// scheduleWalkInviteGroupProgDlg.dismiss();
 
+								// check return values
+								if (null != retValue && 0 < retValue.length) {
+									// get and check the update within group
+									// compete history group list
+									if (retValue[retValue.length - 1] instanceof List) {
+										// reset within group compete history
+										// group list
+										withinGroupCompeteHistoryGroupList
+												.clear();
+										withinGroupCompeteHistoryGroupList
+												.addAll((List<GroupBean>) retValue[retValue.length - 1]);
+										historyGroupListViewAdapter
+												.setHistoryGroups(withinGroupCompeteHistoryGroupList);
+									}
+								} else {
+									LOGGER.error("Update within group compete history groups UI error");
+								}
 							}
 
 							@Override
 							public void onFailure(int errorCode, String errorMsg) {
-								// TODO Auto-generated method stub
+								LOGGER.error("Get within group compete history groups from remote server error, error code = "
+										+ errorCode
+										+ " and message = "
+										+ errorMsg);
 
+								// // dismiss get within group compete history
+								// groups progress dialog
+								// scheduleWalkInviteGroupProgDlg.dismiss();
+
+								// check error code and process hopeRun business
+								// error
+								if (errorCode < 100) {
+									// show error message toast
+									Toast.makeText(HistoryInfoActivity.this,
+											errorMsg, Toast.LENGTH_SHORT)
+											.show();
+
+									// test by ares
+									//
+								}
 							}
 
 						});
 			} else {
 				withinGroupCompeteHistoryGroupView.setVisibility(View.VISIBLE);
+
+				// set within group compete history group list
+				historyGroupListViewAdapter
+						.setHistoryGroups(withinGroupCompeteHistoryGroupList);
 			}
 
 			// hide visible history info view and if needed
@@ -282,7 +440,15 @@ public class HistoryInfoActivity extends SSBaseActivity {
 				patStrangerView = ((ViewStub) findViewById(R.id.hi_strangerPat_historyPatStranger_viewStub))
 						.inflate();
 
-				//
+				// get patted strangers history list view
+				ListView _pattedStrangersHistoryListView = (ListView) patStrangerView
+						.findViewById(R.id.hi_common_historyInfo_listView);
+
+				// set its adapter
+				_pattedStrangersHistoryListView.setAdapter(null);
+
+				// set its on item click listener
+				_pattedStrangersHistoryListView.setOnItemClickListener(null);
 
 				// get pat strangers
 				strangerPatModel.getPatStrangers(loginUser.getUserId(),
@@ -536,4 +702,42 @@ public class HistoryInfoActivity extends SSBaseActivity {
 
 	}
 
+	/**
+	 * @name HistoryGroupOnItemClickListener
+	 * @descriptor walk invite or within group compete history group item on
+	 *             click listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class HistoryGroupOnItemClickListener implements OnItemClickListener {
+
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+			// define history group item extra data map
+			Map<String, Object> _extraMap = new HashMap<String, Object>();
+
+			// put the selected history group id, type, topic, walk start and
+			// stop time to extra data map as param
+			_extraMap.put(HistoryGroupWalkInfoExtraData.HGWI_HISTORYGROUP_ID,
+					historyGroupListViewAdapter.getGroupId(position));
+			_extraMap.put(HistoryGroupWalkInfoExtraData.HGWI_HISTORYGROUP_TYPE,
+					historyGroupListViewAdapter.getGroupType(position));
+			_extraMap.put(
+					HistoryGroupWalkInfoExtraData.HGWI_HISTORYGROUP_TOPIC,
+					historyGroupListViewAdapter.getGroupTopic(position));
+			_extraMap
+					.put(HistoryGroupWalkInfoExtraData.HGWI_HISTORYGROUP_WALKSTARTTIME,
+							historyGroupListViewAdapter
+									.getGroupWalkStartTime(position));
+			_extraMap
+					.put(HistoryGroupWalkInfoExtraData.HGWI_HISTORYGROUP_WALKSTOPTIME,
+							historyGroupListViewAdapter
+									.getGroupWalkStopTime(position));
+
+			// go to history group walk info activity with extra data map
+			pushActivity(HistoryGroupWalkInfoActivity.class, _extraMap);
+		}
+
+	}
 }

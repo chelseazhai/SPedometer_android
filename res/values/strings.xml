@@ -230,6 +230,24 @@
     <string name="common_historyInfo_searchEditText_hint">搜索</string>
     <string name="common_historyInfo_cancelSearch_button_text">取消</string>
 
+    <!-- history group listView item -->
+    <string name="historyGroupItem_indicator_imageView_contentDescription" translatable="false">this is walk invite or within group compete history group item setting imageView</string>
+    <string name="historyGroup_topic_label">主题：</string>
+    <string name="historyGroup_walkStartTime_label">开始时间：</string>
+    <string name="historyGroup_walkStartTime_format" formatted="false">%s %s</string>
+    <string name="historyGroup_durationTime_label_format">%s时长：</string>
+    <string name="historyGroup_walkinvite_durationTime_header">约走</string>
+    <string name="historyGroup_withinGroupCompete_durationTime_header">竞赛</string>
+    <string name="historyGroup_walkinvite_durationTime_secondssUnit">秒钟</string>
+    <string name="historyGroup_walkinvite_durationTime_format" formatted="false">%d分 %d秒</string>
+    <string name="historyGroup_walkinvite_durationTime_minutesUnit">分钟</string>
+    <string name="historyGroup_withinGroupCompete_durationTime_unit">分钟</string>
+    <string name="historyGroup_attendeesNum_label">参与人数：</string>
+    <string name="historyGroup_attendeesNum_unit">人</string>
+
+    <!-- history group walk info activity -->
+    <string name="title_activity_historyGroup_walkInfo" translatable="false">HistoryGroupWalkInfoActivity</string>
+
     <!-- others -->
     <string name="title_activity_demo" translatable="false">DemoActivity</string>
 

@@ -149,6 +149,13 @@
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
+            android:name=".history.walk.group.HistoryGroupWalkInfoActivity"
+            android:label="@string/title_activity_historyGroup_walkInfo"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseActivityTheme"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
             android:name=".demo.DemoActivity"
             android:label="@string/title_activity_demo"
             android:screenOrientation="portrait" >

@@ -315,7 +315,7 @@ public class GroupInfoModel {
 	 * @author Ares
 	 */
 	public void getUserHistoryGroups(long userId, String token,
-			final GroupType groupType, ICMConnector executant) {
+			final GroupType groupType, final ICMConnector executant) {
 		// get user all history groups with user id, token and history group
 		// type
 		((GroupInfoNetworkAdapter) NetworkAdapter.getInstance()
@@ -336,6 +336,9 @@ public class GroupInfoModel {
 								// check get user history groups response json
 								// array
 								if (null != respJSONArray) {
+									// define walk or compete history group list
+									List<GroupBean> _historyGroupList = new ArrayList<GroupBean>();
+
 									for (int i = 0; i < respJSONArray.length(); i++) {
 										// get and check user history group json
 										// object from response json array
@@ -347,17 +350,26 @@ public class GroupInfoModel {
 											GroupBean _historyGroupBean = new GroupBean(
 													_historyGroup);
 
+											// set history group type
+											_historyGroupBean
+													.setType(groupType);
+
 											// put user history group object to
 											// map
 											walkOrCompeteGroupMap.put(
 													_historyGroupBean
 															.getGroupId(),
 													_historyGroupBean);
+
+											// add user history group object to
+											// list
+											_historyGroupList
+													.add(_historyGroupBean);
 										}
 									}
 
 									// get user all history groups successful
-									//
+									executant.onSuccess(_historyGroupList);
 								} else {
 									LOGGER.error("Get user history groups, type = "
 											+ groupType
@@ -382,7 +394,7 @@ public class GroupInfoModel {
 										+ errorMsg);
 
 								// get user all history groups failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});
@@ -402,7 +414,7 @@ public class GroupInfoModel {
 	 * @author Ares
 	 */
 	public void getUserHistoryGroupInfo(long userId, String token,
-			final String groupId, ICMConnector executant) {
+			final String groupId, final ICMConnector executant) {
 		// get user history group info with user id, token and history group id
 		((GroupInfoNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(GroupInfoNetworkAdapter.class))
@@ -440,7 +452,7 @@ public class GroupInfoModel {
 											+ _historyGroupInfo);
 
 									// get user history group info successful
-									//
+									executant.onSuccess(_historyGroupInfo);
 								} else {
 									LOGGER.error("Get user history group info response json object is null, group id = "
 											+ groupId);
@@ -458,7 +470,7 @@ public class GroupInfoModel {
 										+ errorMsg);
 
 								// get user history group info failed
-								//
+								executant.onFailure(statusCode, errorMsg);
 							}
 
 						});

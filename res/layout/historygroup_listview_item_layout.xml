@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/listview_item_bg"
+    android:padding="8dp" >
+
+    <ImageView
+        android:id="@+id/hgi_item_indicator_imageView"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/historyGroupItem_indicator_imageView_contentDescription"
+        android:src="@drawable/img_item_indicator" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@id/hgi_item_indicator_imageView"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/hgi_groupTopic_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:ellipsize="end"
+                android:minWidth="220dp"
+                android:singleLine="true"
+                android:textColor="@color/gray"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/hgi_groupTopic_label_textView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="4dp"
+                android:layout_toLeftOf="@id/hgi_groupTopic_textView"
+                android:ellipsize="middle"
+                android:gravity="center_vertical|right"
+                android:singleLine="true"
+                android:text="@string/historyGroup_topic_label"
+                android:textColor="@color/dark_gray"
+                android:textSize="17sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/hgi_groupWalkStartTime_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:ellipsize="end"
+                android:minWidth="220dp"
+                android:singleLine="true"
+                android:textColor="@color/gray"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/hgi_groupWalkStartTime_label_textView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="4dp"
+                android:layout_toLeftOf="@id/hgi_groupWalkStartTime_textView"
+                android:ellipsize="middle"
+                android:gravity="center_vertical|right"
+                android:singleLine="true"
+                android:text="@string/historyGroup_walkStartTime_label"
+                android:textColor="@color/dark_gray"
+                android:textSize="17sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/hgi_groupDurationTime_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:ellipsize="end"
+                android:minWidth="220dp"
+                android:singleLine="true"
+                android:textColor="@color/gray"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/hgi_groupDurationTime_label_textView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="4dp"
+                android:layout_toLeftOf="@id/hgi_groupDurationTime_textView"
+                android:ellipsize="middle"
+                android:gravity="center_vertical|right"
+                android:singleLine="true"
+                android:textColor="@color/dark_gray"
+                android:textSize="17sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/hgi_groupAttendeesNum_relativeLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" >
+
+            <TextView
+                android:id="@+id/hgi_groupAttendeesNum_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:ellipsize="end"
+                android:minWidth="220dp"
+                android:singleLine="true"
+                android:textColor="@color/gray"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/hgi_groupAttendeesNum_label_textView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="4dp"
+                android:layout_toLeftOf="@id/hgi_groupAttendeesNum_textView"
+                android:ellipsize="middle"
+                android:gravity="center_vertical|right"
+                android:singleLine="true"
+                android:text="@string/historyGroup_attendeesNum_label"
+                android:textColor="@color/dark_gray"
+                android:textSize="17sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

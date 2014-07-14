@@ -10,8 +10,6 @@ import android.widget.ImageView;
 import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.TextView;
 
-import com.smartsport.spedometer.R;
-import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -47,9 +45,7 @@ public class SSSimpleAdapterViewBinder implements ViewBinder {
 		// imageView
 		else if (view instanceof ImageView) {
 			// check data type
-			if (data instanceof String
-					&& ((String) data).startsWith(SSApplication.getContext()
-							.getString(R.string.fileServer_rootUrl))) {
+			if (data instanceof String) {
 				LOGGER.info("Overwrite imageView data view binder");
 
 				// set imageView image uri
