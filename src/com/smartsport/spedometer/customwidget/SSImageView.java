@@ -222,7 +222,15 @@ public class SSImageView extends ImageView {
 		}
 	}
 
-	// initialize smartsport image view attributes
+	/**
+	 * @title initAttrs
+	 * @descriptor initialize smartsport image view attributes
+	 * @param context
+	 *            : context
+	 * @param attrs
+	 *            : attribute set
+	 * @author Ares
+	 */
 	private void initAttrs(Context context, AttributeSet attrs) {
 		// define smartsport image view typedArray, attributes array, image view
 		// background drawable

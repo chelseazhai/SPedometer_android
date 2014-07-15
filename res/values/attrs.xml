@@ -17,4 +17,11 @@
         <attr name="android:fadingEdgeLength" />
     </declare-styleable>
 
+    <!-- smartsport user login form item -->
+    <declare-styleable name="ss_userLogin_formItem">
+        <attr name="label" format="string" />
+        <attr name="inputEditTextHint" format="string" />
+        <attr name="android:inputType" />
+    </declare-styleable>
+
 </resources>

@@ -161,8 +161,16 @@ public class SSBNavBarButtonItem extends FrameLayout {
 		}
 	}
 
-	// initialize smartsport base activity navigation bar bar button item
-	// attributes
+	/**
+	 * @title initAttrs
+	 * @descriptor initialize smartsport base activity navigation bar bar button
+	 *             item attributes
+	 * @param context
+	 *            : context
+	 * @param attrs
+	 *            : attribute set
+	 * @author Ares
+	 */
 	private void initAttrs(Context context, AttributeSet attrs) {
 		// define smartsport base activity navigation bar bar button item
 		// typedArray, bar button item text, text color, image resource and
