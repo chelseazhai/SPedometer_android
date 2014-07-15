@@ -105,6 +105,11 @@ public abstract class SSBaseActivity extends Activity {
 		// get navigation bar
 		navBar = (RelativeLayout) findViewById(R.id.ssb_navigationBar);
 
+		// check the navigation bar hide flag and hide navigation bar
+		if (hideNavBarWhenOnCreate()) {
+			navBar.setVisibility(View.GONE);
+		}
+
 		// get navigation bar left and right bar button item
 		leftBarBtnItem = (SSBNavBarButtonItem) findViewById(R.id.ssb_navBar_leftBarBtnItem);
 		rightBarBtnItem = (SSBNavBarButtonItem) findViewById(R.id.ssb_navBar_rightBarBtnItem);
@@ -1149,6 +1154,16 @@ public abstract class SSBaseActivity extends Activity {
 
 			super.onBackPressed();
 		}
+	}
+
+	/**
+	 * @title hideNavBarWhenOnCreate
+	 * @descriptor hide navigation bar when smartsport base activity on create
+	 * @return hide navigation bar flag when smartsport base activity on create
+	 * @author Ares
+	 */
+	protected boolean hideNavBarWhenOnCreate() {
+		return false;
 	}
 
 	/**

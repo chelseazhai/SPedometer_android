@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.smartsport.spedometer.user;
+package com.smartsport.spedometer.user.info.setting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,8 +32,14 @@ import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
-import com.smartsport.spedometer.user.UserInfoItemEditorActivity.UserInfoItemEditorExtraData;
-import com.smartsport.spedometer.user.UserInfoSettingActivity.UserInfo4SettingListViewAdapter.UserInfo4SettingListViewAdapterKey;
+import com.smartsport.spedometer.user.UserManager;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
+import com.smartsport.spedometer.user.info.UserGender;
+import com.smartsport.spedometer.user.info.UserInfoBean;
+import com.smartsport.spedometer.user.info.UserInfoModel;
+import com.smartsport.spedometer.user.info.UserStepLenCalcType;
+import com.smartsport.spedometer.user.info.setting.UserInfoItemEditorActivity.UserInfoItemEditorExtraData;
+import com.smartsport.spedometer.user.info.setting.UserInfoSettingActivity.UserInfo4SettingListViewAdapter.UserInfo4SettingListViewAdapterKey;
 import com.smartsport.spedometer.utils.SSLogger;
 import com.smartsport.spedometer.utils.StringUtils;
 

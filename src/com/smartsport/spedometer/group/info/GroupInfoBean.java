@@ -15,7 +15,7 @@ import android.content.Context;
 import com.smartsport.spedometer.group.GroupBean;
 import com.smartsport.spedometer.group.GroupInviteInfoBean;
 import com.smartsport.spedometer.group.GroupType;
-import com.smartsport.spedometer.user.UserInfoBean;
+import com.smartsport.spedometer.user.info.UserInfoBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**

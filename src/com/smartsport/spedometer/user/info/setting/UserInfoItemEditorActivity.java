@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.smartsport.spedometer.user;
+package com.smartsport.spedometer.user.info.setting;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +29,7 @@ import android.widget.TextView;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
-import com.smartsport.spedometer.user.UserInfoSettingActivity.UserInfoSettingExtraData;
+import com.smartsport.spedometer.user.info.setting.UserInfoSettingActivity.UserInfoSettingExtraData;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**

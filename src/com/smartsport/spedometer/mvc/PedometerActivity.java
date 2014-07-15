@@ -13,7 +13,7 @@ import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteInfoSetti
 import com.smartsport.spedometer.history.HistoryInfoActivity;
 import com.smartsport.spedometer.pedometer.PersonalPedometerActivity;
 import com.smartsport.spedometer.strangersocial.NearbyStrangersActivity;
-import com.smartsport.spedometer.user.UserInfoSettingActivity;
+import com.smartsport.spedometer.user.info.setting.UserInfoSettingActivity;
 
 /**
  * @name PedometerActivity

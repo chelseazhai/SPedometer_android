@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.smartsport.spedometer.user;
+package com.smartsport.spedometer.user.info.setting;
 
 /**
  * @name UserInfoAttr4Setting

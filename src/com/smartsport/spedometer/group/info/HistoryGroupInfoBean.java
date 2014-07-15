@@ -14,7 +14,7 @@ import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.group.GroupBean;
 import com.smartsport.spedometer.group.info.result.GroupResultInfoBean;
 import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
-import com.smartsport.spedometer.user.UserInfoBean;
+import com.smartsport.spedometer.user.info.UserInfoBean;
 import com.smartsport.spedometer.utils.JSONUtils;
 import com.smartsport.spedometer.utils.SSLogger;
 

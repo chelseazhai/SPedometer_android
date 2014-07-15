@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.smartsport.spedometer.user;
+package com.smartsport.spedometer.user.info;
 
 import java.io.Serializable;
 

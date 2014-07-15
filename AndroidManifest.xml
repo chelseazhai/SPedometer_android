@@ -38,6 +38,12 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".user.reglogin.UserAccountSettingActivity"
+            android:label="@string/title_activity_userAccount_setting"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseActivityTheme" >
+        </activity>
+        <activity
             android:name=".mvc.PedometerActivity"
             android:label="@string/title_activity_pedometer"
             android:screenOrientation="portrait"
@@ -56,13 +62,13 @@
             android:theme="@style/AppBaseActivityTheme" >
         </activity>
         <activity
-            android:name=".user.UserInfoSettingActivity"
+            android:name=".user.info.setting.UserInfoSettingActivity"
             android:label="@string/title_activity_userinfo_setting"
             android:screenOrientation="portrait"
             android:theme="@style/AppBaseActivityTheme" >
         </activity>
         <activity
-            android:name=".user.UserInfoItemEditorActivity"
+            android:name=".user.info.setting.UserInfoItemEditorActivity"
             android:label="@string/title_activity_userinfo_item_editor"
             android:screenOrientation="portrait"
             android:theme="@style/AppBaseActivityTheme"
@@ -149,8 +155,22 @@
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
+            android:name=".history.walk.personal.PersonalWalkHistoryRecordActivity"
+            android:label="@string/title_activity_personal_walk_historyRecord"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseActivityTheme"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
             android:name=".history.walk.group.HistoryGroupWalkInfoActivity"
             android:label="@string/title_activity_historyGroup_walkInfo"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppBaseActivityTheme"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
+            android:name=".history.patstranger.PatStrangerActivity"
+            android:label="@string/title_activity_pat_stranger"
             android:screenOrientation="portrait"
             android:theme="@style/AppBaseActivityTheme"
             android:windowSoftInputMode="adjustPan" >

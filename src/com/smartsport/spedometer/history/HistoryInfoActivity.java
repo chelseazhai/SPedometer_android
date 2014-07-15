@@ -36,17 +36,21 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.customwidget.SSSimpleAdapterViewBinder;
 import com.smartsport.spedometer.group.GroupBean;
 import com.smartsport.spedometer.group.GroupInfoModel;
 import com.smartsport.spedometer.group.GroupType;
-import com.smartsport.spedometer.history.HistoryInfoActivity.PattedStrangerListViewAdapter.PattedStrangerListViewAdapterKey;
+import com.smartsport.spedometer.history.HistoryInfoActivity.PatStrangerListViewAdapter.PatStrangerListViewAdapterKey;
+import com.smartsport.spedometer.history.patstranger.PatStrangerActivity;
+import com.smartsport.spedometer.history.patstranger.PatStrangerActivity.PatStrangerExtraData;
 import com.smartsport.spedometer.history.walk.group.HistoryGroupListViewAdapter;
 import com.smartsport.spedometer.history.walk.group.HistoryGroupListViewAdapter.HistoryGroupListViewAdapterKey;
 import com.smartsport.spedometer.history.walk.group.HistoryGroupWalkInfoActivity;
 import com.smartsport.spedometer.history.walk.group.HistoryGroupWalkInfoActivity.HistoryGroupWalkInfoExtraData;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
+import com.smartsport.spedometer.strangersocial.LocationBean;
 import com.smartsport.spedometer.strangersocial.pat.StrangerPatModel;
 import com.smartsport.spedometer.strangersocial.pat.UserInfoPatLocationExtBean;
 import com.smartsport.spedometer.user.UserManager;
@@ -102,9 +106,12 @@ public class HistoryInfoActivity extends SSBaseActivity {
 	// history group listView on item click listener
 	private HistoryGroupOnItemClickListener historyGroupOnItemClickListener;
 
-	// stranger pat info(patted list and listView adapter)
-	private List<UserInfoPatLocationExtBean> pattedStrangerList;
-	private PattedStrangerListViewAdapter pattedStrangerListViewAdapter;
+	// user pat strangers info(user pat list and listView adapter)
+	private List<UserInfoPatLocationExtBean> patStrangerList;
+	private PatStrangerListViewAdapter patStrangerListViewAdapter;
+
+	// get history info progress dialog
+	private SSProgressDialog getHistoryInfoProgDlg;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -144,8 +151,8 @@ public class HistoryInfoActivity extends SSBaseActivity {
 		// initialize history group listView on item click listener
 		historyGroupOnItemClickListener = new HistoryGroupOnItemClickListener();
 
-		// initialize patted stranger list
-		//
+		// initialize user pat stranger list
+		patStrangerList = new ArrayList<UserInfoPatLocationExtBean>();
 
 		// set content view
 		setContentView(R.layout.activity_history_info);
@@ -277,6 +284,10 @@ public class HistoryInfoActivity extends SSBaseActivity {
 				_walkInviteHistoryGroupListView
 						.setOnItemClickListener(historyGroupOnItemClickListener);
 
+				// show get walk invite history group list progress dialog
+				getHistoryInfoProgDlg = SSProgressDialog.show(this,
+						R.string.procMsg_getWalkInviteHistoryGroups);
+
 				// get walk invite history groups
 				groupInfoModel.getUserHistoryGroups(loginUser.getUserId(),
 						loginUser.getUserKey(), GroupType.WALK_GROUP,
@@ -285,9 +296,9 @@ public class HistoryInfoActivity extends SSBaseActivity {
 							@SuppressWarnings("unchecked")
 							@Override
 							public void onSuccess(Object... retValue) {
-								// // dismiss get walk invite history groups
+								// dismiss get walk invite history groups
 								// progress dialog
-								// scheduleWalkInviteGroupProgDlg.dismiss();
+								getHistoryInfoProgDlg.dismiss();
 
 								// check return values
 								if (null != retValue && 0 < retValue.length) {
@@ -313,9 +324,9 @@ public class HistoryInfoActivity extends SSBaseActivity {
 										+ " and message = "
 										+ errorMsg);
 
-								// // dismiss get walk invite history groups
+								// dismiss get walk invite history groups
 								// progress dialog
-								// scheduleWalkInviteGroupProgDlg.dismiss();
+								getHistoryInfoProgDlg.dismiss();
 
 								// check error code and process hopeRun business
 								// error
@@ -366,6 +377,11 @@ public class HistoryInfoActivity extends SSBaseActivity {
 				_withinGroupCompeteHistoryGroupListView
 						.setOnItemClickListener(historyGroupOnItemClickListener);
 
+				// show get within group compete history group list progress
+				// dialog
+				getHistoryInfoProgDlg = SSProgressDialog.show(this,
+						R.string.procMsg_getWithinGroupCompeteHistoryGroups);
+
 				// get within group compete history groups
 				groupInfoModel.getUserHistoryGroups(loginUser.getUserId(),
 						loginUser.getUserKey(), GroupType.COMPETE_GROUP,
@@ -374,9 +390,9 @@ public class HistoryInfoActivity extends SSBaseActivity {
 							@SuppressWarnings("unchecked")
 							@Override
 							public void onSuccess(Object... retValue) {
-								// // dismiss get within group compete history
+								// dismiss get within group compete history
 								// groups progress dialog
-								// scheduleWalkInviteGroupProgDlg.dismiss();
+								getHistoryInfoProgDlg.dismiss();
 
 								// check return values
 								if (null != retValue && 0 < retValue.length) {
@@ -404,9 +420,9 @@ public class HistoryInfoActivity extends SSBaseActivity {
 										+ " and message = "
 										+ errorMsg);
 
-								// // dismiss get within group compete history
+								// dismiss get within group compete history
 								// groups progress dialog
-								// scheduleWalkInviteGroupProgDlg.dismiss();
+								getHistoryInfoProgDlg.dismiss();
 
 								// check error code and process hopeRun business
 								// error
@@ -440,72 +456,76 @@ public class HistoryInfoActivity extends SSBaseActivity {
 			break;
 
 		case R.id.hi_strangerPat_historyPatStranger_segment:
-			// check, get pat stranger list view and then show it
+			// check, get user pat stranger list view and then show it
 			if (null == patStrangerView) {
 				patStrangerView = ((ViewStub) findViewById(R.id.hi_strangerPat_historyPatStranger_viewStub))
 						.inflate();
 
-				// get patted strangers history list view
-				ListView _pattedStrangersHistoryListView = (ListView) patStrangerView
+				// get user pat strangers history list view
+				ListView _userPatStrangersHistoryListView = (ListView) patStrangerView
 						.findViewById(R.id.hi_common_historyInfo_listView);
 
 				// set its adapter
-				_pattedStrangersHistoryListView
-						.setAdapter(pattedStrangerListViewAdapter = new PattedStrangerListViewAdapter(
+				_userPatStrangersHistoryListView
+						.setAdapter(patStrangerListViewAdapter = new PatStrangerListViewAdapter(
 								this,
-								pattedStrangerList,
-								R.layout.pattedstranger_listview_item_layout,
+								patStrangerList,
+								R.layout.patstranger_listview_item_layout,
 								new String[] {
-										PattedStrangerListViewAdapterKey.PATTEDSTRANGER_AVATAR_KEY
+										PatStrangerListViewAdapterKey.PATSTRANGER_AVATAR_KEY
 												.name(),
-										PattedStrangerListViewAdapterKey.PATTEDSTRANGER_NICKNAME_KEY
+										PatStrangerListViewAdapterKey.PATSTRANGER_NICKNAME_KEY
 												.name(),
-										PattedStrangerListViewAdapterKey.PATTEDSTRANGER_GENDER_KEY
+										PatStrangerListViewAdapterKey.PATSTRANGER_GENDER_KEY
 												.name(),
-										PattedStrangerListViewAdapterKey.PATTEDSTRANGER_PATTEDCOUNT_KEY
-												.name() }, new int[] {
-										R.id.psi_strangerAvatar_imageView,
+										PatStrangerListViewAdapterKey.PATSTRANGER_PATCOUNT_KEY
+												.name() },
+								new int[] { R.id.psi_strangerAvatar_imageView,
 										R.id.psi_strangerNickname_textView,
 										R.id.psi_strangerGender_imageView,
-										R.id.psi_strangerPattedCount_textView }));
+										R.id.psi_strangerBePattedCount_textView }));
 
 				// set its on item click listener
-				_pattedStrangersHistoryListView
-						.setOnItemClickListener(new PattedStrangerOnItemClickListener());
+				_userPatStrangersHistoryListView
+						.setOnItemClickListener(new PatStrangerOnItemClickListener());
 
-				// get pat strangers
+				// show get user pat stranger list progress dialog
+				getHistoryInfoProgDlg = SSProgressDialog.show(this,
+						R.string.procMsg_getUserPatStrangers);
+
+				// get user pat strangers
 				strangerPatModel.getPatStrangers(loginUser.getUserId(),
 						loginUser.getUserKey(), new ICMConnector() {
 
 							@SuppressWarnings("unchecked")
 							@Override
 							public void onSuccess(Object... retValue) {
-								// // dismiss get user patted strangers progress
+								// dismiss get user pat strangers progress
 								// dialog
-								// nearbyStrangersProgDlg.dismiss();
+								getHistoryInfoProgDlg.dismiss();
 
 								// check return values
 								if (null != retValue
 										&& 0 < retValue.length
 										&& retValue[retValue.length - 1] instanceof List) {
-									// set user patted stranger list
-									pattedStrangerListViewAdapter
-											.setPattedStrangers((List<UserInfoPatLocationExtBean>) retValue[retValue.length - 1]);
+									// set user pat stranger list
+									patStrangerListViewAdapter
+											.setPatStrangers((List<UserInfoPatLocationExtBean>) retValue[retValue.length - 1]);
 								} else {
-									LOGGER.error("Update user patted strangers listView error");
+									LOGGER.error("Update user pat strangers listView error");
 								}
 							}
 
 							@Override
 							public void onFailure(int errorCode, String errorMsg) {
-								LOGGER.error("Get patted strangers from remote server error, error code = "
+								LOGGER.error("Get user pat strangers from remote server error, error code = "
 										+ errorCode
 										+ " and message = "
 										+ errorMsg);
 
-								// // dismiss get within group compete history
-								// groups progress dialog
-								// scheduleWalkInviteGroupProgDlg.dismiss();
+								// dismiss get user pat strangers progress
+								// dialog
+								getHistoryInfoProgDlg.dismiss();
 
 								// check error code and process hopeRun business
 								// error
@@ -796,30 +816,33 @@ public class HistoryInfoActivity extends SSBaseActivity {
 	}
 
 	/**
-	 * @name PattedStrangerListViewAdapter
-	 * @descriptor patted stranger listView adapter
+	 * @name PatStrangerListViewAdapter
+	 * @descriptor user pat stranger listView adapter
 	 * @author Ares
 	 * @version 1.0
 	 */
-	static class PattedStrangerListViewAdapter extends SimpleAdapter {
+	static class PatStrangerListViewAdapter extends SimpleAdapter {
 
 		// logger
 		private static final SSLogger LOGGER = new SSLogger(
-				PattedStrangerListViewAdapter.class);
+				PatStrangerListViewAdapter.class);
 
-		// patted stranger listView adapter data list
+		// user pat stranger info key
+		private static final String USERPATSTRANGER_BEAN_KEY = "userPatStranger_bean_key";
+
+		// user pat stranger listView adapter data list
 		private static List<Map<String, Object>> _sDataList;
 
 		/**
-		 * @title PattedStrangerListViewAdapter
-		 * @descriptor patted stranger listView adapter constructor with
-		 *             context, patted stranger list, content view resource,
+		 * @title PatStrangerListViewAdapter
+		 * @descriptor user pat stranger listView adapter constructor with
+		 *             context, pat stranger list, content view resource,
 		 *             content view subview data key, and content view subview
 		 *             id
 		 * @param context
 		 *            : context
-		 * @param pattedStrangers
-		 *            : patted stranger with patted location list
+		 * @param patStrangers
+		 *            : user pat stranger with pat location list
 		 * @param resource
 		 *            : resource id
 		 * @param dataKeys
@@ -827,8 +850,8 @@ public class HistoryInfoActivity extends SSBaseActivity {
 		 * @param ids
 		 *            : content view subview id array
 		 */
-		public PattedStrangerListViewAdapter(Context context,
-				List<UserInfoPatLocationExtBean> pattedStrangers, int resource,
+		public PatStrangerListViewAdapter(Context context,
+				List<UserInfoPatLocationExtBean> patStrangers, int resource,
 				String[] dataKeys, int[] ids) {
 			super(context, _sDataList = new ArrayList<Map<String, Object>>(),
 					resource, dataKeys, ids);
@@ -836,46 +859,47 @@ public class HistoryInfoActivity extends SSBaseActivity {
 			// set view binder
 			setViewBinder(new SSSimpleAdapterViewBinder());
 
-			// set patted stranger list
-			setPattedStrangers(pattedStrangers);
+			// set user pat stranger list
+			setPatStrangers(patStrangers);
 		}
 
 		/**
-		 * @title setPattedStrangers
-		 * @descriptor set new patted stranger list
-		 * @param pattedStrangers
-		 *            : new set patted stranger list
+		 * @title setPatStrangers
+		 * @descriptor set user new pat stranger list
+		 * @param patStrangers
+		 *            : new set user pat stranger list
 		 */
-		public void setPattedStrangers(
-				List<UserInfoPatLocationExtBean> pattedStrangers) {
-			// check new set patted stranger list
-			if (null != pattedStrangers) {
-				// clear patted stranger listView adapter data list and add new
-				// data
+		public void setPatStrangers(
+				List<UserInfoPatLocationExtBean> patStrangers) {
+			// check new set user pat stranger list
+			if (null != patStrangers) {
+				// clear user pat stranger listView adapter data list and add
+				// new data
 				_sDataList.clear();
 
-				// traversal patted stranger list
-				for (UserInfoPatLocationExtBean _pattedStranger : pattedStrangers) {
-					// define patted stranger listView adapter data
+				// traversal user pat stranger list
+				for (UserInfoPatLocationExtBean _patStranger : patStrangers) {
+					// define user pat stranger listView adapter data
 					Map<String, Object> _data = new HashMap<String, Object>();
 
 					// set data attributes
+					_data.put(USERPATSTRANGER_BEAN_KEY, _patStranger);
 					_data.put(
-							PattedStrangerListViewAdapterKey.PATTEDSTRANGER_AVATAR_KEY
-									.name(), _pattedStranger.getAvatarUrl());
+							PatStrangerListViewAdapterKey.PATSTRANGER_AVATAR_KEY
+									.name(), _patStranger.getAvatarUrl());
 					_data.put(
-							PattedStrangerListViewAdapterKey.PATTEDSTRANGER_NICKNAME_KEY
-									.name(), _pattedStranger.getNickname());
-					switch (_pattedStranger.getGender()) {
+							PatStrangerListViewAdapterKey.PATSTRANGER_NICKNAME_KEY
+									.name(), _patStranger.getNickname());
+					switch (_patStranger.getGender()) {
 					case MALE:
 						_data.put(
-								PattedStrangerListViewAdapterKey.PATTEDSTRANGER_GENDER_KEY
+								PatStrangerListViewAdapterKey.PATSTRANGER_GENDER_KEY
 										.name(), R.drawable.img_gender_male);
 						break;
 
 					case FEMALE:
 						_data.put(
-								PattedStrangerListViewAdapterKey.PATTEDSTRANGER_GENDER_KEY
+								PatStrangerListViewAdapterKey.PATSTRANGER_GENDER_KEY
 										.name(), R.drawable.img_gender_female);
 						break;
 
@@ -883,12 +907,12 @@ public class HistoryInfoActivity extends SSBaseActivity {
 						// nothing to do
 						break;
 					}
-					// get stranger patted count
-					int _pattedCount = _pattedStranger.getPatCount();
-					if (0 != _pattedCount) {
+					// get stranger be patted count
+					int _bePattedCount = _patStranger.getPatCount();
+					if (0 != _bePattedCount) {
 						_data.put(
-								PattedStrangerListViewAdapterKey.PATTEDSTRANGER_PATTEDCOUNT_KEY
-										.name(), _pattedCount);
+								PatStrangerListViewAdapterKey.PATSTRANGER_PATCOUNT_KEY
+										.name(), _bePattedCount);
 					}
 
 					// add data to list
@@ -902,34 +926,58 @@ public class HistoryInfoActivity extends SSBaseActivity {
 			}
 		}
 
+		/**
+		 * @title getPatStranger
+		 * @descriptor get the selected user pat stranger info
+		 * @param position
+		 *            : the user pat stranger list position
+		 * @return the user pat stranger info
+		 */
+		public UserInfoPatLocationExtBean getPatStranger(int position) {
+			return (UserInfoPatLocationExtBean) _sDataList.get(position).get(
+					USERPATSTRANGER_BEAN_KEY);
+		}
+
 		// inner class
 		/**
-		 * @name PattedStrangerListViewAdapterKey
-		 * @descriptor patted stranger listView adapter key enumeration
+		 * @name PatStrangerListViewAdapterKey
+		 * @descriptor user pat stranger listView adapter key enumeration
 		 * @author Ares
 		 * @version 1.0
 		 */
-		public enum PattedStrangerListViewAdapterKey {
+		public enum PatStrangerListViewAdapterKey {
 
-			// patted stranger avatar, nickname, gender and patted count key
-			PATTEDSTRANGER_AVATAR_KEY, PATTEDSTRANGER_NICKNAME_KEY, PATTEDSTRANGER_GENDER_KEY, PATTEDSTRANGER_PATTEDCOUNT_KEY;
+			// user pat stranger avatar, nickname, gender and pat count key
+			PATSTRANGER_AVATAR_KEY, PATSTRANGER_NICKNAME_KEY, PATSTRANGER_GENDER_KEY, PATSTRANGER_PATCOUNT_KEY;
 
 		}
 
 	}
 
 	/**
-	 * @name PattedStrangerOnItemClickListener
-	 * @descriptor patted stranger listView item on click listener
+	 * @name PatStrangerOnItemClickListener
+	 * @descriptor user pat stranger listView item on click listener
 	 * @author Ares
 	 * @version 1.0
 	 */
-	class PattedStrangerOnItemClickListener implements OnItemClickListener {
+	class PatStrangerOnItemClickListener implements OnItemClickListener {
 
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			//
+			// define user pat stranger item extra data map
+			Map<String, Object> _extraMap = new HashMap<String, Object>();
+
+			// put the selected user pat stranger bean and user pat location
+			// list to extra data map as param
+			_extraMap.put(PatStrangerExtraData.PS_SI_BEAN,
+					patStrangerListViewAdapter.getPatStranger(position));
+			// test by ares
+			_extraMap.put(PatStrangerExtraData.PS_USER_PATLOCATIONS,
+					new ArrayList<LocationBean>());
+
+			// go to user pat stranger activity with extra data map
+			pushActivity(PatStrangerActivity.class, _extraMap);
 		}
 
 	}

@@ -10,6 +10,10 @@
     <!-- smartsport base activity navigation bar bar button item -->
     <string name="ssb_navBar_barBtnItem_imageBtn_contentDescription" translatable="false">this is smart sport base activity navigation bar bar button item imageButton</string>
 
+    <!-- register and login -->
+    <!-- user account setting activity -->
+    <string name="title_activity_userAccount_setting" translatable="false">UserAccountSettingActivity</string>
+
     <!-- user gender -->
     <string name="userGender_male_label">帅哥</string>
     <string name="userGender_female_label">美女</string>
@@ -230,6 +234,9 @@
     <string name="common_historyInfo_searchEditText_hint">搜索</string>
     <string name="common_historyInfo_cancelSearch_button_text">取消</string>
 
+    <!-- personal walk history record activity -->
+    <string name="title_activity_personal_walk_historyRecord" translatable="false">PersonalWalkHistoryRecordActivity</string>
+
     <!-- history group listView item -->
     <string name="historyGroupItem_indicator_imageView_contentDescription" translatable="false">this is walk invite or within group compete history group item setting imageView</string>
     <string name="historyGroup_topic_label">主题：</string>
@@ -248,10 +255,14 @@
     <!-- history group walk info activity -->
     <string name="title_activity_historyGroup_walkInfo" translatable="false">HistoryGroupWalkInfoActivity</string>
 
-    <!-- patted stranger item -->
-    <string name="pattedStrangerItem_indicator_imageView_contentDescription" translatable="false">this is patted stranger item pat imageView</string>
-    <string name="pattedStrangerItem_strangerAvatar_imageView_contentDescription" translatable="false">this is patted stranger item stranger avatar imageView</string>
-    <string name="pattedStrangerItem_strangerGender_imageView_contentDescription" translatable="false">this is patted stranger item stranger gender imageView</string>
+    <!-- pat stranger item -->
+    <string name="patStrangerItem_indicator_imageView_contentDescription" translatable="false">this is user pat stranger item pat imageView</string>
+    <string name="patStrangerItem_strangerAvatar_imageView_contentDescription" translatable="false">this is user pat stranger item stranger avatar imageView</string>
+    <string name="patStrangerItem_strangerGender_imageView_contentDescription" translatable="false">this is user pat stranger item stranger gender imageView</string>
+
+    <!-- pat stranger activity -->
+    <string name="title_activity_pat_stranger" translatable="false">PatStrangerActivity</string>
+    <string name="patStranger_activity_title">拍肩详情</string>
 
     <!-- others -->
     <string name="title_activity_demo" translatable="false">DemoActivity</string>

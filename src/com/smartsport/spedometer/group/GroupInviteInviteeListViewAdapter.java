@@ -15,7 +15,7 @@ import android.widget.SimpleAdapter;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSSimpleAdapterViewBinder;
-import com.smartsport.spedometer.user.UserInfoBean;
+import com.smartsport.spedometer.user.info.UserInfoBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**

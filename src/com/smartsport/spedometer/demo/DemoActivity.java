@@ -18,8 +18,8 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.mvc.ICMConnector;
-import com.smartsport.spedometer.user.UserGender;
-import com.smartsport.spedometer.user.UserInfoModel;
+import com.smartsport.spedometer.user.info.UserGender;
+import com.smartsport.spedometer.user.info.UserInfoModel;
 import com.smartsport.spedometer.utils.JSONUtils;
 import com.smartsport.spedometer.utils.SSLogger;
 

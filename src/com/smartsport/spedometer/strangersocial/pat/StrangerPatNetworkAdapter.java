@@ -11,7 +11,7 @@ import com.smartsport.spedometer.network.INetworkAdapter;
 import com.smartsport.spedometer.network.NetworkUtils;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespJSONHandler;
 import com.smartsport.spedometer.strangersocial.LocationBean;
-import com.smartsport.spedometer.user.UserGender;
+import com.smartsport.spedometer.user.info.UserGender;
 
 /**
  * @name StrangerPatNetworkAdapter
@@ -128,7 +128,7 @@ public class StrangerPatNetworkAdapter implements INetworkAdapter {
 
 	/**
 	 * @title getPatStrangers
-	 * @descriptor get all strangers user patted from remote server
+	 * @descriptor get all strangers user pat from remote server
 	 * @param userId
 	 *            : user id
 	 * @param token
@@ -146,15 +146,14 @@ public class StrangerPatNetworkAdapter implements INetworkAdapter {
 		// set stranger pat type to param
 		_getPatStrangersReqParam.put(
 				NETWORK_ENGINE.getContext().getString(
-						R.string.getPattedStrangersReqParam_patType),
+						R.string.getUserPatStrangersReqParam_patType),
 				NETWORK_ENGINE.getContext()
 						.getString(R.string.patStranger_type));
 
-		// send get pat stranger list who patted the user asynchronous post http
-		// request
+		// send get user pat stranger list asynchronous post http request
 		NETWORK_ENGINE.postWithAPI(
 				NETWORK_ENGINE.getContext().getString(
-						R.string.getPattedStrangers_url),
+						R.string.getUserPatStrangers_url),
 				_getPatStrangersReqParam, asyncHttpRespJSONHandler);
 	}
 

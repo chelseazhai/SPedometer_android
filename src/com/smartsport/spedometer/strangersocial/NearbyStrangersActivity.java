@@ -40,9 +40,9 @@ import com.smartsport.spedometer.strangersocial.pat.StrangerPatActivity;
 import com.smartsport.spedometer.strangersocial.pat.StrangerPatActivity.StrangerPatExtraData;
 import com.smartsport.spedometer.strangersocial.pat.StrangerPatModel;
 import com.smartsport.spedometer.strangersocial.pat.UserInfoPatLocationExtBean;
-import com.smartsport.spedometer.user.UserGender;
 import com.smartsport.spedometer.user.UserManager;
 import com.smartsport.spedometer.user.UserPedometerExtBean;
+import com.smartsport.spedometer.user.info.UserGender;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**

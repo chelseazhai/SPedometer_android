@@ -12,7 +12,7 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:background="@drawable/user_avatar_imageview_bg"
-        android:contentDescription="@string/pattedStrangerItem_strangerAvatar_imageView_contentDescription"
+        android:contentDescription="@string/patStrangerItem_strangerAvatar_imageView_contentDescription"
         android:scaleType="centerInside"
         android:src="@drawable/img_default_avatar" />
 
@@ -22,7 +22,7 @@
         android:layout_height="16dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:contentDescription="@string/pattedStrangerItem_indicator_imageView_contentDescription"
+        android:contentDescription="@string/patStrangerItem_indicator_imageView_contentDescription"
         android:src="@drawable/img_item_indicator" />
 
     <RelativeLayout
@@ -82,12 +82,12 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="4dp"
                     android:layout_toRightOf="@id/psi_strangerNickname_textView"
-                    android:contentDescription="@string/pattedStrangerItem_strangerGender_imageView_contentDescription"
+                    android:contentDescription="@string/patStrangerItem_strangerGender_imageView_contentDescription"
                     android:scaleType="centerCrop" />
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/psi_strangerPattedCount_textView"
+                android:id="@+id/psi_strangerBePattedCount_textView"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_weight="5"

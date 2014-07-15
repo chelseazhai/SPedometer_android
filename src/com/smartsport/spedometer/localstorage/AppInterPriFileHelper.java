@@ -240,4 +240,31 @@ public class AppInterPriFileHelper {
 		return write2File(data, FILE_DEFAULTDIR, fileName);
 	}
 
+	/**
+	 * @title deleteFile
+	 * @descriptor delete local storage file with its storage dictionary and
+	 *             file name
+	 * @param fileDir
+	 *            : the file storage dictionary
+	 * @param fileName
+	 *            : the storage file name
+	 * @author Ares
+	 */
+	public void deleteFile(String fileDir, String fileName) {
+		//
+	}
+
+	/**
+	 * @title deleteFile
+	 * @descriptor delete local storage file with its file name
+	 * @param fileName
+	 *            : the storage file name
+	 * @author Ares
+	 */
+	public void deleteFile(String fileName) {
+		// delete local storage file with its name from default storage
+		// dictionary
+		deleteFile(FILE_DEFAULTDIR, fileName);
+	}
+
 }

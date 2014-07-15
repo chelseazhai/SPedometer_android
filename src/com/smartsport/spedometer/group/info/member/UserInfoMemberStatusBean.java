@@ -6,7 +6,7 @@ package com.smartsport.spedometer.group.info.member;
 import org.json.JSONObject;
 
 import com.smartsport.spedometer.R;
-import com.smartsport.spedometer.user.UserInfoBean;
+import com.smartsport.spedometer.user.info.UserInfoBean;
 import com.smartsport.spedometer.utils.JSONUtils;
 import com.smartsport.spedometer.utils.SSLogger;
 

@@ -61,10 +61,10 @@ import com.smartsport.spedometer.pedometer.IWalkPathPointLocationChangedListener
 import com.smartsport.spedometer.pedometer.WalkInfoType;
 import com.smartsport.spedometer.pedometer.WalkMyLocationStyle;
 import com.smartsport.spedometer.pedometer.WalkStartPointLocationSource;
-import com.smartsport.spedometer.user.UserInfoBean;
-import com.smartsport.spedometer.user.UserInfoModel;
 import com.smartsport.spedometer.user.UserManager;
 import com.smartsport.spedometer.user.UserPedometerExtBean;
+import com.smartsport.spedometer.user.info.UserInfoBean;
+import com.smartsport.spedometer.user.info.UserInfoModel;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**

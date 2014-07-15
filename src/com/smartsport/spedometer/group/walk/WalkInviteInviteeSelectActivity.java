@@ -25,10 +25,10 @@ import com.smartsport.spedometer.group.GroupType;
 import com.smartsport.spedometer.group.ScheduleWalkInviteGroupsActivity.WalkInviteInviteeSelectOrWalkControlExtraData;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
-import com.smartsport.spedometer.user.UserInfoBean;
-import com.smartsport.spedometer.user.UserInfoModel;
 import com.smartsport.spedometer.user.UserManager;
 import com.smartsport.spedometer.user.UserPedometerExtBean;
+import com.smartsport.spedometer.user.info.UserInfoBean;
+import com.smartsport.spedometer.user.info.UserInfoModel;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**

@@ -23,9 +23,9 @@ import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.strangersocial.LocationBean;
 import com.smartsport.spedometer.strangersocial.NearbyStrangersActivity.NearbyStrangersExtraData;
-import com.smartsport.spedometer.user.UserGender;
 import com.smartsport.spedometer.user.UserManager;
 import com.smartsport.spedometer.user.UserPedometerExtBean;
+import com.smartsport.spedometer.user.info.UserGender;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**

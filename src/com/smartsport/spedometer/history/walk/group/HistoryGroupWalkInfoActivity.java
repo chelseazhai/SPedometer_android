@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.group.GroupInfoModel;
 import com.smartsport.spedometer.group.GroupType;
 import com.smartsport.spedometer.group.compete.WithinGroupCompeteModel;
@@ -49,6 +50,9 @@ public class HistoryGroupWalkInfoActivity extends SSBaseActivity {
 	private Long historyGroupWalkStartTime;
 	private Long historyGroupWalkStopTime;
 
+	// history group info progress dialog
+	private SSProgressDialog historyGroupInfoProgDlg;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -76,17 +80,19 @@ public class HistoryGroupWalkInfoActivity extends SSBaseActivity {
 		// server
 		if (null != historyGroupId) {
 			// show get history group walk info progress dialog
-			// walkInviteWalkProgDlg = SSProgressDialog.show(this,
-			// R.string.procMsg_getWalkInviteGroupInfo);
+			historyGroupInfoProgDlg = SSProgressDialog
+					.show(this,
+							historyGroupType == GroupType.WALK_GROUP ? R.string.procMsg_getWalkInviteHistoryGroupWalkInfo
+									: R.string.procMsg_getWithinGroupCompeteHistoryGroupWalkInfo);
 
 			groupInfoModel.getUserHistoryGroupInfo(loginUser.getUserId(),
 					loginUser.getUserKey(), historyGroupId, new ICMConnector() {
 
 						@Override
 						public void onSuccess(Object... retValue) {
-							// // dismiss get history group walk info progress
+							// dismiss get history group walk info progress
 							// dialog
-							// walkInviteWalkProgDlg.dismiss();
+							historyGroupInfoProgDlg.dismiss();
 
 							// check return values
 							if (null != retValue
@@ -95,24 +101,28 @@ public class HistoryGroupWalkInfoActivity extends SSBaseActivity {
 								// get the history group info
 								HistoryGroupInfoBean _historyGroupInfo = (HistoryGroupInfoBean) retValue[retValue.length - 1];
 
-								LOGGER.info("The history group info = "
-										+ _historyGroupInfo
-										+ " and its type = " + historyGroupType);
+								LOGGER.info("The history group, type = "
+										+ historyGroupType + " info = "
+										+ _historyGroupInfo);
 
 								//
 							} else {
-								LOGGER.error("Update history group invitee walk info UI error");
+								LOGGER.error("Update history group, type = "
+										+ historyGroupType
+										+ " invitee walk info UI error");
 							}
 						}
 
 						@Override
 						public void onFailure(int errorCode, String errorMsg) {
-							LOGGER.error("Get history group walk info from remote server error, error code = "
+							LOGGER.error("Get history group, type = "
+									+ historyGroupType
+									+ " walk info from remote server error, error code = "
 									+ errorCode + " and message = " + errorMsg);
 
-							// // dismiss get history group walk info progress
+							// dismiss get history group walk info progress
 							// dialog
-							// walkInviteWalkProgDlg.dismiss();
+							historyGroupInfoProgDlg.dismiss();
 
 							// check error code and process hopeRun business
 							// error

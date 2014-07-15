@@ -63,4 +63,13 @@
     <!-- search -->
     <string name="toast_search_userInput_null">请输入您要搜索的内容</string>
 
+    <!-- group walk -->
+    <string name="procMsg_getWalkInviteHistoryGroups">获取约走历史组，请稍候&#8230;</string>
+    <string name="procMsg_getWithinGroupCompeteHistoryGroups">获取竞赛历史组，请稍候&#8230;</string>
+    <string name="procMsg_getWalkInviteHistoryGroupWalkInfo">获取约走历史，请稍候&#8230;</string>
+    <string name="procMsg_getWithinGroupCompeteHistoryGroupWalkInfo">获取竞赛历史，请稍候&#8230;</string>
+
+    <!-- stranger pat -->
+    <string name="procMsg_getUserPatStrangers">获取拍肩历史，请稍候&#8230;</string>
+
 </resources>

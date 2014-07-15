@@ -31,8 +31,8 @@ import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
 import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.pedometer.PersonalWalkResultActivity.PersonalWalkResultExtraData;
-import com.smartsport.spedometer.user.UserInfoBean;
-import com.smartsport.spedometer.user.UserInfoModel;
+import com.smartsport.spedometer.user.info.UserInfoBean;
+import com.smartsport.spedometer.user.info.UserInfoModel;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**

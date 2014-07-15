@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.smartsport.spedometer.user;
+package com.smartsport.spedometer.user.info;
 
 import com.smartsport.spedometer.utils.SSLogger;
 

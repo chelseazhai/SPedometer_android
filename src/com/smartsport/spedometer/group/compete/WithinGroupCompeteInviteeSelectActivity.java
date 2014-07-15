@@ -32,10 +32,10 @@ import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteInfoSetti
 import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteeSelectActivity.SelectedInviteesHorizontalListViewAdapter.SelectedInviteesHorizontalListViewAdapterKey;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
-import com.smartsport.spedometer.user.UserInfoBean;
-import com.smartsport.spedometer.user.UserInfoModel;
 import com.smartsport.spedometer.user.UserManager;
 import com.smartsport.spedometer.user.UserPedometerExtBean;
+import com.smartsport.spedometer.user.info.UserInfoBean;
+import com.smartsport.spedometer.user.info.UserInfoModel;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**

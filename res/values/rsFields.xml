@@ -253,12 +253,12 @@
     <!-- patted notify -->
 
 
-    <!-- patted stranger list -->
-    <string name="getPattedStrangersReqParam_patType" translatable="false">type</string>
-    <string name="getPattedStrangersReqResp_patCount" translatable="false">patCount</string>
-    <string name="getPattedStrangersReqResp_patTimestamp" translatable="false">timestamp</string>
-    <string name="getPattedStrangersReqResp_patLocationLongitude" translatable="false">longitude</string>
-    <string name="getPattedStrangersReqResp_patLocationLatitude" translatable="false">latitude</string>
+    <!-- user pat stranger list -->
+    <string name="getUserPatStrangersReqParam_patType" translatable="false">type</string>
+    <string name="getUserPatStrangersReqResp_patCount" translatable="false">patCount</string>
+    <string name="getUserPatStrangersReqResp_patTimestamp" translatable="false">timestamp</string>
+    <string name="getUserPatStrangersReqResp_patLocationLongitude" translatable="false">longitude</string>
+    <string name="getUserPatStrangersReqResp_patLocationLatitude" translatable="false">latitude</string>
 
     <!-- moments -->
     <!-- new moment -->

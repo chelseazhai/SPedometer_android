@@ -18,7 +18,7 @@ import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.network.NetworkAdapter;
 import com.smartsport.spedometer.network.handler.AsyncHttpRespJSONHandler;
 import com.smartsport.spedometer.strangersocial.LocationBean;
-import com.smartsport.spedometer.user.UserGender;
+import com.smartsport.spedometer.user.info.UserGender;
 import com.smartsport.spedometer.utils.JSONUtils;
 import com.smartsport.spedometer.utils.SSLogger;
 
@@ -258,7 +258,7 @@ public class StrangerPatModel {
 
 	/**
 	 * @title getPatStrangers
-	 * @descriptor get all strangers user patted
+	 * @descriptor get all strangers user pat
 	 * @param userId
 	 *            : user id
 	 * @param token
@@ -269,7 +269,7 @@ public class StrangerPatModel {
 	 */
 	public void getPatStrangers(long userId, String token,
 			final ICMConnector executant) {
-		// get pat strangers with user id and token
+		// get user pat strangers with user id and token
 		((StrangerPatNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(StrangerPatNetworkAdapter.class))
 				.getPatStrangers(userId, token, new AsyncHttpRespJSONHandler() {
@@ -347,7 +347,7 @@ public class StrangerPatModel {
 	@Deprecated
 	public void getPattedStrangers(long userId, String token,
 			ICMConnector executant) {
-		// get patted strangers with user id and token
+		// get all patted user strangers with user id and token
 		((StrangerPatNetworkAdapter) NetworkAdapter.getInstance()
 				.getWorkerNetworkAdapter(StrangerPatNetworkAdapter.class))
 				.getPattedStrangers(userId, token,
@@ -356,40 +356,40 @@ public class StrangerPatModel {
 							@Override
 							public void onSuccess(int statusCode,
 									JSONArray respJSONArray) {
-								LOGGER.info("Get patted user strangers successful, status code = "
+								LOGGER.info("Get all patted user strangers successful, status code = "
 										+ statusCode
 										+ " and response json array = "
 										+ respJSONArray);
 
-								// check the strangers who pat the user info
+								// check the strangers info who patted the user
 								// response json array
 								if (null != respJSONArray) {
-									// define the stranger who pat the user info
-									// list
-									List<UserInfoPatLocationExtBean> _strangersPatUserInfo = new ArrayList<UserInfoPatLocationExtBean>();
+									// define the stranger info list who patted
+									// the user
+									List<UserInfoPatLocationExtBean> _strangersPattedUserInfo = new ArrayList<UserInfoPatLocationExtBean>();
 
 									// traversal the json array
 									for (int i = 0; i < respJSONArray.length(); i++) {
-										// get and check the stranger who pat
+										// get and check the stranger who patted
 										// the user info json object from
 										// response json array
-										JSONObject _strangerPatUserInfo = JSONUtils
+										JSONObject _strangerPattedUserInfo = JSONUtils
 												.getJSONObjectFromJSONArray(
 														respJSONArray, i);
-										if (null != _strangerPatUserInfo) {
-											// add the stranger who pat the user
-											// info object to list
-											_strangersPatUserInfo
+										if (null != _strangerPattedUserInfo) {
+											// add the stranger who patted the
+											// user info object to list
+											_strangersPattedUserInfo
 													.add(new UserInfoPatLocationExtBean(
-															_strangerPatUserInfo));
+															_strangerPattedUserInfo));
 										}
 									}
 
 									LOGGER.debug("The strangers info list = "
-											+ _strangersPatUserInfo
-											+ " who pat the user");
+											+ _strangersPattedUserInfo
+											+ " who patted the user");
 
-									// get all strangers who pat the user
+									// get all strangers who patted the user
 									// successful
 									//
 								} else {
@@ -411,7 +411,7 @@ public class StrangerPatModel {
 										+ " and error message = "
 										+ errorMsg);
 
-								// get all strangers who pat the user failed
+								// get all strangers who patted the user failed
 								//
 							}
 
