@@ -94,7 +94,7 @@ public class SplashScreenActivity extends Activity implements IAppLaunch {
 	public Intent targetIntent() {
 		// get user logined flag from local storage
 		// test by ares
-		boolean _isUserLogined = true;
+		boolean _isUserLogined = false;
 
 		return new Intent(SplashScreenActivity.this,
 				_isUserLogined ? PedometerActivity.class

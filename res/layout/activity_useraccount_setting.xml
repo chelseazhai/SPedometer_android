@@ -35,7 +35,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/uas_appLogo_imageView"
         android:layout_marginTop="26dp"
-        android:orientation="vertical" >
+        android:background="@drawable/useraccountsetting_userloginform_bg"
+        android:orientation="vertical"
+        android:padding="1dp" >
 
         <com.smartsport.spedometer.customwidget.SSUserLoginFormItem
             android:id="@+id/uas_userLoginName_formItem"
@@ -46,6 +48,11 @@
             android:inputType="phone"
             spedometer:label="呵呵" >
         </com.smartsport.spedometer.customwidget.SSUserLoginFormItem>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/holo_green_middle" />
 
         <com.smartsport.spedometer.customwidget.SSUserLoginFormItem
             android:id="@+id/uas_userLoginPwd_formItem"
@@ -64,7 +71,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/uas_loginForm_linearLayout"
         android:layout_marginTop="26dp"
-        android:text="登录" />
+        android:background="@drawable/userlogin_button_bg"
+        android:text="登录"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
 
     <Button
         android:id="@+id/uas_myNanjing_userLogin_button"
@@ -72,25 +82,60 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/uas_userLogin_button"
         android:layout_marginTop="10dp"
-        android:text="我的南京登录" />
+        android:background="@drawable/mynanjing_userlogin_button_bg"
+        android:text="我的南京登录"
+        android:textColor="@color/holo_green_middle"
+        android:textSize="18sp" />
 
     <RelativeLayout
         android:id="@+id/uas_userAssistant_relativeLayout"
         android:layout_width="fill_parent"
-        android:layout_marginTop="26dp"
-        android:layout_below="@id/uas_myNanjing_userLogin_button"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_height="wrap_content" >
+        android:layout_below="@id/uas_myNanjing_userLogin_button"
+        android:layout_marginTop="26dp" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/uas_anonymous_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:text="瞧一瞧" />
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="4dp"
+            android:text="瞧一瞧"
+            android:textColor="@color/holo_green_middle"
+            android:textSize="18sp" />
 
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="28dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="16dp"
+            android:layout_toLeftOf="@id/uas_anonymous_textView" >
+
+            <TextView
+                android:id="@+id/uas_newUserRegister_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="新用户"
+                android:textColor="@color/dark_gray" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:background="@color/gray" />
+
+            <TextView
+                android:id="@+id/uas_userForgetPwd_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="忘记密码"
+                android:textColor="@color/dark_gray" />
+        </LinearLayout>
     </RelativeLayout>
 
 </RelativeLayout>
