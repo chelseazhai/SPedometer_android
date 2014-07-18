@@ -25,6 +25,14 @@
     <!-- <string name="uploadFile_url" translatable="false">/fileUpload</string> -->
     <string name="uploadFile_url" translatable="false">/upload.action</string>
 
+    <!-- platform -->
+    <!-- user module name -->
+    <string name="platformUserModule" translatable="false">/user</string>
+
+    <!-- login -->
+    <!-- <string name="userLogin_url" translatable="false">/userLogin</string> -->
+    <string name="userLogin_url" translatable="false">/queryLoginInfo.action</string>
+
     <!-- pedometer -->
     <!-- pedometer module name -->
     <string name="pedometerModule" translatable="false">/pedometer</string>

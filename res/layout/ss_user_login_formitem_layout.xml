@@ -10,24 +10,40 @@
     android:paddingTop="5dp"
     tools:context=".customwidget.SSUserLoginFormItem" >
 
-    <TextView
-        android:id="@+id/ssulfi_userLogin_formItem_label_textView"
+    <FrameLayout
+        android:id="@+id/ssulfi_userLogin_formItem_label_frameLayout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:singleLine="true"
-        android:ellipsize="middle"
-        android:layout_weight="4"
-        android:textSize="18sp" />
+        android:layout_weight="4" >
+
+        <TextView
+            android:id="@+id/ssulfi_userLogin_formItem_label_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:textSize="18sp"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/ssulfi_userLogin_formItem_label_imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/ssulf_userLoginFormItem_label_ImageView_contentDescription"
+            android:src="@drawable/img_userlogin_loginuserlabel_icon"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <EditText
         android:id="@+id/ssulfi_userLogin_formItem_userInput_editText"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:background="@null"
         android:ellipsize="end"
-        android:layout_gravity="center_vertical"
         android:inputType="text"
         android:paddingBottom="7dp"
         android:paddingLeft="14dp"

@@ -7,8 +7,6 @@ import android.widget.ImageView;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.mvc.PedometerActivity;
-import com.smartsport.spedometer.user.UserManager;
-import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.user.reglogin.UserAccountSettingActivity;
 import com.smartsport.spedometer.utils.SSLogger;
 
@@ -69,19 +67,20 @@ public class SplashScreenActivity extends Activity implements IAppLaunch {
 		try {
 			Thread.sleep(2 * 1000L);
 
-			// test by ares
-			// generate pedometer login user object
-			UserPedometerExtBean _pedometerLoginUser = new UserPedometerExtBean();
-			_pedometerLoginUser.setLoginName("18001582338");
-			_pedometerLoginUser.setLoginPwd("123");
-			_pedometerLoginUser.setUserKey("token@ares");
-			// _pedometerLoginUser.setUserId(5196787426436882L); // 58
-			_pedometerLoginUser.setUserId(1745891595710907L); // 218
-			_pedometerLoginUser
-					.setAvatarUrl("http://218.104.116.66:8095/qmjsMSS/loadpic.jsp?path=/qmjs_files/person/1745891595710907/ebeb705.jpg");
-
-			// set pedometer login user
-			UserManager.getInstance().setLoginUser(_pedometerLoginUser);
+			// // test by ares
+			// // generate pedometer login user object
+			// UserPedometerExtBean _pedometerLoginUser = new
+			// UserPedometerExtBean();
+			// _pedometerLoginUser.setLoginName("18001582338");
+			// _pedometerLoginUser.setLoginPwd("123");
+			// _pedometerLoginUser.setUserKey("token@ares");
+			// // _pedometerLoginUser.setUserId(5196787426436882L); // 58
+			// _pedometerLoginUser.setUserId(1745891595710907L); // 218
+			// _pedometerLoginUser
+			// .setAvatarUrl("http://218.104.116.66:8095/qmjsMSS/loadpic.jsp?path=/qmjs_files/person/1745891595710907/ebeb705.jpg");
+			//
+			// // set pedometer login user
+			// UserManager.getInstance().setLoginUser(_pedometerLoginUser);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

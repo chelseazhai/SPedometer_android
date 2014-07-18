@@ -7,6 +7,13 @@
     <string name="nwErrorMsg_remoteServer_exception">服务器异常，请联系管理员</string>
     <string name="nwErrorMsg_remoteServer_responseData_exception">服务器返回数据异常，请联系管理员</string>
 
+    <!-- user account setting activity -->
+    <string name="procMsg_userLogin">正在登录，请稍候&#8230;</string>
+
+    <!-- user login info item -->
+    <string name="toast_userLogin_loginName_null">用户名不能为空</string>
+    <string name="toast_userLogin_loginPwd_null">登录密码不能为空</string>
+
     <!-- user info -->
     <string name="procMsg_getUserInfo">获取用户信息，请稍候&#8230;</string>
     <string name="toast_user_gender_notSet">您还未设置性别，无法自动计算步长</string>

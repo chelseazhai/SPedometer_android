@@ -190,13 +190,13 @@ public class SSBNavBarButtonItem extends FrameLayout {
 			// get smartsport base activity navigation bar bar button item text,
 			// text color, image resource and background resource
 			_text = _typedArray
-					.getString(R.styleable.ssb_navBar_barButtonItem_text);
+					.getString(R.styleable.ssb_navBar_barButtonItem_android_text);
 			_textColor = _typedArray.getColor(
-					R.styleable.ssb_navBar_barButtonItem_textColor, 0);
+					R.styleable.ssb_navBar_barButtonItem_android_textColor, 0);
 			_imageResourceId = _typedArray.getResourceId(
-					R.styleable.ssb_navBar_barButtonItem_src, 0);
+					R.styleable.ssb_navBar_barButtonItem_android_src, 0);
 			_backgroundResourceId = _typedArray.getResourceId(
-					R.styleable.ssb_navBar_barButtonItem_background, 0);
+					R.styleable.ssb_navBar_barButtonItem_android_background, 0);
 		} catch (Exception e) {
 			LOGGER.error("Get smartsport base activity navigation bar bar button item text, text color, image resource and background resource attributes error, exception massage = "
 					+ e.getMessage());

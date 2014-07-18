@@ -10,12 +10,14 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -182,28 +184,35 @@ public class SSUserLoginFormItem extends LinearLayout {
 	 * @author Ares
 	 */
 	private void initAttrs(Context context, AttributeSet attrs) {
-		// define user login form item typedArray, label, input editText hint
-		// and input type
+		// define user login form item typedArray, label, icon image resource,
+		// frameLayout percent, input editText hint and input type
 		TypedArray _typedArray = null;
 		String _label = null;
+		int _iconImgResourceId = 0;
+		float _labelPecent = 0.0f;
 		String _inputEditTextHint = null;
-		String _inputEditTextInputType = null;
+		int _inputEditTextInputType = 0;
 
 		try {
 			// get smartsport user login form item typedArray
 			_typedArray = context.getTheme().obtainStyledAttributes(attrs,
 					R.styleable.ss_userLogin_formItem, 0, 0);
 
-			// get smartsport user login form item label, input editText hint
-			// and input type attributes
+			// get smartsport user login form item label, icon image resource,
+			// frameLayout percent, input editText hint and input type
+			// attributes
 			_label = _typedArray
 					.getString(R.styleable.ss_userLogin_formItem_label);
+			_iconImgResourceId = _typedArray.getResourceId(
+					R.styleable.ss_userLogin_formItem_labelIconSrc, 0);
+			_labelPecent = _typedArray.getFloat(
+					R.styleable.ss_userLogin_formItem_labelPercent, 0.0f);
 			_inputEditTextHint = _typedArray
 					.getString(R.styleable.ss_userLogin_formItem_android_hint);
-			_inputEditTextInputType = _typedArray
-					.getString(R.styleable.ss_userLogin_formItem_android_inputType);
+			_inputEditTextInputType = _typedArray.getInt(
+					R.styleable.ss_userLogin_formItem_android_inputType, 0);
 		} catch (Exception e) {
-			LOGGER.error("Get smartsport user login form item label, input editText hint or input type attributes error, exception massage = "
+			LOGGER.error("Get smartsport user login form item label, icon image resource, frameLayout percent, input editText hint or input type attributes error, exception massage = "
 					+ e.getMessage());
 
 			e.printStackTrace();
@@ -218,15 +227,47 @@ public class SSUserLoginFormItem extends LinearLayout {
 		LayoutInflater.from(context).inflate(
 				R.layout.ss_user_login_formitem_layout, this);
 
+		// get smartsport user login form item label textView
+		TextView _labelTextView = (TextView) findViewById(R.id.ssulfi_userLogin_formItem_label_textView);
+
 		// check smartsport user login form item label and set its text
 		if (null != _label) {
-			// set smartsport user login form item label textView text
-			((TextView) findViewById(R.id.ssulfi_userLogin_formItem_label_textView))
-					.setText(_label);
+			// set smartsport user login form item label textView text and then
+			// show
+			_labelTextView.setText(_label);
+			_labelTextView.setVisibility(View.VISIBLE);
+		}
+
+		// check smartsport user login form item label icon image resource and
+		// set its image
+		if (0 != _iconImgResourceId) {
+			// get smartsport user login form item label icon imageView
+			ImageView _labelIconImgView = (ImageView) findViewById(R.id.ssulfi_userLogin_formItem_label_imageView);
+
+			// set its image resource and then show
+			_labelIconImgView.setImageResource(_iconImgResourceId);
+			_labelIconImgView.setVisibility(View.VISIBLE);
+
+			// hide smartsport user login form item label textView
+			_labelTextView.setVisibility(View.GONE);
 		}
 
 		// get smartsport user login form item input editText
 		userInputEditText = (EditText) findViewById(R.id.ssulfi_userLogin_formItem_userInput_editText);
+
+		// check smartsport user login form item label percent
+		if (0.0 != _labelPecent) {
+			// get smartsport user login form item label frameLayout
+			FrameLayout _labelFrameLayout = (FrameLayout) findViewById(R.id.ssulfi_userLogin_formItem_label_frameLayout);
+
+			// get its linearLayout params and update its percentage
+			LayoutParams _labelFrameLayoutLayoutParams = (LayoutParams) _labelFrameLayout
+					.getLayoutParams();
+			_labelFrameLayoutLayoutParams.weight = _labelPecent;
+
+			// set its linearLayout params
+			_labelFrameLayout.setLayoutParams(_labelFrameLayoutLayoutParams);
+		}
 
 		// check smartsport user login form item input editText hint and set its
 		// hint
@@ -237,20 +278,9 @@ public class SSUserLoginFormItem extends LinearLayout {
 
 		// check smartsport user login form item input editText input type and
 		// set its type
-		if (null != _inputEditTextInputType) {
+		if (0 != _inputEditTextInputType) {
 			// set smartsport user login form item input editText input type
-			if ("phone".equalsIgnoreCase(_inputEditTextInputType)) {
-				userInputEditText.setInputType(InputType.TYPE_CLASS_PHONE);
-			} else if ("textPassword".equalsIgnoreCase(_inputEditTextInputType)) {
-				userInputEditText.setInputType(InputType.TYPE_CLASS_TEXT
-						| InputType.TYPE_TEXT_VARIATION_PASSWORD);
-			} else {
-				LOGGER.warning("Smartsport user login form item user input editText input type = "
-						+ _inputEditTextInputType
-						+ " setting not implement, using default editText input type");
-
-				userInputEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-			}
+			userInputEditText.setInputType(_inputEditTextInputType);
 		}
 	}
 

@@ -44,6 +44,13 @@
     <string name="uploadFileReqParam_multipleMR" translatable="false">2</string>
 
     <!-- user -->
+    <string name="userLoginReqParam_loginName" translatable="false">nickName</string>
+    <string name="userLoginReqParam_loginPwd" translatable="false">password</string>
+    <string name="userLoginReqResp_loginedUserInfo" translatable="false">loginInfoEntity</string>
+    <string name="userLoginReqResp_loginedUser_userId" translatable="false">userId</string>
+    <string name="userLoginReqResp_loginedUser_nickname" translatable="false">nickName</string>
+    <string name="userLoginReqResp_loginedUser_avatarUrl" translatable="false">picPath</string>
+
     <!-- gender -->
     <string name="userGender_male" translatable="false">m</string>
     <string name="userGender_female" translatable="false">f</string>

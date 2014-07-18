@@ -3,10 +3,10 @@
 
     <!-- smartsport base activity navigation bar bar button item -->
     <declare-styleable name="ssb_navBar_barButtonItem">
-        <attr name="text" format="string" />
-        <attr name="textColor" format="color|reference" />
-        <attr name="src" format="color|reference" />
-        <attr name="background" format="color|reference" />
+        <attr name="android:text" />
+        <attr name="android:textColor" />
+        <attr name="android:src" />
+        <attr name="android:background" />
     </declare-styleable>
 
     <!-- smartsport horizontal listView -->
@@ -20,6 +20,8 @@
     <!-- smartsport user login form item -->
     <declare-styleable name="ss_userLogin_formItem">
         <attr name="label" format="string" />
+        <attr name="labelIconSrc" format="color|reference" />
+        <attr name="labelPercent" format="float" />
         <attr name="android:hint" />
         <attr name="android:inputType" />
     </declare-styleable>

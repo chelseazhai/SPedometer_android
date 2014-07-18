@@ -14,7 +14,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginTop="16dp"
-        android:text="版本：1.0.0"
         android:textColor="@color/dark_gray" />
 
     <ImageView
@@ -24,7 +23,7 @@
         android:layout_below="@id/uas_appVersion_textView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="26dp"
-        android:contentDescription=""
+        android:contentDescription="@string/appLogo_ImageView_contentDescription"
         android:minHeight="100dp"
         android:minWidth="100dp"
         android:src="@drawable/img_applogo" />
@@ -34,7 +33,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/uas_appLogo_imageView"
-        android:layout_marginTop="26dp"
+        android:layout_marginTop="36dp"
         android:background="@drawable/useraccountsetting_userloginform_bg"
         android:orientation="vertical"
         android:padding="1dp" >
@@ -44,9 +43,9 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="用户名"
-            android:inputType="phone"
-            spedometer:label="呵呵" >
+            android:hint="@string/userLogin_loginName_userInputEditText_hint"
+            spedometer:labelIconSrc="@drawable/img_userlogin_loginuserlabel_icon"
+            spedometer:labelPercent="10" >
         </com.smartsport.spedometer.customwidget.SSUserLoginFormItem>
 
         <View
@@ -59,9 +58,10 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="密码"
+            android:hint="@string/userLogin_loginPwd_userInputEditText_hint"
             android:inputType="textPassword"
-            spedometer:label="嘻嘻嘻" >
+            spedometer:labelIconSrc="@drawable/img_userlogin_loginpwdlabel_icon"
+            spedometer:labelPercent="10" >
         </com.smartsport.spedometer.customwidget.SSUserLoginFormItem>
     </LinearLayout>
 
@@ -70,9 +70,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/uas_loginForm_linearLayout"
-        android:layout_marginTop="26dp"
+        android:layout_marginTop="36dp"
         android:background="@drawable/userlogin_button_bg"
-        android:text="登录"
+        android:text="@string/userLogin_button_text"
         android:textColor="@android:color/white"
         android:textSize="18sp" />
 
@@ -83,7 +83,7 @@
         android:layout_below="@id/uas_userLogin_button"
         android:layout_marginTop="10dp"
         android:background="@drawable/mynanjing_userlogin_button_bg"
-        android:text="我的南京登录"
+        android:text="@string/myNanjingUser_button_text"
         android:textColor="@color/holo_green_middle"
         android:textSize="18sp" />
 
@@ -93,16 +93,16 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_below="@id/uas_myNanjing_userLogin_button"
-        android:layout_marginTop="26dp" >
+        android:layout_marginTop="36dp" >
 
         <TextView
-            android:id="@+id/uas_anonymous_textView"
+            android:id="@+id/uas_anonymousTry_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="4dp"
-            android:text="瞧一瞧"
+            android:text="@string/anonymousTry_textView_text"
             android:textColor="@color/holo_green_middle"
             android:textSize="18sp" />
 
@@ -112,14 +112,14 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_marginRight="16dp"
-            android:layout_toLeftOf="@id/uas_anonymous_textView" >
+            android:layout_toLeftOf="@id/uas_anonymousTry_textView" >
 
             <TextView
                 android:id="@+id/uas_newUserRegister_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="新用户"
+                android:text="@string/newUserRigister_textView_text"
                 android:textColor="@color/dark_gray" />
 
             <View
@@ -133,7 +133,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="忘记密码"
+                android:text="@string/userForgetPwd_textView_text"
                 android:textColor="@color/dark_gray" />
         </LinearLayout>
     </RelativeLayout>

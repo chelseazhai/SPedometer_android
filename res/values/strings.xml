@@ -11,8 +11,20 @@
     <string name="ssb_navBar_barBtnItem_imageBtn_contentDescription" translatable="false">this is smart sport base activity navigation bar bar button item imageButton</string>
 
     <!-- register and login -->
+    <!-- smartsport user login form item -->
+    <string name="ssulf_userLoginFormItem_label_ImageView_contentDescription" translatable="false">this is smart sport user login form item label icon imageView</string>
+
     <!-- user account setting activity -->
     <string name="title_activity_userAccount_setting" translatable="false">UserAccountSettingActivity</string>
+    <string name="appVersion_format" translatable="false">v%s</string>
+    <string name="appLogo_ImageView_contentDescription" translatable="false">this is smart sport pedometer logo imageView</string>
+    <string name="userLogin_loginName_userInputEditText_hint">用户名</string>
+    <string name="userLogin_loginPwd_userInputEditText_hint">密码</string>
+    <string name="userLogin_button_text">登录</string>
+    <string name="myNanjingUser_button_text">我的南京登录</string>
+    <string name="anonymousTry_textView_text">瞧一瞧</string>
+    <string name="newUserRigister_textView_text">新用户</string>
+    <string name="userForgetPwd_textView_text">忘记密码</string>
 
     <!-- user gender -->
     <string name="userGender_male_label">帅哥</string>
