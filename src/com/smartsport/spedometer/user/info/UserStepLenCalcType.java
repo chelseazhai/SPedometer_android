@@ -50,13 +50,13 @@ public enum UserStepLenCalcType {
 	 */
 	public static UserStepLenCalcType getStepLenCalcType(Integer lsValue) {
 		// define default user step length calculate type
-		UserStepLenCalcType _stepLenCalcType = AUTO_CALC_SETPLEN;
+		UserStepLenCalcType _stepLenCalcType = MANUAL_CALC_SETPLEN;
 
 		// check local storage saved value
 		if (null != lsValue) {
-			if (MANUAL_CALC_SETPLEN.value == lsValue.intValue()) {
-				_stepLenCalcType = MANUAL_CALC_SETPLEN;
-			} else if (AUTO_CALC_SETPLEN.value != lsValue.intValue()) {
+			if (AUTO_CALC_SETPLEN.value == lsValue.intValue()) {
+				_stepLenCalcType = AUTO_CALC_SETPLEN;
+			} else if (MANUAL_CALC_SETPLEN.value != lsValue.intValue()) {
 				LOGGER.error("Get user step length calculate type from local storage value error, local storage saved value = "
 						+ lsValue + " unrecognized");
 			}

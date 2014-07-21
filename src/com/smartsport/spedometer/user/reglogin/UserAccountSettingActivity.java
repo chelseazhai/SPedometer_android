@@ -4,13 +4,12 @@
 package com.smartsport.spedometer.user.reglogin;
 
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,11 +17,14 @@ import android.widget.Toast;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.customwidget.SSUserLoginFormItem;
+import com.smartsport.spedometer.localstorage.AppInterPriSharedPreferencesHelper;
+import com.smartsport.spedometer.localstorage.pedometer.SPUserLocalStorageAttributes;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.PedometerActivity;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
-import com.smartsport.spedometer.user.UserBean;
+import com.smartsport.spedometer.user.UserManager;
 import com.smartsport.spedometer.user.UserModel;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -36,9 +38,6 @@ public class UserAccountSettingActivity extends SSBaseActivity {
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(
 			UserAccountSettingActivity.class);
-
-	// input method manager
-	private InputMethodManager inputMethodManager;
 
 	// user model
 	private UserModel userModel = UserModel.getInstance();
@@ -54,9 +53,6 @@ public class UserAccountSettingActivity extends SSBaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// get input method manager
-		inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-
 		// set content view
 		setContentView(R.layout.activity_useraccount_setting);
 	}
@@ -69,9 +65,22 @@ public class UserAccountSettingActivity extends SSBaseActivity {
 
 	@Override
 	protected void initContentViewUI() {
+		// define and get smartsport pedometer application version name
+		String _appVersionName = "1.0.0";
+		try {
+			_appVersionName = getPackageManager().getPackageInfo(
+					getPackageName(), 0).versionName;
+		} catch (NameNotFoundException e) {
+			LOGGER.error("Get smartsport pedometer application version name error, exception message = "
+					+ e.getMessage());
+
+			e.printStackTrace();
+		}
+
 		// set smartsport pedometer application version textView text
-		((TextView) findViewById(R.id.uas_appVersion_textView)).setText(String
-				.format(getString(R.string.appVersion_format), "0.1.0"));
+		((TextView) findViewById(R.id.uas_appVersion_textView))
+				.setText(String.format(getString(R.string.appVersion_format),
+						_appVersionName));
 
 		// get user account setting user login name and password item
 		userLoginNameItem = (SSUserLoginFormItem) findViewById(R.id.uas_userLoginName_formItem);
@@ -124,8 +133,19 @@ public class UserAccountSettingActivity extends SSBaseActivity {
 	}
 
 	// inner class
-	// // hide soft input
-	// inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+	/**
+	 * @name UserAccountSettingExtraData
+	 * @descriptor user account setting extra data constant
+	 * @author Ares
+	 * @version 1.0
+	 */
+	public static final class UserAccountSettingExtraData {
+
+		// the last operate user login name
+		public static final String UAS_LASTOPERATEUSER_LOGINNAME = "userAccountSetting_lastOperateUser_loginName";
+
+	}
+
 	/**
 	 * @name UserLoginBtnOnClickListener
 	 * @descriptor user login button on click listener
@@ -137,7 +157,8 @@ public class UserAccountSettingActivity extends SSBaseActivity {
 		@Override
 		public void onClick(View v) {
 			// get and check user login name
-			String _userLoginName = userLoginNameItem.getUserInputEditText();
+			final String _userLoginName = userLoginNameItem
+					.getUserInputEditText();
 			if (null == _userLoginName || "".equalsIgnoreCase(_userLoginName)) {
 				LOGGER.error("User login name is null");
 
@@ -179,14 +200,67 @@ public class UserAccountSettingActivity extends SSBaseActivity {
 							// check return values
 							if (null != retValue
 									&& 0 < retValue.length
-									&& retValue[retValue.length - 1] instanceof UserBean) {
-								// go to smartsport pedometer activity
+									&& retValue[retValue.length - 1] instanceof UserPedometerExtBean) {
+								// get login user
+								UserPedometerExtBean _loginUser = (UserPedometerExtBean) retValue[retValue.length - 1];
 								LOGGER.info("Login user = "
-										+ (UserBean) retValue[retValue.length - 1]);
+										+ _loginUser
+										+ " and memory set user = "
+										+ UserManager.getInstance()
+												.getLoginUser());
+
+								// get application internal private shared
+								// preferences helper instance
+								AppInterPriSharedPreferencesHelper _appInterPriSharedPreferencesHelper = AppInterPriSharedPreferencesHelper
+										.getInstance();
+
+								// save user login name and remote server return
+								// user id to local storage
+								_appInterPriSharedPreferencesHelper.putValue(
+										_userLoginName, _loginUser.getUserId());
+								_appInterPriSharedPreferencesHelper
+										.putValue(
+												SPUserLocalStorageAttributes.LASTLOGIN_USERID
+														.name(), _loginUser
+														.getUserId());
+
+								// generate user local storage shared
+								// preferences file name, using logined user id
+								String _userLSSPFileName = String
+										.valueOf(_loginUser.getUserId());
+								// save platform user login name, remote server
+								// return token(user key), user id and avatar
+								// url to local storage
+								_appInterPriSharedPreferencesHelper
+										.putValue(
+												SPUserLocalStorageAttributes.PF_USER_LOGINNAME
+														.name(),
+												_userLoginName,
+												_userLSSPFileName);
+								_appInterPriSharedPreferencesHelper
+										.putValue(
+												SPUserLocalStorageAttributes.PF_USER_LOGINED_USERKEY
+														.name(), _loginUser
+														.getUserKey(),
+												_userLSSPFileName);
+								_appInterPriSharedPreferencesHelper
+										.putValue(
+												SPUserLocalStorageAttributes.PF_USER_LOGINED_USERID
+														.name(), _loginUser
+														.getUserId(),
+												_userLSSPFileName);
+								_appInterPriSharedPreferencesHelper
+										.putValue(
+												SPUserLocalStorageAttributes.PF_USER_LOGINED_USERAVATARURL
+														.name(), _loginUser
+														.getAvatarUrl(),
+												_userLSSPFileName);
+
+								// go to smartsport pedometer activity
+								finish();
 								startActivity(new Intent(
 										UserAccountSettingActivity.this,
 										PedometerActivity.class));
-								dismissActivity();
 							} else {
 								LOGGER.error("Update login user info error");
 							}
@@ -289,6 +363,10 @@ public class UserAccountSettingActivity extends SSBaseActivity {
 
 			case R.id.uas_anonymousTry_textView:
 			default:
+				// test by ares
+				Toast.makeText(UserAccountSettingActivity.this,
+						"此功能暂未开通(测试@Ares)", Toast.LENGTH_LONG).show();
+
 				// TODO Auto-generated method stub
 				//
 				break;

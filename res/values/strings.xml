@@ -275,6 +275,7 @@
     <!-- pat stranger activity -->
     <string name="title_activity_pat_stranger" translatable="false">PatStrangerActivity</string>
     <string name="patStranger_activity_title">拍肩详情</string>
+    <string name="patStranger_lastPatInfo_format" formatted="false">您已拍过他/她 %d 次了, 最后于 %s 在 %s 处拍肩</string>
 
     <!-- others -->
     <string name="title_activity_demo" translatable="false">DemoActivity</string>

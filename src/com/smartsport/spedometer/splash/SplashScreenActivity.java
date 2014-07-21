@@ -6,8 +6,13 @@ import android.os.Bundle;
 import android.widget.ImageView;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.localstorage.AppInterPriSharedPreferencesHelper;
+import com.smartsport.spedometer.localstorage.pedometer.SPUserLocalStorageAttributes;
 import com.smartsport.spedometer.mvc.PedometerActivity;
+import com.smartsport.spedometer.user.UserManager;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.user.reglogin.UserAccountSettingActivity;
+import com.smartsport.spedometer.user.reglogin.UserAccountSettingActivity.UserAccountSettingExtraData;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
@@ -61,11 +66,11 @@ public class SplashScreenActivity extends Activity implements IAppLaunch {
 
 	@Override
 	public boolean didFinishLaunching() {
-		LOGGER.debug("Fake sleep 2 seconds");
+		LOGGER.debug("Fake sleep 3 seconds");
 
 		// sleep 2 seconds
 		try {
-			Thread.sleep(2 * 1000L);
+			Thread.sleep(3 * 1000L);
 
 			// // test by ares
 			// // generate pedometer login user object
@@ -91,13 +96,71 @@ public class SplashScreenActivity extends Activity implements IAppLaunch {
 
 	@Override
 	public Intent targetIntent() {
-		// get user logined flag from local storage
-		// test by ares
-		boolean _isUserLogined = false;
+		// define target intent
+		Intent _targetIntent = null;
 
-		return new Intent(SplashScreenActivity.this,
-				_isUserLogined ? PedometerActivity.class
-						: UserAccountSettingActivity.class);
+		// get application internal private shared preferences helper instance
+		AppInterPriSharedPreferencesHelper _appInterPriSharedPreferencesHelper = AppInterPriSharedPreferencesHelper
+				.getInstance();
+
+		// get and check last login user id from local storage
+		Long _lastLoginUserId = _appInterPriSharedPreferencesHelper
+				.getLong(SPUserLocalStorageAttributes.LASTLOGIN_USERID.name());
+		if (null != _lastLoginUserId) {
+			// generate user local storage shared preferences file name, using
+			// logined user id
+			String _userLSSPFileName = String.valueOf(_lastLoginUserId);
+
+			// get and check last login user name
+			String _userLoginName = _appInterPriSharedPreferencesHelper
+					.getString(SPUserLocalStorageAttributes.PF_USER_LOGINNAME
+							.name(), _userLSSPFileName);
+			if (null != _userLoginName && !"".equalsIgnoreCase(_userLoginName)) {
+				// get and check logined user key
+				String _loginedUserKey = _appInterPriSharedPreferencesHelper
+						.getString(
+								SPUserLocalStorageAttributes.PF_USER_LOGINED_USERKEY
+										.name(), _userLSSPFileName);
+				if (null != _loginedUserKey
+						&& !"".equalsIgnoreCase(_loginedUserKey)) {
+					// load logined user from local storage and save to user
+					// manager
+					UserPedometerExtBean _loginedUser = new UserPedometerExtBean();
+					_loginedUser.setLoginName(_userLoginName);
+					_loginedUser.setUserKey(_loginedUserKey);
+					_loginedUser.setUserId(_lastLoginUserId);
+					_loginedUser
+							.setAvatarUrl(_appInterPriSharedPreferencesHelper
+									.getString(
+											SPUserLocalStorageAttributes.PF_USER_LOGINED_USERAVATARURL
+													.name(), _userLSSPFileName));
+					UserManager.getInstance().setLoginUser(_loginedUser);
+
+					// go to pedometer activity
+					_targetIntent = new Intent(SplashScreenActivity.this,
+							PedometerActivity.class);
+				} else {
+					// go to user account setting activity with last login user
+					// name
+					_targetIntent = new Intent(SplashScreenActivity.this,
+							UserAccountSettingActivity.class);
+					_targetIntent
+							.putExtra(
+									UserAccountSettingExtraData.UAS_LASTOPERATEUSER_LOGINNAME,
+									_userLoginName);
+				}
+			} else {
+				// go to user account setting activity
+				_targetIntent = new Intent(SplashScreenActivity.this,
+						UserAccountSettingActivity.class);
+			}
+		} else {
+			// go to user account setting activity
+			_targetIntent = new Intent(SplashScreenActivity.this,
+					UserAccountSettingActivity.class);
+		}
+
+		return _targetIntent;
 	}
 
 	// inner class

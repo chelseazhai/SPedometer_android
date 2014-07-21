@@ -29,6 +29,8 @@ import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSProgressDialog;
+import com.smartsport.spedometer.localstorage.AppInterPriSharedPreferencesHelper;
+import com.smartsport.spedometer.localstorage.pedometer.SPUserInfoLocalStorageAttributes;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.ISSBaseActivityResult;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
@@ -83,11 +85,23 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// get application internal private shared preferences helper instance
+		AppInterPriSharedPreferencesHelper _appInterPriSharedPreferencesHelper = AppInterPriSharedPreferencesHelper
+				.getInstance();
+
+		// generate user info local storage shared preferences file name, using
+		// logined user id
+		String _userInfoLSSPFileName = String.valueOf(loginUser.getUserId());
 		// load user info with step length and its calculate type from local
 		// storage
-		// test by ares
-		userStepLenCalcType = UserStepLenCalcType.MANUAL_CALC_SETPLEN;
-		//
+		userStepLength = _appInterPriSharedPreferencesHelper.getFloat(
+				SPUserInfoLocalStorageAttributes.USER_STEPLENGTH.name(),
+				_userInfoLSSPFileName);
+		userStepLenCalcType = UserStepLenCalcType
+				.getStepLenCalcType(_appInterPriSharedPreferencesHelper
+						.getInteger(
+								SPUserInfoLocalStorageAttributes.USER_STEPLENGTH_CALCTYPE
+										.name(), _userInfoLSSPFileName));
 
 		// set content view
 		setContentView(R.layout.activity_userinfo_setting);
@@ -413,7 +427,12 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 										: "");
 
 						// save user step length to local storage
-						//
+						AppInterPriSharedPreferencesHelper
+								.getInstance()
+								.putValue(
+										SPUserInfoLocalStorageAttributes.USER_STEPLENGTH
+												.name(), userStepLength,
+										String.valueOf(loginUser.getUserId()));
 						break;
 
 					default:
@@ -813,6 +832,16 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 		@Override
 		public void onCheckedChanged(CompoundButton buttonView,
 				boolean isChecked) {
+			// get application internal private shared preferences helper
+			// instance
+			AppInterPriSharedPreferencesHelper _appInterPriSharedPreferencesHelper = AppInterPriSharedPreferencesHelper
+					.getInstance();
+
+			// generate user info local storage shared preferences file name,
+			// using logined user id
+			String _userInfoLSSPFileName = String
+					.valueOf(loginUser.getUserId());
+
 			// check compound button checked
 			if (isChecked) {
 				// get, check user gender, age, height and weight
@@ -881,9 +910,23 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 					userStepLengthIndicatorImgView.setVisibility(View.GONE);
 				}
 
-				// save editor user step length
+				// auto calculate user step length
 				// test by ares
 				userStepLength = Float.parseFloat("22.0");
+
+				// save editor user step length and its calculate type to local
+				// storage
+				_appInterPriSharedPreferencesHelper
+						.putValue(
+								SPUserInfoLocalStorageAttributes.USER_STEPLENGTH
+										.name(), userStepLength,
+								_userInfoLSSPFileName);
+				_appInterPriSharedPreferencesHelper
+						.putValue(
+								SPUserInfoLocalStorageAttributes.USER_STEPLENGTH_CALCTYPE
+										.name(),
+								UserStepLenCalcType.AUTO_CALC_SETPLEN
+										.getValue(), _userInfoLSSPFileName);
 
 				// update user step length
 				userStepLengthTextView
@@ -899,6 +942,14 @@ public class UserInfoSettingActivity extends SSBaseActivity {
 
 				// show user step length indicator imageView
 				userStepLengthIndicatorImgView.setVisibility(View.VISIBLE);
+
+				// save editor user step length calculate type to local storage
+				_appInterPriSharedPreferencesHelper
+						.putValue(
+								SPUserInfoLocalStorageAttributes.USER_STEPLENGTH_CALCTYPE
+										.name(),
+								UserStepLenCalcType.MANUAL_CALC_SETPLEN
+										.getValue(), _userInfoLSSPFileName);
 			}
 		}
 
