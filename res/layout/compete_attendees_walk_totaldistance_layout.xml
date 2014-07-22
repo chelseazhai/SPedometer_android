@@ -1,7 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/holo_orange_dark" >
+    android:layout_height="match_parent" >
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/cwttd_unitDescription_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:shadowColor="@android:color/white"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="1"
+        android:text="@string/competeAttendees_walk_totalDistance_unitDescription"
+        android:textColor="@color/dark_gray"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <com.smartsport.spedometer.customwidget.SSChartBarGraph
+        android:id="@+id/cwttd_attendees_walkTotalDistance_chartBarGraph"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cwttd_unitDescription_textView"
+        android:layout_marginTop="10dp" />
+
+</RelativeLayout>

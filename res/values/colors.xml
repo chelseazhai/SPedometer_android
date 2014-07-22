@@ -18,4 +18,7 @@
     <color name="threequarters_lightgray_transparent">#C0C0C0C0</color>
     <color name="little_white_transparent">#F0FFFFFF</color>
 
+    <!-- chart color -->
+    <color name="chartcolor_cyan">#00FFFF</color>
+
 </resources>

@@ -26,4 +26,32 @@
         <attr name="android:inputType" />
     </declare-styleable>
 
+    <!-- smartsport chart line graph -->
+    <declare-styleable name="ss_chart_lineGraph">
+        <attr name="lineStrokeColor" format="color" />
+        <attr name="lineAxisColor" format="color" />
+        <attr name="lineStrokeWidth" format="dimension" />
+        <attr name="lineStrokeSpacing" format="dimension" />
+        <attr name="lineUseDip" format="boolean" />
+    </declare-styleable>
+
+    <!-- smartsport chart bar graph -->
+    <declare-styleable name="ss_chart_barGraph">
+        <attr name="barAxisColor" format="color" />
+        <attr name="orientation" format="enum">
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
+        </attr>
+        <attr name="barShowAxis" format="boolean" />
+        <attr name="barShowAxisLabel" format="boolean" />
+        <attr name="barShowText" format="boolean" />
+        <attr name="barShowPopup" format="boolean" />
+    </declare-styleable>
+
+    <!-- smartsport chart pie graph -->
+    <declare-styleable name="ss_chart_pieGraph">
+        <attr name="pieInnerCircleRatio" format="integer" />
+        <attr name="pieSlicePadding" format="dimension" />
+    </declare-styleable>
+
 </resources>

@@ -170,7 +170,9 @@
     <!-- compete attendees walk trend activity -->
     <string name="title_activity_competeAttendees_walkTrend" translatable="false">CompeteAttendeesWalkTrendActivity</string>
     <string name="competeAttendees_walk_totalDistance">行走总里程</string>
+    <string name="competeAttendees_walk_totalDistance_unitDescription">单位：公里</string>
     <string name="competeAttendees_walk_speed">行走速度</string>
+    <string name="competeAttendees_walk_speed_unitDescription">单位：公里/小时</string>
 
     <!-- within group compete invite info setting activity -->
     <string name="title_activity_withinGroupCompeteInviteInfo_setting">WithinGroupCompeteInviteInfoSettingActivity</string>

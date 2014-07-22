@@ -3,6 +3,7 @@
  */
 package com.smartsport.spedometer.group.compete;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -16,6 +17,11 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.customwidget.SSChartBarGraph;
+import com.smartsport.spedometer.customwidget.SSChartBarGraph.SSChartBar;
+import com.smartsport.spedometer.customwidget.SSChartLineGraph;
+import com.smartsport.spedometer.customwidget.SSChartLineGraph.SSChartLine;
+import com.smartsport.spedometer.customwidget.SSChartLineGraph.SSChartLinePoint;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.user.UserManager;
@@ -204,6 +210,58 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 			if (null == walkTotalDistanceBarChart) {
 				walkTotalDistanceBarChart = ((ViewStub) findViewById(R.id.cawt_attendees_walkTotalDistance_barChart_viewStub))
 						.inflate();
+
+				// test by ares
+				ArrayList<SSChartBar> aBars = new ArrayList<SSChartBar>();
+				SSChartBar bar = new SSChartBar();
+				bar.setColor(getResources().getColor(
+						android.R.color.holo_green_light));
+				bar.setSelectedColor(getResources().getColor(
+						android.R.color.holo_orange_light));
+				bar.setName("Test1");
+				bar.setValue(1000);
+				bar.setValueString("1,000");
+				aBars.add(bar);
+				bar = new SSChartBar();
+				bar.setColor(getResources().getColor(
+						android.R.color.holo_orange_dark));
+				bar.setName("Test2");
+				bar.setValue(500);
+				bar.setValueString("500");
+				aBars.add(bar);
+				bar = new SSChartBar();
+				bar.setColor(getResources().getColor(
+						android.R.color.holo_purple));
+				bar.setName("Test3");
+				bar.setValue(1500);
+				bar.setValueString("1,500");
+				aBars.add(bar);
+				bar = new SSChartBar();
+				bar.setColor(getResources().getColor(
+						android.R.color.holo_blue_dark));
+				bar.setName("Test4");
+				bar.setValue(900);
+				bar.setValueString("900");
+				aBars.add(bar);
+				bar = new SSChartBar();
+				bar.setColor(getResources().getColor(
+						android.R.color.holo_red_dark));
+				bar.setName("Test5");
+				bar.setValue(1400);
+				bar.setValueString("1,400");
+				aBars.add(bar);
+				bar = new SSChartBar();
+				bar.setColor(getResources().getColor(
+						android.R.color.darker_gray));
+				bar.setName("Test6");
+				bar.setValue(300);
+				bar.setValueString("300");
+				aBars.add(bar);
+
+				final SSChartBarGraph barGraph = (SSChartBarGraph) walkTotalDistanceBarChart
+						.findViewById(R.id.cwttd_attendees_walkTotalDistance_chartBarGraph);
+				// bg = barGraph;
+				barGraph.setBars(aBars);
 			} else {
 				walkTotalDistanceBarChart.setVisibility(View.VISIBLE);
 			}
@@ -225,6 +283,58 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 			if (null == walkSpeedLineChart) {
 				walkSpeedLineChart = ((ViewStub) findViewById(R.id.cawt_attendees_walkSpeed_lineChart_viewStub))
 						.inflate();
+
+				// test by ares
+				SSChartLine l = new SSChartLine();
+//				l.setUsingDips(true);
+				SSChartLinePoint p = new SSChartLinePoint();
+				p.setX(0);
+				p.setY(3);
+				p.setSelectedColor(getResources().getColor(
+						android.R.color.holo_orange_light));
+				l.addPoint(p);
+				p = new SSChartLinePoint();
+				p.setX(4);
+				p.setY(5);
+				l.addPoint(p);
+				p = new SSChartLinePoint();
+				p.setX(8);
+				p.setY(4);
+				l.addPoint(p);
+				p = new SSChartLinePoint();
+				p.setX(12);
+				p.setY(8);
+				l.addPoint(p);
+				l.setColor(getResources().getColor(
+						android.R.color.holo_orange_dark));
+				SSChartLine l1 = new SSChartLine();
+				l1.setUsingDips(true);
+				p = new SSChartLinePoint();
+				p.setX(0);
+				p.setY(1);
+				l1.addPoint(p);
+				p = new SSChartLinePoint();
+				p.setX(4);
+				p.setY(6);
+				l1.addPoint(p);
+				p = new SSChartLinePoint();
+				p.setX(8);
+				p.setY(8);
+				l1.addPoint(p);
+				p = new SSChartLinePoint();
+				p.setX(12);
+				p.setY(5);
+				l1.addPoint(p);
+				l1.setColor(getResources().getColor(
+						android.R.color.holo_green_dark));
+
+				SSChartLineGraph li = (SSChartLineGraph) walkSpeedLineChart
+						.findViewById(R.id.cwts_attendees_walkSpeed_chartLineGraph);
+				li.setUsingDips(true);
+				li.addLine(l);
+				li.addLine(l1);
+				li.setRangeX(0, 15);
+				li.setRangeY(0, 10);
 			} else {
 				walkSpeedLineChart.setVisibility(View.VISIBLE);
 			}

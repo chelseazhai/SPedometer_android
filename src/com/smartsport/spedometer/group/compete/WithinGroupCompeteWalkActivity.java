@@ -141,7 +141,7 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 			competeGroupStartTime = _extraData
 					.getLong(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_STARTTIME);
 			// test by ares
-			competeGroupStartTime -= 3 * SECONDS_PER_MINUTE
+			competeGroupStartTime -= 4 * SECONDS_PER_MINUTE
 					* MILLISECONDS_PER_SECOND;
 			competeGroupDurationTime = _extraData
 					.getInt(WithinGroupCompeteWalkExtraData.WIGCW_COMPETEGROUP_DURATIONTIME);

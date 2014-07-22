@@ -30,4 +30,14 @@
         <item>@string/withinGroupCompete_inviteInfo_durationTime_label</item>
     </string-array>
 
+    <!-- within group compete attendees walk trend chart color array -->
+    <string-array name="competeAttendees_walkTrend_chartColors" translatable="false">
+        <item>@android:color/holo_red_dark</item>
+        <item>@android:color/holo_orange_dark</item>
+        <item>@android:color/holo_green_dark</item>
+        <item>@color/chartcolor_cyan</item>
+        <item>@android:color/holo_blue_dark</item>
+        <item>@android:color/holo_purple</item>
+    </string-array>
+
 </resources>
