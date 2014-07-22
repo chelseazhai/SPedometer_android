@@ -286,7 +286,7 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 
 				// test by ares
 				SSChartLine l = new SSChartLine();
-//				l.setUsingDips(true);
+				l.setUsingDips(true);
 				SSChartLinePoint p = new SSChartLinePoint();
 				p.setX(0);
 				p.setY(3);

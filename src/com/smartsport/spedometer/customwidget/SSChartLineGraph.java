@@ -91,7 +91,7 @@ public class SSChartLineGraph extends View {
 		mAxisColor = a.getColor(R.styleable.ss_chart_lineGraph_lineAxisColor,
 				Color.LTGRAY);
 		mStrokeWidth = a.getDimension(
-				R.styleable.ss_chart_lineGraph_lineStrokeWidth, 2);
+				R.styleable.ss_chart_lineGraph_lineStrokeWidth, 1);
 		mStrokeSpacing = a.getDimensionPixelSize(
 				R.styleable.ss_chart_lineGraph_lineStrokeSpacing, 10);
 		mUseDips = a.getBoolean(R.styleable.ss_chart_lineGraph_lineUseDip,
@@ -486,9 +486,14 @@ public class SSChartLineGraph extends View {
 
 					int outerRadius;
 					if (line.isUsingDips()) {
-						outerRadius = getPixelForDip(line.getStrokeWidth() + 4);
+						// outerRadius = getPixelForDip(line.getStrokeWidth() +
+						// 4);
+						// test by ares
+						outerRadius = getPixelForDip(line.getStrokeWidth() + 2);
 					} else {
-						outerRadius = line.getStrokeWidth() + 4;
+						// outerRadius = line.getStrokeWidth() + 4;
+						// test by ares
+						outerRadius = line.getStrokeWidth() + 2;
 					}
 					int innerRadius = outerRadius / 2;
 
@@ -500,7 +505,7 @@ public class SSChartLineGraph extends View {
 					// Create selection region
 					Path path = p.getPath();
 					path.reset();
-//					outerRadius *= 2;
+					outerRadius *= 2;
 					path.addCircle(xPixels, yPixels, outerRadius, Direction.CW);
 					p.getRegion().set((int) (xPixels - outerRadius),
 							(int) (yPixels - outerRadius),
