@@ -105,9 +105,10 @@ public class SSProgressDialog extends ProgressDialog {
 			boolean indeterminate, boolean cancelable,
 			OnCancelListener cancelListener) {
 		// new smartsport progress dialog using default theme
-		SSProgressDialog _progressDialog = new SSProgressDialog(context);
 		// SSProgressDialog _progressDialog = new SSProgressDialog(context,
-		// R.style.ProgressDialogTheme);
+		// R.style.SSProgressDialogTheme);
+		// test by ares
+		SSProgressDialog _progressDialog = new SSProgressDialog(context);
 
 		// set the progress dialog attributes
 		_progressDialog.setMessage(tip);

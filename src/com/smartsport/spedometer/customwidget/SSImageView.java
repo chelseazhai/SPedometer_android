@@ -293,7 +293,7 @@ public class SSImageView extends ImageView {
 			imgViewRadius = _radiusField
 					.getFloat(((GradientDrawable) bgDrawable)
 							.getConstantState());
-			LOGGER.info("@@, ImageView background drawable radius = "
+			LOGGER.info("ImageView background drawable radius = "
 					+ imgViewRadius);
 		} catch (ClassNotFoundException e) {
 			LOGGER.error("Found GradientState class error, exception message = "

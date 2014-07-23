@@ -1003,11 +1003,16 @@ public class WithinGroupCompeteWalkActivity extends SSBaseActivity {
 			// define within group compete attendees walk trend extra data map
 			Map<String, Object> _extraMap = new HashMap<String, Object>();
 
-			// put within group compete group id and attendees user info with
-			// status list to extra data map as param
+			// put within group compete group id, walk duration time and
+			// attendees user info with status list to extra data map as param
 			_extraMap.put(
 					CompeteAttendeesWalkTrendExtraData.CAWT_COMPETEGROUP_ID,
 					competeGroupId);
+			_extraMap
+					.put(CompeteAttendeesWalkTrendExtraData.CAWT_COMPETEGROUP_WALKDURATIONTIME,
+							(int) (competeGroupDurationTime
+									* SECONDS_PER_MINUTE - walkRemainTimeCountDownTimer
+									.getRemainTime() / MILLISECONDS_PER_SECOND));
 			_extraMap
 					.put(CompeteAttendeesWalkTrendExtraData.CAWT_COMPETEGROUP_ATTENDEES,
 							inviteesUserInfoWithMemberStatusList);

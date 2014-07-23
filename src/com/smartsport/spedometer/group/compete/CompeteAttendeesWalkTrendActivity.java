@@ -11,8 +11,11 @@ import java.util.TimerTask;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewStub;
+import android.widget.Chronometer;
+import android.widget.Chronometer.OnChronometerTickListener;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
@@ -51,6 +54,12 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 	// get within group or groups compete walk info timer task
 	private TimerTask getCompeteWalkInfoTimerTask;
 
+	// within group or groups compete attendees walk duration time
+	private int walkDurationTime;
+
+	// within group or groups compete attendees walk duration time chronometer
+	private Chronometer walkDurationTimeChronometer;
+
 	// within group or groups compete model
 	private WithinGroupCompeteModel withinGroupCompeteModel = WithinGroupCompeteModel
 			.getInstance();
@@ -67,8 +76,11 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 		// get and check the extra data
 		final Bundle _extraData = getIntent().getExtras();
 		if (null != _extraData) {
-			// get the within group or groups compete group attendees user info
-			// with status list
+			// get the within group or groups compete group walk duration time
+			// and attendees user info with status list
+			walkDurationTime = _extraData
+					.getInt(CompeteAttendeesWalkTrendExtraData.CAWT_COMPETEGROUP_WALKDURATIONTIME,
+							0);
 			//
 		}
 
@@ -176,6 +188,24 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 		// update the within group or groups compete attendees walk trend
 		updateAttendeesWalkTrend(_attendeesWalkTrendSegRadioGroup
 				.getCheckedRadioButtonId());
+
+		// get compete attendees walk duration time chronometer
+		walkDurationTimeChronometer = (Chronometer) findViewById(R.id.cawt_walkDuration_chronometer);
+
+		// set its text
+		walkDurationTimeChronometer.setText(String.format(
+				getString(R.string.competeAttendees_walkDurationTime_format),
+				0, 0));
+
+		// set its on chronometer tick listener
+		walkDurationTimeChronometer
+				.setOnChronometerTickListener(new CompeteAttendeesWalkDurationTimeChronometerOnChronometerTickListener());
+
+		// set compete attendees walk duration time chronometer base and start
+		// it
+		walkDurationTimeChronometer.setBase(SystemClock.elapsedRealtime()
+				- walkDurationTime * MILLISECONDS_PER_SECOND);
+		walkDurationTimeChronometer.start();
 	}
 
 	@Override
@@ -187,6 +217,12 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 			getCompeteWalkInfoTimerTask.cancel();
 
 			getCompeteWalkInfoTimerTask = null;
+		}
+
+		// check and stop within group compete attendees walk duration time
+		// chronometer
+		if (null != walkDurationTimeChronometer) {
+			walkDurationTimeChronometer.stop();
 		}
 	}
 
@@ -359,9 +395,10 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 	 */
 	public static final class CompeteAttendeesWalkTrendExtraData {
 
-		// the within group or groups compete group id and attendees user info
-		// with status list
+		// the within group or groups compete group id, walk duration time and
+		// attendees user info with status list
 		public static final String CAWT_COMPETEGROUP_ID = "competeAttendeesWalkTrend_competeGroup_Id";
+		public static final String CAWT_COMPETEGROUP_WALKDURATIONTIME = "competeAttendeesWalkTrend_competeGroup_walkDurationTime";
 		public static final String CAWT_COMPETEGROUP_ATTENDEES = "competeAttendeesWalkTrend_competeGroup_attendeesList";
 
 	}
@@ -380,6 +417,38 @@ public class CompeteAttendeesWalkTrendActivity extends SSBaseActivity {
 		public void onCheckedChanged(RadioGroup group, int checkedId) {
 			// update the within group or groups compete attendees walk trend
 			updateAttendeesWalkTrend(checkedId);
+		}
+
+	}
+
+	/**
+	 * @name 
+	 *       CompeteAttendeesWalkDurationTimeChronometerOnChronometerTickListener
+	 * @descriptor within group compete attendees walk duration time chronometer
+	 *             on chronometer tick listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class CompeteAttendeesWalkDurationTimeChronometerOnChronometerTickListener
+			implements OnChronometerTickListener {
+
+		// seconds per minute
+		private final int SECONDS_PER_MINUTED = 60;
+
+		@Override
+		public void onChronometerTick(Chronometer chronometer) {
+			// get chronometer run duration time(seconds)
+			long _chronometerRunDurationTime = (SystemClock.elapsedRealtime() - chronometer
+					.getBase()) / MILLISECONDS_PER_SECOND;
+
+			// set user walk duration time chronometer text
+			chronometer
+					.setText(String
+							.format(getString(R.string.competeAttendees_walkDurationTime_format),
+									_chronometerRunDurationTime
+											/ SECONDS_PER_MINUTED,
+									_chronometerRunDurationTime
+											% SECONDS_PER_MINUTED));
 		}
 
 	}

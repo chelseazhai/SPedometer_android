@@ -12,12 +12,12 @@
 
     <!-- register and login -->
     <!-- smartsport user login form item -->
-    <string name="ssulf_userLoginFormItem_label_ImageView_contentDescription" translatable="false">this is smart sport user login form item label icon imageView</string>
+    <string name="ssulf_userLoginFormItem_label_imageView_contentDescription" translatable="false">this is smart sport user login form item label icon imageView</string>
 
     <!-- user account setting activity -->
     <string name="title_activity_userAccount_setting" translatable="false">UserAccountSettingActivity</string>
     <string name="appVersion_format" translatable="false">v%s</string>
-    <string name="appLogo_ImageView_contentDescription" translatable="false">this is smart sport pedometer logo imageView</string>
+    <string name="appLogo_imageView_contentDescription" translatable="false">this is smart sport pedometer logo imageView</string>
     <string name="userLogin_loginName_userInputEditText_hint">用户名</string>
     <string name="userLogin_loginPwd_userInputEditText_hint">密码</string>
     <string name="userLogin_button_text">登录</string>
@@ -36,6 +36,11 @@
 
     <!-- smartsport progress dialog -->
     <string name="sspd_progress_tip">正在处理，请稍候&#8230;</string>
+
+    <!-- smartsport alter dialog -->
+    <string name="ssad_icon_imageView_contentDescription" translatable="false">this is smart sport alter dialog icon imageView</string>
+    <string name="ssad_positiveOrNeutral_button_text">确定</string>
+    <string name="ssad_negative_button_text">取消</string>
 
     <!-- pedometer activity -->
     <string name="title_activity_pedometer" translatable="false">PedometerActivity</string>
@@ -167,13 +172,6 @@
     <string name="walkInviteGroup_willStartSoon">即将开始</string>
     <string name="walkInviteGroup_isInvalid">约走已失效</string>
 
-    <!-- compete attendees walk trend activity -->
-    <string name="title_activity_competeAttendees_walkTrend" translatable="false">CompeteAttendeesWalkTrendActivity</string>
-    <string name="competeAttendees_walk_totalDistance">行走总里程</string>
-    <string name="competeAttendees_walk_totalDistance_unitDescription">单位：公里</string>
-    <string name="competeAttendees_walk_speed">行走速度</string>
-    <string name="competeAttendees_walk_speed_unitDescription">单位：公里/小时</string>
-
     <!-- within group compete invite info setting activity -->
     <string name="title_activity_withinGroupCompeteInviteInfo_setting">WithinGroupCompeteInviteInfoSettingActivity</string>
     <string name="withinGroupCompeteInviteInfoSetting_activity_title">安排组内竞赛</string>
@@ -205,6 +203,14 @@
     <string name="withinGroupCompeteGroup_startReaminTime_format" formatted="false" translatable="false">%02d:%02d</string>
     <string name="withinGroupCompeteGroup_isInvalid">多人组内竞赛已失效</string>
     <string name="withinGroupCompeteGroup_stopReaminTime_format" formatted="false" translatable="false">%02d\'%02d\"</string>
+
+    <!-- compete attendees walk trend activity -->
+    <string name="title_activity_competeAttendees_walkTrend" translatable="false">CompeteAttendeesWalkTrendActivity</string>
+    <string name="competeAttendees_walk_totalDistance">行走总里程</string>
+    <string name="competeAttendees_walk_totalDistance_unitDescription">单位：公里</string>
+    <string name="competeAttendees_walk_speed">行走速度</string>
+    <string name="competeAttendees_walk_speed_unitDescription">单位：公里/小时</string>
+    <string name="competeAttendees_walkDurationTime_format" formatted="false" translatable="false">%02d\'%02d\"</string>
 
     <!-- nearby strangers activity -->
     <string name="title_activity_nearby_strangers" translatable="false">NearbyStrangersActivity</string>

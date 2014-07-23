@@ -41,15 +41,23 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
-    <!-- progress dialog theme -->
-    <style name="ProgressDialogTheme" parent="@android:style/Theme.Dialog">
+    <!-- Smartsport progress dialog theme -->
+    <style name="SSProgressDialogTheme" parent="@android:style/Theme.Dialog">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <!-- Style -->
-    <style name="ActionSheetAnimationPopupStyle">
+    <!-- Smartsport alter dialog theme -->
+    <style name="SSAlterDialogTheme" parent="@android:style/Theme.Dialog">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <!-- Smartsport action sheet animation popup style -->
+    <style name="SSActionSheetAnimationPopupStyle">
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>

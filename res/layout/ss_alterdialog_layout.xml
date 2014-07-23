@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ss_alterdialog_view_bg"
+    tools:context=".customwidget.SSAlterDialog" >
+
+    <LinearLayout
+        android:id="@+id/ssad_header_linearLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="6dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="6dp"
+        android:visibility="visible" >
+
+        <ImageView
+            android:id="@+id/ssad_icon_imageView"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:contentDescription="@string/ssad_icon_imageView_contentDescription"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_launcher" />
+
+        <TextView
+            android:id="@+id/ssad_title_textView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:ellipsize="end"
+            android:shadowColor="@android:color/white"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:singleLine="true"
+            android:text="好享走提示"
+            android:textColor="@color/dark_gray"
+            android:textSize="17sp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/ssad_divider_view"
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:layout_below="@id/ssad_header_linearLayout"
+        android:background="@android:color/holo_green_light" />
+
+    <FrameLayout
+        android:id="@+id/ssad_contentView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ssad_divider_view" >
+
+        <TextView
+            android:id="@+id/ssad_message_textView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="7dp"
+            android:lineSpacingExtra="2dp"
+            android:text="数据库货到付款合适的时间到恢复开会水电费科技时代框架返回SD交付黑客技术都快结婚反馈时间到返回开始"
+            android:textSize="15sp"
+            android:visibility="visible" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/ssad_operate_linearLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ssad_contentView"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp" >
+
+        <Button
+            android:id="@+id/ssad_positiveOrNeutral_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/ss_alterdialog_positiveneutral_button_bg"
+            android:text="@string/ssad_positiveOrNeutral_button_text"
+            android:textColor="@android:color/white"
+            android:textSize="17sp" />
+
+        <Button
+            android:id="@+id/ssad_negative_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/ss_alterdialog_negative_button_bg"
+            android:text="@string/ssad_negative_button_text"
+            android:textSize="17sp"
+            android:visibility="visible" />
+    </LinearLayout>
+
+</RelativeLayout>

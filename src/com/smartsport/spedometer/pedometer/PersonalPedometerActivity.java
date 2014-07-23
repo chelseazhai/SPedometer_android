@@ -29,8 +29,12 @@ import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
 import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
 import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
+import com.smartsport.spedometer.localstorage.AppInterPriSharedPreferencesHelper;
+import com.smartsport.spedometer.localstorage.pedometer.SPUserInfoLocalStorageAttributes;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.pedometer.PersonalWalkResultActivity.PersonalWalkResultExtraData;
+import com.smartsport.spedometer.user.UserManager;
+import com.smartsport.spedometer.user.UserPedometerExtBean;
 import com.smartsport.spedometer.user.info.UserInfoBean;
 import com.smartsport.spedometer.user.info.UserInfoModel;
 import com.smartsport.spedometer.utils.SSLogger;
@@ -613,8 +617,14 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 				walkPathPoints.add(walkPathPoint);
 
 				// get local storage user step length
-				// test by ares
-				Float _userStepLength = Float.parseFloat("62.0");
+				Float _userStepLength = AppInterPriSharedPreferencesHelper
+						.getInstance()
+						.getFloat(
+								SPUserInfoLocalStorageAttributes.USER_STEPLENGTH
+										.name(),
+								String.valueOf(((UserPedometerExtBean) UserManager
+										.getInstance().getLoginUser())
+										.getUserId()));
 
 				// increase walk total distance and total steps count
 				this.walkDistance += walkDistance;

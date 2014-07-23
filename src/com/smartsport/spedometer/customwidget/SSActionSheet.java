@@ -166,7 +166,7 @@ public abstract class SSActionSheet extends PopupWindow {
 		animationShowAndDismiss = true;
 
 		// set default enter and exit animation
-		setAnimationStyle(R.style.ActionSheetAnimationPopupStyle);
+		setAnimationStyle(R.style.SSActionSheetAnimationPopupStyle);
 
 		// set animation for all child views of content view for showing
 		for (int i = 0; i < contentView.getChildCount(); i++) {

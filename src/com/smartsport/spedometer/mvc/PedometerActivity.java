@@ -1,5 +1,6 @@
 package com.smartsport.spedometer.mvc;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -7,13 +8,14 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.customwidget.SSAlterDialog;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
 import com.smartsport.spedometer.group.ScheduleWalkInviteGroupsActivity;
 import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteInfoSettingActivity;
 import com.smartsport.spedometer.history.HistoryInfoActivity;
-import com.smartsport.spedometer.pedometer.PersonalPedometerActivity;
 import com.smartsport.spedometer.strangersocial.NearbyStrangersActivity;
 import com.smartsport.spedometer.user.info.setting.UserInfoSettingActivity;
+import com.smartsport.spedometer.utils.SSLogger;
 
 /**
  * @name PedometerActivity
@@ -22,6 +24,9 @@ import com.smartsport.spedometer.user.info.setting.UserInfoSettingActivity;
  * @version 1.0
  */
 public class PedometerActivity extends SSBaseActivity {
+
+	// logger
+	private static final SSLogger LOGGER = new SSLogger(PedometerActivity.class);
 
 	// walk invite and nearby strangers button
 	private Button walkInviteBtn;
@@ -60,25 +65,29 @@ public class PedometerActivity extends SSBaseActivity {
 		_personalPedometerBtn
 				.setOnClickListener(new PersonalPedometerBtnOnClickListener());
 
+		// define pedometer social function button on click listener
+		SocialFunctionBtnOnClickListener _pedometerSocialFunctionBtnOnClickListener = new SocialFunctionBtnOnClickListener();
+
 		// get walk invite button
 		walkInviteBtn = (Button) findViewById(R.id.pfc_walkInvite_button);
 
 		// set its on click listener
-		walkInviteBtn.setOnClickListener(new WalkInviteBtnOnClickListener());
+		walkInviteBtn
+				.setOnClickListener(_pedometerSocialFunctionBtnOnClickListener);
 
 		// get within group compete invite button
 		Button _withinGroupCompeteBtn = (Button) findViewById(R.id.pfc_withinGroupCompete_button);
 
 		// set its on click listener
 		_withinGroupCompeteBtn
-				.setOnClickListener(new WithinGroupCompeteInviteBtnOnClickListener());
+				.setOnClickListener(_pedometerSocialFunctionBtnOnClickListener);
 
 		// get nearby stranger button
 		nearbyStrangersBtn = (Button) findViewById(R.id.pfc_nearbyStrangers_button);
 
 		// set its on click listener
 		nearbyStrangersBtn
-				.setOnClickListener(new GetNearbyStrangersBtnOnClickListener());
+				.setOnClickListener(_pedometerSocialFunctionBtnOnClickListener);
 
 		// get history info button
 		Button _historyInfoBtn = (Button) findViewById(R.id.pfc_historyRecord_button);
@@ -114,56 +123,49 @@ public class PedometerActivity extends SSBaseActivity {
 
 		@Override
 		public void onClick(View v) {
+			//
+			new SSAlterDialog.SSAlterDialogBuilder(PedometerActivity.this)
+					.setView(R.layout.ss_alterdialog_layout).show();
+
 			// go to personal pedometer activity
-			presentActivity(PersonalPedometerActivity.class);
+			// presentActivity(PersonalPedometerActivity.class);
 		}
 
 	}
 
 	/**
-	 * @name WalkInviteBtnOnClickListener
-	 * @descriptor walk invite button on click listener
+	 * @name SocialFunctionBtnOnClickListener
+	 * @descriptor social function button on click listener
 	 * @author Ares
 	 * @version 1.0
 	 */
-	class WalkInviteBtnOnClickListener implements OnClickListener {
+	class SocialFunctionBtnOnClickListener implements OnClickListener {
 
 		@Override
 		public void onClick(View v) {
-			// go to schedule walk invite groups activity
-			pushActivity(ScheduleWalkInviteGroupsActivity.class);
-		}
+			// define pedometer social function activity class
+			Class<? extends Activity> _pedometerSFACls = null;
 
-	}
+			// check clicked button id
+			switch (v.getId()) {
+			case R.id.pfc_walkInvite_button:
+				// schedule walk invite groups activity
+				_pedometerSFACls = ScheduleWalkInviteGroupsActivity.class;
+				break;
 
-	/**
-	 * @name WithinGroupCompeteInviteBtnOnClickListener
-	 * @descriptor within group compete invite button on click listener
-	 * @author Ares
-	 * @version 1.0
-	 */
-	class WithinGroupCompeteInviteBtnOnClickListener implements OnClickListener {
+			case R.id.pfc_withinGroupCompete_button:
+				// within group compete invite info setting activity
+				_pedometerSFACls = WithinGroupCompeteInviteInfoSettingActivity.class;
+				break;
 
-		@Override
-		public void onClick(View v) {
-			// go to within group compete invite info setting activity
-			pushActivity(WithinGroupCompeteInviteInfoSettingActivity.class);
-		}
+			case R.id.pfc_nearbyStrangers_button:
+				// nearby strangers activity
+				_pedometerSFACls = NearbyStrangersActivity.class;
+				break;
+			}
 
-	}
-
-	/**
-	 * @name GetNearbyStrangersBtnOnClickListener
-	 * @descriptor get nearby strangers button on click listener
-	 * @author Ares
-	 * @version 1.0
-	 */
-	class GetNearbyStrangersBtnOnClickListener implements OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			// go to nearby strangers activity
-			pushActivity(NearbyStrangersActivity.class);
+			// go to pedometer social function activity
+			pushActivity(_pedometerSFACls);
 		}
 
 	}
