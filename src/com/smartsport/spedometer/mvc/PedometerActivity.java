@@ -8,14 +8,13 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import com.smartsport.spedometer.R;
-import com.smartsport.spedometer.customwidget.SSAlterDialog;
 import com.smartsport.spedometer.customwidget.SSBNavImageBarButtonItem;
 import com.smartsport.spedometer.group.ScheduleWalkInviteGroupsActivity;
 import com.smartsport.spedometer.group.compete.WithinGroupCompeteInviteInfoSettingActivity;
 import com.smartsport.spedometer.history.HistoryInfoActivity;
+import com.smartsport.spedometer.pedometer.PersonalPedometerActivity;
 import com.smartsport.spedometer.strangersocial.NearbyStrangersActivity;
 import com.smartsport.spedometer.user.info.setting.UserInfoSettingActivity;
-import com.smartsport.spedometer.utils.SSLogger;
 
 /**
  * @name PedometerActivity
@@ -24,9 +23,6 @@ import com.smartsport.spedometer.utils.SSLogger;
  * @version 1.0
  */
 public class PedometerActivity extends SSBaseActivity {
-
-	// logger
-	private static final SSLogger LOGGER = new SSLogger(PedometerActivity.class);
 
 	// walk invite and nearby strangers button
 	private Button walkInviteBtn;
@@ -123,12 +119,8 @@ public class PedometerActivity extends SSBaseActivity {
 
 		@Override
 		public void onClick(View v) {
-			//
-			new SSAlterDialog.SSAlterDialogBuilder(PedometerActivity.this)
-					.setView(R.layout.ss_alterdialog_layout).show();
-
 			// go to personal pedometer activity
-			// presentActivity(PersonalPedometerActivity.class);
+			presentActivity(PersonalPedometerActivity.class);
 		}
 
 	}

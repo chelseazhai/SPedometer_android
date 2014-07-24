@@ -37,10 +37,10 @@
     <!-- smartsport progress dialog -->
     <string name="sspd_progress_tip">正在处理，请稍候&#8230;</string>
 
-    <!-- smartsport alter dialog -->
-    <string name="ssad_icon_imageView_contentDescription" translatable="false">this is smart sport alter dialog icon imageView</string>
-    <string name="ssad_positiveOrNeutral_button_text">确定</string>
-    <string name="ssad_negative_button_text">取消</string>
+    <!-- smartsport alert dialog -->
+    <string name="ssad_icon_imageView_contentDescription" translatable="false">this is smart sport alert dialog icon imageView</string>
+    <string name="ssad_default_title_tip">享走路提示</string>
+    <string name="ssad_neutral_button_text">好的</string>
 
     <!-- pedometer activity -->
     <string name="title_activity_pedometer" translatable="false">PedometerActivity</string>
@@ -73,6 +73,9 @@
     <string name="walkInfo_speed_value_format">%.2f</string>
     <string name="walkStart_button_text">开始</string>
     <string name="walkStop_button_text">结束</string>
+    <string name="walkRecord_save_alertDialog_message">您需要保存此次运动记录嘛？</string>
+    <string name="walkRecord_save_alertDialog_positiveBtn_text">保存</string>
+    <string name="walkRecord_save_alertDialog_negativeBtn_text">放弃</string>
 
     <!-- personal walk result activity -->
     <string name="title_activity_personalWalkResult" translatable="false">PersonalWalkResultActivity</string>

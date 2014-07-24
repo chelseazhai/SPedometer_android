@@ -201,7 +201,7 @@ public class AppLaunchModel {
 									"Application launch target intent is null")
 							.setNegativeButton(
 									"ok",
-									new NullTargetIntentAlterDlgNegativeBtnOnClickListener())
+									new NullTargetIntentAlertDlgNegativeBtnOnClickListener())
 							.create();
 
 					// show application launch target intent null alert dialog
@@ -226,13 +226,13 @@ public class AppLaunchModel {
 
 		// inner class
 		/**
-		 * @name NullTargetIntentAlterDlgNegativeBtnOnClickListener
-		 * @descriptor null target intent alter dialog negative button on click
+		 * @name NullTargetIntentAlertDlgNegativeBtnOnClickListener
+		 * @descriptor null target intent alert dialog negative button on click
 		 *             listener
 		 * @author Ares
 		 * @version 1.0
 		 */
-		class NullTargetIntentAlterDlgNegativeBtnOnClickListener implements
+		class NullTargetIntentAlertDlgNegativeBtnOnClickListener implements
 				OnClickListener {
 
 			@Override

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ss_alertdialog_view_bg"
+    android:paddingTop="10dp"
+    tools:context=".customwidget.SSAlertDialog" >
+
+    <RelativeLayout
+        android:id="@+id/ssad_header_relativeLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" >
+
+        <LinearLayout
+            android:id="@+id/ssad_title_linearLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="6dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="6dp" >
+
+            <ImageView
+                android:id="@+id/ssad_icon_imageView"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginRight="16dp"
+                android:contentDescription="@string/ssad_icon_imageView_contentDescription"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_launcher"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/ssad_title_textView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:ellipsize="end"
+                android:shadowColor="@android:color/white"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:singleLine="true"
+                android:text="@string/ssad_default_title_tip"
+                android:textColor="@color/dark_gray"
+                android:textSize="17sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:layout_below="@id/ssad_title_linearLayout"
+            android:background="@android:color/holo_orange_dark" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/ssad_contentView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ssad_header_relativeLayout"
+        android:background="@android:color/white"
+        android:paddingBottom="6dp"
+        android:paddingTop="6dp"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/ssad_message_textView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="12dp"
+            android:lineSpacingExtra="2dp"
+            android:textSize="18sp" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/ssad_operate_linearLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ssad_contentView"
+        android:background="@drawable/ss_alertdialog_operateview_bg"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp" >
+
+        <Button
+            android:id="@+id/ssad_negative_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/ss_alertdialog_negative_button_bg"
+            android:textColor="@color/dark_gray"
+            android:textSize="17sp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/ssad_positiveOrNeutral_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/ss_alertdialog_neutral_button_bg"
+            android:text="@string/ssad_neutral_button_text"
+            android:textSize="17sp" />
+    </LinearLayout>
+
+</RelativeLayout>

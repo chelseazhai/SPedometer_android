@@ -48,8 +48,8 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <!-- Smartsport alter dialog theme -->
-    <style name="SSAlterDialogTheme" parent="@android:style/Theme.Dialog">
+    <!-- Smartsport alert dialog theme -->
+    <style name="SSAlertDialogTheme" parent="@android:style/Theme.Dialog">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>

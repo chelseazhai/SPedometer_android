@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +28,7 @@ import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.services.core.LatLonPoint;
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.customwidget.SSAlertDialogBuilder;
 import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
 import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
 import com.smartsport.spedometer.localstorage.AppInterPriSharedPreferencesHelper;
@@ -558,32 +560,20 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 						break;
 					}
 
-					// define walk invite walk extra data map
-					Map<String, Object> _extraMap = new HashMap<String, Object>();
-
-					// put walk start, stop time, walk path location point list
-					// and user walk result to extra data map as param
-					_extraMap
-							.put(PersonalWalkResultExtraData.PWR_USER_WALK_STARTTIME,
-									walkStratTime);
-					_extraMap
-							.put(PersonalWalkResultExtraData.PWR_USER_WALK_STOPTIME,
-									walkStratTime
-											+ (SystemClock.elapsedRealtime() - walkDurationTimeChronometer
-													.getBase())
-											/ MILLISECONDS_PER_SECOND);
-					_extraMap
-							.put(PersonalWalkResultExtraData.PWR_USER_WALKPATH_LOCATIONPOINTS,
-									walkPathPoints);
-					// test by ares
-					_extraMap.put(
-							PersonalWalkResultExtraData.PWR_USER_WALKRESULT,
-							new UserInfoGroupResultBean());
-
-					// go to personal pedometer user walk result activity with
-					// extra data map
-					dismissPushActivity(PersonalWalkResultActivity.class,
-							_extraMap);
+					// define walk record save alert dialog on click listener
+					// and show the alert dialog
+					WalkRecordSaveAlertDialogOnClickListener _walkRecordSaveAlertDialogOnClickListener = new WalkRecordSaveAlertDialogOnClickListener();
+					new SSAlertDialogBuilder(PersonalPedometerActivity.this)
+							.showTip()
+							.setMessage(
+									R.string.walkRecord_save_alertDialog_message)
+							.setPositiveButton(
+									R.string.walkRecord_save_alertDialog_positiveBtn_text,
+									_walkRecordSaveAlertDialogOnClickListener)
+							.setNegativeButton(
+									R.string.walkRecord_save_alertDialog_negativeBtn_text,
+									_walkRecordSaveAlertDialogOnClickListener)
+							.show();
 				}
 			}
 		}
@@ -662,6 +652,53 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 								getString(R.string.walkInfo_speed_value_format),
 								walkSpeed));
 			}
+		}
+
+		/**
+		 * @name WalkRecordSaveAlertDialogOnClickListener
+		 * @descriptor walk record save alert dialog on click listener
+		 * @author Ares
+		 * @version 1.0
+		 */
+		class WalkRecordSaveAlertDialogOnClickListener implements
+				android.content.DialogInterface.OnClickListener {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// check walk record save alert dialog operate button id
+				if (R.id.ssad_positiveOrNeutral_button == which) {
+					LOGGER.info("Save user personal walk info to local storage");
+
+					// save user personal walk info to local storage
+					//
+				}
+
+				// define walk invite walk extra data map
+				Map<String, Object> _extraMap = new HashMap<String, Object>();
+
+				// put walk start, stop time, walk path location point list and
+				// user walk result to extra data map as param
+				_extraMap.put(
+						PersonalWalkResultExtraData.PWR_USER_WALK_STARTTIME,
+						walkStratTime);
+				_extraMap
+						.put(PersonalWalkResultExtraData.PWR_USER_WALK_STOPTIME,
+								walkStratTime
+										+ (SystemClock.elapsedRealtime() - walkDurationTimeChronometer
+												.getBase())
+										/ MILLISECONDS_PER_SECOND);
+				_extraMap
+						.put(PersonalWalkResultExtraData.PWR_USER_WALKPATH_LOCATIONPOINTS,
+								walkPathPoints);
+				// test by ares
+				_extraMap.put(PersonalWalkResultExtraData.PWR_USER_WALKRESULT,
+						new UserInfoGroupResultBean());
+
+				// go to personal pedometer user walk result activity with extra
+				// data map
+				dismissPushActivity(PersonalWalkResultActivity.class, _extraMap);
+			}
+
 		}
 
 	}

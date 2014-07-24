@@ -769,6 +769,9 @@ public class NearbyStrangersActivity extends SSBaseActivity {
 									.getString(R.string.nearbyStrangerItem_strangerDistance_step));
 					double _distance = sUserLocation
 							.getDistance(_nearbyStranger.getLocation());
+					LOGGER.info("The nearby stranger = "
+							+ _nearbyStranger.getNickname() + " distance is = "
+							+ _distance);
 					_data.put(
 							NearbyStrangerListViewAdapterKey.NEARBYSTRANGER_DISTANCE_KEY
 									.name(),
