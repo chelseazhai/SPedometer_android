@@ -27,6 +27,9 @@ public class UserInfoPatLocationExtBean extends UserInfoLocationExtBean {
 	private static final SSLogger LOGGER = new SSLogger(
 			UserInfoPatLocationExtBean.class);
 
+	// pat count
+	private int patCount;
+
 	/**
 	 * @title UserInfoPatLocationExtBean
 	 * @descriptor user info pat location extension bean constructor
@@ -47,9 +50,6 @@ public class UserInfoPatLocationExtBean extends UserInfoLocationExtBean {
 	public UserInfoPatLocationExtBean(JSONObject info) {
 		super(info);
 	}
-
-	// pat count
-	private int patCount;
 
 	public int getPatCount() {
 		return patCount;

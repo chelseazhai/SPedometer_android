@@ -88,6 +88,8 @@
     <string name="patStranger_url" translatable="false">/patStranger.action</string>
     <!-- <string name="getUserPatStrangers_url" translatable="false">/pat/getPatList</string> -->
     <string name="getUserPatStrangers_url" translatable="false">/getPatList.action</string>
+    <!-- <string name="getStrangerPatLocation_url" translatable="false">/pat/getPatLocation</string> -->
+    <string name="getStrangerPatLocation_url" translatable="false">/getPatLocation.action</string>
     <!-- <string name="getPattedStrangers_url" translatable="false">/pat/getPattedList</string> -->
     <string name="getPattedStrangers_url" translatable="false">/getPattedList.action</string>
 

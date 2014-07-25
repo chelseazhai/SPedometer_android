@@ -76,7 +76,10 @@
     <string name="procMsg_getWalkInviteHistoryGroupWalkInfo">获取约走历史，请稍候&#8230;</string>
     <string name="procMsg_getWithinGroupCompeteHistoryGroupWalkInfo">获取竞赛历史，请稍候&#8230;</string>
 
-    <!-- stranger pat -->
+    <!-- pat strangers -->
     <string name="procMsg_getUserPatStrangers">获取拍肩历史，请稍候&#8230;</string>
+
+    <!-- pat stranger -->
+    <string name="procMsg_getStrangerPatLocation">获取拍肩详情，请稍候&#8230;</string>
 
 </resources>

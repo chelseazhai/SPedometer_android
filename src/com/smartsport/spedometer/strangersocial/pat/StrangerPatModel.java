@@ -334,6 +334,93 @@ public class StrangerPatModel {
 	}
 
 	/**
+	 * @title getStrangerPatLocation
+	 * @descriptor get the user pat stranger be patted location
+	 * @param userId
+	 *            : user id
+	 * @param token
+	 *            : user token
+	 * @param strangerId
+	 *            : the user pat stranger id
+	 * @param executant
+	 *            :
+	 * @author Ares
+	 */
+	public void getStrangerPatLocation(long userId, String token,
+			long strangerId, final ICMConnector executant) {
+		// get the user pat stranger be patted location with user id and token
+		((StrangerPatNetworkAdapter) NetworkAdapter.getInstance()
+				.getWorkerNetworkAdapter(StrangerPatNetworkAdapter.class))
+				.getStrangerPatLocation(userId, token, strangerId,
+						new AsyncHttpRespJSONHandler() {
+
+							@Override
+							public void onSuccess(int statusCode,
+									JSONArray respJSONArray) {
+								LOGGER.info("Get user pat stranger be patted location successful, status code = "
+										+ statusCode
+										+ " and response json array = "
+										+ respJSONArray);
+
+								// check the user pat stranger be patted
+								// location response json array
+								if (null != respJSONArray) {
+									// define the user pat stranger be patted
+									// location list
+									List<StrangerPatLocationExtBean> _userPatStrangerBePattedLocations = new ArrayList<StrangerPatLocationExtBean>();
+
+									// traversal the json array
+									for (int i = 0; i < respJSONArray.length(); i++) {
+										// get and check the user pat stranger
+										// be patted location json object from
+										// response json array
+										JSONObject _userPatStrangerBePattedLocation = JSONUtils
+												.getJSONObjectFromJSONArray(
+														respJSONArray, i);
+										if (null != _userPatStrangerBePattedLocation) {
+											// add the user pat stranger be
+											// patted location object to list
+											_userPatStrangerBePattedLocations
+													.add(new StrangerPatLocationExtBean(
+															_userPatStrangerBePattedLocation));
+										}
+									}
+
+									LOGGER.debug("The user pat stranger be patted location = "
+											+ _userPatStrangerBePattedLocations);
+
+									// get the user pat stranger be patted
+									// location successful
+									executant
+											.onSuccess(_userPatStrangerBePattedLocations);
+								} else {
+									LOGGER.error("Get the user pat stranger be patted location response json array is null");
+								}
+							}
+
+							@Override
+							public void onSuccess(int statusCode,
+									JSONObject respJSONObject) {
+								// nothing to do
+							}
+
+							@Override
+							public void onFailure(int statusCode,
+									String errorMsg) {
+								LOGGER.info("Get the user pat stranger be patted location failed, status code = "
+										+ statusCode
+										+ " and error message = "
+										+ errorMsg);
+
+								// get the user pat stranger be patted location
+								// failed
+								executant.onFailure(statusCode, errorMsg);
+							}
+
+						});
+	}
+
+	/**
 	 * @title getPattedStrangers
 	 * @descriptor get all strangers who patted the user
 	 * @param userId

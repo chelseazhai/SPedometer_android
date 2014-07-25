@@ -50,7 +50,6 @@ import com.smartsport.spedometer.history.walk.group.HistoryGroupWalkInfoActivity
 import com.smartsport.spedometer.history.walk.group.HistoryGroupWalkInfoActivity.HistoryGroupWalkInfoExtraData;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
-import com.smartsport.spedometer.strangersocial.LocationBean;
 import com.smartsport.spedometer.strangersocial.pat.StrangerPatModel;
 import com.smartsport.spedometer.strangersocial.pat.UserInfoPatLocationExtBean;
 import com.smartsport.spedometer.user.UserManager;
@@ -968,13 +967,10 @@ public class HistoryInfoActivity extends SSBaseActivity {
 			// define user pat stranger item extra data map
 			Map<String, Object> _extraMap = new HashMap<String, Object>();
 
-			// put the selected user pat stranger bean and user pat location
-			// list to extra data map as param
+			// put the selected user pat stranger bean to extra data map as
+			// param
 			_extraMap.put(PatStrangerExtraData.PS_SI_BEAN,
 					patStrangerListViewAdapter.getPatStranger(position));
-			// test by ares
-			_extraMap.put(PatStrangerExtraData.PS_USER_PATLOCATIONS,
-					new ArrayList<LocationBean>());
 
 			// go to user pat stranger activity with extra data map
 			pushActivity(PatStrangerActivity.class, _extraMap);

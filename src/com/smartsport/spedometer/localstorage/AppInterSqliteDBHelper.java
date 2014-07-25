@@ -8,16 +8,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import android.content.Context;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.BaseColumns;
 
+import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.utils.SSLogger;
 
 /**
+ * @name AppInterSqliteDBHelper
+ * @descriptor smartsport application internal sqlite database helper
  * @author Ares
- * 
+ * @version 1.0
  */
 public class AppInterSqliteDBHelper extends SQLiteOpenHelper {
 
@@ -25,43 +27,96 @@ public class AppInterSqliteDBHelper extends SQLiteOpenHelper {
 	private static final SSLogger LOGGER = new SSLogger(
 			AppInterSqliteDBHelper.class);
 
+	// application inter local storage sqlite database name and current version
+	private static final String LOCALSTORAGE_DBNAME = "spedometer.db3";
+	private int sqliteDBVersion;
+
+	// singleton instance
+	private static volatile AppInterSqliteDBHelper _sSingletonSqliteDBHelper;
+
 	// context
 	private Context context;
 
 	/**
+	 * @title AppInterSqliteDBHelper
+	 * @descriptor smartsport application internal sqlite database helper
+	 *             private constructor with context and sqlite database version
 	 * @param context
-	 * @param name
-	 * @param factory
+	 *            : context
 	 * @param version
-	 * @param errorHandler
+	 *            : sqlite database version
+	 * @author Ares
 	 */
-	public AppInterSqliteDBHelper(Context context, String name,
-			CursorFactory factory, int version,
-			DatabaseErrorHandler errorHandler) {
-		super(context, name, factory, version, errorHandler);
-		// TODO Auto-generated constructor stub
+	private AppInterSqliteDBHelper(Context context, int version) {
+		super(context, LOCALSTORAGE_DBNAME, null, version);
+
+		// save context and sqlite database version
+		this.context = context;
+		sqliteDBVersion = version;
 	}
 
 	/**
-	 * @param context
-	 * @param name
-	 * @param factory
-	 * @param version
+	 * @title getInstance
+	 * @descriptor get sqlite database helper singleton instance with database
+	 *             version
+	 * @return sqlite database helper singleton instance
+	 * @author Ares
 	 */
-	public AppInterSqliteDBHelper(Context context, String name,
-			CursorFactory factory, int version) {
-		super(context, name, factory, version);
-		// TODO Auto-generated constructor stub
+	public static AppInterSqliteDBHelper getInstance(int version) {
+		if (null == _sSingletonSqliteDBHelper) {
+			synchronized (AppInterSqliteDBHelper.class) {
+				if (null == _sSingletonSqliteDBHelper
+						|| _sSingletonSqliteDBHelper.sqliteDBVersion != version) {
+					_sSingletonSqliteDBHelper = new AppInterSqliteDBHelper(
+							SSApplication.getContext(), version);
+				}
+			}
+		}
+
+		return _sSingletonSqliteDBHelper;
+	}
+
+	/**
+	 * @title getInstance
+	 * @descriptor get sqlite database helper singleton instance
+	 * @return sqlite database helper singleton instance
+	 * @author Ares
+	 */
+	public static AppInterSqliteDBHelper getInstance() {
+		// sqlite database version is 1
+		return getInstance(1);
+	}
+
+	/**
+	 * @title tables
+	 * @descriptor get sqlite database helper singleton instance
+	 * @return sqlite database helper singleton instance
+	 * @author Ares
+	 */
+	public static AppInterSqliteDBHelper tables() {
+		//
+
+		return _sSingletonSqliteDBHelper;
+	}
+
+	public int getSqliteDBVersion() {
+		return sqliteDBVersion;
 	}
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		// TODO Auto-generated method stub
+		LOGGER.info("Local storage sqlite database = " + db + " on create");
 
+		// create smartsport pedometer user personal walk record table
+		db.execSQL(getSqlStatementFromAssets(""));
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		LOGGER.debug("Local storage sqlite database = " + db
+				+ " on upgrade from old version = " + oldVersion
+				+ " to new version = " + newVersion);
+
 		// TODO Auto-generated method stub
 
 	}
@@ -103,6 +158,27 @@ public class AppInterSqliteDBHelper extends SQLiteOpenHelper {
 		}
 
 		return _sqlStatement;
+	}
+
+	// inner class
+	/**
+	 * @name ISimpleBaseColumns
+	 * @descriptor simple sqlite database base columns interface
+	 * @author Ares
+	 * @version 1.0
+	 */
+	public interface ISimpleBaseColumns extends BaseColumns {
+
+		// selection "and" string
+		public static final String _AND_SELECTION = " and ";
+
+		// data count projection
+		public static final String _COUNT_PROJECTION = "count(*) as " + _COUNT;
+
+		// data order ascension and descent
+		public static final String _ORDER_ASC = " asc";
+		public static final String _ORDER_DESC = " desc";
+
 	}
 
 }

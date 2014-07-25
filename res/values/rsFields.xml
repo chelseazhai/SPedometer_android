@@ -267,6 +267,12 @@
     <string name="getUserPatStrangersReqResp_patLocationLongitude" translatable="false">longitude</string>
     <string name="getUserPatStrangersReqResp_patLocationLatitude" translatable="false">latitude</string>
 
+    <!-- user pat stranger be patted location -->
+    <string name="getStrangerPatLocationReqParam_pattedStrangerId" translatable="false">strangerId</string>
+    <string name="getStrangerPatLocationReqResp_patTime" translatable="false">timestamp</string>
+    <string name="getStrangerPatLocationReqResp_patLocationLongitude" translatable="false">longitude</string>
+    <string name="getStrangerPatLocationReqResp_patLocationLatitude" translatable="false">latitude</string>
+
     <!-- moments -->
     <!-- new moment -->
     <string name="newMomentReqParam_primaryKey" translatable="false">cirId</string>

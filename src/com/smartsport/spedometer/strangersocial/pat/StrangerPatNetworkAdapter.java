@@ -158,6 +158,42 @@ public class StrangerPatNetworkAdapter implements INetworkAdapter {
 	}
 
 	/**
+	 * @title getStrangerPatLocation
+	 * @descriptor get the user pat stranger be patted location from remote
+	 *             server
+	 * @param userId
+	 *            : user id
+	 * @param token
+	 *            : user token
+	 * @param strangerId
+	 *            : the user pat stranger id
+	 * @param asyncHttpRespJSONHandler
+	 *            : asynchronous http response json handler
+	 * @author Ares
+	 */
+	public void getStrangerPatLocation(long userId, String token,
+			long strangerId, AsyncHttpRespJSONHandler asyncHttpRespJSONHandler) {
+		// get user common request param
+		Map<String, String> _getStrangerPatLocationReqParam = NetworkUtils
+				.genUserComReqParam(userId, token);
+
+		// set the pat stranger id to param
+		_getStrangerPatLocationReqParam
+				.put(NETWORK_ENGINE
+						.getContext()
+						.getString(
+								R.string.getStrangerPatLocationReqParam_pattedStrangerId),
+						String.valueOf(strangerId));
+
+		// send get the user pat stranger be patted location asynchronous post
+		// http request
+		NETWORK_ENGINE.postWithAPI(
+				NETWORK_ENGINE.getContext().getString(
+						R.string.getStrangerPatLocation_url),
+				_getStrangerPatLocationReqParam, asyncHttpRespJSONHandler);
+	}
+
+	/**
 	 * @title getPattedStrangers
 	 * @descriptor get all strangers who patted the user from remote server
 	 * @param userId
