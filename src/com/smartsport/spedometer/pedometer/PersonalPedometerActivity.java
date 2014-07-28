@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -32,6 +34,7 @@ import com.smartsport.spedometer.customwidget.SSAlertDialogBuilder;
 import com.smartsport.spedometer.customwidget.SSBNavTitleBarButtonItem;
 import com.smartsport.spedometer.group.info.result.UserInfoGroupResultBean;
 import com.smartsport.spedometer.localstorage.AppInterPriSharedPreferencesHelper;
+import com.smartsport.spedometer.localstorage.pedometer.SPPersonalWalkRecordContentProvider.UserPersonalWalkRecords.UserPersonalWalkRecord;
 import com.smartsport.spedometer.localstorage.pedometer.SPUserInfoLocalStorageAttributes;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.pedometer.PersonalWalkResultActivity.PersonalWalkResultExtraData;
@@ -62,6 +65,10 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 	// user walk path mapView and autoNavi map
 	private MapView userWalkPathMapView;
 	private AMap autoNaviMap;
+
+	// pedometer login user
+	private UserPedometerExtBean loginUser = (UserPedometerExtBean) UserManager
+			.getInstance().getLoginUser();
 
 	// user walk info record type
 	private WalkInfoRecordType userWalkInfoRecordType;
@@ -493,6 +500,11 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 	 */
 	class WalkControlBtnOnClickListener implements OnClickListener {
 
+		// walk info: walk total distance, total steps count and energy
+		private double walkDistance;
+		private int walkStepsCount;
+		private float walkEnergy;
+
 		@Override
 		public void onClick(final View v) {
 			// get and check walk control button tag
@@ -595,11 +607,6 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 			// energy calculate coefficient
 			private final float ENERGY_CALCCOEFFICIENT = 1.036f;
 
-			// walk info: walk total distance, total steps count and energy
-			private double walkDistance;
-			private int walkStepsCount;
-			private float walkEnergy;
-
 			@Override
 			public void onLocationChanged(LatLonPoint walkPathPoint,
 					double walkSpeed, double walkDistance) {
@@ -612,12 +619,10 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 						.getFloat(
 								SPUserInfoLocalStorageAttributes.USER_STEPLENGTH
 										.name(),
-								String.valueOf(((UserPedometerExtBean) UserManager
-										.getInstance().getLoginUser())
-										.getUserId()));
+								String.valueOf(loginUser.getUserId()));
 
 				// increase walk total distance and total steps count
-				this.walkDistance += walkDistance;
+				walkDistance += walkDistance;
 				walkStepsCount += walkDistance
 						* WalkStartPointLocationSource.METERS_PER_KILOMETER
 						/ (_userStepLength / CENTIMETERS_PER_METER);
@@ -629,7 +634,7 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 				// update energy
 				// test by ares
 				// walkEnergy = 123.5f;
-				walkEnergy = (float) (_userInfo.getWeight() * this.walkDistance * ENERGY_CALCCOEFFICIENT);
+				walkEnergy = (float) (_userInfo.getWeight() * walkDistance * ENERGY_CALCCOEFFICIENT);
 
 				// update user personal walk info(walk total distance, total
 				// steps count, energy, pace and speed) textView text
@@ -637,7 +642,7 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 						WalkInfoType.WALKINFO_WALKDISTANCE,
 						String.format(
 								getString(R.string.walkInfo_distance_value_format),
-								this.walkDistance));
+								walkDistance));
 				updateWalkInfoTextViewText(WalkInfoType.WALKINFO_WALKSTEPS,
 						String.valueOf(walkStepsCount));
 				updateWalkInfoTextViewText(
@@ -663,14 +668,41 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 		class WalkRecordSaveAlertDialogOnClickListener implements
 				android.content.DialogInterface.OnClickListener {
 
+			// content resolver
+			private final ContentResolver CONTENTRESOLVER = getContentResolver();
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				// get walk duration time
+				int _walkDurationTime = (int) ((SystemClock.elapsedRealtime() - walkDurationTimeChronometer
+						.getBase()) / MILLISECONDS_PER_SECOND);
+
 				// check walk record save alert dialog operate button id
 				if (R.id.ssad_positiveOrNeutral_button == which) {
 					LOGGER.info("Save user personal walk info to local storage");
 
 					// save user personal walk info to local storage
-					//
+					// generate new insert user personal walk record
+					ContentValues _newUserWalkRecord = new ContentValues();
+
+					_newUserWalkRecord.put(UserPersonalWalkRecord.USER_ID,
+							loginUser.getUserId());
+					_newUserWalkRecord.put(UserPersonalWalkRecord.START_TIME,
+							walkStratTime);
+					_newUserWalkRecord.put(
+							UserPersonalWalkRecord.DURATION_TIME,
+							_walkDurationTime);
+					_newUserWalkRecord.put(UserPersonalWalkRecord.TOTALSTEP,
+							walkStepsCount);
+					_newUserWalkRecord.put(
+							UserPersonalWalkRecord.TOTALDISTANCE, walkDistance);
+					_newUserWalkRecord.put(UserPersonalWalkRecord.ENERGY,
+							walkEnergy);
+
+					// insert user new walk record to sqlite database table
+					CONTENTRESOLVER
+							.insert(UserPersonalWalkRecord.PERSONALWALKRECORD_CONTENT_URI,
+									_newUserWalkRecord);
 				}
 
 				// define walk invite walk extra data map
@@ -681,12 +713,9 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 				_extraMap.put(
 						PersonalWalkResultExtraData.PWR_USER_WALK_STARTTIME,
 						walkStratTime);
-				_extraMap
-						.put(PersonalWalkResultExtraData.PWR_USER_WALK_STOPTIME,
-								walkStratTime
-										+ (SystemClock.elapsedRealtime() - walkDurationTimeChronometer
-												.getBase())
-										/ MILLISECONDS_PER_SECOND);
+				_extraMap.put(
+						PersonalWalkResultExtraData.PWR_USER_WALK_STOPTIME,
+						walkStratTime + _walkDurationTime);
 				_extraMap
 						.put(PersonalWalkResultExtraData.PWR_USER_WALKPATH_LOCATIONPOINTS,
 								walkPathPoints);

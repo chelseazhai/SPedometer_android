@@ -3,8 +3,11 @@
  */
 package com.smartsport.spedometer.history.patstranger;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,7 +16,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.maps2d.AMap;
+import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
+import com.amap.api.maps2d.model.BitmapDescriptorFactory;
+import com.amap.api.maps2d.model.LatLng;
+import com.amap.api.maps2d.model.Marker;
+import com.amap.api.maps2d.model.MarkerOptions;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
@@ -44,6 +52,14 @@ public class PatStrangerActivity extends SSBaseActivity {
 	private static final SSLogger LOGGER = new SSLogger(
 			PatStrangerActivity.class);
 
+	// pat location last location marker and others marker
+	private final MarkerOptions STRANGER_LASTPATLOCATION_MARKER_OPERTIONS = new MarkerOptions()
+			.icon(BitmapDescriptorFactory
+					.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+	private final MarkerOptions STRANGER_OTHERSPATLOCATION_MARKER_OPERTIONS = new MarkerOptions()
+			.icon(BitmapDescriptorFactory
+					.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
 	// stranger pat model
 	private StrangerPatModel strangerPatModel = StrangerPatModel.getInstance();
 
@@ -58,11 +74,16 @@ public class PatStrangerActivity extends SSBaseActivity {
 	private MapView patLocationMapView;
 	private AMap autoNaviMap;
 
+	// stranger last pat time, location point and marker
+	private Long strangerLastPatTime;
+	private LatLonPoint lastpatLocationPoint;
+	private Marker lastpatLocationMarker;
+
+	// stranger pat location marker list
+	private List<Marker> patLocationMarkers;
+
 	// pat location autoNavi geocode search
 	private GeocodeSearch autoNaviGeocoderSearch;
-
-	// stranger last pat time
-	private Long strangerLastPatTime;
 
 	// stranger pat info textView
 	private TextView strangerPatInfoTextView;
@@ -121,27 +142,52 @@ public class PatStrangerActivity extends SSBaseActivity {
 								// location list
 								if (null != patLocationList
 										&& 0 < patLocationList.size()) {
-									// get the last pat location
-									StrangerPatLocationExtBean _lastPatLocationExtBean = patLocationList
-											.get(patLocationList.size() - 1);
+									// initialize pat location marker list
+									patLocationMarkers = new ArrayList<Marker>();
+									for (int i = 0; i < patLocationList.size(); i++) {
+										// get the stranger pat location
+										StrangerPatLocationExtBean _patLocationExtBean = patLocationList
+												.get(i);
 
-									// save stranger last pat time
-									strangerLastPatTime = _lastPatLocationExtBean
-											.getPatTime();
+										// check the index
+										if (patLocationList.size() - 1 == i) {
+											// save stranger last pat time and
+											// position point
+											strangerLastPatTime = _patLocationExtBean
+													.getPatTime();
+											lastpatLocationPoint = new LatLonPoint(
+													_patLocationExtBean
+															.getLatitude(),
+													_patLocationExtBean
+															.getLongitude());
 
-									// search stranger last pat location address
-									autoNaviGeocoderSearch
-											.getFromLocationAsyn(new RegeocodeQuery(
-													new LatLonPoint(
-															_lastPatLocationExtBean
-																	.getLatitude(),
-															_lastPatLocationExtBean
-																	.getLongitude()),
-													200, GeocodeSearch.AMAP));
+											// search stranger last pat location
+											// address
+											autoNaviGeocoderSearch
+													.getFromLocationAsyn(new RegeocodeQuery(
+															lastpatLocationPoint,
+															200,
+															GeocodeSearch.AMAP));
+										} else {
+											// add stranger pat location marker
+											// to autoNavi map
+											// generate pat location marker
+											Marker _patLocationMarker = autoNaviMap
+													.addMarker(STRANGER_OTHERSPATLOCATION_MARKER_OPERTIONS);
+
+											// update its position
+											_patLocationMarker.setPosition(new LatLng(
+													_patLocationExtBean
+															.getLatitude(),
+													_patLocationExtBean
+															.getLongitude()));
+
+											// add stranger pat location to list
+											patLocationMarkers
+													.add(_patLocationMarker);
+										}
+									}
 								}
-
-								// add stranger pat location maker
-								//
 							} else {
 								LOGGER.error("Update the user pat stranger be patted locations UI error");
 							}
@@ -254,6 +300,14 @@ public class PatStrangerActivity extends SSBaseActivity {
 	class StrangerPatLocationOnGeocodeSearchListener implements
 			OnGeocodeSearchListener {
 
+		// milliseconds per second
+		private static final int MILLISECONDS_PER_SECOND = 1000;
+
+		// stranger pat time date format
+		@SuppressLint("SimpleDateFormat")
+		private final SimpleDateFormat STRANGER_PATTIME_DATEFORMAT = new SimpleDateFormat(
+				getString(R.string.long_dateFormat));
+
 		@Override
 		public void onGeocodeSearched(GeocodeResult result, int code) {
 			// nothing to do
@@ -261,15 +315,92 @@ public class PatStrangerActivity extends SSBaseActivity {
 
 		@Override
 		public void onRegeocodeSearched(RegeocodeResult result, int code) {
-			// TODO Auto-generated method stub
+			// check code
+			switch (code) {
+			case 0:
+				// regeocode searched successful
+				// check result and regeocode address
+				if (null != result && null != result.getRegeocodeAddress()) {
+					// get regeocode format address
+					String _regeocodeFormatAddr = result.getRegeocodeAddress()
+							.getFormatAddress();
 
-			// test by ares
-			// update stranger pat info textView text
-			strangerPatInfoTextView
-					.setText(String.format(
+					LOGGER.info("Search stranger pat location successful, regeocode result = "
+							+ result
+							+ " format address "
+							+ _regeocodeFormatAddr);
+
+					// generate last pat location marker
+					lastpatLocationMarker = autoNaviMap
+							.addMarker(STRANGER_LASTPATLOCATION_MARKER_OPERTIONS);
+
+					// get last pat position
+					LatLng _lastPatPositionLatLng = new LatLng(
+							lastpatLocationPoint.getLatitude(),
+							lastpatLocationPoint.getLongitude());
+
+					// update its position
+					lastpatLocationMarker.setPosition(_lastPatPositionLatLng);
+
+					// animate camera
+					autoNaviMap.animateCamera(CameraUpdateFactory
+							.newLatLngZoom(_lastPatPositionLatLng, 20));
+
+					// update stranger pat info textView text
+					strangerPatInfoTextView.setText(String.format(
 							getString(R.string.patStranger_lastPatInfo_format),
-							strangerInfo.getPatCount(), "14-12-22 12:23",
-							"南京市下关区汽轮四村"));
+							strangerInfo.getPatCount(),
+							STRANGER_PATTIME_DATEFORMAT
+									.format(strangerLastPatTime
+											* MILLISECONDS_PER_SECOND),
+							_regeocodeFormatAddr));
+				} else {
+					// no result
+					LOGGER.error("Search stranger pat location no result, regeocode result = "
+							+ result + " and code = " + code);
+
+					// show stranger last pat location search no result toast
+					Toast.makeText(PatStrangerActivity.this,
+							R.string.toast_searchPatLocation_noResult,
+							Toast.LENGTH_LONG).show();
+				}
+				break;
+
+			case 27:
+				// no network
+				LOGGER.error("Search stranger pat location error(no network), regeocode result = "
+						+ result + " and code = " + code);
+
+				// show stranger last pat location search error(no network)
+				// toast
+				Toast.makeText(PatStrangerActivity.this,
+						R.string.toast_searchPatLocation_error_noNetwork,
+						Toast.LENGTH_LONG).show();
+				break;
+
+			case 32:
+				// invalid key
+				LOGGER.error("Search stranger pat location error(invalid key), regeocode result = "
+						+ result + " and code = " + code);
+
+				// show stranger last pat location search error(invalid key)
+				// toast
+				Toast.makeText(PatStrangerActivity.this,
+						R.string.toast_searchPatLocation_error_invalidKey,
+						Toast.LENGTH_LONG).show();
+				break;
+
+			default:
+				// unknown
+				LOGGER.error("Search stranger pat location error(unknown), regeocode result = "
+						+ result + " and code = " + code);
+
+				// show stranger last pat location search error(unknown) toast
+				Toast.makeText(PatStrangerActivity.this,
+						R.string.toast_searchPatLocation_error_unknown,
+						Toast.LENGTH_LONG).show();
+				break;
+			}
 		}
 
 	}

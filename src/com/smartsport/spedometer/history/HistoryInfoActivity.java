@@ -8,24 +8,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
@@ -48,6 +53,9 @@ import com.smartsport.spedometer.history.walk.group.HistoryGroupListViewAdapter;
 import com.smartsport.spedometer.history.walk.group.HistoryGroupListViewAdapter.HistoryGroupListViewAdapterKey;
 import com.smartsport.spedometer.history.walk.group.HistoryGroupWalkInfoActivity;
 import com.smartsport.spedometer.history.walk.group.HistoryGroupWalkInfoActivity.HistoryGroupWalkInfoExtraData;
+import com.smartsport.spedometer.history.walk.personal.PersonalWalkHistoryRecordActivity;
+import com.smartsport.spedometer.localstorage.AppInterSqliteDBHelper.ISimpleBaseColumns;
+import com.smartsport.spedometer.localstorage.pedometer.SPPersonalWalkRecordContentProvider.UserPersonalWalkRecords.UserPersonalWalkRecord;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
 import com.smartsport.spedometer.strangersocial.pat.StrangerPatModel;
@@ -67,6 +75,9 @@ public class HistoryInfoActivity extends SSBaseActivity {
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(
 			HistoryInfoActivity.class);
+
+	// content resolver
+	private final ContentResolver CONTENTRESOLVER = getContentResolver();
 
 	// input method manager
 	private InputMethodManager inputMethodManager;
@@ -227,7 +238,27 @@ public class HistoryInfoActivity extends SSBaseActivity {
 		personalPedometerWalkInfoSearchCancelBtn
 				.setOnClickListener(new PPWalkInfoCancelSearchBtnOnClickListener());
 
-		//
+		// get history info listView
+		personalPedometerWalkInfoListView = (ListView) personalPedometerWalkInfoView
+				.findViewById(R.id.hi_common_historyInfo_listView);
+
+		// set its adapter
+		personalPedometerWalkInfoListView
+				.setAdapter(new PPWalkInfoCursorAdapter(
+						this,
+						R.layout.personal_walkrecord_listview_item_layout,
+						CONTENTRESOLVER
+								.query(UserPersonalWalkRecord.PERSONALWALKRECORDS_CONTENT_URI,
+										null,
+										UserPersonalWalkRecord.USERPERSONAL_WALKRECORDS_WITHLOGINNAME_CONDITION,
+										new String[] {},
+										UserPersonalWalkRecord.START_TIME
+												+ ISimpleBaseColumns._ORDER_DESC),
+						new String[] {}, new int[] {}));
+
+		// set its on item click listener
+		personalPedometerWalkInfoListView
+				.setOnItemClickListener(new PPWalkInfoOnItemClickListener());
 	}
 
 	/**
@@ -771,6 +802,128 @@ public class HistoryInfoActivity extends SSBaseActivity {
 
 				personalPedometerWalkInfoSearchEditText.setFocusable(false);
 			}
+		}
+
+	}
+
+	/**
+	 * @name PPWalkInfoCursorAdapter
+	 * @descriptor user personal pedometer walk info cursor adapter
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class PPWalkInfoCursorAdapter extends CursorAdapter {
+
+		// logger
+		private final SSLogger LOGGER = new SSLogger(
+				PPWalkInfoCursorAdapter.class);
+
+		// context
+		protected Context context;
+
+		// layout inflater
+		protected LayoutInflater layoutInflater;
+
+		// items layout resource id
+		protected int itemsLayoutResId;
+
+		// data keys and items component resource identities
+		protected String[] dataKeys;
+		protected int[] itemsComponentResIds;
+
+		// cursor data list
+		protected List<Object> dataList;
+
+		/**
+		 * @title PPWalkInfoCursorAdapter
+		 * @descriptor user personal walk record listView adapter constructor
+		 *             with context, content view resource, data cursor, content
+		 *             view subview data key, and content view subview id
+		 * @param context
+		 *            : context
+		 * @param resource
+		 *            : resource id
+		 * @param cursor
+		 *            : personal walk record data cursor
+		 * @param dataKeys
+		 *            : content view subview data key array
+		 * @param ids
+		 *            : content view subview id array
+		 */
+		public PPWalkInfoCursorAdapter(Context context, int itemsLayoutResId,
+				Cursor cursor, String[] dataKeys, int[] itemsComponentResIds) {
+			super(context, cursor, true);
+
+			// save context, layout inflater, items layout resource id, data
+			// keys and items component resource identities
+			this.context = context;
+			layoutInflater = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			this.itemsLayoutResId = itemsLayoutResId;
+			this.dataKeys = dataKeys;
+			this.itemsComponentResIds = itemsComponentResIds;
+
+			// init cursor data list
+			dataList = new ArrayList<Object>();
+		}
+
+		@Override
+		public View newView(Context context, Cursor cursor, ViewGroup parent) {
+			// inflate convert view
+			View _convertView = layoutInflater.inflate(itemsLayoutResId,
+					parent, false);
+
+			// set item component view subViews
+			for (int i = 0; i < itemsComponentResIds.length; i++) {
+				_viewHolder.getViews4Holding().append(itemsComponentResIds[i],
+						_convertView.findViewById(itemsComponentResIds[i]));
+			}
+
+			// set tag
+			_convertView.setTag(_viewHolder);
+
+			return _convertView;
+		}
+
+		@Override
+		public void bindView(View view, Context context, Cursor cursor) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		protected void onContentChanged() {
+			// auto requery
+			super.onContentChanged();
+
+			// TODO Auto-generated method stub
+
+		}
+
+	}
+
+	/**
+	 * @name PPWalkInfoOnItemClickListener
+	 * @descriptor user personal pedometer walk info item on click listener
+	 * @author Ares
+	 * @version 1.0
+	 */
+	class PPWalkInfoOnItemClickListener implements OnItemClickListener {
+
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+			// define personal walk history record item extra data map
+			Map<String, Object> _extraMap = new HashMap<String, Object>();
+
+			// put the selected user personal walk record start time, duration,
+			// walk total step, total distance and energy to extra data map as
+			// param
+			// test by ares
+			_extraMap.put("test", "@ares");
+
+			// go to personal walk history record activity with extra data map
+			pushActivity(PersonalWalkHistoryRecordActivity.class, _extraMap);
 		}
 
 	}

@@ -81,5 +81,9 @@
 
     <!-- pat stranger -->
     <string name="procMsg_getStrangerPatLocation">获取拍肩详情，请稍候&#8230;</string>
+    <string name="toast_searchPatLocation_noResult">对不起，没有搜索到拍肩的地点！</string>
+    <string name="toast_searchPatLocation_error_noNetwork">定位拍肩地点失败，请检查网络连接！</string>
+    <string name="toast_searchPatLocation_error_invalidKey">定位拍肩地点失败，高德地图key验证无效！</string>
+    <string name="toast_searchPatLocation_error_unknown">定位拍肩地点失败，未知错误，请稍后重试！</string>
 
 </resources>

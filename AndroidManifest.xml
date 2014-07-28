@@ -180,6 +180,11 @@
             android:label="@string/title_activity_demo"
             android:screenOrientation="portrait" >
         </activity>
+
+        <provider
+            android:name=".localstorage.pedometer.SPPersonalWalkRecordContentProvider"
+            android:authorities="com.smartsport.spedometer.localstorage.pedometer.SPPersonalWalkRecordContentProvider"
+            android:exported="false" />
     </application>
 
 </manifest>
