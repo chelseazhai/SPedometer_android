@@ -5,23 +5,127 @@
     android:background="@drawable/listview_item_bg"
     android:padding="8dp" >
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <ImageView
+        android:id="@+id/pwri_item_indicator_imageView"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/personalWalkHistoryRecordItem_indicator_imageView_contentDescription"
+        android:src="@drawable/img_item_indicator" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="#00ffff"
-        android:orientation="horizontal" >
+        android:layout_centerVertical="true"
+        android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@id/pwri_item_indicator_imageView" >
 
         <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
+            android:id="@+id/pwr_startTime_textView"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:textColor="@android:color/holo_green_dark"
+            android:textSize="15sp" />
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
-    </LinearLayout>
+            android:layout_below="@id/pwr_startTime_textView"
+            android:layout_marginTop="6dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/pwr_durationTime_textView"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/dark_gray"
+                android:textSize="15sp" />
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="2dp"
+                android:layout_weight="1" >
+
+                <TextView
+                    android:id="@+id/pwr_totalStep_textView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center_horizontal"
+                    android:singleLine="true"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/pwr_totalStep_textView"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/personalWalkHistoryRecord_walkTotalStep_label"
+                    android:textColor="@color/gray" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:layout_weight="1" >
+
+                <TextView
+                    android:id="@+id/pwr_totalDistance_textView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center_horizontal"
+                    android:singleLine="true"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/pwr_totalDistance_textView"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/personalWalkHistoryRecord_walkTotalDistance_label"
+                    android:textColor="@color/gray" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="4dp"
+                android:layout_weight="1" >
+
+                <TextView
+                    android:id="@+id/pwr_energy_textView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="center_horizontal"
+                    android:singleLine="true"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/pwr_energy_textView"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center_horizontal"
+                    android:text="@string/personalWalkHistoryRecord_walkEnergy_label"
+                    android:textColor="@color/gray" />
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

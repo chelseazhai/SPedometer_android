@@ -257,19 +257,34 @@
     <string name="common_historyInfo_searchEditText_hint">搜索</string>
     <string name="common_historyInfo_cancelSearch_button_text">取消</string>
 
+    <!-- personal walk record listView item -->
+    <string name="personalWalkHistoryRecordItem_indicator_imageView_contentDescription" translatable="false">this is personal walk history record item indicate imageView</string>
+    <string name="personalWalkHistoryRecord_walkStartTime_format">yyyy年MM月dd日 HH:mm</string>
+    <string name="personalWalkHistoryRecord_walkDurationTime_format" formatted="false">%02d\'%02d\"</string>
+    <string name="personalWalkHistoryRecord_walkTotalStep_label">总步数</string>
+    <string name="personalWalkHistoryRecord_walkTotalDistance_label">总里程</string>
+    <string name="personalWalkHistoryRecord_walkEnergy_label">大卡</string>
+
     <!-- personal walk history record activity -->
     <string name="title_activity_personal_walk_historyRecord" translatable="false">PersonalWalkHistoryRecordActivity</string>
 
     <!-- history group listView item -->
-    <string name="historyGroupItem_indicator_imageView_contentDescription" translatable="false">this is walk invite or within group compete history group item setting imageView</string>
+    <string name="historyGroupItem_indicator_imageView_contentDescription" translatable="false">this is walk invite or within group compete history group item indicate imageView</string>
     <string name="historyGroup_topic_label">主题：</string>
     <string name="historyGroup_walkStartTime_label">开始时间：</string>
-    <string name="historyGroup_walkStartTime_format" formatted="false">%s %s</string>
+    <string name="historyGroup_walkStartTimeFormat_yesterdayWalk">Yesterday</string>
+    <string name="historyGroup_walkStartTimeFormat_sundayWalk">Sunday</string>
+    <string name="historyGroup_walkStartTimeFormat_mondayWalk">Monday</string>
+    <string name="historyGroup_walkStartTimeFormat_tuesdayWalk">Tuesday</string>
+    <string name="historyGroup_walkStartTimeFormat_wednesdayWalk">Wednesday</string>
+    <string name="historyGroup_walkStartTimeFormat_thursdayWalk">Thursday</string>
+    <string name="historyGroup_walkStartTimeFormat_fridayWalk">Friday</string>
+    <string name="historyGroup_walkStartTimeFormat_saturdayWalk">Saturday</string>
     <string name="historyGroup_durationTime_label_format">%s时长：</string>
     <string name="historyGroup_walkinvite_durationTime_header">约走</string>
     <string name="historyGroup_withinGroupCompete_durationTime_header">竞赛</string>
     <string name="historyGroup_walkinvite_durationTime_secondssUnit">秒钟</string>
-    <string name="historyGroup_walkinvite_durationTime_format" formatted="false">%d分 %d秒</string>
+    <string name="historyGroup_walkinvite_durationTime_format" formatted="false">%d分 %02d秒</string>
     <string name="historyGroup_walkinvite_durationTime_minutesUnit">分钟</string>
     <string name="historyGroup_withinGroupCompete_durationTime_unit">分钟</string>
     <string name="historyGroup_attendeesNum_label">参与人数：</string>

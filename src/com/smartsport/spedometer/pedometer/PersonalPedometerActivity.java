@@ -557,7 +557,11 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 					}
 				} else if (getString(R.string.walkStop_button_text)
 						.equalsIgnoreCase(_walkControlBtnText.toString())) {
-					// stop walk duration time chronometer
+					// get walk duration time and stop walk duration time
+					// chronometer
+					int _walkDurationTime = (int) ((SystemClock
+							.elapsedRealtime() - walkDurationTimeChronometer
+							.getBase()) / MILLISECONDS_PER_SECOND);
 					walkDurationTimeChronometer.stop();
 
 					// check user walk info record type
@@ -574,7 +578,8 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 
 					// define walk record save alert dialog on click listener
 					// and show the alert dialog
-					WalkRecordSaveAlertDialogOnClickListener _walkRecordSaveAlertDialogOnClickListener = new WalkRecordSaveAlertDialogOnClickListener();
+					WalkRecordSaveAlertDialogOnClickListener _walkRecordSaveAlertDialogOnClickListener = new WalkRecordSaveAlertDialogOnClickListener(
+							_walkDurationTime);
 					new SSAlertDialogBuilder(PersonalPedometerActivity.this)
 							.showTip()
 							.setMessage(
@@ -671,16 +676,26 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 			// content resolver
 			private final ContentResolver CONTENTRESOLVER = getContentResolver();
 
+			// walk duration time
+			private int walkDurationTime;
+
+			/**
+			 * @title WalkRecordSaveAlertDialogOnClickListener
+			 * @descriptor personal walk record save alert dialog on click
+			 *             listener constructor with walk duration time
+			 * @author Ares
+			 */
+			public WalkRecordSaveAlertDialogOnClickListener(int walkDurationTime) {
+				super();
+
+				// save walk duration time
+				this.walkDurationTime = walkDurationTime;
+			}
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				// get walk duration time
-				int _walkDurationTime = (int) ((SystemClock.elapsedRealtime() - walkDurationTimeChronometer
-						.getBase()) / MILLISECONDS_PER_SECOND);
-
 				// check walk record save alert dialog operate button id
 				if (R.id.ssad_positiveOrNeutral_button == which) {
-					LOGGER.info("Save user personal walk info to local storage");
-
 					// save user personal walk info to local storage
 					// generate new insert user personal walk record
 					ContentValues _newUserWalkRecord = new ContentValues();
@@ -691,7 +706,7 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 							walkStratTime);
 					_newUserWalkRecord.put(
 							UserPersonalWalkRecord.DURATION_TIME,
-							_walkDurationTime);
+							walkDurationTime);
 					_newUserWalkRecord.put(UserPersonalWalkRecord.TOTALSTEP,
 							walkStepsCount);
 					_newUserWalkRecord.put(
@@ -703,6 +718,9 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 					CONTENTRESOLVER
 							.insert(UserPersonalWalkRecord.PERSONALWALKRECORD_CONTENT_URI,
 									_newUserWalkRecord);
+
+					LOGGER.info("Save user personal walk info = "
+							+ _newUserWalkRecord + " to local storage");
 				}
 
 				// define walk invite walk extra data map
@@ -715,7 +733,7 @@ public class PersonalPedometerActivity extends SSBaseActivity {
 						walkStratTime);
 				_extraMap.put(
 						PersonalWalkResultExtraData.PWR_USER_WALK_STOPTIME,
-						walkStratTime + _walkDurationTime);
+						walkStratTime + walkDurationTime);
 				_extraMap
 						.put(PersonalWalkResultExtraData.PWR_USER_WALKPATH_LOCATIONPOINTS,
 								walkPathPoints);

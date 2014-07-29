@@ -3,17 +3,22 @@
  */
 package com.smartsport.spedometer.history.walk.group;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.customwidget.SSSimpleAdapterViewBinder;
 import com.smartsport.spedometer.group.GroupBean;
 import com.smartsport.spedometer.group.GroupInviteInfoBean;
@@ -38,9 +43,16 @@ public class HistoryGroupListViewAdapter extends SimpleAdapter {
 	private static final String HISTORYGROUP_WALKSTARTTIME_KEY = "historyGroup_walkStartTime_key";
 	private static final String HISTORYGROUP_WALKSTOPTIME_KEY = "historyGroup_walkStopTime_key";
 
-	// milliseconds per second and seconds per minute
+	// milliseconds per day, milliseconds per second and seconds per minute
+	private final long MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000L;
 	private final int MILLISECONDS_PER_SECOND = 1000;
 	private final int SECONDS_PER_MINUTE = 60;
+
+	// group walk start time day and time format, format timeStamp
+	private final SimpleDateFormat _groupWalkStartTimeDayFormat = new SimpleDateFormat(
+			SSApplication.getContext().getString(R.string.long_dateFormat));
+	private final SimpleDateFormat _groupWalkStartTimeTimeFormat = new SimpleDateFormat(
+			SSApplication.getContext().getString(R.string.short_dateFormat));
 
 	// context
 	private Context context;
@@ -65,6 +77,7 @@ public class HistoryGroupListViewAdapter extends SimpleAdapter {
 	 * @param ids
 	 *            : content view subview id array
 	 */
+	@SuppressLint("SimpleDateFormat")
 	public HistoryGroupListViewAdapter(Context context,
 			List<GroupBean> historyGroups, int resource, String[] dataKeys,
 			int[] ids) {
@@ -112,6 +125,11 @@ public class HistoryGroupListViewAdapter extends SimpleAdapter {
 				long _historyGroupWalkStopTimestamp = _historyGroupInviteInfo
 						.getEndTime() * MILLISECONDS_PER_SECOND;
 
+				LOGGER.info("History group walk start timestamp = "
+						+ _historyGroupWalkStartTimestamp
+						+ " and stop timestamp = "
+						+ _historyGroupWalkStopTimestamp);
+
 				// set data attributes
 				_data.put(HISTORYGROUP_ID_KEY, _historyGroup.getGroupId());
 				_data.put(HISTORYGROUP_TYPE_KEY, _historyGroupType);
@@ -123,7 +141,8 @@ public class HistoryGroupListViewAdapter extends SimpleAdapter {
 						_historyGroupWalkStopTimestamp);
 				_data.put(
 						HistoryGroupListViewAdapterKey.HISTORYGROUP_WALKSTARTTIME_KEY
-								.name(), "下午 14：22");
+								.name(),
+						formatGroupWalkStartTime(_historyGroupWalkStartTimestamp));
 				_data.put(
 						HistoryGroupListViewAdapterKey.HISTORYGROUP_DURATIONTIME_LABEL_KEY
 								.name(),
@@ -136,7 +155,8 @@ public class HistoryGroupListViewAdapter extends SimpleAdapter {
 				_data.put(
 						HistoryGroupListViewAdapterKey.HISTORYGROUP_DURATIONTIME_KEY
 								.name(),
-						GroupType.WALK_GROUP == _historyGroupType ? "20 秒钟"
+						GroupType.WALK_GROUP == _historyGroupType ? getWalkInviteGroupDurationTimeFormat(_historyGroupWalkStopTimestamp
+								- _historyGroupWalkStartTimestamp)
 								: _historyGroupInviteInfo.getDuration()
 										+ context
 												.getString(R.string.historyGroup_withinGroupCompete_durationTime_unit));
@@ -234,6 +254,142 @@ public class HistoryGroupListViewAdapter extends SimpleAdapter {
 	public Long getGroupWalkStopTime(int position) {
 		// return the history group walk stop time with position
 		return (Long) getItem(position).get(HISTORYGROUP_WALKSTOPTIME_KEY);
+	}
+
+	/**
+	 * @title formatGroupWalkStartTime
+	 * @descriptor format the walk invite or within group compete group walk
+	 *             start time
+	 * @param groupStartTime
+	 *            : walk invite or within group compete group walk start time
+	 * @return the walk invite or within group compete group walk start time
+	 *         format
+	 * @author Ares
+	 */
+	private String formatGroupWalkStartTime(long groupStartTime) {
+		// define return string builder
+		StringBuilder _ret = new StringBuilder();
+
+		// get current system time
+		Long _currentSystemTime = System.currentTimeMillis();
+
+		// compare current system time and submit timestamp
+		if (_currentSystemTime - groupStartTime >= 0) {
+			// get today zero o'clock calendar instance
+			Calendar _todayZeroCalendarInstance = Calendar.getInstance(Locale
+					.getDefault());
+			_todayZeroCalendarInstance.set(Calendar.AM_PM, 0);
+			_todayZeroCalendarInstance.set(Calendar.HOUR, 0);
+			_todayZeroCalendarInstance.set(Calendar.MINUTE, 0);
+			_todayZeroCalendarInstance.set(Calendar.SECOND, 0);
+			_todayZeroCalendarInstance.set(Calendar.MILLISECOND, 0);
+
+			// get the group walk start timestamp calendar instance
+			Calendar _groupWalkStartTimestampCalendarInstance = Calendar
+					.getInstance(Locale.getDefault());
+			_groupWalkStartTimestampCalendarInstance
+					.setTimeInMillis(groupStartTime);
+
+			// format day and time
+			if (_groupWalkStartTimestampCalendarInstance
+					.before(_todayZeroCalendarInstance)) {
+				// get today zero o'clock and group walk start timestamp time
+				// different
+				Long _today7GroupWalkStartTimestampCalendarTimeDifferent = _todayZeroCalendarInstance
+						.getTimeInMillis()
+						- _groupWalkStartTimestampCalendarInstance
+								.getTimeInMillis();
+
+				// check time different
+				if (_today7GroupWalkStartTimestampCalendarTimeDifferent <= MILLISECONDS_PER_DAY) {
+					// yesterday
+					_ret.append(context
+							.getString(R.string.historyGroup_walkStartTimeFormat_yesterdayWalk));
+				} else {
+					// get first day zero o'clock of week calendar instance
+					Calendar _firstDayOfWeekZeroCalendarInstance = Calendar
+							.getInstance(Locale.getDefault());
+					_firstDayOfWeekZeroCalendarInstance
+							.setTimeInMillis(_todayZeroCalendarInstance
+									.getTimeInMillis());
+					_firstDayOfWeekZeroCalendarInstance.set(
+							Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+
+					if (_groupWalkStartTimestampCalendarInstance
+							.before(_firstDayOfWeekZeroCalendarInstance)) {
+						// one day before days of one week
+						_ret.append(_groupWalkStartTimeDayFormat
+								.format(groupStartTime));
+					} else {
+						// in the week
+						_ret.append(context
+								.getResources()
+								.getStringArray(
+										R.array.historyGroup_walkStartTimeFormat_daysOfWeek)[_groupWalkStartTimestampCalendarInstance
+								.get(Calendar.DAY_OF_WEEK) - 1]);
+					}
+				}
+			} else {
+				// today
+				_ret.append(_groupWalkStartTimeTimeFormat
+						.format(groupStartTime));
+			}
+		} else {
+			LOGGER.error("Format walk invite or within group compete walk start time error, walk start timestamp greater than current system time");
+
+			_ret.append(_groupWalkStartTimeTimeFormat.format(groupStartTime));
+		}
+
+		return _ret.toString();
+	}
+
+	/**
+	 * @title getWalkInviteGroupDurationTimeFormat
+	 * @descriptor get the walk invite group duration time format
+	 * @param walkInviteGroupDurationTime
+	 *            : walk invite group walk duration time
+	 * @return the walk invite group duration time format
+	 * @author Ares
+	 */
+	private String getWalkInviteGroupDurationTimeFormat(
+			long walkInviteGroupDurationTime) {
+		// define the walk invite group walk duration time format
+		String _walkInviteGroupWalkDurationTimeFormat = "";
+
+		// trim the walk invite group duration time(seconds) and check
+		walkInviteGroupDurationTime = walkInviteGroupDurationTime
+				/ MILLISECONDS_PER_SECOND;
+
+		// get the walk invite group walk duration time minute and second
+		int _walkInviteGroupWalkDurationTimeMinute = 0 <= walkInviteGroupDurationTime ? (int) (walkInviteGroupDurationTime / SECONDS_PER_MINUTE)
+				: 0;
+		int _walkInviteGroupWalkDurationTimeSecond = 0 <= walkInviteGroupDurationTime ? (int) (walkInviteGroupDurationTime % SECONDS_PER_MINUTE)
+				: 0;
+
+		// check the walk invite group duration time(seconds) and then format
+		// the walk invite group walk duration time
+		if (0 == _walkInviteGroupWalkDurationTimeMinute) {
+			// less than on minute
+			_walkInviteGroupWalkDurationTimeFormat = _walkInviteGroupWalkDurationTimeSecond
+					+ context
+							.getString(R.string.historyGroup_walkinvite_durationTime_secondssUnit);
+		} else {
+			if (0 == _walkInviteGroupWalkDurationTimeSecond) {
+				// just some minutes
+				_walkInviteGroupWalkDurationTimeFormat = _walkInviteGroupWalkDurationTimeMinute
+						+ context
+								.getString(R.string.historyGroup_walkinvite_durationTime_minutesUnit);
+			} else {
+				// has minute and second
+				_walkInviteGroupWalkDurationTimeFormat = String
+						.format(context
+								.getString(R.string.historyGroup_walkinvite_durationTime_format),
+								_walkInviteGroupWalkDurationTimeMinute,
+								_walkInviteGroupWalkDurationTimeSecond);
+			}
+		}
+
+		return _walkInviteGroupWalkDurationTimeFormat;
 	}
 
 	// inner class

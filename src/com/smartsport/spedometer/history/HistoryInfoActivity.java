@@ -3,19 +3,25 @@
  */
 package com.smartsport.spedometer.history;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import android.content.ContentResolver;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
+import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -41,11 +47,13 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.smartsport.spedometer.R;
+import com.smartsport.spedometer.SSApplication;
 import com.smartsport.spedometer.customwidget.SSProgressDialog;
 import com.smartsport.spedometer.customwidget.SSSimpleAdapterViewBinder;
 import com.smartsport.spedometer.group.GroupBean;
 import com.smartsport.spedometer.group.GroupInfoModel;
 import com.smartsport.spedometer.group.GroupType;
+import com.smartsport.spedometer.history.HistoryInfoActivity.PPWalkInfoCursorAdapter.WalkInfoCursorAdapterKey;
 import com.smartsport.spedometer.history.HistoryInfoActivity.PatStrangerListViewAdapter.PatStrangerListViewAdapterKey;
 import com.smartsport.spedometer.history.patstranger.PatStrangerActivity;
 import com.smartsport.spedometer.history.patstranger.PatStrangerActivity.PatStrangerExtraData;
@@ -54,10 +62,12 @@ import com.smartsport.spedometer.history.walk.group.HistoryGroupListViewAdapter.
 import com.smartsport.spedometer.history.walk.group.HistoryGroupWalkInfoActivity;
 import com.smartsport.spedometer.history.walk.group.HistoryGroupWalkInfoActivity.HistoryGroupWalkInfoExtraData;
 import com.smartsport.spedometer.history.walk.personal.PersonalWalkHistoryRecordActivity;
+import com.smartsport.spedometer.history.walk.personal.PersonalWalkHistoryRecordActivity.PersonalWalkHistoryRecordExtraData;
 import com.smartsport.spedometer.localstorage.AppInterSqliteDBHelper.ISimpleBaseColumns;
 import com.smartsport.spedometer.localstorage.pedometer.SPPersonalWalkRecordContentProvider.UserPersonalWalkRecords.UserPersonalWalkRecord;
 import com.smartsport.spedometer.mvc.ICMConnector;
 import com.smartsport.spedometer.mvc.SSBaseActivity;
+import com.smartsport.spedometer.pedometer.PersonalWalkRecordBean;
 import com.smartsport.spedometer.strangersocial.pat.StrangerPatModel;
 import com.smartsport.spedometer.strangersocial.pat.UserInfoPatLocationExtBean;
 import com.smartsport.spedometer.user.UserManager;
@@ -75,9 +85,6 @@ public class HistoryInfoActivity extends SSBaseActivity {
 	// logger
 	private static final SSLogger LOGGER = new SSLogger(
 			HistoryInfoActivity.class);
-
-	// content resolver
-	private final ContentResolver CONTENTRESOLVER = getContentResolver();
 
 	// input method manager
 	private InputMethodManager inputMethodManager;
@@ -247,14 +254,30 @@ public class HistoryInfoActivity extends SSBaseActivity {
 				.setAdapter(new PPWalkInfoCursorAdapter(
 						this,
 						R.layout.personal_walkrecord_listview_item_layout,
-						CONTENTRESOLVER
+						getContentResolver()
 								.query(UserPersonalWalkRecord.PERSONALWALKRECORDS_CONTENT_URI,
 										null,
 										UserPersonalWalkRecord.USERPERSONAL_WALKRECORDS_WITHLOGINNAME_CONDITION,
-										new String[] {},
+										new String[] { String.valueOf(loginUser
+												.getUserId()) },
 										UserPersonalWalkRecord.START_TIME
 												+ ISimpleBaseColumns._ORDER_DESC),
-						new String[] {}, new int[] {}));
+						new String[] {
+								WalkInfoCursorAdapterKey.WALKRECORD_STARTTIME_KEY
+										.name(),
+								WalkInfoCursorAdapterKey.WALKRECORD_DURATIONTIME_KEY
+										.name(),
+								WalkInfoCursorAdapterKey.WALKRECORD_TOTALSTEP_KEY
+										.name(),
+								WalkInfoCursorAdapterKey.WALKRECORD_TOTALDISTANCE_KEY
+										.name(),
+								WalkInfoCursorAdapterKey.WALKRECORD_ENERGY_KEY
+										.name() }, new int[] {
+								R.id.pwr_startTime_textView,
+								R.id.pwr_durationTime_textView,
+								R.id.pwr_totalStep_textView,
+								R.id.pwr_totalDistance_textView,
+								R.id.pwr_energy_textView }));
 
 		// set its on item click listener
 		personalPedometerWalkInfoListView
@@ -812,11 +835,23 @@ public class HistoryInfoActivity extends SSBaseActivity {
 	 * @author Ares
 	 * @version 1.0
 	 */
-	class PPWalkInfoCursorAdapter extends CursorAdapter {
+	@SuppressLint("SimpleDateFormat")
+	static class PPWalkInfoCursorAdapter extends CursorAdapter {
 
 		// logger
 		private final SSLogger LOGGER = new SSLogger(
 				PPWalkInfoCursorAdapter.class);
+
+		// milliseconds per second and seconds per minute
+		private final int MILLISECONDS_PER_SECONDS = 1000;
+		private final int SECONDS_PER_MINUTED = 60;
+
+		// walk start time date
+		private final SimpleDateFormat WALKSTARTTIME_DATEFORMAT = new SimpleDateFormat(
+				SSApplication
+						.getContext()
+						.getString(
+								R.string.personalWalkHistoryRecord_walkStartTime_format));
 
 		// context
 		protected Context context;
@@ -833,6 +868,9 @@ public class HistoryInfoActivity extends SSBaseActivity {
 
 		// cursor data list
 		protected List<Object> dataList;
+
+		// cursor
+		private Cursor cursor;
 
 		/**
 		 * @title PPWalkInfoCursorAdapter
@@ -863,12 +901,22 @@ public class HistoryInfoActivity extends SSBaseActivity {
 			this.dataKeys = dataKeys;
 			this.itemsComponentResIds = itemsComponentResIds;
 
-			// init cursor data list
+			// initialize cursor data list
 			dataList = new ArrayList<Object>();
+
+			// save the cursor
+			this.cursor = cursor;
+		}
+
+		public void setDataList(List<Object> dataList) {
+			this.dataList = dataList;
 		}
 
 		@Override
 		public View newView(Context context, Cursor cursor, ViewGroup parent) {
+			// define and initalize view holder object
+			AdapterViewHolder _viewHolder = new AdapterViewHolder();
+
 			// inflate convert view
 			View _convertView = layoutInflater.inflate(itemsLayoutResId,
 					parent, false);
@@ -887,8 +935,44 @@ public class HistoryInfoActivity extends SSBaseActivity {
 
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
-			// TODO Auto-generated method stub
+			// check cursor
+			if (this.cursor != cursor) {
+				// reset data with cursor
+				// clear old cursor data list
+				dataList.clear();
 
+				// append cursor data
+				do {
+					appendCursorData(dataList, cursor);
+				} while (cursor.moveToPrevious());
+
+				// reverse data list
+				Collections.reverse(dataList);
+
+				// cursor recover
+				cursor.move(dataList.size());
+
+				// update cursor
+				this.cursor = cursor;
+			} else {
+				// check cursor position and append cursor data
+				if (cursor.getPosition() >= dataList.size()) {
+					appendCursorData(dataList, cursor);
+				} else {
+					LOGGER.debug("Rollback, mustn't append cursor data");
+				}
+			}
+
+			// set item component view subViews
+			for (int i = 0; i < itemsComponentResIds.length; i++) {
+				// recombination data and bind item component view data
+				bindView(
+						((AdapterViewHolder) view.getTag()).getViews4Holding()
+								.get(itemsComponentResIds[i]),
+						recombinationData(dataKeys[i],
+								dataList.get(cursor.getPosition())),
+						dataKeys[i]);
+			}
 		}
 
 		@Override
@@ -897,6 +981,196 @@ public class HistoryInfoActivity extends SSBaseActivity {
 			super.onContentChanged();
 
 			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public Object getItem(int position) {
+			// return super.getItem(position);
+			return dataList.get(position);
+		}
+
+		/**
+		 * @title getWalkStartTime
+		 * @descriptor get walk start time
+		 * @param position
+		 *            : walk history record listView selected item position
+		 * @return the selected walk history record walk start time
+		 * @author Ares
+		 */
+		public String getWalkStartTime(int position) {
+			// get walk start time
+			return WALKSTARTTIME_DATEFORMAT
+					.format(((PersonalWalkRecordBean) getItem(position))
+							.getStartTime() * MILLISECONDS_PER_SECONDS);
+		}
+
+		/**
+		 * @title appendCursorData
+		 * @descriptor append cursor data
+		 * @param data
+		 *            : new added data
+		 * @param cursor
+		 *            : the cursor
+		 * @author Ares
+		 */
+		protected void appendCursorData(List<Object> data, Cursor cursor) {
+			// check the cursor
+			if (null != cursor) {
+				// get user personal walk record bean and append to data list
+				data.add(new PersonalWalkRecordBean(cursor));
+			} else {
+				LOGGER.error("Query user login history all walk records error, cursor = "
+						+ cursor);
+			}
+		}
+
+		/**
+		 * @title recombinationData
+		 * @descriptor recombination data
+		 * @param dataKey
+		 *            : data key
+		 * @param dataObject
+		 *            : data object
+		 * @return recombination data
+		 * @author Ares
+		 */
+		protected Map<String, ?> recombinationData(String dataKey,
+				Object dataObject) {
+			// define return data map and the data value for key in data object
+			Map<String, Object> _dataMap = new HashMap<String, Object>();
+			Object _dataValue = null;
+
+			// check data object and convert to user personal walk record object
+			try {
+				// convert data object to user personal walk record
+				PersonalWalkRecordBean _walkRecordObject = (PersonalWalkRecordBean) dataObject;
+
+				// check data key and get data value for it
+				if (WalkInfoCursorAdapterKey.WALKRECORD_STARTTIME_KEY.name()
+						.equalsIgnoreCase(dataKey)) {
+					// walk start time
+					_dataValue = WALKSTARTTIME_DATEFORMAT
+							.format(_walkRecordObject.getStartTime()
+									* MILLISECONDS_PER_SECONDS);
+				} else if (WalkInfoCursorAdapterKey.WALKRECORD_DURATIONTIME_KEY
+						.name().equalsIgnoreCase(dataKey)) {
+					// walk duration time
+					_dataValue = String
+							.format(context
+									.getString(R.string.personalWalkHistoryRecord_walkDurationTime_format),
+									_walkRecordObject.getDurationTime()
+											/ SECONDS_PER_MINUTED,
+									_walkRecordObject.getDurationTime()
+											% SECONDS_PER_MINUTED);
+				} else if (WalkInfoCursorAdapterKey.WALKRECORD_TOTALSTEP_KEY
+						.name().equalsIgnoreCase(dataKey)) {
+					// walk total step
+					_dataValue = _walkRecordObject.getTotalStep();
+				} else if (WalkInfoCursorAdapterKey.WALKRECORD_TOTALDISTANCE_KEY
+						.name().equalsIgnoreCase(dataKey)) {
+					// walk total distance
+					_dataValue = _walkRecordObject.getTotalDistance();
+				} else if (WalkInfoCursorAdapterKey.WALKRECORD_ENERGY_KEY
+						.name().equalsIgnoreCase(dataKey)) {
+					// walk energy
+					_dataValue = _walkRecordObject.getEnergy();
+				} else {
+					LOGGER.error("Recombination data error, data key = "
+							+ dataKey + " and data object = " + dataObject);
+				}
+			} catch (Exception e) {
+				LOGGER.error("Convert data object to user personal walk record bean object error, data = "
+						+ dataObject);
+
+				e.printStackTrace();
+			}
+
+			// put data value to map and return
+			_dataMap.put(dataKey, _dataValue);
+			return _dataMap;
+		}
+
+		/**
+		 * @title bindView
+		 * @descriptor bind view and data
+		 * @param view
+		 *            : the binded view
+		 * @param dataMap
+		 *            : data
+		 * @param dataKey
+		 *            : data key
+		 * @author Ares
+		 */
+		protected void bindView(View view, Map<String, ?> dataMap,
+				String dataKey) {
+			// get item data object
+			Object _itemData = dataMap.get(dataKey);
+
+			// check view type
+			// textView
+			if (view instanceof TextView) {
+				// generate view text
+				SpannableString _viewNewText = new SpannableString(
+						null == _itemData ? "" : _itemData.toString());
+
+				// check data class name
+				if (_itemData instanceof SpannableString) {
+					_viewNewText
+							.setSpan(
+									new ForegroundColorSpan(
+											context.getResources()
+													.getColor(
+															android.R.color.holo_green_light)),
+									0, _viewNewText.length(),
+									Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				}
+
+				// set view text
+				((TextView) view).setText(_viewNewText);
+			} else {
+				LOGGER.error("Bind view error, view = " + view
+						+ " not recognized, data key = " + dataKey
+						+ " and data map = " + dataMap);
+			}
+		}
+
+		// inner class
+		/**
+		 * @name WalkInfoCursorAdapterKey
+		 * @descriptor walk info listView cursor adapter key enumeration
+		 * @author Ares
+		 * @version 1.0
+		 */
+		public enum WalkInfoCursorAdapterKey {
+
+			// walk start time, duration time, walk total step, total distance
+			// and energy
+			WALKRECORD_STARTTIME_KEY, WALKRECORD_DURATIONTIME_KEY, WALKRECORD_TOTALSTEP_KEY, WALKRECORD_TOTALDISTANCE_KEY, WALKRECORD_ENERGY_KEY;
+
+		}
+
+		/**
+		 * @name AdapterViewHolder
+		 * @descriptor adapter view holder
+		 * @author Ares
+		 * @version 1.0
+		 */
+		class AdapterViewHolder {
+
+			// views for holding
+			private SparseArray<View> views4Holding;
+
+			public AdapterViewHolder() {
+				super();
+
+				// init views sparse array for holding
+				views4Holding = new SparseArray<View>();
+			}
+
+			public SparseArray<View> getViews4Holding() {
+				return views4Holding;
+			}
 
 		}
 
@@ -916,11 +1190,20 @@ public class HistoryInfoActivity extends SSBaseActivity {
 			// define personal walk history record item extra data map
 			Map<String, Object> _extraMap = new HashMap<String, Object>();
 
-			// put the selected user personal walk record start time, duration,
-			// walk total step, total distance and energy to extra data map as
-			// param
-			// test by ares
-			_extraMap.put("test", "@ares");
+			// get the walk history record listView adapter
+			PPWalkInfoCursorAdapter _walkHistoryRecordListViewAdapter = (PPWalkInfoCursorAdapter) personalPedometerWalkInfoListView
+					.getAdapter();
+
+			// put the selected user personal walk record title and its
+			// bean(start time, duration time, walk total step, total distance
+			// and energy) to extra data map as param
+			_extraMap
+					.put(PersonalWalkHistoryRecordExtraData.PPWHR_SELECTED_WALKRECORD_TITLE,
+							_walkHistoryRecordListViewAdapter
+									.getWalkStartTime(position));
+			_extraMap
+					.put(PersonalWalkHistoryRecordExtraData.PPWHR_SELECTED_WALKRECORD_BEAN,
+							_walkHistoryRecordListViewAdapter.getItem(position));
 
 			// go to personal walk history record activity with extra data map
 			pushActivity(PersonalWalkHistoryRecordActivity.class, _extraMap);

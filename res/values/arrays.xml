@@ -40,4 +40,15 @@
         <item>@android:color/holo_purple</item>
     </string-array>
 
+    <!-- walk invite or within group compete walk start time days of week -->
+    <string-array name="historyGroup_walkStartTimeFormat_daysOfWeek" translatable="false">
+        <item>@string/historyGroup_walkStartTimeFormat_sundayWalk</item>
+        <item>@string/historyGroup_walkStartTimeFormat_mondayWalk</item>
+        <item>@string/historyGroup_walkStartTimeFormat_tuesdayWalk</item>
+        <item>@string/historyGroup_walkStartTimeFormat_wednesdayWalk</item>
+        <item>@string/historyGroup_walkStartTimeFormat_thursdayWalk</item>
+        <item>@string/historyGroup_walkStartTimeFormat_fridayWalk</item>
+        <item>@string/historyGroup_walkStartTimeFormat_saturdayWalk</item>
+    </string-array>
+
 </resources>
