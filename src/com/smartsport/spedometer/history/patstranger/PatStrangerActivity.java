@@ -150,7 +150,7 @@ public class PatStrangerActivity extends SSBaseActivity {
 												.get(i);
 
 										// check the index
-										if (patLocationList.size() - 1 == i) {
+										if (0 == i) {
 											// save stranger last pat time and
 											// position point
 											strangerLastPatTime = _patLocationExtBean

@@ -272,14 +272,14 @@
     <string name="historyGroupItem_indicator_imageView_contentDescription" translatable="false">this is walk invite or within group compete history group item indicate imageView</string>
     <string name="historyGroup_topic_label">主题：</string>
     <string name="historyGroup_walkStartTime_label">开始时间：</string>
-    <string name="historyGroup_walkStartTimeFormat_yesterdayWalk">Yesterday</string>
-    <string name="historyGroup_walkStartTimeFormat_sundayWalk">Sunday</string>
-    <string name="historyGroup_walkStartTimeFormat_mondayWalk">Monday</string>
-    <string name="historyGroup_walkStartTimeFormat_tuesdayWalk">Tuesday</string>
-    <string name="historyGroup_walkStartTimeFormat_wednesdayWalk">Wednesday</string>
-    <string name="historyGroup_walkStartTimeFormat_thursdayWalk">Thursday</string>
-    <string name="historyGroup_walkStartTimeFormat_fridayWalk">Friday</string>
-    <string name="historyGroup_walkStartTimeFormat_saturdayWalk">Saturday</string>
+    <string name="historyGroup_walkStartTimeFormat_yesterdayWalk">昨天</string>
+    <string name="historyGroup_walkStartTimeFormat_sundayWalk">星期天</string>
+    <string name="historyGroup_walkStartTimeFormat_mondayWalk">星期一</string>
+    <string name="historyGroup_walkStartTimeFormat_tuesdayWalk">星期二</string>
+    <string name="historyGroup_walkStartTimeFormat_wednesdayWalk">星期三</string>
+    <string name="historyGroup_walkStartTimeFormat_thursdayWalk">星期四</string>
+    <string name="historyGroup_walkStartTimeFormat_fridayWalk">星期五</string>
+    <string name="historyGroup_walkStartTimeFormat_saturdayWalk">星期六</string>
     <string name="historyGroup_durationTime_label_format">%s时长：</string>
     <string name="historyGroup_walkinvite_durationTime_header">约走</string>
     <string name="historyGroup_withinGroupCompete_durationTime_header">竞赛</string>
